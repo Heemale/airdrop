@@ -7,7 +7,7 @@ const Home = () => {
     <div className="bg-[url('/home_banner_bg.png')] bg-center bg-no-repeat bg-cover bg-fixed">
       <NavBar />
       <div className="flex flex-col gap-64 mb-10">
-        <div className="flex justify-between mx-14 mt-24">
+        <div className="flex justify-between mx-10 mt-24">
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-2 text-white text-6xl font-semibold">
               <div>Unlock Exclusive</div>
