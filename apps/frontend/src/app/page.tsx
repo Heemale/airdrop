@@ -57,17 +57,33 @@ const Home = () => {
               Cumulative sales worldwide
             </div>
             <div className="flex gap-8 text-white text-9xl font-bold italic">
-              <div className="flex items-center justify-center border-white border rounded-2xl w-[144px] h-[190px]">
-                6
+              <div className="flex flex-col justify-between w-[144px] gap-1 relative">
+                <div className="bg-gray-400 border-white rounded-t-3xl h-[93px]"></div>
+                <div className="bg-gray-400 border-white rounded-b-3xl h-[93px]"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  6
+                </div>
               </div>
-              <div className="flex items-center justify-center border-white border rounded-2xl w-[144px] h-[190px]">
-                0
+              <div className="flex flex-col justify-between w-[144px] gap-1 relative">
+                <div className="bg-gray-400 border-white rounded-t-3xl h-[93px]"></div>
+                <div className="bg-gray-400 border-white rounded-b-3xl h-[93px]"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  0
+                </div>
               </div>
-              <div className="flex items-center justify-center border-white border rounded-2xl w-[144px] h-[190px]">
-                0
+              <div className="flex flex-col justify-between w-[144px] gap-1 relative">
+                <div className="bg-gray-400 border-white rounded-t-3xl h-[93px]"></div>
+                <div className="bg-gray-400 border-white rounded-b-3xl h-[93px]"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  0
+                </div>
               </div>
-              <div className="flex items-center justify-center border-white border rounded-2xl w-[144px] h-[190px]">
-                0
+              <div className="flex flex-col justify-between w-[144px] gap-1 relative">
+                <div className="bg-gray-400 border-white rounded-t-3xl h-[93px]"></div>
+                <div className="bg-gray-400 border-white rounded-b-3xl h-[93px]"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  0
+                </div>
               </div>
             </div>
             <div className="flex gap-2 mt-6">
@@ -83,12 +99,12 @@ const Home = () => {
               <div className="text-white text-3xl font-semibold">1</div>
             </div>
           </div>
-          <div className="flex gap-8">
+          <div className="grid grid-cols-2">
             <div className="flex flex-col items-center gap-10">
               <div className="text-white text-2xl border-white border rounded-2xl px-12 py-4">
                 Quantity of units remaining for the current round
               </div>
-              <div className="flex gap-10 text-white text-9xl font-bold italic">
+              <div className="flex gap-4 text-white text-9xl font-bold italic">
                 <div className="flex justify-center border-white border rounded-2xl w-[110px] h-[158px]">
                   -
                 </div>
@@ -101,7 +117,7 @@ const Home = () => {
               <div className="text-white text-2xl border-white border rounded-2xl px-12 py-4">
                 Quantity sold during the current round
               </div>
-              <div className="flex gap-10 text-white text-9xl font-bold italic">
+              <div className="flex gap-4 text-white text-9xl font-bold italic">
                 <div className="flex justify-center border-white border rounded-2xl w-[110px] h-[158px]">
                   -
                 </div>
