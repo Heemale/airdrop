@@ -4,6 +4,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import ConnectButton from '@/components/ConnectButton';
 import Link from 'next/link';
+import LanguageChanger from '@/components/LanguageChanger';
 
 const pages = [
   {
@@ -41,6 +42,7 @@ const NavBar = () => {
                 </Link>
               );
             })}
+          <LanguageChanger />
           <ConnectButton />
         </div>
       </div>

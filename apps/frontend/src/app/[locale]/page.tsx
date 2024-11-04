@@ -1,8 +1,14 @@
 import NavBar from '@/components/NavBar';
 import Image from 'next/image';
 import * as React from 'react';
+import initTranslations from '@/app/i18n';
 
-const Home = () => {
+const i18nNamespaces = ['common'];
+
+const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const { locale } = await params;
+  const { t, resources } = await initTranslations(locale, i18nNamespaces);
+
   return (
     <div className="bg-[url('/home_banner_bg.png')] bg-center bg-no-repeat bg-cover bg-fixed">
       <NavBar />
@@ -10,22 +16,25 @@ const Home = () => {
         <div className="flex justify-between mx-10 mt-24">
           <div className="flex flex-col gap-12">
             <div className="flex flex-col gap-2 text-white text-6xl font-semibold">
-              <div>Unlock Exclusive</div>
-              <div>Rewards with</div>
-              <div>CoralPhone</div>
+              <div>{t('Unlock Exclusive')}</div>
+              <div>{t('Rewards with')}</div>
+              <div>{t('CoralPhone')}</div>
             </div>
             <div className="flex flex-col gap-1 text-white text-lg">
               <div>
-                CoralPhone maximizes your advantages through a series of
-                exclusive rewards
+                {t(
+                  'CoralPhone maximizes your advantages through a series of exclusive rewards',
+                )}
               </div>
               <div>
-                designed to enhance your Web3 experience. From airdrops to
-                passive income,
+                {t(
+                  'designed to enhance your Web3 experience. From airdrops to passive income,',
+                )}
               </div>
               <div>
-                CoralPhone users can enjoy unique benefits tailored to promote
-                the Web3 lifestyle.
+                {t(
+                  'CoralPhone users can enjoy unique benefits tailored to promote the Web3 lifestyle.',
+                )}
               </div>
             </div>
             <Image
