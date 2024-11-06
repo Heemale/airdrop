@@ -30,7 +30,9 @@ const NavBar = () => {
       <div className="flex justify-between mx-[30px] my-2">
         <div className="flex gap-8">
           <div className="flex items-center">
-            <Image src="/logo.png" width="320" height="320" alt="logo" />
+            <Link href="/">
+              <Image src="/logo.png" width="320" height="320" alt="logo" />
+            </Link>
           </div>
         </div>
         <div className="flex flex-col sm:flex-row gap-10 text-white items-center">

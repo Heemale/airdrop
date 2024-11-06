@@ -25,33 +25,38 @@ const Home = () => {
             />
           </div>
           <div className="flex flex-col justify-center gap-4 text-white w-[456px]">
-            <div className="text-3xl">Node Info</div>
-            <div className="flex justify-between">
-              <div>Node Name</div>
-              <div>HyperFuse Guardian Node</div>
-            </div>
-            <div className="flex justify-between">
-              <div>Current Tier</div>
-              <div>11</div>
-            </div>
-            <div className="flex justify-between">
-              <div>Remaining/Total Nodes</div>
-              <div>625/2033</div>
-            </div>
+            <div className="text-3xl">Purchase Order</div>
             <div className="flex justify-between">
               <div>Allowed Purchase Amount</div>
-              <div>0</div>
+              <div>649</div>
             </div>
             <div className="flex justify-between">
-              <div>Node Price</div>
-              <div>1Node = 303 USDC</div>
+              <div>Quantity</div>
+              <div>1</div>
             </div>
-            <div>
-              <Link href="/presale-comfirm">
+            <div className="flex justify-between">
+              <div>Estimated Cost</div>
+              <div>272.7 USDT</div>
+            </div>
+            <div className="flex justify-between">
+              <div>Price Detail：1 x 272.7 USDT</div>
+            </div>
+            <div className="flex justify-between">
+              <div>Wallet Balance：19.409 USDT</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div className="col-span-1">
+                <Link href="/presale">
+                  <Button variant="contained" fullWidth>
+                    Back
+                  </Button>
+                </Link>
+              </div>
+              <div className="col-span-2">
                 <Button variant="contained" fullWidth>
-                  Next
+                  Purchase
                 </Button>
-              </Link>
+              </div>
             </div>
           </div>
         </div>
