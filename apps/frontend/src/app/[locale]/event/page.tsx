@@ -19,7 +19,7 @@ const Home = () => {
             <div className="flex flex-col gap-4">
               <div>Mystery Box Rules</div>
               <div>BNB Airdrop Preview</div>
-              <div>CoralApp & Skyark | TenJin NFT Airdrop Event Ann</div>
+              <div>CoralApp & Skyark | TenJin NFT Airdrop Event Ann...</div>
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@ const Home = () => {
           <div className="flex flex-col gap-4 border border-gray-600 rounded-3xl px-6 py-8 text-white">
             <div className="flex justify-between">
               <div className="flex gap-4">
-                <BnbLogo width="56" height="56" />
+                <BnbLogo width={56} height={56} />
                 <div className="flex flex-col justify-between">
                   <div>BNB ROUND #3</div>
                   <div className="flex gap-2">
@@ -51,7 +51,7 @@ const Home = () => {
             <div className="flex justify-between">
               <div>Chain</div>
               <div className="flex justify-between items-center gap-2">
-                <BnbLogo width="24" height="24" />
+                <BnbLogo width={24} height={24} />
                 <div>BEP20</div>
               </div>
             </div>
