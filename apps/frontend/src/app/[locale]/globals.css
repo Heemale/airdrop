@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+    @font-face {
+        font-family: Orbitron;
+        src: url('/fonts/Orbitron.ttf') format("truetype");
+    }
+    @font-face {
+        font-family: Manrope;
+        src: url('/fonts/Manrope.ttf') format("truetype");
+    }
+}
+
 @layer utilities {
     .text-gradient {
         background: linear-gradient(45deg, #ffbfb0, #e7534f);
