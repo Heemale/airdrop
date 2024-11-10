@@ -48,17 +48,9 @@ const NavBar = () => {
   return (
     <div className="bg-black flex flex-col items-center">
       <div className="w-full max-w-screen-xl flex justify-between items-center py-5 px-4">
-        {/* Desktop Navigation */}
-        <div className="hidden sm:flex items-center">
+        <div className="w-[115px] sm:w-[320px] items-center">
           <Link href={'/'}>
             <Image src="/logo.png" width="320" height="320" alt="logo" />
-          </Link>
-        </div>
-
-        {/* Mobile Navigation */}
-        <div className="flex sm:hidden items-center">
-          <Link href={'/'}>
-            <Image src="/logo.png" width="115" height="115" alt="logo" />
           </Link>
         </div>
 
