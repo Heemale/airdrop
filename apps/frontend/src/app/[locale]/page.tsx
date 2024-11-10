@@ -63,10 +63,10 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
               </div>
               <div className="flex items-center gap-4 sm:gap-10 mt-10">
                 <div className="hidden sm:flex text-white font-semibold">
-                  ———
+                  ————
                 </div>
                 <div className="sm:hidden flex text-gray-400 font-semibold">
-                  ———
+                  ————
                 </div>
                 <div className="hidden sm:flex">
                   <Image
@@ -100,35 +100,35 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
       <div className="bg-[url('/home_bg4.png')] bg-center bg-no-repeat flex flex-col gap-24 sm:gap-64 my-5">
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <div className="flex flex-col gap-8 sm:gap-20">
-            <div className="flex flex-col gap-4 sm:gap-14 items-center">
+            <div className="flex flex-col gap-4 sm:gap-14 items-center mt-16 sm:mt-32">
               <div className="text-gradient text-xl sm:text-6xl font-semibold">
                 Cumulative sales worldwide
               </div>
               <div className="flex gap-1 sm:gap-8 text-white text-3xl sm:text-9xl font-bold italic">
                 <div className="flex flex-col justify-between w-[40px] sm:w-[144px] gap-0.5 sm:gap-1 relative">
-                  <div className="bg-gradient-to-b from-[#010101] to-[#222] border-gray-400 border sm:border-2 rounded-t-xl sm:rounded-t-3xl h-[26px] sm:h-[93px]"></div>
-                  <div className="bg-gradient-to-b from-[#222] to-[#010101] border-gray-400 border sm:border-2 rounded-b-xl sm:rounded-b-3xl h-[26px] sm:h-[93px]"></div>
+                  <div className="bg-gradient-to-b from-[#010101] to-[#222] border-[#393838] border sm:border-2 rounded-t-xl sm:rounded-t-3xl h-[26px] sm:h-[93px]"></div>
+                  <div className="bg-gradient-to-b from-[#222] to-[#010101] border-[#393838] border sm:border-2 rounded-b-xl sm:rounded-b-3xl h-[26px] sm:h-[93px]"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     6
                   </div>
                 </div>
                 <div className="flex flex-col justify-between w-[40px] sm:w-[144px] gap-0.5 sm:gap-1 relative">
-                  <div className="bg-gradient-to-b from-[#010101] to-[#222] border-gray-400 border sm:border-2 rounded-t-xl sm:rounded-t-3xl h-[26px] sm:h-[93px]"></div>
-                  <div className="bg-gradient-to-b from-[#222] to-[#010101] border-gray-400 border sm:border-2 rounded-b-xl sm:rounded-b-3xl h-[26px] sm:h-[93px]"></div>
+                  <div className="bg-gradient-to-b from-[#010101] to-[#222] border-[#393838] border sm:border-2 rounded-t-xl sm:rounded-t-3xl h-[26px] sm:h-[93px]"></div>
+                  <div className="bg-gradient-to-b from-[#222] to-[#010101] border-[#393838] border sm:border-2 rounded-b-xl sm:rounded-b-3xl h-[26px] sm:h-[93px]"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     0
                   </div>
                 </div>
                 <div className="flex flex-col justify-between w-[40px] sm:w-[144px] gap-0.5 sm:gap-1 relative">
-                  <div className="bg-gradient-to-b from-[#010101] to-[#222] border-gray-400 border sm:border-2 rounded-t-xl sm:rounded-t-3xl h-[26px] sm:h-[93px]"></div>
-                  <div className="bg-gradient-to-b from-[#222] to-[#010101] border-gray-400 border sm:border-2 rounded-b-xl sm:rounded-b-3xl h-[26px] sm:h-[93px]"></div>
+                  <div className="bg-gradient-to-b from-[#010101] to-[#222] border-[#393838] border sm:border-2 rounded-t-xl sm:rounded-t-3xl h-[26px] sm:h-[93px]"></div>
+                  <div className="bg-gradient-to-b from-[#222] to-[#010101] border-[#393838] border sm:border-2 rounded-b-xl sm:rounded-b-3xl h-[26px] sm:h-[93px]"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     0
                   </div>
                 </div>
                 <div className="flex flex-col justify-between w-[40px] sm:w-[144px] gap-0.5 sm:gap-1 relative">
-                  <div className="bg-gradient-to-b from-[#010101] to-[#222] border-gray-400 border sm:border-2 rounded-t-xl sm:rounded-t-3xl h-[26px] sm:h-[93px]"></div>
-                  <div className="bg-gradient-to-b from-[#222] to-[#010101] border-gray-400 border sm:border-2 rounded-b-xl sm:rounded-b-3xl h-[26px] sm:h-[93px]"></div>
+                  <div className="bg-gradient-to-b from-[#010101] to-[#222] border-[#393838] border sm:border-2 rounded-t-xl sm:rounded-t-3xl h-[26px] sm:h-[93px]"></div>
+                  <div className="bg-gradient-to-b from-[#222] to-[#010101] border-[#393838] border sm:border-2 rounded-b-xl sm:rounded-b-3xl h-[26px] sm:h-[93px]"></div>
                   <div className="absolute inset-0 flex items-center justify-center">
                     0
                   </div>

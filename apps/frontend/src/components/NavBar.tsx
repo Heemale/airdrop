@@ -46,67 +46,67 @@ const NavBar = () => {
   };
 
   return (
-    <div className="bg-black">
-      <div className="flex justify-between mx-[30px] py-5 sm:px-14">
-        {/* Logo */}
-        <div className="flex items-center">
-          <Link href="/">
-            <Image src="/logo.png" width="320" height="320" alt="logo" />
-          </Link>
-        </div>
+      <div className="bg-black flex flex-col items-center">
+        <div className="w-full max-w-screen-xl flex justify-between items-center py-5 px-4">
 
-        {/* Desktop Navigation */}
-        <div className="hidden sm:flex gap-10 text-white items-center">
-          {pages &&
-            pages.map((page) => (
-              <Link key={page.id} href={page.link}>
-                {page.name}
-              </Link>
-            ))}
-          <LanguageChanger />
-          <ConnectButton />
-        </div>
-
-        {/* Mobile Navigation */}
-        <div className="flex sm:hidden items-center gap-4">
-          <ConnectButton />
-          <IconButton color="inherit" onClick={toggleDrawer(true)}>
-            <Image
-              src="/home_header.png"
-              width="20"
-              height="20"
-              alt="home-header"
-            />
-          </IconButton>
-        </div>
-
-        {/* Drawer for Mobile */}
-        <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
-          <div
-            className="w-64 p-4 text-white bg-black h-full"
-            onClick={toggleDrawer(false)}
-            onKeyDown={toggleDrawer(false)}
-          >
-            <List>
-              {pages &&
-                pages.map((page) => (
-                  <ListItem
-                    button
-                    key={page.id}
-                    component={Link}
-                    href={page.link}
-                  >
-                    <ListItemText primary={page.name} />
-                  </ListItem>
-                ))}
-              <ListItem>
-                <LanguageChanger />
-              </ListItem>
-            </List>
+          {/* Desktop Navigation */}
+          <div className="hidden sm:flex items-center">
+            <Link href="/">
+              <Image src="/logo.png" width="320" height="320" alt="logo"/>
+            </Link>
           </div>
-        </Drawer>
+
+          {/* Mobile Navigation */}
+          <div className="flex sm:hidden items-center">
+            <Link href="/">
+              <Image src="/logo.png" width="115" height="115" alt="logo"/>
+            </Link>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden sm:flex gap-10 items-center">
+            {pages &&
+                pages.map((page) => (
+                    <Link key={page.id} href={page.link}>
+                      <div className="text-gradient">
+                        {page.name}
+                      </div>
+                    </Link>
+                ))}
+            <LanguageChanger/>
+            <ConnectButton/>
+          </div>
+
+          {/* Mobile Navigation */}
+          <div className="flex sm:hidden items-center gap-4">
+            <ConnectButton/>
+            <IconButton color="inherit" onClick={toggleDrawer(true)}>
+              <Image src="/home_header.png" width="20" height="20" alt="home-header"/>
+            </IconButton>
+          </div>
+
+          {/* Drawer for Mobile */}
+          <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
+            <div
+                className="w-64 p-4 text-white bg-black h-full"
+                onClick={toggleDrawer(false)}
+                onKeyDown={toggleDrawer(false)}
+            >
+              <List>
+                {pages &&
+                    pages.map((page) => (
+                        <ListItem button key={page.id} component={Link} href={page.link}>
+                          <ListItemText className="text-gradient" primary={page.name}/>
+                        </ListItem>
+                    ))}
+                <ListItem>
+                  <LanguageChanger/>
+                </ListItem>
+              </List>
+            </div>
+          </Drawer>
+        </div>
       </div>
-    </div>
   );
 };
 
