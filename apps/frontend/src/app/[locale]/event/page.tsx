@@ -3,6 +3,7 @@ import Image from 'next/image';
 import * as React from 'react';
 import Announcement from '@/ui/Announcement';
 import BnbLogo from '@/ui/BnbLogo';
+import Button from '@/components/Button';
 
 const Home = () => {
   return (
@@ -28,9 +29,7 @@ const Home = () => {
             <div className="text-white text-xl font-bold">Ongoing Airdrops</div>
             <div className="w-1/2 h-1 bg-red-500 mx-auto mt-2 rounded-3xl"></div>
           </div>
-          <div className="relative inline-block bg-[url('/button_bg.png')] bg-cover text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer">
-            All Airdrops
-          </div>
+          <Button text="All Airdrops" />
         </div>
         <div className="flex flex-col">
           <div className="flex flex-col gap-4 border border-gray-600 rounded-3xl px-6 py-8 text-white">

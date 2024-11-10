@@ -3,7 +3,7 @@ import * as React from 'react';
 import initTranslations from '@/app/i18n';
 import Remain from '@/components/Home/Remain';
 import Banner from '@/components/Home/Banner';
-import Sale from "@/components/Home/Sale";
+import Sale from '@/components/Home/Sale';
 
 const i18nNamespaces = ['common'];
 
