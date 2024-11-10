@@ -13,6 +13,7 @@ import {
   ListItemText,
 } from '@mui/material';
 import { useState } from 'react';
+import './sui-button.css';
 
 const pages = [
   {
@@ -55,7 +56,7 @@ const NavBar = () => {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden sm:flex gap-10 items-center">
+        <div className="hidden md:flex gap-10 items-center">
           {pages &&
             pages.map((page) => (
               <Link key={page.id} href={page.link}>
@@ -67,7 +68,7 @@ const NavBar = () => {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="flex sm:hidden items-center gap-4">
+        <div className="flex md:hidden items-center gap-4">
           <ConnectButton />
           <IconButton color="inherit" onClick={toggleDrawer(true)}>
             <Image

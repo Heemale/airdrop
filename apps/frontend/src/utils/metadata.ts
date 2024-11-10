@@ -6,11 +6,6 @@ export const metadataList = [
       description: '',
       keysWords: '',
     },
-    kr: {
-      title: '',
-      description: '',
-      keysWords: '',
-    },
     zh: {
       title: '',
       description: '',

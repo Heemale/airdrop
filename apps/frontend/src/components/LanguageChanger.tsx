@@ -48,7 +48,7 @@ const LanguageChanger = () => {
 
   return (
     <Dropdown menu={{ items, onClick }} placement="bottom">
-      <Image src="/language.png" alt="change language" width={24} height={24} />
+      <Image src="/language.svg" alt="change language" width={24} height={24} />
     </Dropdown>
   );
 };
