@@ -1,0 +1,24 @@
+{
+  "name": "deploy",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "format": "prettier --write \"src/**/*.ts\"",
+    "newAirdrops": "npx ts-node -r tsconfig-paths/register src/scripts/newAirdrops.ts",
+    "newConfig": "npx ts-node -r tsconfig-paths/register src/scripts/newConfig.ts",
+    "transferCap": "npx ts-node -r tsconfig-paths/register src/scripts/transferCap.ts",
+    "getInviter": "npx ts-node -r tsconfig-paths/register src/scripts/test/getInviter.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@local/airdrop-sdk": "workspace:*",
+    "@mysten/sui": "^1.14.0",
+    "@types/node": "^22.5.5",
+    "dotenv": "^16.4.5",
+    "prettier": "^3.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
+  }
+}
