@@ -1,17 +1,24 @@
 module airdrop::airdrop {
+    // === Imports ===
+
     use sui::vec_map::{Self, VecMap};
     use sui::address::{Self};
     use sui::coin::{Self, Coin};
     use sui::balance::{Self, Balance};
 
+    // === Constants ===
+
     const MathBase: u64 = 10000;
+
+    // === Errors ===
+
     // 异常: root用户
-    const ERoot: u64 = 1;
-    // 异常: 绑定自己
+    const ERootUser: u64 = 1;
+    // 异常: 非法邀请人
     const EInvalidInviter: u64 = 2;
-    // 异常: 已绑定邀请关系
+    // 异常: 已绑定邀请人
     const EAlreadyBindInviter: u64 = 3;
-    // 异常: 未绑定邀请关系
+    // 异常: 未绑定邀请人
     const ENotBindInviter : u64 = 4;
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 5;
@@ -21,10 +28,14 @@ module airdrop::airdrop {
     const ENotBuyNode: u64 = 7;
     // 异常: 非法数量
     const EInvalidAmount: u64 = 8;
-    // 异常: 非法空投
-    const EInvalidAirDrop: u64 = 9;
+    // 异常: 轮次不存在
+    const ERoundNotFound: u64 = 9;
+    // 异常: 轮次已存在
+    const ERoundExited: u64 = 10;
     // 异常: 节点已售罄
-    const ENodeSoldOut: u64 = 10;
+    const ENodeSoldOut: u64 = 11;
+
+    // === Struct ===
 
     // 配置对象
     public struct Config has key, store {
@@ -87,9 +98,7 @@ module airdrop::airdrop {
         id: UID,
     }
 
-    /*
-     * 初始化函数
-     */
+
     fun init(ctx: &mut TxContext) {
         let sender = tx_context::sender(ctx);
         let admin_cap = AdminCap {
@@ -99,7 +108,8 @@ module airdrop::airdrop {
     }
 
     /*
-     * 创建配置对象
+     * @notice 创建配置对象
+     *
      * @param _admin_cap: AdminCap对象
      * @param root: root用户
      * @param inviter_fee: 邀请人费用
@@ -125,7 +135,8 @@ module airdrop::airdrop {
     }
 
     /*
-     * 修改配置对象
+     * @notice 修改配置对象
+     *
      * @param _admin_cap: AdminCap对象
      * @param config: 配置对象
      * @param root: root用户
@@ -145,7 +156,8 @@ module airdrop::airdrop {
     }
 
     /*
-     * 创建空投对象
+     * @notice 创建空投对象
+     *
      * @param T: 代币类型
      * @param _admin_cap: AdminCap对象
      */
@@ -161,23 +173,27 @@ module airdrop::airdrop {
     }
 
     /*
-     * 邀请
+     * @notice 邀请
+     *
      * @param config: 配置对象
      * @param inviter: 邀请人地址
+     *
+     * aborts-if:
+     * - 调用人是根用户.
+     * - 邀请人是调用人.
+     * - 调用人重复绑定
      */
     entry fun invite(config: &mut Config, inviter: address, ctx: &TxContext) {
         let sender = tx_context::sender(ctx);
-        // 根用户不能操作
-        assert!(&sender == &config.root, ERoot);
-        // 用户不能绑定自己
-        assert!(&sender == &inviter, EInvalidInviter);
-        // 不能重复绑定
+        assert!(&sender != &config.root, ERootUser);
+        assert!(&sender != &inviter, EInvalidInviter);
         assert!(vec_map::contains(&config.inviters, &sender), EAlreadyBindInviter);
         vec_map::insert(&mut config.inviters, sender, inviter);
     }
 
     /*
-     * 获取邀请人
+     * @notice 获取邀请人
+     *
      * @param config: 配置对象
      * @param user: 用户地址
      * @return 邀请人地址
@@ -192,7 +208,8 @@ module airdrop::airdrop {
     }
 
     /*
-     * 增加节点
+     * @notice 增加节点
+     *
      * @param _admin_cap: AdminCap对象
      * @param config: 配置对象
      * @param rank: 等级
@@ -224,7 +241,8 @@ module airdrop::airdrop {
     }
 
     /*
-     * 移除节点
+     * @notice 移除节点
+     *
      * @param _admin_cap: AdminCap对象
      * @param config: 配置对象
      * @param rank: 等级
@@ -238,7 +256,8 @@ module airdrop::airdrop {
     }
 
     /*
-     * 修改节点
+     * @notice 修改节点
+     *
      * @param _admin_cap: AdminCap对象
      * @param config: 配置对象
      * @param rank: 等级
@@ -268,11 +287,18 @@ module airdrop::airdrop {
     }
 
     /*
-     * 购买节点
+     * @notice 购买节点
+     *
      * @param T: 代币类型
      * @param config: 配置对象
      * @param rank: 等级
      * @param wallet: 支付的代币对象
+     *
+     * aborts-if:
+     * - 调用人没有绑定邀请人
+     * - 调用人支付资金不足
+     * - 调用人重复购买节点
+     * - 节点已售罄
      */
     entry fun buy_node<T>(
         config: &mut Config,
@@ -309,7 +335,8 @@ module airdrop::airdrop {
     }
 
     /*
-     * 增加空投
+     * @notice 增加空投
+     *
      * @param T: 代币类型
      * @param _admin_cap: AdminCap对象
      * @param airdrops: airdrops对象
@@ -319,6 +346,10 @@ module airdrop::airdrop {
      * @param total_shares: 总份数
      * @param total_balance: 总资金
      * @param wallet: 支付的代币对象
+     *
+     * aborts-if:
+     * - 支付的资金和total_balance不匹配
+     * - 空投回合已存在
      */
     entry fun insert_airdrop<T>(
         _admin_cap: &AdminCap,
@@ -332,7 +363,7 @@ module airdrop::airdrop {
         ctx: &mut TxContext,
     ) {
         assert!(coin::value(&wallet) >= total_balance, EInvalidAmount);
-        assert!(vec_map::contains(&airdrops.airdrop, &round), EInvalidAirDrop);
+        assert!(!vec_map::contains(&airdrops.airdrop, &round), ERoundExited);
 
         // 处理多余的入金
         let sender = tx_context::sender(ctx);
@@ -356,15 +387,18 @@ module airdrop::airdrop {
     }
 
     /*
-     * 修改空投
+     * @notice 修改空投
+     *
      * @param T: 代币类型
      * @param _admin_cap: AdminCap对象
      * @param airdrops: airdrops对象
      * @param round: 轮次
      * @param start_time: 开始时间
      * @param end_time: 结束时间
-     * @param total_shares: 总份数
-     * @param total_balance: 总资金
+     * @param is_open: 是否开启
+     *
+     * aborts-if:
+     * - 空投回合不存在
      */
     entry fun modify_airdrop<T>(
         _admin_cap: &AdminCap,
@@ -374,7 +408,7 @@ module airdrop::airdrop {
         end_time: u64,
         is_open: bool,
     ) {
-        assert!(!vec_map::contains(&airdrops.airdrop, &round), EInvalidAirDrop);
+        assert!(vec_map::contains(&airdrops.airdrop, &round), ERoundNotFound);
         let aidrop: &mut Airdrop<T> = vec_map::get_mut(&mut airdrops.airdrop, &round);
         aidrop.start_time = start_time;
         aidrop.end_time = end_time;
@@ -382,11 +416,15 @@ module airdrop::airdrop {
     }
 
     /*
-     * 提取空投资金
+     * @notice 提取空投资金
+     *
      * @param T: 代币类型
      * @param _admin_cap: AdminCap对象
      * @param airdrops: airdrops对象
      * @param round: 轮次
+     *
+     * aborts-if:
+     * - 空投回合不存在
      */
     entry fun withdraw<T>(
         _admin_cap: &AdminCap,
@@ -394,7 +432,7 @@ module airdrop::airdrop {
         round: u64,
         ctx: &mut TxContext
     ) {
-        assert!(!vec_map::contains(&airdrops.airdrop, &round), EInvalidAirDrop);
+        assert!(vec_map::contains(&airdrops.airdrop, &round), ERoundNotFound);
         let aidrop: &mut Airdrop<T> = vec_map::get_mut(&mut airdrops.airdrop, &round);
         let sender = tx_context::sender(ctx);
         let treasury_balance = balance::withdraw_all(&mut aidrop.treasury_balance);
