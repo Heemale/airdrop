@@ -1,15 +1,15 @@
 export const MODULE_CLOB = 'airdrop';
 
-export const ERROR_CODE: Record<bigint, string> = {
-    1n: "ERootUser",
-    2n: "EInvalidInviter",
-    3n: "EAlreadyBindInviter",
-    4n: "ENotBindInviter",
-    5n: "ECoinBalanceNotEnough",
-    6n: "EAlreadyBuyNode",
-    7n: "ENotBuyNode",
-    8n: "EInvalidAmount",
-    9n: "ERoundNotFound",
-    10n: "ERoundExited",
-    11n: "ENodeSoldOut"
+export const ERROR_CODE: Record<string, string> = {
+  '1': 'ERootUser',
+  '2': 'EInvalidInviter',
+  '3': 'EAlreadyBindInviter',
+  '4': 'ENotBindInviter',
+  '5': 'ECoinBalanceNotEnough',
+  '6': 'EAlreadyBuyNode',
+  '7': 'ENotBuyNode',
+  '8': 'EInvalidAmount',
+  '9': 'ERoundNotFound',
+  '10': 'ERoundExited',
+  '11': 'ENodeSoldOut',
 };
