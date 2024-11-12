@@ -19,13 +19,13 @@ module airdrop::airdrop {
     // 异常: 已绑定邀请人
     const EAlreadyBindInviter: u64 = 3;
     // 异常: 未绑定邀请人
-    const ENotBindInviter : u64 = 4;
+    const ENotBindInviter: u64 = 4;
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 5;
     // 异常: 已购买节点
     const EAlreadyBuyNode: u64 = 6;
     // 异常: 未购买节点
-    const ENotBuyNode: u64 = 7;
+    // const ENotBuyNode: u64 = 7;
     // 异常: 非法数量
     const EInvalidAmount: u64 = 8;
     // 异常: 轮次不存在
@@ -72,8 +72,8 @@ module airdrop::airdrop {
 
     // 空投列表对象
     public struct Airdrops<phantom T> has key, store {
-       id: UID,
-       airdrop: VecMap<u64, Airdrop<T>>,
+        id: UID,
+        airdrop: VecMap<u64, Airdrop<T>>,
     }
 
     // 空投对象
@@ -185,9 +185,9 @@ module airdrop::airdrop {
      */
     entry fun invite(config: &mut Config, inviter: address, ctx: &TxContext) {
         let sender = tx_context::sender(ctx);
-        assert!(&sender != &config.root, ERootUser);
-        assert!(&sender != &inviter, EInvalidInviter);
-        assert!(vec_map::contains(&config.inviters, &sender), EAlreadyBindInviter);
+        assert!(!(&sender == &config.root), ERootUser);
+        assert!(!(&sender == &inviter), EInvalidInviter);
+        assert!(!vec_map::contains(&config.inviters, &sender), EAlreadyBindInviter);
         vec_map::insert(&mut config.inviters, sender, inviter);
     }
 
@@ -438,5 +438,22 @@ module airdrop::airdrop {
         let treasury_balance = balance::withdraw_all(&mut aidrop.treasury_balance);
         let treasury_coin = coin::from_balance(treasury_balance, ctx);
         transfer::public_transfer(treasury_coin, sender);
+    }
+
+    public(package) fun root(config: &Config): address {
+        config.root
+    }
+
+    public(package) fun inviter_fee(config: &Config): u64 {
+        config.inviter_fee
+    }
+
+    public(package) fun receiver(config: &Config): address {
+        config.receiver
+    }
+
+    #[test_only]
+    entry fun init_for_test(ctx: &mut TxContext) {
+        init(ctx);
     }
 }
