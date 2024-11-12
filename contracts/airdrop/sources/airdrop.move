@@ -1,9 +1,10 @@
 module airdrop::airdrop {
     // === Imports ===
 
-    use sui::vec_map::{Self, VecMap};
+    use sui::object_bag::{Self, ObjectBag};
     use sui::coin::{Self, Coin};
     use sui::balance::{Self, Balance};
+    use sui::event::{Self};
 
     // === Errors ===
 
@@ -19,7 +20,7 @@ module airdrop::airdrop {
     // 空投列表对象
     public struct Airdrops<phantom T> has key, store {
         id: UID,
-        airdrop: VecMap<u64, Airdrop<T>>,
+        airdrops: ObjectBag,
     }
 
     // 空投对象
@@ -46,6 +47,21 @@ module airdrop::airdrop {
         id: UID,
     }
 
+    public struct AirdropInfo has copy, drop {
+        // 开始时间
+        start_time: u64,
+        // 结束时间
+        end_time: u64,
+        // 总份数
+        total_shares: u64,
+        // 剩余份数
+        remaining_shares: u64,
+        // 总资金
+        total_balance: u64,
+        // 是否开放
+        is_open: bool,
+    }
+
     fun init(ctx: &mut TxContext) {
         let sender = tx_context::sender(ctx);
         let admin_cap = AdminCap {
@@ -66,7 +82,7 @@ module airdrop::airdrop {
     ) {
         let airdrops = Airdrops<T> {
             id: object::new(ctx),
-            airdrop: vec_map::empty(),
+            airdrops: object_bag::new(ctx),
         };
         transfer::public_share_object(airdrops);
     }
@@ -121,7 +137,7 @@ module airdrop::airdrop {
             treasury_balance: coin::into_balance(wallet),
             is_open: true,
         };
-        vec_map::insert(&mut airdrops.airdrop, round, aidrop);
+        object_bag::add(&mut airdrops.airdrops, round, aidrop);
     }
 
     /*
@@ -147,7 +163,7 @@ module airdrop::airdrop {
         is_open: bool,
     ) {
         assert_round_not_found(airdrops, round);
-        let aidrop: &mut Airdrop<T> = vec_map::get_mut(&mut airdrops.airdrop, &round);
+        let aidrop: &mut Airdrop<T> = object_bag::borrow_mut(&mut airdrops.airdrops, round);
         aidrop.start_time = start_time;
         aidrop.end_time = end_time;
         aidrop.is_open = is_open;
@@ -171,20 +187,35 @@ module airdrop::airdrop {
         ctx: &mut TxContext
     ) {
         assert_round_not_found(airdrops, round);
-        let aidrop: &mut Airdrop<T> = vec_map::get_mut(&mut airdrops.airdrop, &round);
+        let aidrop: &mut Airdrop<T> = object_bag::borrow_mut(&mut airdrops.airdrops, round);
         let sender = tx_context::sender(ctx);
         let treasury_balance = balance::withdraw_all(&mut aidrop.treasury_balance);
         let treasury_coin = coin::from_balance(treasury_balance, ctx);
         transfer::public_transfer(treasury_coin, sender);
     }
 
+    public fun airdrops() {
+        event::emit(AirdropInfo {
+            start_time: 0,
+            end_time: 1,
+            total_shares: 10,
+            remaining_shares: 10,
+            total_balance: 10,
+            is_open: true,
+        })
+    }
+
+    // === Assertions ===
+
     public fun assert_round_exited<T>(airdrops: &Airdrops<T>, round: u64) {
-        assert!(!vec_map::contains(&airdrops.airdrop, &round), ERoundExited);
+        assert!(!object_bag::contains(&airdrops.airdrops, round), ERoundExited);
     }
 
     public fun assert_round_not_found<T>(airdrops: &Airdrops<T>, round: u64) {
-        assert!(vec_map::contains(&airdrops.airdrop, &round), ERoundNotFound);
+        assert!(object_bag::contains(&airdrops.airdrops, round), ERoundNotFound);
     }
+
+    // === Testing ===
 
     #[test_only]
     entry fun init_for_test(ctx: &mut TxContext) {

@@ -202,6 +202,8 @@ module airdrop::node {
         transfer::public_transfer(wallet, nodes.receiver);
     }
 
+    // === Assertions ===
+
     public fun assert_already_buy_node(users: VecMap<address, u8>, sender: address) {
         assert!(vec_map::contains(&users, &sender), EAlreadyBuyNode);
     }
