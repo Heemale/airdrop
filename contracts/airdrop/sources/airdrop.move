@@ -1,5 +1,11 @@
 module airdrop::airdrop {
+<<<<<<< HEAD
     use sui::vec_map::{Self, VecMap};
+=======
+    // === Imports ===
+
+    use sui::object_bag::{Self, ObjectBag};
+>>>>>>> 01c32e3142fb3e3ffbfd175b38c468342a717bb4
     use sui::coin::{Self, Coin};
     use sui::address::{Self};
     use sui::balance::{Self, Balance};
@@ -157,7 +163,6 @@ public struct AirDropEvent has copy, drop {
         let airdrops = Airdrops<T> {
             id: object::new(ctx),
             airdrops: object_bag::new(ctx),
-
         };
         transfer::public_share_object(airdrops);
     }
@@ -380,11 +385,15 @@ public struct AirDropEvent has copy, drop {
 
        
     /*
-     * 提取空投资金
+     * @notice 提取空投资金
+     *
      * @param T: 代币类型
      * @param _admin_cap: AdminCap对象
      * @param airdrops: airdrops对象
      * @param round: 轮次
+     *
+     * aborts-if:
+     * - 空投回合不存在
      */
     entry fun withdraw<T>(
         _admin_cap: &AdminCap,

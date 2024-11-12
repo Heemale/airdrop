@@ -2,3 +2,6 @@ packages:
   - 'apps/*'
   - 'contracts/*'
   - 'sdk/*'
+  - '!sdk\airdrop-sdk\airdrop'
+  - '!sdk\airdrop-sdk\types'
+  - '!sdk\airdrop-sdk\utils\constants'
