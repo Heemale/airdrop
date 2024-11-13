@@ -22,8 +22,8 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
       <div className="bg-[url('/home_bg4.png')] bg-center bg-no-repeat flex flex-col gap-24 sm:gap-64 my-5">
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <div className="flex flex-col gap-8 sm:gap-20">
-            <Sale />
-            <Remain />
+            <Sale translate={t} />
+            <Remain translate={t} />
           </div>
         </div>
       </div>
