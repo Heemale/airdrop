@@ -1,8 +1,14 @@
 {
-  "Unlock Exclusive": "使用",
-  "Rewards with": "珊瑚手机",
-  "CoralPhone": "解锁奖励",
+  "Unlock Exclusive":"解锁奖励" ,
+  "Rewards with": "使用",
+  "CoralPhone": "珊瑚手机",
   "CoralPhone maximizes your advantages through a series of exclusive rewards": "CoralPhone 通过一系列独家奖励，将您的优势发挥到极致",
   "designed to enhance your Web3 experience. From airdrops to passive income,": "旨在增强您的 Web3 体验。从空投到被动收入、",
-  "CoralPhone users can enjoy unique benefits tailored to promote the Web3 lifestyle.": "CoralPhone 用户可享受为推广 Web3 生活方式而量身定制的独特优惠。"
+  "CoralPhone users can enjoy unique benefits tailored to promote the Web3 lifestyle.": "CoralPhone 用户可享受为推广 Web3 生活方式而量身定制的独特优惠。",
+  "CoralPhone maximizes your advantages through a series of exclusive rewards designed to enhance your Web3 experience. From airdrops to passive income, CoralPhone users can enjoy unique benefits tailored to promote the Web3 lifestyle.":"CoralPhone 通过一系列旨在增强您的 Web3 体验的独家奖励来最大限度地发挥您的优势。从空投到被动收入,CoralPhone 用户可以享受为推广 Web3 生活方式而量身定制的独特福利。",
+  "Cumulative sales worldwide": "全球累计销量",
+  "Data update:": "数据更新：",
+  "Quantity of units remaining for the current round": "当前轮次剩余单位数量",
+  "Quantity sold during the current round": "当前轮次已售数量",
+  "Buy Nodes": "购买节点"
 }
