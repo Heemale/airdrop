@@ -44,6 +44,9 @@ importers:
       '@emotion/styled':
         specifier: ^11.13.0
         version: 11.13.0(@emotion/react@11.13.3)(@types/react@18.3.12)(react@19.0.0-rc-69d4b800-20241021)
+      '@local/airdrop-sdk':
+        specifier: workspace:*
+        version: link:../../sdk/airdrop-sdk
       '@mui/icons-material':
         specifier: ^6.1.6
         version: 6.1.6(@mui/material@6.1.6)(@types/react@18.3.12)(react@19.0.0-rc-69d4b800-20241021)
