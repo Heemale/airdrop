@@ -2,8 +2,12 @@ import NavBar from '@/components/NavBar';
 import * as React from 'react';
 import AirdropsList from '@/components/Event/AirdropsList';
 import Link from 'next/link';
+import initTranslations from '@/app/i18n';
 
-const Home = () => {
+const i18nNamespaces = ['common'];
+const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
+  const { locale } = await params;
+  const { t, resources } = await initTranslations(locale, i18nNamespaces);
   return (
     <>
       <NavBar />
@@ -23,16 +27,16 @@ const Home = () => {
               <Link href={'/benefits'}>
                 <div className="text-center cursor-pointer">
                   <div className="text-white text-xl font-bold">
-                    My Airdrop Benefits
+                    {t('My Airdrop Benefits')}
                   </div>
                   <div className="w-1/2 h-1 bg-gradient-to-r from-[#ffbdad] to-[#e7534f] mx-auto mt-2 rounded-3xl"></div>
                 </div>
               </Link>
             </div>
             <div className="text-sm">
-              Purchase CoralPhone to receive airdrop rewards!
+              {t(' Purchase CoralPhone to receive airdrop rewards!')}
             </div>
-            <AirdropsList />
+            <AirdropsList translate={t} />
           </div>
         </div>
       </div>
