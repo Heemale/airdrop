@@ -2,6 +2,7 @@ import Image from 'next/image';
 import * as React from 'react';
 
 interface Props {
+  translate: any;
   data: {
     id: number | bigint | string;
   };
@@ -10,6 +11,7 @@ interface Props {
 const AirdropsItem = (props: Props) => {
   const { data } = props;
   const { id } = data;
+  const { translate: t } = props;
   return (
     <div className="bg-gradient-to-b from-[#010101] to-[#222] flex flex-col gap-4 sm:gap-6 border border-gray-600 rounded-3xl px-3 sm:px-6 py-8 text-white">
       <div className="flex justify-between">
@@ -40,10 +42,10 @@ const AirdropsItem = (props: Props) => {
         </div>
       </div>
       <div className="relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer">
-        Claim
+        {t('Claim')}
       </div>
       <div className="flex justify-between">
-        <div>Chain</div>
+        <div>{t('Chain')}</div>
         <div className="flex justify-between items-center gap-2">
           <Image
             src="/bnb-bnb-logo.svg"
@@ -55,11 +57,11 @@ const AirdropsItem = (props: Props) => {
         </div>
       </div>
       <div className="flex justify-between">
-        <div>Total Copies</div>
+        <div>{t('Total Copies')}</div>
         <div>9,367</div>
       </div>
       <div className="flex justify-between">
-        <div>Reward Quantity per Copy</div>
+        <div>{t('Reward Quantity per Copy')}</div>
         <div>168 BNB</div>
       </div>
     </div>

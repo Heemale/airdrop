@@ -1,29 +1,34 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Button from '@/components/Button';
-
-const NodeInfo = () => {
+interface Props {
+  translate: any;
+}
+const NodeInfo = (props: Props) => {
+  const { translate: t } = props;
   return (
     <>
-      <div className="font-orbitron text-2xl">Node Info</div>
-      <div className="flex justify-between">
-        <div>Node Name</div>
-        <div>HyperFuse Guardian Node</div>
+      <div className="font-orbitron text-2xl">
+        <div>{t('Node Info')}</div>
       </div>
       <div className="flex justify-between">
-        <div>Current Tier</div>
+        <div>{t('Node Name')}</div>
+        <div>{t('HyperFuse Guardian Node')}</div>
+      </div>
+      <div className="flex justify-between">
+        <div>{t('Current Tier')}</div>
         <div>11</div>
       </div>
       <div className="flex justify-between">
-        <div>Remaining/Total Nodes</div>
+        <div>{t('Remaining/Total Nodes')}</div>
         <div>625/2033</div>
       </div>
       <div className="flex justify-between">
-        <div>Allowed Purchase Amount</div>
+        <div>{t('Allowed Purchase Amount')}</div>
         <div>0</div>
       </div>
       <div className="flex justify-between">
-        <div>Node Price</div>
+        <div>{t('Node Price')}</div>
         <div className="flex gap-0.5">
           <div>1</div>
           <div className="flex flex-col justify-end text-xs">Node</div>
