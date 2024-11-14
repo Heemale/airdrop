@@ -9,9 +9,8 @@ interface Props {
 }
 
 const AirdropsItem = (props: Props) => {
-  const { data } = props;
+  const { data, translate: t } = props;
   const { id } = data;
-  const { translate: t } = props;
   return (
     <div className="bg-gradient-to-b from-[#010101] to-[#222] flex flex-col gap-4 sm:gap-6 border border-gray-600 rounded-3xl px-3 sm:px-6 py-8 text-white">
       <div className="flex justify-between">

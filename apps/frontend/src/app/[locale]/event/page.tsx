@@ -21,7 +21,7 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
               <Announcement translate={t} />
             </div>
             <AirdropsHeader translate={t} />
-            <AirdropsList />
+            <AirdropsList translate={t} />
           </div>
         </div>
       </div>

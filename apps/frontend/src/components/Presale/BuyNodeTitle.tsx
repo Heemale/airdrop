@@ -1,9 +1,16 @@
 import * as React from 'react';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
+
 interface Props {
-  translate: any;
+  locale: string;
 }
-const BuyNodeTitle = (props: Props) => {
-  const { translate: t } = props;
+const BuyNodeTitle = async (props: Props) => {
+  const { locale } = props;
+  const { t, resources } = await initTranslations(
+    locale,
+    i18nConfig.i18nNamespaces,
+  );
   return (
     <div className="flex flex-col gap-8 sm:mt-10 mx-10">
       <div className="font-orbitron text-white text-2xl sm:text-5xl font-semibold">

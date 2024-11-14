@@ -1,11 +1,19 @@
 import * as React from 'react';
 import Link from 'next/link';
 import Button from '@/components/Button';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
+
 interface Props {
-  translate: any;
+  locale: string;
 }
-const NodeInfo = (props: Props) => {
-  const { translate: t } = props;
+
+const NodeInfo = async (props: Props) => {
+  const { locale } = props;
+  const { t, resources } = await initTranslations(
+    locale,
+    i18nConfig.i18nNamespaces,
+  );
   return (
     <>
       <div className="font-orbitron text-2xl">
