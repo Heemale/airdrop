@@ -26,8 +26,8 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
           <div className="flex flex-col gap-8 sm:gap-20">
             <Sale translate={t} />
             <Remain translate={t} />
-            <About />
-            <Holder />
+            <About locale={locale} />
+            <Holder locale={locale} />
           </div>
         </div>
       </div>

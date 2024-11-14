@@ -14,7 +14,12 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import './sui-button.css';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
 
+interface Props {
+  locale: string;
+}
 // 定义页面对象的类型
 interface Page {
   id: string;
@@ -41,10 +46,14 @@ const pages: Page[] = [
   },
 ];
 
-const NavBar: React.FC = () => {
+const NavBar: React.FC<Props> = async (props: Props) => {
   // 状态：抽屉是否打开
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-
+  const { locale, text, className } = props;
+  const { t, resources } = await initTranslations(
+    locale,
+    i18nConfig.i18nNamespaces,
+  );
   // 切换抽屉的状态
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -75,12 +84,12 @@ const NavBar: React.FC = () => {
             </Link>
           ))}
           <LanguageChanger />
-          <ConnectButton />
+          <ConnectButton locale={locale} />
         </div>
 
         {/* Mobile Navigation */}
         <div className="flex md:hidden items-center gap-4">
-          <ConnectButton />
+          <ConnectButton locale={locale} />
           <IconButton color="inherit" onClick={toggleDrawer(true)}>
             <Image
               src="/home_header.png"
@@ -106,7 +115,10 @@ const NavBar: React.FC = () => {
                   component={Link}
                   href={page.link}
                 >
-                  <ListItemText className="text-gradient" primary={page.name} />
+                  <ListItemText
+                    className="text-gradient"
+                    primary={t(page.name)}
+                  />
                 </ListItem>
               ))}
               <ListItem>
