@@ -4,6 +4,8 @@ import initTranslations from '@/app/i18n';
 import Remain from '@/components/Home/Remain';
 import Banner from '@/components/Home/Banner';
 import Sale from '@/components/Home/Sale';
+import About from '@/components/Home/About';
+import Holder from '@/components/Home/Holder';
 
 const i18nNamespaces = ['common'];
 
@@ -24,6 +26,8 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
           <div className="flex flex-col gap-8 sm:gap-20">
             <Sale translate={t} />
             <Remain translate={t} />
+            <About />
+            <Holder />
           </div>
         </div>
       </div>
