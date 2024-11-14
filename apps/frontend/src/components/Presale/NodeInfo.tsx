@@ -20,7 +20,7 @@ const NodeInfo = async (props: Props) => {
         <div>{t('Node Info')}</div>
       </div>
       <div className="flex justify-between">
-        <div>{t('Node Name')}</div>
+        a<div>{t('Node Name')}</div>
         <div>{t('HyperFuse Guardian Node')}</div>
       </div>
       <div className="flex justify-between">
@@ -47,7 +47,7 @@ const NodeInfo = async (props: Props) => {
       </div>
       <div>
         <Link href={'/presale-comfirm'}>
-          <Button className="text-white w-full" text="Next" />
+          <Button className="text-white w-full" text="Next" locale={locale} />
         </Link>
       </div>
     </>
