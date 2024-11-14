@@ -3,7 +3,6 @@ module airdrop::invite {
 
     use sui::vec_map::{Self, VecMap};
     use sui::address::{Self};
-    use airdrop::airdrop::{AdminCap};
 
     // === Errors ===
 
@@ -32,12 +31,10 @@ module airdrop::invite {
     /*
      * @notice 创建邀请关系对象
      *
-     * @param _admin_cap: AdminCap对象
      * @param root: root用户
      * @param inviter_fee: 邀请人费用
      */
-    entry fun new(
-        _admin_cap: &AdminCap,
+    public(package) fun new(
         root: address,
         inviter_fee: u64,
         ctx: &mut TxContext
@@ -54,13 +51,11 @@ module airdrop::invite {
     /*
      * @notice 修改邀请关系对象
      *
-     * @param _admin_cap: AdminCap对象
      * @param invite: 邀请关系对象
      * @param root: root用户
      * @param inviter_fee: 邀请人费用
      */
-    entry fun modify(
-        _admin_cap: &AdminCap,
+    public(package) fun modify(
         invite: &mut Invite,
         root: address,
         inviter_fee: u64,
@@ -104,11 +99,11 @@ module airdrop::invite {
         }
     }
 
-    public(package) fun root(config: &Invite): address {
+    public fun root(config: &Invite): address {
         config.root
     }
 
-    public(package) fun inviter_fee(config: &Invite): u64 {
+    public fun inviter_fee(config: &Invite): u64 {
         config.inviter_fee
     }
 

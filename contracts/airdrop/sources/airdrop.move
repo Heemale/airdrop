@@ -7,21 +7,20 @@ module airdrop::airdrop {
     use sui::bag::{Self, Bag};
     use std::type_name::{Self, TypeName};
     use sui::event::{Self};
+    use sui::clock::{Self, Clock};
+    use airdrop::invite::{Self, Invite};
+    use airdrop::node::{Self, Nodes};
 
     // 异常: 余额不足
-    const ECoinBalanceNotEnough: u64 = 9;
+    const ECoinBalanceNotEnough: u64 = 1;
     // 异常: 轮次不存在
-    const ERoundNotFound: u64 = 10;
+    const ERoundNotFound: u64 = 2;
     // 异常: 轮次已存在
-    const ERoundExited: u64 = 11;
-    // 异常: 空投已结束
-    const EInvalidAirDrop: u64 = 1009;
-    // 不在空投领取时间内
-    const EClaimTimeInvalid: u64 = 1011;
-    // 无可领取的空投
-    const ENoRemainingShares: u64 = 1012;
-    // 币种未设置
-    const ETokenNotSet: u64 = 1013;
+    const ERoundExited: u64 = 3;
+    // 异常: 不在空投领取时间内
+    const EInvalidClaimTime: u64 = 4;
+    // 异常: 无可领取的空投
+    const ENoRemainingShares: u64 = 5;
 
     // === Struct ===
 
@@ -29,7 +28,7 @@ module airdrop::airdrop {
     public struct Airdrops has key, store {
         id: UID,
         airdrops: VecMap<u64, Airdrop>,
-        balances: Bag,
+        treasury_balances: Bag,
     }
 
     // 空投对象
@@ -42,8 +41,8 @@ module airdrop::airdrop {
         end_time: u64,
         // 总份数
         total_shares: u64,
-        // 剩余份数
-        remaining_shares: u64,
+        // 已领取份数
+        claimed_shares: u64,
         // 总资金
         total_balance: u64,
         // 是否开放
@@ -68,8 +67,8 @@ module airdrop::airdrop {
         end_time: u64,
         // 总份数
         total_shares: u64,
-        // 剩余份数
-        remaining_shares: u64,
+        // 已领取份数
+        claimed_shares: u64,
         // 总资金
         total_balance: u64,
         // 是否开放
@@ -94,14 +93,14 @@ module airdrop::airdrop {
      * @param T: 代币类型
      * @param _admin_cap: AdminCap对象
      */
-    entry fun new_airdrops(
+    entry fun new(
         _admin_cap: &AdminCap,
         ctx: &mut TxContext
     ) {
         let airdrops = Airdrops {
             id: object::new(ctx),
             airdrops: vec_map::empty(),
-            balances: bag::new(ctx),
+            treasury_balances: bag::new(ctx),
         };
         transfer::public_share_object(airdrops);
     }
@@ -123,7 +122,7 @@ module airdrop::airdrop {
      * - 支付的资金和total_balance不匹配
      * - 空投回合已存在
      */
-    entry fun insert_airdrop<T>(
+    entry fun insert<T>(
         _admin_cap: &AdminCap,
         airdrops: &mut Airdrops,
         round: u64,
@@ -155,14 +154,14 @@ module airdrop::airdrop {
             start_time,
             end_time,
             total_shares,
-            remaining_shares: total_balance,
+            claimed_shares: 0,
             total_balance,
             is_open: true,
             description,
             coin_type,
         };
         vec_map::insert(&mut airdrops.airdrops, round, aidrop);
-        bag::add(&mut airdrops.balances, round, coin::into_balance(wallet));
+        bag::add(&mut airdrops.treasury_balances, round, coin::into_balance(wallet));
     }
 
     /*
@@ -179,7 +178,7 @@ module airdrop::airdrop {
      * aborts-if:
      * - 空投回合不存在
      */
-    entry fun modify_airdrop(
+    entry fun modify(
         _admin_cap: &AdminCap,
         airdrops: &mut Airdrops,
         round: u64,
@@ -215,10 +214,97 @@ module airdrop::airdrop {
     ) {
         let sender = tx_context::sender(ctx);
         assert_round_not_found(airdrops, round);
-        let aidrop_balance: &mut Balance<T> = bag::borrow_mut(&mut airdrops.balances, round);
+        let aidrop_balance: &mut Balance<T> = bag::borrow_mut(&mut airdrops.treasury_balances, round);
         let treasury_balance = balance::withdraw_all(aidrop_balance);
         let treasury_coin = coin::from_balance(treasury_balance, ctx);
         transfer::public_transfer(treasury_coin, sender);
+    }
+
+    /*
+     * @notice 领取空投
+     */
+    entry fun claim<T>(
+        airdrops: &mut Airdrops,
+        nodes: &mut Nodes,
+        round: u64,
+        clock: &Clock,
+        ctx: &mut TxContext,
+    ) {
+        let sender = tx_context::sender(ctx);
+        assert_round_not_found(airdrops, round);
+        let airdrop: &mut Airdrop = vec_map::get_mut(&mut airdrops.airdrops, &round);
+
+        assert_invalid_claim_time(clock, airdrop);
+        assert_no_remaining_shares(airdrop);
+
+        node::update_purchased_quantity(nodes, sender, round);
+
+        let per_share_amount = airdrop.total_balance / airdrop.total_shares;
+        airdrop.claimed_shares = airdrop.claimed_shares + 1;
+        let treasury_balance = bag::borrow_mut<u64, Balance<T>>(&mut airdrops.treasury_balances, round);
+        let treasury_balance_part = balance::split<T>(treasury_balance, per_share_amount);
+        let treasury_coina_part: Coin<T> = coin::from_balance<T>(treasury_balance_part, ctx);
+        transfer::public_transfer(treasury_coina_part, sender);
+    }
+
+    public fun new_invite(
+        _admin_cap: &AdminCap,
+        root: address,
+        inviter_fee: u64,
+        ctx: &mut TxContext
+    ) {
+        invite::new(root, inviter_fee, ctx);
+    }
+
+    public fun modify_invite(
+        _admin_cap: &AdminCap,
+        invite: &mut Invite,
+        root: address,
+        inviter_fee: u64,
+    ) {
+        invite::modify(invite, root, inviter_fee);
+    }
+
+    public fun new_node(
+        _admin_cap: &AdminCap,
+        receiver: address,
+        ctx: &mut TxContext
+    ) {
+        node::new(receiver, ctx);
+    }
+
+    public fun insert_node(
+        _admin_cap: &AdminCap,
+        nodes: &mut Nodes,
+        rank: u8,
+        name: vector<u8>,
+        description: vector<u8>,
+        limit: u64,
+        price: u64,
+        total_quantity: u64,
+    ) {
+        node::insert(nodes, rank, name, description, limit, price, total_quantity);
+    }
+
+    public fun remove_node(
+        _admin_cap: &AdminCap,
+        nodes: &mut Nodes,
+        rank: u8
+    ) {
+        node::remove(nodes, rank);
+    }
+
+    public fun modify_node(
+        _admin_cap: &AdminCap,
+        nodes: &mut Nodes,
+        rank: u8,
+        name: vector<u8>,
+        description: vector<u8>,
+        limit: u64,
+        price: u64,
+        total_quantity: u64,
+    ) {
+        node::insert(nodes, rank, name, description, limit, price, total_quantity);
     }
 
     public fun airdrops(airdrops: &Airdrops) {
@@ -231,7 +317,7 @@ module airdrop::airdrop {
                 start_time: airdrop.start_time,
                 end_time: airdrop.end_time,
                 total_shares: airdrop.total_shares,
-                remaining_shares: airdrop.remaining_shares,
+                claimed_shares: airdrop.claimed_shares,
                 total_balance: airdrop.total_balance,
                 is_open: airdrop.is_open,
                 description: airdrop.description,
@@ -241,34 +327,6 @@ module airdrop::airdrop {
         };
     }
 
-    /*
-     * @notice 领取空投
-     */
-    // entry fun claim_airdrop<T>(
-    //     airdrops: &mut Airdrops,
-    //     node: &Node,
-    //     round: u64,
-    //     clock: &Clock,
-    //     ctx: &mut TxContext,
-    // ) {
-    //     let sender = tx_context::sender(ctx);
-    //     assert!(object_bag::contains(&airdrops.airdrops, round), EInvalidAirDrop);
-    //     let airdrop: &mut Airdrop<T> = object_bag::borrow_mut(&mut airdrops.airdrops, round);
-    //
-    //     // 检查是否在空投时间范围内
-    //     let current_time = clock::timestamp_ms(clock);
-    //     assert!(current_time >= airdrop.start_time && current_time <= airdrop.end_time, EClaimTimeInvalid);
-    //     assert!(airdrop.total_shares > 0, ENoRemainingShares);
-    //     //获取已领取次数
-    //     // let user_rank: &u8 = vec_map::get(&config.users, &sender);
-    //     node::assert_node_sold_out(node);
-    //     let per_share_amount = airdrop.total_balance / airdrop.total_shares;
-    //     airdrop.remaining_shares = airdrop.remaining_shares - 1;
-    //     let treasury_balance = balance::split<T>(&mut airdrop.treasury_balance, per_share_amount);
-    //     let treasury_coin = coin::from_balance(treasury_balance, ctx);
-    //     transfer::public_transfer(treasury_coin, sender);
-    // }
-
     // === Assertions ===
 
     public fun assert_round_exited(airdrops: &Airdrops, round: u64) {
@@ -277,6 +335,15 @@ module airdrop::airdrop {
 
     public fun assert_round_not_found(airdrops: &Airdrops, round: u64) {
         assert!(vec_map::contains(&airdrops.airdrops, &round), ERoundNotFound);
+    }
+
+    public fun assert_invalid_claim_time(clock: &Clock, airdrop: &Airdrop) {
+        let current_time = clock::timestamp_ms(clock);
+        assert!(current_time >= airdrop.start_time && current_time <= airdrop.end_time, EInvalidClaimTime);
+    }
+
+    public fun assert_no_remaining_shares(airdrop: &Airdrop) {
+        assert!(airdrop.total_shares - airdrop.total_shares > 0, ENoRemainingShares);
     }
 
     // === Testing ===
