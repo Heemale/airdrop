@@ -10,7 +10,7 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { t, resources } = await initTranslations(locale, i18nNamespaces);
   return (
     <>
-      <NavBar />
+      <NavBar locale={locale} />
       <div className="flex flex-col gap-24 sm:gap-64 my-4 sm:my-5 mx-6">
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <div className="w-full max-w-[1260px] flex flex-col gap-6 text-white">

@@ -15,7 +15,7 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
 
   return (
     <>
-      <NavBar />
+      <NavBar locale={locale} />
       <div className="bg-[url('/home_banner_bg.png')] bg-center bg-no-repeat flex flex-col gap-24 sm:gap-64 my-5">
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <Banner translate={t} />

@@ -44,7 +44,11 @@ const PurchaseOrder = async (props: Props) => {
           </Link>
         </div>
         <div className="col-span-2">
-          <Button className="text-white w-full" text={t('Purchase')} />
+          <Button
+            className="text-white w-full"
+            text={'Purchase'}
+            locale={locale}
+          />
         </div>
       </div>
     </>
