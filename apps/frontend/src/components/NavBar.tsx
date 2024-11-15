@@ -49,7 +49,7 @@ const pages: Page[] = [
 const NavBar: React.FC<Props> = async (props: Props) => {
   // 状态：抽屉是否打开
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const { locale, text, className } = props;
+  const { locale } = props;
   const { t, resources } = await initTranslations(
     locale,
     i18nConfig.i18nNamespaces,
@@ -80,7 +80,7 @@ const NavBar: React.FC<Props> = async (props: Props) => {
         <div className="hidden md:flex gap-10 items-center">
           {pages.map((page) => (
             <Link key={page.id} href={page.link}>
-              <div className="text-gradient">{page.name}</div>
+              <div className="text-gradient">{t(page.name)}</div>
             </Link>
           ))}
           <LanguageChanger />

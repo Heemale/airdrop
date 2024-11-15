@@ -7,7 +7,7 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { locale } = await params;
   return (
     <>
-      <NavBar />
+      <NavBar locale={locale} />
       <PreSale locale={locale}>
         <PurchaseOrder locale={locale} />
       </PreSale>

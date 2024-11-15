@@ -12,7 +12,7 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
   const { t, resources } = await initTranslations(locale, i18nNamespaces);
   return (
     <>
-      <NavBar />
+      <NavBar locale={locale} />
       <div className="flex flex-col gap-24 sm:gap-64 my-4 sm:my-5 mx-6">
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <div className="flex flex-col gap-8 sm:gap-20 mb-6">
@@ -20,7 +20,7 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
               <Banner />
               <Announcement translate={t} />
             </div>
-            <AirdropsHeader translate={t} />
+            <AirdropsHeader locale={locale} />
             <AirdropsList translate={t} />
           </div>
         </div>
