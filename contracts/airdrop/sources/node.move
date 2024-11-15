@@ -217,6 +217,10 @@ module airdrop::node {
         transfer::public_transfer(wallet, nodes.receiver);
     }
 
+    public fun receiver(nodes: &Nodes): address {
+        nodes.receiver
+    }
+
     // === Assertions ===
 
     public fun assert_already_buy_node(users: &VecMap<address, User>, sender: address) {
