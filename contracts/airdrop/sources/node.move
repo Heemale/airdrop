@@ -221,12 +221,17 @@ module airdrop::node {
         nodes.receiver
     }
 
+    public fun nodesRank(nodes: &Nodes,sender: address): u8 {
+        let user_info = vec_map::get(&nodes.users, &sender);
+        user_info.rank
+
+    }
     // === Assertions ===
 
     public fun assert_already_buy_node(users: &VecMap<address, User>, sender: address) {
         assert!(vec_map::contains(users, &sender), EAlreadyBuyNode);
     }
-
+    
     public fun assert_not_buy_node(users: &VecMap<address, User>, sender: address) {
         assert!(!vec_map::contains(users, &sender), ENotBuyNode);
     }
