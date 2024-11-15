@@ -72,7 +72,7 @@ const NavBar: React.FC<Props> = async (props: Props) => {
       <div className="w-full max-w-screen-xl flex justify-between items-center py-5 px-4">
         <div className="w-[115px] sm:w-[320px] items-center">
           <Link href={'/'}>
-            <Image src="/logo.png" width={320} height={320} alt="logo" />
+            <Image src="/01.png" width={320} height={280} alt="logo" />
           </Link>
         </div>
 
