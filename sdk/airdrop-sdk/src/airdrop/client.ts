@@ -3,67 +3,60 @@ import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
-import type { DevInspectResults } from '@mysten/sui/client';
-import { toHexString } from './utils';
+import type {
+  DevInspectResults,
+  SuiEvent,
+  PaginationArguments,
+  PaginatedEvents,
+  OrderArguments,
+} from '@mysten/sui/client';
+import { AirdropInfo } from './types';
 
 export class AirdropClient {
   constructor(public suiClient: SuiClient) {}
 
-  newConfig(
-    admin_cap: string,
-    root: string,
-    inviter_fee: bigint,
-    receiver: string,
-  ): Transaction {
+  new(admin_cap: string): Transaction {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::new_config`,
-      arguments: [
-        tx.object(admin_cap),
-        tx.pure.address(root),
-        tx.pure.u64(inviter_fee),
-        tx.pure.address(receiver),
-      ],
-    });
-    return tx;
-  }
-
-  newAirdrops(T: string, admin_cap: string): Transaction {
-    const tx = new Transaction();
-    tx.moveCall({
-      typeArguments: [T],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::new_airdrops`,
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::new`,
       arguments: [tx.object(admin_cap)],
     });
     return tx;
   }
 
-  invite(config: string, inviter: string): Transaction {
-    const tx = new Transaction();
-    tx.moveCall({
-      typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::invite`,
-      arguments: [tx.object(config), tx.pure.address(inviter)],
-    });
-    return tx;
-  }
-
-  async buyNode(
+  async insert(
     T: string,
-    config: string,
-    rank: bigint,
-    c: string | undefined,
+    adminCap: string,
+    airdrops: string,
+    round: bigint,
+    startTime: bigint,
+    endTime: bigint,
+    totalShares: bigint,
+    totalBalance: bigint,
+    description: string,
+    wallet: string | undefined,
     owner: string,
   ): Promise<Transaction> {
     const tx = new Transaction();
-    if (c) {
+    if (wallet) {
       tx.moveCall({
         typeArguments: [T],
-        target: `${PACKAGE_ID}::${MODULE_CLOB}::buy_node`,
-        arguments: [tx.object(config), tx.pure.u8(Number(rank)), tx.object(c)],
+        target: `${PACKAGE_ID}::${MODULE_CLOB}::insert`,
+        arguments: [
+          tx.object(adminCap),
+          tx.object(airdrops),
+          tx.pure.u64(round),
+          tx.pure.u64(startTime),
+          tx.pure.u64(endTime),
+          tx.pure.u64(totalShares),
+          tx.pure.u64(totalBalance),
+          tx.pure.string(description),
+          tx.object(wallet),
+        ],
       });
     } else {
+      // @ts-ignore
       const coins = await this.suiClient.getCoins({
         owner,
         coinType: T,
@@ -78,27 +71,257 @@ export class AirdropClient {
       const coin = tx.object(coins.data[0]['coinObjectId']); //合并后使用
       tx.moveCall({
         typeArguments: [T],
-        target: `${PACKAGE_ID}::${MODULE_CLOB}::buy_node`,
-        arguments: [tx.object(config), tx.pure.u64(rank), coin],
+        target: `${PACKAGE_ID}::${MODULE_CLOB}::insert`,
+        arguments: [
+          tx.object(adminCap),
+          tx.object(airdrops),
+          tx.pure.u64(round),
+          tx.pure.u64(startTime),
+          tx.pure.u64(endTime),
+          tx.pure.u64(totalShares),
+          tx.pure.u64(totalBalance),
+          tx.pure.string(description),
+          coin,
+        ],
       });
     }
     return tx;
   }
 
-  async getInviter(config: string, user: string) {
+  modify(
+    adminCap: string,
+    airdrops: string,
+    round: bigint,
+    startTime: bigint,
+    endTime: bigint,
+    isOpen: boolean,
+    description: string,
+  ): Transaction {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::get_inviter`,
-      arguments: [tx.object(config), tx.pure.address(user)],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(airdrops),
+        tx.pure.u64(round),
+        tx.pure.u64(startTime),
+        tx.pure.u64(endTime),
+        tx.pure.bool(isOpen),
+        tx.pure.string(description),
+      ],
     });
+    return tx;
+  }
+
+  withdraw(
+    T: string,
+    adminCap: string,
+    airdrops: string,
+    round: bigint,
+  ): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [T],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::withdraw`,
+      arguments: [tx.object(adminCap), tx.object(airdrops), tx.pure.u64(round)],
+    });
+    return tx;
+  }
+
+  claim(
+    T: string,
+    adminCap: string,
+    nodes: string,
+    round: bigint,
+    clock: string,
+  ): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [T],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::claim`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(nodes),
+        tx.pure.u64(round),
+        tx.object(clock),
+      ],
+    });
+    return tx;
+  }
+
+  newInvite(adminCap: string, root: string, inviter_fee: bigint): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::new_invite`,
+      arguments: [
+        tx.object(adminCap),
+        tx.pure.address(root),
+        tx.pure.u64(inviter_fee),
+      ],
+    });
+    return tx;
+  }
+
+  modifyInvite(
+    adminCap: string,
+    invite: string,
+    root: string,
+    inviter_fee: bigint,
+  ): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify_invite`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(invite),
+        tx.pure.address(root),
+        tx.pure.u64(inviter_fee),
+      ],
+    });
+    return tx;
+  }
+
+  newNode(adminCap: string, receiver: string): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::new_node`,
+      arguments: [tx.object(adminCap), tx.pure.address(receiver)],
+    });
+    return tx;
+  }
+
+  insertNode(
+    adminCap: string,
+    nodes: string,
+    rank: number,
+    name: string,
+    description: string,
+    limit: bigint,
+    price: bigint,
+    total_quantity: bigint,
+  ): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::insert_node`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(nodes),
+        tx.pure.u8(rank),
+        tx.pure.string(name),
+        tx.pure.string(description),
+        tx.pure.u64(limit),
+        tx.pure.u64(price),
+        tx.pure.u64(total_quantity),
+      ],
+    });
+    return tx;
+  }
+
+  removeNode(adminCap: string, nodes: string, rank: number): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::remove_node`,
+      arguments: [tx.object(adminCap), tx.object(nodes), tx.pure.u8(rank)],
+    });
+    return tx;
+  }
+
+  modifyNode(
+    adminCap: string,
+    nodes: string,
+    rank: number,
+    name: string,
+    description: string,
+    limit: bigint,
+    price: bigint,
+    total_quantity: bigint,
+  ): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify_node`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(nodes),
+        tx.pure.u8(rank),
+        tx.pure.string(name),
+        tx.pure.string(description),
+        tx.pure.u64(limit),
+        tx.pure.u64(price),
+        tx.pure.u64(total_quantity),
+      ],
+    });
+    return tx;
+  }
+
+  async airdrops(airdrops: string): Promise<Array<AirdropInfo>> {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::airdrops`,
+      arguments: [tx.object(airdrops)],
+    });
+    // @ts-ignore
     const res: DevInspectResults =
       await this.suiClient.devInspectTransactionBlock({
         transactionBlock: tx,
         sender: normalizeSuiAddress('0x0'),
       });
     // @ts-ignore
-    const value = res?.results[0]?.returnValues[0][0];
-    return '0x' + toHexString(value);
+    const events: Array<SuiEvent> = res?.events;
+
+    const customMapping = (rawEvent: any): AirdropInfo => ({
+      round: rawEvent.round as bigint,
+      startTime: rawEvent.start_time as bigint,
+      endTime: rawEvent.end_time as bigint,
+      totalShares: rawEvent.total_shares as bigint,
+      claimedShares: rawEvent.claimed_shares as bigint,
+      totalBalance: rawEvent.total_balance as bigint,
+      isOpen: rawEvent.is_open as boolean,
+      description: rawEvent.description as string,
+      coinType: rawEvent.coin_type as string,
+    });
+
+    return events.map((event) => {
+      // @ts-ignore
+      return customMapping(event?.parsedJson);
+    });
+  }
+
+  async queryEvents(
+    eventName: string,
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ) {
+    // @ts-ignore
+    return this.suiClient.queryEvents({
+      query: {
+        MoveEventType: `${PACKAGE_ID}::${MODULE_CLOB}::${eventName}`,
+      },
+      ...input,
+    });
+  }
+
+  createEventMapper<T>(customMapping: (rawEvent: any) => T) {
+    return (event: any) => ({
+      ...customMapping(event.parsedJson),
+      eventId: event.id,
+      timestampMs: event.timestampMs,
+    });
+  }
+
+  handleEventReturns<T>(resp: any, customMapping: (rawEvent: any) => T) {
+    const eventMapper = this.createEventMapper(customMapping);
+    const data = resp.data.map(eventMapper);
+    return {
+      data,
+      nextCursor: resp.nextCursor,
+      hasNextPage: resp.hasNextPage,
+    };
   }
 }

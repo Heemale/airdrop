@@ -13,6 +13,14 @@
 			"import": "./dist/esm/airdrop/index.js",
 			"require": "./dist/cjs/airdrop/index.js"
 		},
+		"./node": {
+			"import": "./dist/esm/node/index.js",
+			"require": "./dist/cjs/node/index.js"
+		},
+		"./invite": {
+			"import": "./dist/esm/invite/index.js",
+			"require": "./dist/cjs/invite/index.js"
+		},
 		"./types": {
 			"import": "./dist/esm/types/index.js",
 			"require": "./dist/cjs/types/index.js"
@@ -20,12 +28,18 @@
 		"./utils/constants": {
 			"import": "./dist/esm/utils/constants.js",
 			"require": "./dist/cjs/utils/constants.js"
+		},
+		"./utils": {
+			"import": "./dist/esm/utils/index.js",
+			"require": "./dist/cjs/utils/index.js"
 		}
 	},
 	"files": [
 		"CHANGELOG.md",
 		"airdrop",
 		"dist",
+		"invite",
+		"node",
 		"src",
 		"types",
 		"utils"

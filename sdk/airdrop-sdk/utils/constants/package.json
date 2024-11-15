@@ -1,5 +1,0 @@
-{
-	"private": true,
-	"import": "..\\..\\dist\\esm\\utils\\constants.js",
-	"main": "..\\..\\dist\\cjs\\utils\\constants.js"
-}
