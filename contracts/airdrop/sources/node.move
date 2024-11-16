@@ -229,11 +229,11 @@ module airdrop::node {
     // === Assertions ===
 
     public fun assert_already_buy_node(users: &VecMap<address, User>, sender: address) {
-        assert!(vec_map::contains(users, &sender), EAlreadyBuyNode);
+        assert!(!vec_map::contains(users, &sender), EAlreadyBuyNode);
     }
     
     public fun assert_not_buy_node(users: &VecMap<address, User>, sender: address) {
-        assert!(!vec_map::contains(users, &sender), ENotBuyNode);
+        assert!(vec_map::contains(users, &sender), ENotBuyNode);
     }
 
     public fun assert_node_sold_out(node: &Node) {
