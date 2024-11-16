@@ -10,6 +10,8 @@ const SuiClientProvider = ({ children }: { children: React.ReactNode }) => {
   const { networkConfig } = createNetworkConfig({
     mainnet: { url: RPC },
   });
+
+  // @ts-ignore
   return (
     <ClientProvider networks={networkConfig} defaultNetwork="mainnet">
       {children}

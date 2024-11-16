@@ -2,6 +2,7 @@ import * as React from 'react';
 import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
 import NavBar from './NavBar';
+import ConnectButton from '@/components/ConnectButton';
 
 interface Props {
   locale: string;
@@ -37,7 +38,6 @@ const NavBarWrapper = async (props: Props) => {
 
   return (
     <NavBar
-      locale={locale}
       pages={pages.map((page) => {
         const { name, ...rest } = page;
         return {
@@ -45,7 +45,9 @@ const NavBarWrapper = async (props: Props) => {
           ...rest,
         };
       })}
-    />
+    >
+      <ConnectButton connectText={t('connect')} />
+    </NavBar>
   );
 };
 
