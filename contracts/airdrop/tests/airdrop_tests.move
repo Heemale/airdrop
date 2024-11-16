@@ -5,7 +5,6 @@ module airdrop::airdrop_tests {
     use sui::coin::{Self, Coin};
     use airdrop::airdrop::{Self, AdminCap, Airdrops};
     use airdrop::node::{Self, Nodes};
-    use sui::vec_map::{Self, VecMap};
     use airdrop::invite::{Self, Invite};
  
 
@@ -48,26 +47,26 @@ module airdrop::airdrop_tests {
             10, // 总数量
         );
         test_scenario::next_tx(&mut scenario, Admin);
-       
+       let mut invite = test_scenario::take_shared<Invite>(&scenario); // 获取 Invite 对象
         airdrop::new_invite(
             &adminCap,
-            invite::root{invite},
+            Admin,
             20, // 邀请费用
             ctx(&mut scenario)
         );
         test_scenario::next_tx(&mut scenario, Admin);
-        let mut invite = test_scenario::take_shared<Invite>(&scenario); // 获取 Invite 对象
+        
         // 绑定邀请关系
-        invite::bind(&mut invite, Receiver, ctx(&mut scenario));
+        invite::bind(&mut invite, Admin, ctx(&mut scenario));
         test_scenario::next_tx(&mut scenario, User);
     
         // 读取邀请关系
         let inviter = invite::inviters(&invite,User);
         assert!(inviter == Admin, 1004);
         // 模拟用户购买节点
-        let mut wallet = coin::mint<SUI>(coin::TreasuryCap,1500, ctx(&mut scenario));
+        let  wallet = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
         test_scenario::next_tx(&mut scenario, User);
-        node::buy<T>(
+        node::buy(
             &mut nodes,
             &invite,
             1, // 节点等级
@@ -77,12 +76,17 @@ module airdrop::airdrop_tests {
         test_scenario::next_tx(&mut scenario, User);
          // 验证购买的节点等级
         assert!( node::nodesRank(&nodes,User) == 1, 1002); 
+        
+        let sui_coin: Coin<0x2::sui::SUI> = test_scenario::take_from_address<Coin<0x2::sui::SUI>>(&scenario, node::receiver(&nodes));
+        assert!(coin::value(&sui_coin) == 950, 1004); // 检查接收人接收到的资金
+        transfer::public_transfer(sui_coin, node::receiver(&nodes));
 
-         // 验证余额转移至接收人
-         let receiver_balance = coin::balance(Coin<SUI>);
-        assert!(coin::value(Coin<SUI>) == 950, 1004); // 检查接收人接收到的资金
+        //  // 验证余额转移至接收人
+        //  let receiver_balance = coin::split(&mut wallet,1000,ctx(&mut scenario));
+        
         transfer::public_transfer(adminCap, Admin);
         test_scenario::return_shared(nodes);
+        test_scenario::return_shared(invite);
         // test_scenario::return_shared(airdrops);
         test_scenario::end(scenario);
          // // 实例化airdrops对象
