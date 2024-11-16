@@ -8,12 +8,10 @@ interface Props {
   locale: string;
 }
 
-const Button: React.FC<Props> = async (props: Props) => {
+const Button = async (props: Props) => {
   const { locale, text, className } = props;
-  const { t, resources } = await initTranslations(
-    locale,
-    i18nConfig.i18nNamespaces,
-  );
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <div
       className={`${className} relative inline-block bg-[url('/button_bg.png')] bg-cover text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}

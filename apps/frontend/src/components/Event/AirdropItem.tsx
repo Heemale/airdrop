@@ -1,16 +1,20 @@
 import Image from 'next/image';
 import * as React from 'react';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
 
 interface Props {
-  translate: any;
+  locale: string;
   data: {
     id: number | bigint | string;
   };
 }
 
-const AirdropsItem = (props: Props) => {
-  const { data, translate: t } = props;
+const AirdropItem = async (props: Props) => {
+  const { data, locale } = props;
   const { id } = data;
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <div className="bg-gradient-to-b from-[#010101] to-[#222] flex flex-col gap-4 sm:gap-6 border border-gray-600 rounded-3xl px-3 sm:px-6 py-8 text-white">
       <div className="flex justify-between">
@@ -67,4 +71,4 @@ const AirdropsItem = (props: Props) => {
   );
 };
 
-export default AirdropsItem;
+export default AirdropItem;

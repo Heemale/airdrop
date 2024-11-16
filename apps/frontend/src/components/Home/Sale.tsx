@@ -2,11 +2,17 @@ import NumberPlate from '@/components/Home/NumberPlate';
 import UpdateData from '@/components/Home/UpdateData';
 import Always from '@/components/Home/Always';
 import * as React from 'react';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
+
 interface Props {
-  translate: any;
+  locale: string;
 }
-const Sale = (props: Props) => {
-  const { translate: t } = props;
+
+const Sale = async (props: Props) => {
+  const { locale } = props;
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <div className="flex flex-col gap-4 sm:gap-14 items-center mt-16 sm:mt-32">
       <div className="text-gradient text-xl sm:text-6xl font-semibold">
@@ -18,7 +24,7 @@ const Sale = (props: Props) => {
         <NumberPlate num={0} />
         <NumberPlate num={0} />
       </div>
-      <UpdateData translate={t} />
+      <UpdateData locale={locale} />
       <Always />
     </div>
   );

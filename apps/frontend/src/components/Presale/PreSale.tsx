@@ -9,6 +9,7 @@ interface Props {
 
 const PreSale = (props: Props) => {
   const { locale, children } = props;
+
   return (
     <div className="flex flex-col gap-24 sm:gap-64 sm:my-5">
       <div className="flex flex-col gap-24 sm:gap-48 items-center">

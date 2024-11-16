@@ -1,10 +1,16 @@
 import Image from 'next/image';
 import * as React from 'react';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
+
 interface Props {
-  translate: any;
+  locale: string;
 }
-const Announcement = (props: Props) => {
-  const { translate: t } = props;
+
+const Announcement = async (props: Props) => {
+  const { locale } = props;
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <div className="bg-gradient-to-b from-[#010101] to-[#222] flex flex-col gap-4 border border-gray-600 rounded-2xl sm:rounded-3xl px-6 pt-6 pb-8 text-white">
       <div className="flex gap-4 items-center">

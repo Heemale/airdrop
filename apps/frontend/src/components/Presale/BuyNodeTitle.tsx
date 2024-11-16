@@ -5,12 +5,11 @@ import i18nConfig from '@/i18nConfig';
 interface Props {
   locale: string;
 }
+
 const BuyNodeTitle = async (props: Props) => {
   const { locale } = props;
-  const { t, resources } = await initTranslations(
-    locale,
-    i18nConfig.i18nNamespaces,
-  );
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <div className="flex flex-col gap-8 sm:mt-10 mx-10">
       <div className="font-orbitron text-white text-2xl sm:text-5xl font-semibold">

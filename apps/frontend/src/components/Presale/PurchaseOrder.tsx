@@ -10,10 +10,8 @@ interface Props {
 
 const PurchaseOrder = async (props: Props) => {
   const { locale } = props;
-  const { t, resources } = await initTranslations(
-    locale,
-    i18nConfig.i18nNamespaces,
-  );
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <>
       <div className="font-orbitron text-2xl">{t('Purchase Order')}</div>

@@ -13,47 +13,18 @@ import {
   ListItemText,
 } from '@mui/material';
 import { useState } from 'react';
+import { Page } from './NavBarWrapper';
 import './sui-button.css';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
 
 interface Props {
   locale: string;
-}
-// 定义页面对象的类型
-interface Page {
-  id: string;
-  name: string;
-  link: string;
+  pages: Array<Page>;
 }
 
-// 定义组件的类型
-const pages: Page[] = [
-  {
-    id: '0',
-    name: 'Home',
-    link: '/',
-  },
-  {
-    id: '1',
-    name: 'Presale',
-    link: '/presale',
-  },
-  {
-    id: '2',
-    name: 'Event',
-    link: 'event',
-  },
-];
-
-const NavBar: React.FC<Props> = async (props: Props) => {
+const NavBar = (props: Props) => {
+  const { locale, pages } = props;
   // 状态：抽屉是否打开
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  const { locale } = props;
-  const { t, resources } = await initTranslations(
-    locale,
-    i18nConfig.i18nNamespaces,
-  );
   // 切换抽屉的状态
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
@@ -80,7 +51,7 @@ const NavBar: React.FC<Props> = async (props: Props) => {
         <div className="hidden md:flex gap-10 items-center">
           {pages.map((page) => (
             <Link key={page.id} href={page.link}>
-              <div className="text-gradient">{t(page.name)}</div>
+              <div className="text-gradient">{page.name}</div>
             </Link>
           ))}
           <LanguageChanger />
@@ -115,10 +86,7 @@ const NavBar: React.FC<Props> = async (props: Props) => {
                   component={Link}
                   href={page.link}
                 >
-                  <ListItemText
-                    className="text-gradient"
-                    primary={t(page.name)}
-                  />
+                  <ListItemText className="text-gradient" primary={page.name} />
                 </ListItem>
               ))}
               <ListItem>

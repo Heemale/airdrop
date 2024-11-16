@@ -1,13 +1,19 @@
 import * as React from 'react';
-import NavBar from '@/components/NavBar';
+import NavBarWrapper from '@/components/NavBarWrapper';
 import PreSale from '@/components/Presale/PreSale';
 import PurchaseOrder from '@/components/Presale/PurchaseOrder';
 
-const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+const Home = async (props: Props) => {
+  const { params } = props;
   const { locale } = await params;
+
   return (
     <>
-      <NavBar locale={locale} />
+      <NavBarWrapper locale={locale} />
       <PreSale locale={locale}>
         <PurchaseOrder locale={locale} />
       </PreSale>

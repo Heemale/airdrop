@@ -1,26 +1,35 @@
-import NavBar from '@/components/NavBar';
+import NavBarWrapper from '@/components/NavBarWrapper';
 import * as React from 'react';
-import AirdropsList from '@/components/Event/AirdropsList';
+import AirdropList from '@/components/Event/AirdropList';
 import Link from 'next/link';
 import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
 
-const i18nNamespaces = ['common'];
-const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
+interface Props {
+  params: Promise<{ locale: string }>;
+}
+
+const Home = async (props: Props) => {
+  const { params } = props;
   const { locale } = await params;
-  const { t, resources } = await initTranslations(locale, i18nNamespaces);
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <>
-      <NavBar locale={locale} />
+      <NavBarWrapper locale={locale} />
       <div className="flex flex-col gap-24 sm:gap-64 my-4 sm:my-5 mx-6">
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <div className="w-full max-w-[1260px] flex flex-col gap-6 text-white">
             <Link href={'/event'} className="cursor-pointer">
-              {'< Events'}
+              {'< '}
+              {t('Events')}
             </Link>
             <div className="flex gap-6">
               <Link href={'/airdrop-list'}>
                 <div className="text-center cursor-pointer">
-                  <div className="text-white text-xl font-bold">Airdrops</div>
+                  <div className="text-white text-xl font-bold">
+                    {t('Airdrops')}
+                  </div>
                   <div className="w-1/2 h-1 bg-gradient-to-r from-[#ffbdad] to-[#e7534f] mx-auto mt-2 rounded-3xl"></div>
                 </div>
               </Link>
@@ -36,7 +45,7 @@ const Home = async ({ params }: { params: Promise<{ locale: string }> }) => {
             <div className="text-sm">
               {t(' Purchase CoralPhone to receive airdrop rewards!')}
             </div>
-            <AirdropsList translate={t} />
+            <AirdropList locale={locale} />
           </div>
         </div>
       </div>

@@ -5,12 +5,10 @@ import i18nConfig from '@/i18nConfig';
 interface Props {
   locale: string;
 }
+
 const ConnectButton = async (props: Props) => {
   const { locale } = props;
-  const { t, resources } = await initTranslations(
-    locale,
-    i18nConfig.i18nNamespaces,
-  );
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
 
   return <Connect connectText={t('Connect')} />;
 };

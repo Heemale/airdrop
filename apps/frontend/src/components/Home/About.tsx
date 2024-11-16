@@ -9,10 +9,8 @@ interface Props {
 
 const About = async (props: Props) => {
   const { locale } = props;
-  const { t, resources } = await initTranslations(
-    locale,
-    i18nConfig.i18nNamespaces,
-  );
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <div className="max-w-screen-xl flex flex-col lg:flex-row items-center gap-10 px-4 text-white">
       <div className="flex-1 about-info">

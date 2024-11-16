@@ -1,9 +1,15 @@
 import * as React from 'react';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
+
 interface Props {
-  translate: any;
+  locale: string;
 }
-const UpdateData = (props: Props) => {
-  const { translate: t } = props;
+
+const UpdateData = async (props: Props) => {
+  const { locale } = props;
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <div className="flex gap-2 mt-6">
       <div className="text-gradient sm:text-2xl font-semibold">

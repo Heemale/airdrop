@@ -1,11 +1,15 @@
 import * as React from 'react';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
 
 interface Props {
-  translate: any;
+  locale: string;
 }
 
-const BannerDescription = (props: Props) => {
-  const { translate: t } = props;
+const BannerDescription = async (props: Props) => {
+  const { locale } = props;
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
   return (
     <>
       <div className="hidden sm:flex flex-col sm:gap-1 text-white text-lg">
