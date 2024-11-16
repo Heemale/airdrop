@@ -14,10 +14,10 @@ const About = async (props: Props) => {
   return (
     <div className="max-w-screen-xl flex flex-col lg:flex-row items-center gap-10 px-4 text-white">
       <div className="flex-1 about-info">
-        <h2 className="text-6xl font-bold text-gradient">
+        <h2 className="text-xl sm:text-6xl font-bold text-gradient">
           {t('About CoralApp')}
         </h2>
-        <p className="mt-5 text-lg leading-relaxed">
+        <p className="mt-5 text-sm sm:text-lg leading-relaxed">
           {t(
             'CoralApp is a pioneering mobile ecosystem for multi-chain environmentswhich was admitted into Binance Labs Incubation. CoralApp recentlylaunched its first Web3 phone, the CoralApp. CoralApp features arevolutionary Coral OS + Mobile Stack, which optimizes Android OS andsmart devices from the ground up, creating a smoother entry point toWeb3 and strengthening the mobile infrastructure of the blockchainindustry',
           )}
