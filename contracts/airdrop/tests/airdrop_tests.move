@@ -31,7 +31,7 @@ module airdrop::airdrop_tests {
             Receiver,
             ctx(&mut scenario)
         );
-        test_scenario::next_tx(&mut scenario, Admin); 
+        test_scenario::next_tx(&mut scenario, User);
 
         // 获取nodes对象
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
@@ -47,15 +47,15 @@ module airdrop::airdrop_tests {
             10, // 总数量
         );
         test_scenario::next_tx(&mut scenario, Admin);
-       
+       let mut invite = test_scenario::take_shared<Invite>(&scenario); // 获取 Invite 对象
         airdrop::new_invite(
             &adminCap,
             Admin,
             20, // 邀请费用
             ctx(&mut scenario)
         );
-        test_scenario::next_tx(&mut scenario, User);
-        let mut invite = test_scenario::take_shared<Invite>(&scenario); // 获取 Invite 对象
+        test_scenario::next_tx(&mut scenario, Admin);
+        
         // 绑定邀请关系
         invite::bind(&mut invite, Admin, ctx(&mut scenario));
         test_scenario::next_tx(&mut scenario, User);
