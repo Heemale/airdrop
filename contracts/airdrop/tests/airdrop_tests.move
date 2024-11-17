@@ -51,7 +51,7 @@ module airdrop::airdrop_tests {
         airdrop::new_invite(
             &adminCap,
             Admin,
-            20, // 邀请费用
+            200, // 邀请费用
             ctx(&mut scenario)
         );
         test_scenario::next_tx(&mut scenario, User);

@@ -8,7 +8,8 @@
     "newConfig": "npx ts-node -r tsconfig-paths/register src/scripts/newConfig.ts",
     "transferCap": "npx ts-node -r tsconfig-paths/register src/scripts/transferCap.ts",
     "getInviter": "npx ts-node -r tsconfig-paths/register src/scripts/test/getInviter.ts",
-    "inviter": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviter.ts"
+    "inviter": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviter.ts",
+    "nodeNew":" npx ts-node -r tsconfig-paths/register src/scripts/nodeNew.ts"
   },
   "keywords": [],
   "author": "",

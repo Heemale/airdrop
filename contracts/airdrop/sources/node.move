@@ -211,6 +211,7 @@ module airdrop::node {
 
         // 处理剩余入金
         let inviter_rebate_value: u64 = node.price * MathBase / invite::inviter_fee(invite);
+        assert!(coin::value(&wallet) > inviter_rebate_value, ECoinBalanceNotEnough);
         let inviter_rebate = coin::split(&mut wallet, inviter_rebate_value, ctx);
         let inviter = invite::inviters(invite, sender);
         transfer::public_transfer(inviter_rebate, inviter);
@@ -231,7 +232,7 @@ module airdrop::node {
     public fun assert_already_buy_node(users: &VecMap<address, User>, sender: address) {
         assert!(!vec_map::contains(users, &sender), EAlreadyBuyNode);
     }
-    
+
     public fun assert_not_buy_node(users: &VecMap<address, User>, sender: address) {
         assert!(vec_map::contains(users, &sender), ENotBuyNode);
     }
