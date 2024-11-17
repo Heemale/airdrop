@@ -210,7 +210,7 @@ module airdrop::node {
         };
 
         // 处理剩余入金
-        let inviter_rebate_value: u64 = node.price * MathBase / invite::inviter_fee(invite);
+        let inviter_rebate_value: u64 = node.price * invite::inviter_fee(invite) / MathBase;
         let inviter_rebate = coin::split(&mut wallet, inviter_rebate_value, ctx);
         let inviter = invite::inviters(invite, sender);
         transfer::public_transfer(inviter_rebate, inviter);
@@ -229,11 +229,11 @@ module airdrop::node {
     // === Assertions ===
 
     public fun assert_already_buy_node(users: &VecMap<address, User>, sender: address) {
-        assert!(vec_map::contains(users, &sender), EAlreadyBuyNode);
+        assert!(!vec_map::contains(users, &sender), EAlreadyBuyNode);
     }
     
     public fun assert_not_buy_node(users: &VecMap<address, User>, sender: address) {
-        assert!(!vec_map::contains(users, &sender), ENotBuyNode);
+        assert!(vec_map::contains(users, &sender), ENotBuyNode);
     }
 
     public fun assert_node_sold_out(node: &Node) {
