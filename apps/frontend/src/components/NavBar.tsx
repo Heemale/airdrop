@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import ConnectButton from '@/components/ConnectButton';
 import Link from 'next/link';
 import LanguageChanger from '@/components/LanguageChanger';
 import {
@@ -17,12 +16,12 @@ import { Page } from './NavBarWrapper';
 import './sui-button.css';
 
 interface Props {
-  locale: string;
   pages: Array<Page>;
+  children: React.ReactNode;
 }
 
 const NavBar = (props: Props) => {
-  const { locale, pages } = props;
+  const { pages, children } = props;
   // 状态：抽屉是否打开
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   // 切换抽屉的状态
@@ -55,12 +54,12 @@ const NavBar = (props: Props) => {
             </Link>
           ))}
           <LanguageChanger />
-          <ConnectButton locale={locale} />
+          {children}
         </div>
 
         {/* Mobile Navigation */}
         <div className="flex md:hidden items-center gap-4">
-          <ConnectButton locale={locale} />
+          {children}
           <IconButton color="inherit" onClick={toggleDrawer(true)}>
             <Image
               src="/home_header.png"

@@ -1,16 +1,15 @@
+'use client';
+
 import { ConnectButton as Connect } from '@mysten/dapp-kit';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
 
 interface Props {
-  locale: string;
+  connectText: string;
 }
 
-const ConnectButton = async (props: Props) => {
-  const { locale } = props;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+const ConnectButton = (props: Props) => {
+  const { connectText } = props;
 
-  return <Connect connectText={t('Connect')} />;
+  return <Connect connectText={connectText} />;
 };
 
 export default ConnectButton;

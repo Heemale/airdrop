@@ -1,20 +1,26 @@
 'use client';
 
+import * as React from 'react';
+import Image from 'next/image';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import i18nConfig from '@/i18nConfig';
-import type { MenuProps } from 'antd';
-import { Dropdown } from 'antd';
-import Image from 'next/image';
 
-const items: MenuProps['items'] = [
+interface LanguageType {
+  key: string;
+  name: string;
+}
+
+const languages: Array<LanguageType> = [
   {
     key: 'en',
-    label: <span>English</span>,
+    name: 'English',
   },
   {
     key: 'zh',
-    label: <span>简体中文</span>,
+    name: '简体中文',
   },
 ];
 
@@ -24,7 +30,18 @@ const LanguageChanger = () => {
   const router = useRouter();
   const currentPathname = usePathname();
 
-  const onClick: MenuProps['onClick'] = ({ key }) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event: React.MouseEvent<any>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const changeLanguage = (key: string) => {
     const newLocale = key;
 
     // set cookie for next-i18n-router
@@ -47,9 +64,39 @@ const LanguageChanger = () => {
   };
 
   return (
-    <Dropdown menu={{ items, onClick }} placement="bottom">
-      <Image src="/language.svg" alt="change language" width={24} height={24} />
-    </Dropdown>
+    <div>
+      <Image
+        src="/language.svg"
+        alt="change language"
+        width={24}
+        height={24}
+        onClick={handleClick}
+      />
+      <Menu
+        id="basic-menu"
+        anchorEl={anchorEl}
+        open={open}
+        onClose={handleClose}
+        MenuListProps={{
+          'aria-labelledby': 'basic-button',
+        }}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        {languages &&
+          languages.map((item) => (
+            <MenuItem key={item.key} onClick={() => changeLanguage(item.key)}>
+              {item.name}
+            </MenuItem>
+          ))}
+      </Menu>
+    </div>
   );
 };
 
