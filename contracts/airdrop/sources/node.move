@@ -5,7 +5,7 @@ module airdrop::node {
     use sui::table::{Self, Table};
     use sui::coin::{Self, Coin};
     use airdrop::invite::{Self, Invite};
-
+    use std::debug;
     // === Constants ===
 
     const MathBase: u64 = 10000;
@@ -199,6 +199,7 @@ module airdrop::node {
             purchased_quantitys: table::new(ctx),
         };
         vec_map::insert(&mut nodes.users, sender, user);
+        debug::print(&nodes.users);
         // 更新节点信息
         node.purchased_quantity = node.purchased_quantity + 1;
 
