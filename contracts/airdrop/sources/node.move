@@ -4,6 +4,7 @@ module airdrop::node {
     use sui::vec_map::{Self, VecMap};
     use sui::table::{Self, Table};
     use sui::coin::{Self, Coin};
+    use sui::event;
     use airdrop::invite::{Self, Invite};
 
     // === Constants ===
@@ -59,6 +60,23 @@ module airdrop::node {
         rank: u8,
         // 已购买的数量：轮次 => 次数
         purchased_quantitys: Table<u64, u64>,
+    }
+
+    public struct NodeInfo has copy, drop {
+        // 等级
+        rank: u8,
+        // 名称
+        name: vector<u8>,
+        // 描述
+        description: vector<u8>,
+        // 每轮空投购买次数
+        limit: u64,
+        // 价格
+        price: u64,
+        // 总量
+        total_quantity: u64,
+        // 已购买的数量
+        purchased_quantity: u64,
     }
 
     /*
@@ -224,8 +242,26 @@ module airdrop::node {
     public fun nodesRank(nodes: &Nodes,sender: address): u8 {
         let user_info = vec_map::get(&nodes.users, &sender);
         user_info.rank
-
     }
+
+    public fun node_list(nodes: &Nodes) {
+        let length = vec_map::size(&nodes.nodes);
+        let mut i = 0;
+        while (i < length + 1) {
+            let node = vec_map::get(&nodes.nodes, &i);
+            event::emit(NodeInfo {
+                rank: node.round,
+                name: node.start_time,
+                description: node.end_time,
+                limit: node.total_shares,
+                price: node.claimed_shares,
+                total_quantity: node.total_balance,
+                purchased_quantity: node.is_open,
+            });
+            i = i + 1;
+        };
+    }
+
     // === Assertions ===
 
     public fun assert_already_buy_node(users: &VecMap<address, User>, sender: address) {
