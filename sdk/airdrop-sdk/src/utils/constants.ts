@@ -6,7 +6,7 @@ export const UPGRADE_CAP = '';
 
 export const INVITE = '';
 
-export const NODE = '';
+export const NODES = '';
 
 export const AIRDROPS = '';
 

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
+import NodeData from '@/components/Presale/NodeData';
 
 interface Props {
   locale: string;
@@ -14,35 +15,15 @@ const NodeInfo = async (props: Props) => {
 
   return (
     <>
-      <div className="font-orbitron text-2xl">
-        <div>{t('Node Info')}</div>
-      </div>
-      <div className="flex justify-between">
-        <div>{t('Node Name')}</div>
-        <div>{t('HyperFuse Guardian Node')}</div>
-      </div>
-      <div className="flex justify-between">
-        <div>{t('Current Tier')}</div>
-        <div>11</div>
-      </div>
-      <div className="flex justify-between">
-        <div>{t('Remaining/Total Nodes')}</div>
-        <div>625/2033</div>
-      </div>
-      <div className="flex justify-between">
-        <div>{t('Allowed Purchase Amount')}</div>
-        <div>0</div>
-      </div>
-      <div className="flex justify-between">
-        <div>{t('Node Price')}</div>
-        <div className="flex gap-0.5">
-          <div>1</div>
-          <div className="flex flex-col justify-end text-xs">Node</div>
-          <div>=</div>
-          <div>303</div>
-          <div className="flex flex-col justify-end text-xs">USDC</div>
-        </div>
-      </div>
+      <NodeData
+        nodeInfo={t('Node Info')}
+        nodeName={t('Node Name')}
+        nodeNameContent={t('HyperFuse Guardian Node')}
+        currentTier={t('Current Tier')}
+        remainingAndTotalNodes={t('Remaining/Total Nodes')}
+        allowedPurchaseAmount={t('Allowed Purchase Amount')}
+        nodePrice={t('Node Price')}
+      />
       <div>
         <Link href={'/presale-comfirm'}>
           <Button className="text-white w-full" text="Next" locale={locale} />

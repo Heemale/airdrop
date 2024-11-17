@@ -1,5 +1,6 @@
 import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
+import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
 import type {
@@ -7,14 +8,16 @@ import type {
   PaginatedEvents,
   OrderArguments,
 } from '@mysten/sui/client';
+import { NodeInfo } from './types';
 
 export class NodeClient {
   constructor(public suiClient: SuiClient) {}
 
   async buy(
     T: string,
-    config: string,
-    rank: bigint,
+    nodes: string,
+    invite: string,
+    rank: number,
     wallet: string | undefined,
     owner: string,
   ): Promise<Transaction> {
@@ -24,7 +27,8 @@ export class NodeClient {
         typeArguments: [T],
         target: `${PACKAGE_ID}::${MODULE_CLOB}::buy`,
         arguments: [
-          tx.object(config),
+          tx.object(nodes),
+          tx.object(invite),
           tx.pure.u8(Number(rank)),
           tx.object(wallet),
         ],
@@ -46,10 +50,42 @@ export class NodeClient {
       tx.moveCall({
         typeArguments: [T],
         target: `${PACKAGE_ID}::${MODULE_CLOB}::buy_node`,
-        arguments: [tx.object(config), tx.pure.u64(rank), coin],
+        arguments: [tx.object(nodes), tx.object(invite), tx.pure.u64(rank), coin],
       });
     }
     return tx;
+  }
+
+  async nodeList(nodes: string): Promise<Array<NodeInfo>> {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::node_list`,
+      arguments: [tx.object(nodes)],
+    });
+    // @ts-ignore
+    const res: DevInspectResults =
+      await this.suiClient.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: normalizeSuiAddress('0x0'),
+      });
+    // @ts-ignore
+    const events: Array<SuiEvent> = res?.events;
+
+    const customMapping = (rawEvent: any): NodeInfo => ({
+      rank: rawEvent.rank as number,
+      name: rawEvent.name as string,
+      description: rawEvent.description as string,
+      limit: rawEvent.limit as bigint,
+      price: rawEvent.price as bigint,
+      total_quantity: rawEvent.total_quantity as bigint,
+      purchased_quantity: rawEvent.purchased_quantity as bigint,
+    });
+
+    return events.map((event) => {
+      // @ts-ignore
+      return customMapping(event?.parsedJson);
+    });
   }
 
   async queryEvents(
