@@ -343,7 +343,7 @@ module airdrop::airdrop {
     }
 
     public fun assert_no_remaining_shares(airdrop: &Airdrop) {
-        assert!(airdrop.total_shares - airdrop.total_shares > 0, ENoRemainingShares);
+        assert!(airdrop.total_shares - airdrop.claimed_shares > 0, ENoRemainingShares);
     }
 
     // === Testing ===
