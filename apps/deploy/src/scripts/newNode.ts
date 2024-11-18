@@ -1,16 +1,17 @@
 import { signAndExecuteTransaction } from '@/sdk/utils';
-import { ADMIN_CAP } from '@local/airdrop-sdk/utils';
 import { adminKeypair, airdropClient } from '@/sdk';
+import { ADMIN_CAP } from '@local/airdrop-sdk/utils';
 
-const newAirdrops = async () => {
-  const tx = airdropClient.new(ADMIN_CAP);
+const newNode = async () => {
+  const admin = adminKeypair.getPublicKey().toSuiAddress();
+  const tx = airdropClient.newNode(ADMIN_CAP, admin);
   const res = await signAndExecuteTransaction(tx, adminKeypair);
   console.log({ res });
-  console.log('newAirdrops success');
+  console.log('newNodes success');
 };
 
 const main = async () => {
-  await newAirdrops();
+  await newNode();
 };
 
 main().catch(({ message }) => {

@@ -4,12 +4,12 @@
   "description": "",
   "scripts": {
     "format": "prettier --write \"src/**/*.ts\"",
+    "newInvite": "npx ts-node -r tsconfig-paths/register src/scripts/newInvite.ts",
+    "newNode":" npx ts-node -r tsconfig-paths/register src/scripts/newNode.ts",
     "newAirdrops": "npx ts-node -r tsconfig-paths/register src/scripts/newAirdrops.ts",
-    "newConfig": "npx ts-node -r tsconfig-paths/register src/scripts/newConfig.ts",
     "transferCap": "npx ts-node -r tsconfig-paths/register src/scripts/transferCap.ts",
-    "getInviter": "npx ts-node -r tsconfig-paths/register src/scripts/test/getInviter.ts",
-    "inviter": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviter.ts",
-    "nodeNew":" npx ts-node -r tsconfig-paths/register src/scripts/nodeNew.ts"
+    "bind": "npx ts-node -r tsconfig-paths/register src/scripts/test/bind.ts",
+    "inviters": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviters.ts"
   },
   "keywords": [],
   "author": "",

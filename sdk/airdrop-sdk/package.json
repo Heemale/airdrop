@@ -25,10 +25,6 @@
 			"import": "./dist/esm/types/index.js",
 			"require": "./dist/cjs/types/index.js"
 		},
-		"./utils/constants": {
-			"import": "./dist/esm/utils/constants.js",
-			"require": "./dist/cjs/utils/constants.js"
-		},
 		"./utils": {
 			"import": "./dist/esm/utils/index.js",
 			"require": "./dist/cjs/utils/index.js"

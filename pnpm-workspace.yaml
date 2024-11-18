@@ -7,4 +7,3 @@ packages:
   - '!sdk\airdrop-sdk\invite'
   - '!sdk\airdrop-sdk\types'
   - '!sdk\airdrop-sdk\utils'
-  - '!sdk\airdrop-sdk\utils\constants'

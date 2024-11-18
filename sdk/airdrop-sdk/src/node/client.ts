@@ -50,7 +50,12 @@ export class NodeClient {
       tx.moveCall({
         typeArguments: [T],
         target: `${PACKAGE_ID}::${MODULE_CLOB}::buy_node`,
-        arguments: [tx.object(nodes), tx.object(invite), tx.pure.u64(rank), coin],
+        arguments: [
+          tx.object(nodes),
+          tx.object(invite),
+          tx.pure.u64(rank),
+          coin,
+        ],
       });
     }
     return tx;

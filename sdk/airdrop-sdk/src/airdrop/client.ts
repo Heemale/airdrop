@@ -15,12 +15,12 @@ import { AirdropInfo } from './types';
 export class AirdropClient {
   constructor(public suiClient: SuiClient) {}
 
-  new(admin_cap: string): Transaction {
+  new(adminCap: string): Transaction {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
       target: `${PACKAGE_ID}::${MODULE_CLOB}::new`,
-      arguments: [tx.object(admin_cap)],
+      arguments: [tx.object(adminCap)],
     });
     return tx;
   }
