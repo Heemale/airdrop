@@ -113,7 +113,6 @@ module airdrop::airdrop_tests {
         let wallet11 = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
         test_scenario::next_tx(&mut scenario, Receiver);
 
-
          //添加空投信息
         airdrop::insert<SUI>(
              &adminCap,

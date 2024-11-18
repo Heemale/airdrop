@@ -236,7 +236,7 @@ module airdrop::airdrop {
 
         assert_invalid_claim_time(clock, airdrop);
         assert_no_remaining_shares(airdrop);
-
+        
         node::update_purchased_quantity(nodes, sender, round);
 
         let per_share_amount = airdrop.total_balance / airdrop.total_shares;
