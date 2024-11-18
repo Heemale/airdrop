@@ -100,7 +100,7 @@ module airdrop::airdrop_tests {
         );
         assert!(coin::value(&receiver_coin) == 980, 1004);
         transfer::public_transfer(receiver_coin, node::receiver(&nodes));
-
+test_scenario::next_tx(&mut scenario, Admin);
         // 检查邀请人接收到的资金
         let inviter = invite::inviters(&invite, User);
         let inviter_coin: Coin<SUI> = test_scenario::take_from_address<Coin<SUI>>(
@@ -111,7 +111,7 @@ module airdrop::airdrop_tests {
         transfer::public_transfer(inviter_coin, inviter);
 
         let wallet11 = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
-        test_scenario::next_tx(&mut scenario, Receiver);
+        
 
          //添加空投信息
         airdrop::insert<SUI>(
@@ -120,7 +120,7 @@ module airdrop::airdrop_tests {
             1, // round
             1000,
             2000,
-            10,
+            1,
             100000,
             b"Test Airdrop",
             wallet11,
@@ -129,7 +129,7 @@ module airdrop::airdrop_tests {
         // === 模拟用户领取空投 ===
         let mut clock = clock::create_for_testing(ctx(&mut scenario)); // 模拟当前时间在空投范围内
         clock::set_for_testing(&mut clock, 1500);
-
+        test_scenario::next_tx(&mut scenario, User);
         airdrop::claim<SUI>(
             &mut airdrops,
             &mut nodes,
@@ -137,7 +137,7 @@ module airdrop::airdrop_tests {
             &clock,
             ctx(&mut scenario),
         );
-        test_scenario::next_tx(&mut scenario, User);
+        
         clock::destroy_for_testing(clock);
         test_scenario::next_tx(&mut scenario, User);
 

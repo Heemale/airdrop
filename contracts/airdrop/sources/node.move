@@ -176,11 +176,13 @@ module airdrop::node {
         assert_not_buy_node(&nodes.users, sender);
         let user: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
         let node = vec_map::get(&nodes.nodes, &user.rank);
-
+        if (table::contains(&user.purchased_quantitys, round)){
         let purchased_quantity: &mut u64 = table::borrow_mut(&mut user.purchased_quantitys, round);
         assert_exceeds_purchase_limit(node, *purchased_quantity);
         *purchased_quantity + 1;
-    }
+        }else{
+        table::add(&mut user.purchased_quantitys, round, 1);
+    }}
 
     /*
      * @notice 购买节点
@@ -247,17 +249,17 @@ module airdrop::node {
 
     public fun node_list(nodes: &Nodes) {
         let length = vec_map::size(&nodes.nodes);
-        let mut i = 0;
-        while (i < length + 1) {
+        let mut i :u8 = 0;
+        while (i < length as u8 + 1) {
             let node = vec_map::get(&nodes.nodes, &i);
             event::emit(NodeInfo {
-                rank: node.round,
-                name: node.start_time,
-                description: node.end_time,
-                limit: node.total_shares,
-                price: node.claimed_shares,
-                total_quantity: node.total_balance,
-                purchased_quantity: node.is_open,
+                rank: node.rank,
+                name: node.name,
+                description: node.description,
+                limit: node.limit,
+                price: node.price,
+                total_quantity: node.total_quantity,
+                purchased_quantity: node.purchased_quantity,
             });
             i = i + 1;
         };

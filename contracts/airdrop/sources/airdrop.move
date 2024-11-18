@@ -10,6 +10,7 @@ module airdrop::airdrop {
     use sui::clock::{Self, Clock};
     use airdrop::invite::{Self, Invite};
     use airdrop::node::{Self, Nodes};
+     use std::debug;
 
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 1;
@@ -238,13 +239,15 @@ module airdrop::airdrop {
         assert_no_remaining_shares(airdrop);
         
         node::update_purchased_quantity(nodes, sender, round);
-
+        debug::print(&airdrop.claimed_shares);
         let per_share_amount = airdrop.total_balance / airdrop.total_shares;
         airdrop.claimed_shares = airdrop.claimed_shares + 1;
+        debug::print(&airdrop.claimed_shares);
         let treasury_balance = bag::borrow_mut<u64, Balance<T>>(&mut airdrops.treasury_balances, round);
         let treasury_balance_part = balance::split<T>(treasury_balance, per_share_amount);
         let treasury_coina_part: Coin<T> = coin::from_balance<T>(treasury_balance_part, ctx);
         transfer::public_transfer(treasury_coina_part, sender);
+       
     }
 
     public fun new_invite(
