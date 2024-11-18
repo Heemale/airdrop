@@ -176,13 +176,14 @@ module airdrop::node {
         assert_not_buy_node(&nodes.users, sender);
         let user: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
         let node = vec_map::get(&nodes.nodes, &user.rank);
-        if (table::contains(&user.purchased_quantitys, round)){
-        let purchased_quantity: &mut u64 = table::borrow_mut(&mut user.purchased_quantitys, round);
-        assert_exceeds_purchase_limit(node, *purchased_quantity);
-        *purchased_quantity + 1;
-        }else{
-        table::add(&mut user.purchased_quantitys, round, 1);
-    }}
+        if (table::contains(&user.purchased_quantitys, round)) {
+            let purchased_quantity: &mut u64 = table::borrow_mut(&mut user.purchased_quantitys, round);
+            assert_exceeds_purchase_limit(node, *purchased_quantity);
+            *purchased_quantity + 1;
+        }else {
+            table::add(&mut user.purchased_quantitys, round, 1);
+        }
+    }
 
     /*
      * @notice 购买节点
@@ -242,15 +243,15 @@ module airdrop::node {
         nodes.receiver
     }
 
-    public fun nodesRank(nodes: &Nodes,sender: address): u8 {
+    public fun nodesRank(nodes: &Nodes, sender: address): u8 {
         let user_info = vec_map::get(&nodes.users, &sender);
         user_info.rank
     }
 
     public fun node_list(nodes: &Nodes) {
-        let length = vec_map::size(&nodes.nodes);
-        let mut i :u8 = 0;
-        while (i < length as u8 + 1) {
+        let length = vec_map::size(&nodes.nodes) as u8;
+        let mut i: u8 = 0;
+        while (i < length + 1) {
             let node = vec_map::get(&nodes.nodes, &i);
             event::emit(NodeInfo {
                 rank: node.rank,
