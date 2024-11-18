@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
+import PurchaseOrderData from '@/components/Presale/PurchaseOrderData';
 
 interface Props {
   locale: string;
@@ -14,25 +15,14 @@ const PurchaseOrder = async (props: Props) => {
 
   return (
     <>
-      <div className="font-orbitron text-2xl">{t('Purchase Order')}</div>
-      <div className="flex justify-between">
-        <div>{t('Allowed Purchase Amount')}</div>
-        <div>649</div>
-      </div>
-      <div className="flex justify-between">
-        <div>{t('Quantity')}</div>
-        <div>1</div>
-      </div>
-      <div className="flex justify-between">
-        <div>{t('Estimated Cost')}</div>
-        <div>272.7 USDT</div>
-      </div>
-      <div className="flex justify-between text-[#313131] text-sm">
-        <div>{t('Price Detail')}: 1 x 272.7 USDT</div>
-      </div>
-      <div className="flex justify-between text-[#313131] text-sm">
-        <div>{t('Wallet Balance')}: 19.409 USDT</div>
-      </div>
+      <PurchaseOrderData
+        purchaseOrder={t('Purchase Order')}
+        allowedPurchaseAmount={t('Allowed Purchase Amount')}
+        quantity={t('Quantity')}
+        estimatedCost={t('Estimated Cost')}
+        priceDetail={t('Price Detail')}
+        walletBalance={t('Wallet Balance')}
+      />
       <div className="grid grid-cols-3 gap-2">
         <div className="col-span-1">
           <Link href={'/presale'}>
