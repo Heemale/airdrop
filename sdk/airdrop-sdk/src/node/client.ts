@@ -18,7 +18,8 @@ export class NodeClient {
     nodes: string,
     invite: string,
     rank: number,
-    wallet: string | undefined,
+    wallet: string | null,
+    amount: bigint | null,
     owner: string,
   ): Promise<Transaction> {
     const tx = new Transaction();
@@ -34,29 +35,43 @@ export class NodeClient {
         ],
       });
     } else {
-      // @ts-ignore
-      const coins = await this.suiClient.getCoins({
-        owner,
-        coinType: T,
-      });
-      if (!coins.data.length) throw new Error('No coins.');
-      if (coins.data.length > 1) {
-        tx.mergeCoins(
-          tx.object(coins.data[0]['coinObjectId']),
-          coins.data.slice(1).map((e: any) => tx.object(e['coinObjectId'])),
-        );
+      if (T === '0x2::sui::SUI' && amount) {
+        const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(amount)]);
+        tx.moveCall({
+          typeArguments: [T],
+          target: `${PACKAGE_ID}::${MODULE_CLOB}::buy`,
+          arguments: [
+            tx.object(nodes),
+            tx.object(invite),
+            tx.pure.u8(rank),
+            coin,
+          ],
+        });
+      } else {
+        // @ts-ignore
+        const coins = await this.suiClient.getCoins({
+          owner,
+          coinType: T,
+        });
+        if (!coins.data.length) throw new Error('No coins.');
+        if (coins.data.length > 1) {
+          tx.mergeCoins(
+            tx.object(coins.data[0]['coinObjectId']),
+            coins.data.slice(1).map((e: any) => tx.object(e['coinObjectId'])),
+          );
+        }
+        const coin = tx.object(coins.data[0]['coinObjectId']); //合并后使用
+        tx.moveCall({
+          typeArguments: [T],
+          target: `${PACKAGE_ID}::${MODULE_CLOB}::buy`,
+          arguments: [
+            tx.object(nodes),
+            tx.object(invite),
+            tx.pure.u8(rank),
+            coin,
+          ],
+        });
       }
-      const coin = tx.object(coins.data[0]['coinObjectId']); //合并后使用
-      tx.moveCall({
-        typeArguments: [T],
-        target: `${PACKAGE_ID}::${MODULE_CLOB}::buy_node`,
-        arguments: [
-          tx.object(nodes),
-          tx.object(invite),
-          tx.pure.u64(rank),
-          coin,
-        ],
-      });
     }
     return tx;
   }
