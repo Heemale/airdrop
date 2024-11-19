@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Button from '@/components/Button';
 import { nodeClient } from '@/sdk';
-import { NODES, INVITE } from '@local/airdrop-sdk/utils/constants';
+import { NODES, INVITE } from '@local/airdrop-sdk/utils';
 import { useAccounts, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 
 interface Props {

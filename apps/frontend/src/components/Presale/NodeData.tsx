@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { nodeClient } from '@/sdk';
-import { NODES } from '@local/airdrop-sdk/utils/constants';
+import { NODES } from '@local/airdrop-sdk/utils';
 import { NodeInfo } from '@local/airdrop-sdk/node';
 
 interface Props {
