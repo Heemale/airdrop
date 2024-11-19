@@ -1,3 +1,4 @@
+'use client';
 import * as React from 'react';
 import AirdropItem from '@/components/Event/AirdropItem';
 import { useEffect, useState } from 'react';
