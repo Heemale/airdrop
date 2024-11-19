@@ -1,37 +1,65 @@
 'use client';
 
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { NodeInfo } from '@local/airdrop-sdk/node';
+import { Autocomplete, TextField } from '@mui/material';
 import { nodeClient } from '@/sdk';
 import { NODES } from '@local/airdrop-sdk/utils';
-import { NodeInfo } from '@local/airdrop-sdk/node';
+import { convertSmallToLarge } from '@/utils/math';
+import { PresaleContext } from '@/context/PresaleContext';
 
 interface Props {
   nodeInfo: string;
   nodeName: string;
-  nodeNameContent: string;
   currentTier: string;
   remainingAndTotalNodes: string;
   allowedPurchaseAmount: string;
   nodePrice: string;
 }
 
+const nodes = [
+  {
+    rank: 1,
+    name: 'node 1',
+    description: 'node 1 description',
+    limit: 1n,
+    price: 1000000000n,
+    total_quantity: 100n,
+    purchased_quantity: 1n,
+  },
+  {
+    rank: 2,
+    name: 'node 2',
+    description: 'node 2 description',
+    limit: 2n,
+    price: 2000000000n,
+    total_quantity: 200n,
+    purchased_quantity: 2n,
+  },
+];
+
 const NodeData = (props: Props) => {
   const {
     nodeInfo,
     nodeName,
-    nodeNameContent,
     currentTier,
     remainingAndTotalNodes,
     allowedPurchaseAmount,
     nodePrice,
   } = props;
 
+  const { node, setNode } = useContext(PresaleContext);
+
   const [nodeList, setNodeList] = useState<Array<NodeInfo>>([]);
-  const [index, setIndex] = useState<number>(0);
+  const defaultProps = {
+    options: nodeList,
+    getOptionLabel: (option: NodeInfo) => option.name,
+  };
 
   const getNodeList = async () => {
-    const nodes = await nodeClient.nodeList(NODES);
+    // const nodes = await nodeClient.nodeList(NODES);
+    console.log({ nodes });
     setNodeList(nodes);
   };
 
@@ -44,21 +72,53 @@ const NodeData = (props: Props) => {
       <div className="font-orbitron text-2xl">
         <div>{nodeInfo}</div>
       </div>
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center gap-12">
         <div>{nodeName}</div>
-        <div>{nodeNameContent}</div>
+        <div className="grow">
+          <Autocomplete
+            {...defaultProps}
+            id="controlled-demo"
+            value={node}
+            onChange={(event: any, newValue: NodeInfo | null) => {
+              setNode(newValue);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                sx={{
+                  backgroundColor: 'white', // 设置背景色为白色
+                }}
+              />
+            )}
+            sx={{
+              '& .MuiAutocomplete-listbox': {
+                backgroundColor: 'white', // 设置下拉框的背景色
+                color: 'black', // 设置下拉项的文字颜色
+              },
+              '& .MuiAutocomplete-option': {
+                '&:hover': {
+                  backgroundColor: 'lightgray', // 设置悬浮时的背景色
+                },
+              },
+            }}
+            fullWidth
+          />
+        </div>
       </div>
       <div className="flex justify-between">
         <div>{currentTier}</div>
-        <div>11</div>
+        <div>{node ? node.rank : '-'}</div>
       </div>
       <div className="flex justify-between">
         <div>{remainingAndTotalNodes}</div>
-        <div>625/2033</div>
+        <div>
+          {node ? node.total_quantity - node.purchased_quantity : '-'}/
+          {node ? node.total_quantity : '-'}
+        </div>
       </div>
       <div className="flex justify-between">
         <div>{allowedPurchaseAmount}</div>
-        <div>0</div>
+        <div>1</div>
       </div>
       <div className="flex justify-between">
         <div>{nodePrice}</div>
@@ -66,8 +126,10 @@ const NodeData = (props: Props) => {
           <div>1</div>
           <div className="flex flex-col justify-end text-xs">Node</div>
           <div>=</div>
-          <div>303</div>
-          <div className="flex flex-col justify-end text-xs">USDC</div>
+          <div>
+            {node ? convertSmallToLarge(node.price.toString(), 9) : '-'}
+          </div>
+          <div className="flex flex-col justify-end text-xs">USDT</div>
         </div>
       </div>
     </>

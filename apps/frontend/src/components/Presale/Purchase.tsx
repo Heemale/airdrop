@@ -2,53 +2,117 @@
 
 import * as React from 'react';
 import Button from '@/components/Button';
-import { nodeClient } from '@/sdk';
+import { inviteClient, nodeClient } from '@/sdk';
 import { NODES, INVITE } from '@local/airdrop-sdk/utils';
-import { useAccounts, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+} from '@mysten/dapp-kit';
+import { useContext, useEffect } from 'react';
+import ConnectWallet from '@/components/ConnectWallet';
+import { InviteDialogContext } from '@/context/InviteDialogContext';
+import { normalizeSuiAddress } from '@mysten/sui/utils';
+import { PresaleContext } from '@/context/PresaleContext';
 
 interface Props {
-  locale: string;
+  buyText: string;
+  connectText: string;
+  bindText: string;
 }
 
+const coinType: string = '0x2::sui::SUI';
+
 const Purchase = (props: Props) => {
-  const { locale } = props;
-  const accounts = useAccounts();
+  const { buyText, connectText, bindText } = props;
+
+  const account = useCurrentAccount();
+  const { node } = useContext(PresaleContext);
+  const { inviter, setOpen, setInviter } = useContext(InviteDialogContext);
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
-  const coinType: string = '0x2::sui::SUI';
-  const rank: number = 1;
-
   const buyNode = async () => {
-    if (accounts && accounts.length > 0) {
-      const user = accounts[0].address;
-      const tx = await nodeClient.buy(
-        coinType,
-        NODES,
-        INVITE,
-        rank,
-        undefined,
-        user,
-      );
-      signAndExecuteTransaction(
-        {
-          transaction: tx,
-        },
-        {
-          onSuccess: (result) => {
-            console.log({ result });
-            console.log({ digest: result.digest });
+    try {
+      if (node && account && account.address) {
+        console.log({
+          coinType: coinType,
+          NODES: NODES,
+          INVITE: INVITE,
+          rank: node.rank,
+          wallet: null,
+          price: node.price,
+          address: account.address,
+        });
+        const tx = await nodeClient.buy(
+          coinType,
+          NODES,
+          INVITE,
+          node.rank,
+          null,
+          node.price,
+          account.address,
+        );
+        signAndExecuteTransaction(
+          {
+            transaction: tx,
           },
-          onError: (error) => {
-            console.log({ error });
+          {
+            onSuccess: (result) => {
+              console.log({ result });
+              console.log({ digest: result.digest });
+            },
+            onError: (error) => {
+              console.log({ error });
+            },
           },
-        },
-      );
+        );
+      }
+    } catch ({ message }) {
+      console.log({ message });
     }
   };
 
+  const bind = () => {
+    setOpen(true);
+  };
+
+  const updateInvite = async () => {
+    if (account && account.address) {
+      // 查询邀请人和root
+      const [inviter, root] = await Promise.all([
+        inviteClient.inviters(INVITE, account.address),
+        inviteClient.root(INVITE),
+      ]);
+      console.log({
+        inviter,
+        root,
+      });
+      setInviter(inviter);
+    }
+  };
+
+  useEffect(() => {
+    updateInvite();
+  }, [account]);
+
   return (
-    <div className="col-span-2" onClick={buyNode}>
-      <Button className="text-white w-full" text={'Purchase'} locale={locale} />
+    <div className="col-span-2">
+      {account ? (
+        inviter === normalizeSuiAddress('0x0') ? (
+          <Button
+            className="text-white w-full"
+            text={bindText}
+            onClick={bind}
+          />
+        ) : (
+          <Button
+            className="text-white w-full"
+            text={buyText}
+            onClick={buyNode}
+          />
+        )
+      ) : (
+        <ConnectWallet text={connectText} />
+      )}
     </div>
   );
 };

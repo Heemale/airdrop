@@ -1,9 +1,9 @@
 import * as React from 'react';
 import Link from 'next/link';
-import Button from '@/components/Button';
 import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
 import PurchaseOrderData from '@/components/Presale/PurchaseOrderData';
+import Purchase from '@/components/Presale/Purchase';
 
 interface Props {
   locale: string;
@@ -32,10 +32,10 @@ const PurchaseOrder = async (props: Props) => {
           </Link>
         </div>
         <div className="col-span-2">
-          <Button
-            className="text-white w-full"
-            text={'Purchase'}
-            locale={locale}
+          <Purchase
+            buyText={t('BUY')}
+            connectText={t('CONNECT WALLET')}
+            bindText={t('BIND INVITER')}
           />
         </div>
       </div>
