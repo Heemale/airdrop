@@ -7,7 +7,7 @@ import {
 } from '@mysten/dapp-kit';
 import { useEffect } from 'react';
 import { inviteClient } from '@/sdk';
-import { INVITE } from '@local/airdrop-sdk/utils/constants';
+import { INVITE } from '@local/airdrop-sdk/utils';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 
 interface Props {
