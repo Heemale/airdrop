@@ -1,16 +1,19 @@
 'use client';
-import dynamic from 'next/dynamic';
 import QueryClientProvider from './QueryClientProvider';
 import SuiClientProvider from './SuiClientProvider';
 import SuiWalletProvider from './SuiWalletProvider';
-
-// const SuiWalletProvider = dynamic(() => import('./SuiWalletProvider'));
+import InviteDialogContextProvider from '@/context/InviteDialogContext';
+import PresaleContextProvider from '@/context/PresaleContext';
 
 const Context = ({ children }: { children: React.ReactNode }) => {
   return (
     <QueryClientProvider>
       <SuiClientProvider>
-        <SuiWalletProvider>{children}</SuiWalletProvider>
+        <SuiWalletProvider>
+          <InviteDialogContextProvider>
+            <PresaleContextProvider>{children}</PresaleContextProvider>
+          </InviteDialogContextProvider>
+        </SuiWalletProvider>
       </SuiClientProvider>
     </QueryClientProvider>
   );

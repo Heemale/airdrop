@@ -6,6 +6,7 @@ import initTranslations from '@/app/i18n';
 import { dir } from 'i18next';
 import i18nConfig from '@/i18nConfig';
 import TranslationsProvider from '@/context/TranslationsProvider';
+import InviteDialog from '@/components/InviteDialog';
 
 export const metadata: Metadata = {
   title: 'Sui AirDrop',
@@ -37,7 +38,10 @@ const RootLayout = async ({
           locale={locale}
           resources={resources}
         >
-          <Context>{children}</Context>
+          <Context>
+            {children}
+            <InviteDialog />
+          </Context>
         </TranslationsProvider>
       </body>
     </html>
