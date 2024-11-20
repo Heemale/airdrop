@@ -12,10 +12,10 @@ const insertAirdrop = async () => {
   const startTime = BigInt(Math.floor(Date.now() / 1000)); // 开始时间（当前时间戳）
   const endTime = startTime + BigInt(3600); // 结束时间（1小时后）
   const totalShares = BigInt(100); // 空投份额
-  const totalBalance = BigInt(1000000); // 总金额
-  const description = 'Example Airdrop'; // 空投描述
-  const wallet =
-    '0x4c88263a2e7c999ada8512d3538fead1bde0659212fafc12b2ac9328bba21f68'; // 管理员钱包地址
+  const totalBalance = BigInt(10); // 总金额
+  const description = 'Example Airdrop1'; // 空投描述
+  const wallet = null; // 管理员钱包地址
+  const amount = BigInt(10);
   const owner = adminKeypair.toSuiAddress(); // 使用管理员地址作为所有者
 
   // 调用 insert 方法创建添加空投的交易
@@ -30,6 +30,7 @@ const insertAirdrop = async () => {
     totalBalance,
     description,
     wallet,
+    amount,
     owner,
   );
 
