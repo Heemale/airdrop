@@ -1,5 +1,0 @@
-{
-	"private": true,
-	"import": "..\\dist\\esm\\airdrop\\index.js",
-	"main": "..\\dist\\cjs\\airdrop\\index.js"
-}

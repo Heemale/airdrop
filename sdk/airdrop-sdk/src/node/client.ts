@@ -92,10 +92,12 @@ export class NodeClient {
     // @ts-ignore
     const events: Array<SuiEvent> = res?.events;
 
+    const decoder = new TextDecoder('utf-8');
+
     const customMapping = (rawEvent: any): NodeInfo => ({
       rank: rawEvent.rank as number,
-      name: rawEvent.name as string,
-      description: rawEvent.description as string,
+      name: decoder.decode(new Uint8Array(rawEvent.name)),
+      description: decoder.decode(new Uint8Array(rawEvent.description)),
       limit: rawEvent.limit as bigint,
       price: rawEvent.price as bigint,
       total_quantity: rawEvent.total_quantity as bigint,

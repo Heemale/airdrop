@@ -296,6 +296,8 @@ export class AirdropClient {
     // @ts-ignore
     const events: Array<SuiEvent> = res?.events;
 
+    const decoder = new TextDecoder('utf-8');
+
     const customMapping = (rawEvent: any): AirdropInfo => ({
       round: rawEvent.round as bigint,
       startTime: rawEvent.start_time as bigint,
@@ -304,8 +306,8 @@ export class AirdropClient {
       claimedShares: rawEvent.claimed_shares as bigint,
       totalBalance: rawEvent.total_balance as bigint,
       isOpen: rawEvent.is_open as boolean,
-      description: rawEvent.description as string,
-      coinType: rawEvent.coin_type as string,
+      description: decoder.decode(new Uint8Array(rawEvent.description)),
+      coinType: rawEvent.coin_type.name as string,
     });
 
     return events.map((event) => {
