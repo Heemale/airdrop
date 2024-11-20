@@ -267,12 +267,12 @@ module airdrop::airdrop {
         invite::modify(invite, root, inviter_fee);
     }
 
-    public fun new_node(
+    public fun new_node<T>(
         _admin_cap: &AdminCap,
         receiver: address,
         ctx: &mut TxContext
     ) {
-        node::new(receiver, ctx);
+        node::new<T>(receiver, ctx);
     }
 
     public fun insert_node(

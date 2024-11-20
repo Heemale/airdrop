@@ -6,7 +6,7 @@ module airdrop::node {
     use sui::coin::{Self, Coin};
     use sui::event;
     use airdrop::invite::{Self, Invite};
-    use std::debug;
+    use std::type_name::{Self, TypeName};
     // === Constants ===
 
     const MathBase: u64 = 10000;
@@ -23,6 +23,8 @@ module airdrop::node {
     const ENodeSoldOut: u64 = 4;
     // 异常: 超出购买限额
     const EExceedsPurchaseLimit: u64 = 5;
+    // 异常: 非法代币类型
+    const EInvalidCoinType: u64 = 6;
 
     // === Struct ===
 
@@ -35,6 +37,8 @@ module airdrop::node {
         users: VecMap<address, User>,
         // 接收人
         receiver: address,
+        // 代币类型
+        coin_type: TypeName,
     }
 
     // 节点对象
@@ -85,7 +89,7 @@ module airdrop::node {
      * @param root: root用户
      * @param inviter_fee: 邀请人费用
      */
-    public(package) fun new(
+    public(package) fun new<T>(
         receiver: address,
         ctx: &mut TxContext
     ) {
@@ -94,6 +98,7 @@ module airdrop::node {
             nodes: vec_map::empty(),
             users: vec_map::empty(),
             receiver,
+            coin_type: type_name::get<T>(),
         };
         transfer::public_share_object(node);
     }
@@ -206,6 +211,8 @@ module airdrop::node {
         mut wallet: Coin<T>,
         ctx: &mut TxContext,
     ) {
+        assert_invalid_coin_type<T>(nodes.coin_type);
+
         let sender = tx_context::sender(ctx);
         invite::assert_not_bind_inviter(invite, sender);
 
@@ -220,7 +227,6 @@ module airdrop::node {
             purchased_quantitys: table::new(ctx),
         };
         vec_map::insert(&mut nodes.users, sender, user);
-        debug::print(&nodes.users);
         // 更新节点信息
         node.purchased_quantity = node.purchased_quantity + 1;
 
@@ -282,5 +288,9 @@ module airdrop::node {
 
     public fun assert_exceeds_purchase_limit(node: &Node, purchased_quantity: u64) {
         assert!(node.limit - purchased_quantity > 0, EExceedsPurchaseLimit);
+    }
+
+    public fun assert_invalid_coin_type<T>(coin_type: TypeName) {
+        assert!(type_name::get<T>() == coin_type, EInvalidCoinType);
     }
 }
