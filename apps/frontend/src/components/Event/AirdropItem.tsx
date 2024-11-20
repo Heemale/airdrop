@@ -8,31 +8,46 @@ import { airdropClient } from '@/sdk';
 import { AIRDROPS, ADMIN_CAP, NODES } from '@local/airdrop-sdk/utils';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
+import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 
 export interface Props {
   locale: string;
   data: AirdropInfo;
 }
 
-const AirdropItem = async (props: Props) => {
+const AirdropItem = (props: Props) => {
   const { data, locale } = props;
+  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+
   const { round } = data;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+  // const { t } =  initTranslations(locale, i18nConfig.i18nNamespaces);
   const [loading, setLoading] = useState<boolean>(true);
   const [claiming, setClaiming] = useState<boolean>(false);
+
   // 截取 coinType 名称
   const getCoinTypeName = (coinType: string): string => {
     const parts = coinType.split('::');
     return parts[parts.length - 1]; // 获取最后一部分
   };
-  const handleClaim = async () => {
+  const handleClaim = () => {
     setClaiming(true);
-    const response = await airdropClient.claim(
+    const response = airdropClient.claim(
       data.coinType,
       ADMIN_CAP,
       NODES,
       data.round,
       SUI_CLOCK_OBJECT_ID,
+    );
+    signAndExecuteTransaction(
+      { transaction: response },
+      {
+        onSuccess: (result) => {
+          console.log({ digest: result.digest });
+        },
+        onError: (error) => {
+          console.log({ error });
+        },
+      },
     );
     console.log('Claim success:', response);
   };
@@ -73,7 +88,7 @@ const AirdropItem = async (props: Props) => {
         }`}
         disabled={claiming}
       >
-        {claiming ? t('Claiming...') : t('Claim')}
+        {claiming ? 'Claiming...' : 'Claim'}
       </button>
       <div className="flex justify-between">
         <div>{data.coinType}</div>
@@ -88,16 +103,16 @@ const AirdropItem = async (props: Props) => {
         </div>
       </div>
       <div className="flex justify-between">
+        <div>totalShares</div>
         <div>{data.totalShares}</div>
-        <div>9,367</div>
       </div>
       <div className="flex justify-between">
+        <div>description</div>
         <div>{data.description}</div>
-        <div>aasd</div>
       </div>
       <div className="flex justify-between">
+        <div>totalBalance</div>
         <div>{data.totalBalance}</div>
-        <div>168 BNB</div>
       </div>
     </div>
   );
