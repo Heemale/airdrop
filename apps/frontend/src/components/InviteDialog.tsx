@@ -11,6 +11,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { inviteClient } from '@/sdk';
 import { INVITE } from '@local/airdrop-sdk/utils';
 import PinkSwitch from '@/components/PinkSwitch';
+import { message } from 'antd';
 
 const InviteDialog = () => {
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
@@ -19,6 +20,7 @@ const InviteDialog = () => {
 
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = React.useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
     setInputValue(event.target.value);
@@ -31,7 +33,6 @@ const InviteDialog = () => {
     try {
       const root = await inviteClient.root(INVITE);
       const inviter = !hasInviter ? root : inputValue;
-      console.log({ inviter });
       const tx = inviteClient.bind(INVITE, inviter);
       signAndExecuteTransaction(
         {
@@ -40,14 +41,17 @@ const InviteDialog = () => {
         {
           onSuccess: (result) => {
             console.log({ digest: result.digest });
+            messageApi.info(`Success: ${result.digest}`);
           },
-          onError: (error) => {
-            console.log({ error });
+          onError: ({ message }) => {
+            console.log(`Bind: ${message}`);
+            messageApi.error(`Error: ${message}`);
           },
         },
       );
     } catch ({ message }) {
-      console.log({ message });
+      console.log(`Bind: ${message}`);
+      messageApi.error(`Error: ${message}`);
     }
   };
 
@@ -114,6 +118,7 @@ const InviteDialog = () => {
       >
         <CircularProgress color="inherit" />
       </Backdrop>
+      {contextHolder}
     </Dialog>
   );
 };

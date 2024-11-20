@@ -4,6 +4,8 @@ import Banner from '@/components/Event/Banner';
 import Announcement from '@/components/Event/Announcement';
 import AirdropsHeader from '@/components/Event/AirdropsHeader';
 import AirdropList from '@/components/Event/AirdropList';
+import initTranslations from '@/app/i18n';
+import i18nConfig from '@/i18nConfig';
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -12,6 +14,7 @@ interface Props {
 const Home = async (props: Props) => {
   const { params } = props;
   const { locale } = await params;
+  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
 
   return (
     <>
@@ -24,7 +27,13 @@ const Home = async (props: Props) => {
               <Announcement locale={locale} />
             </div>
             <AirdropsHeader locale={locale} />
-            <AirdropList locale={locale} />
+            <AirdropList
+              isOngoing
+              ongoingText={t('ongoing')}
+              chainText={t('Chain')}
+              totalCopies={t('Total Copies')}
+              rewardQuantityPerCopy={t('Reward Quantity per Copy')}
+            />
           </div>
         </div>
       </div>

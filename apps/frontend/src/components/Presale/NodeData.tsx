@@ -58,8 +58,7 @@ const NodeData = (props: Props) => {
   };
 
   const getNodeList = async () => {
-    // const nodes = await nodeClient.nodeList(NODES);
-    console.log({ nodes });
+    const nodes = await nodeClient.nodeList(NODES);
     setNodeList(nodes);
   };
 

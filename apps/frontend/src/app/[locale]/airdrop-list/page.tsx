@@ -45,7 +45,13 @@ const Home = async (props: Props) => {
             <div className="text-sm">
               {t(' Purchase CoralPhone to receive airdrop rewards!')}
             </div>
-            <AirdropList locale={locale} />
+            <AirdropList
+              isOngoing
+              ongoingText={t('ongoing')}
+              chainText={t('Chain')}
+              totalCopies={t('Total Copies')}
+              rewardQuantityPerCopy={t('Reward Quantity per Copy')}
+            />
           </div>
         </div>
       </div>

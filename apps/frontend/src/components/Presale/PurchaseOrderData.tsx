@@ -6,6 +6,7 @@ import { PresaleContext } from '@/context/PresaleContext';
 import { convertSmallToLarge } from '@/utils/math';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { suiClient } from '@/sdk';
+import { message } from 'antd';
 
 interface Props {
   purchaseOrder: string;
@@ -29,6 +30,7 @@ const PurchaseOrderData = (props: Props) => {
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
   const [balance, setBalance] = useState<string | null>(null);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const getBalance = async () => {
     if (account && account.address) {
@@ -39,7 +41,8 @@ const PurchaseOrderData = (props: Props) => {
         });
         setBalance(res.totalBalance);
       } catch ({ message }) {
-        console.error({ message });
+        console.log(`getBalance: ${message}`);
+        messageApi.error(`Error: ${message}`);
       }
     }
   };
@@ -78,6 +81,7 @@ const PurchaseOrderData = (props: Props) => {
           USDT
         </div>
       </div>
+      {contextHolder}
     </>
   );
 };

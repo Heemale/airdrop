@@ -29,17 +29,15 @@ const Next = (props: Props) => {
 
   const updateInvite = async () => {
     if (account && account.address) {
-      const user = account.address;
-      // 查询邀请人和root
-      const [inviter, root] = await Promise.all([
-        inviteClient.inviters(INVITE, user),
-        inviteClient.root(INVITE),
-      ]);
-      console.log({
-        inviter,
-        root,
-      });
-      setInviter(inviter);
+      try {
+        const user = account.address;
+        // 查询邀请人和root
+        const [inviter, root] = await Promise.all([
+          inviteClient.inviters(INVITE, user),
+          inviteClient.root(INVITE),
+        ]);
+        setInviter(inviter);
+      } catch ({ message }) {}
     }
   };
 

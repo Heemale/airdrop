@@ -46,7 +46,7 @@ const NavBarWrapper = async (props: Props) => {
         };
       })}
     >
-      <ConnectButton connectText={t('connect')} />
+      <ConnectButton connectText={t('CONNECT')} />
     </NavBar>
   );
 };

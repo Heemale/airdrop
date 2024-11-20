@@ -1,55 +1,72 @@
 'use client';
 import Image from 'next/image';
 import * as React from 'react';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { airdropClient } from '@/sdk';
-import { AIRDROPS, ADMIN_CAP, NODES } from '@local/airdrop-sdk/utils';
+import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
 import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import { message } from 'antd';
+import { getCoinTypeName } from '@/utils';
+import { formatTimestamp } from '@/utils/time';
+import { divide } from '@/utils/math';
 
 export interface Props {
-  locale: string;
   data: AirdropInfo;
+  isOngoing?: boolean;
+  ongoingText: string;
+  chainText: string;
+  totalCopies: string;
+  rewardQuantityPerCopy: string;
 }
 
 const AirdropItem = (props: Props) => {
-  const { data, locale } = props;
+  const {
+    data,
+    isOngoing,
+    ongoingText,
+    chainText,
+    totalCopies,
+    rewardQuantityPerCopy,
+  } = props;
+
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
-  const { round } = data;
-  // const { t } =  initTranslations(locale, i18nConfig.i18nNamespaces);
   const [loading, setLoading] = useState<boolean>(true);
   const [claiming, setClaiming] = useState<boolean>(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
-  // 截取 coinType 名称
-  const getCoinTypeName = (coinType: string): string => {
-    const parts = coinType.split('::');
-    return parts[parts.length - 1]; // 获取最后一部分
-  };
-  const handleClaim = () => {
+  const claim = () => {
     setClaiming(true);
-    const response = airdropClient.claim(
-      data.coinType,
-      ADMIN_CAP,
-      NODES,
-      data.round,
-      SUI_CLOCK_OBJECT_ID,
-    );
-    signAndExecuteTransaction(
-      { transaction: response },
-      {
-        onSuccess: (result) => {
-          console.log({ digest: result.digest });
+    try {
+      const res = airdropClient.claim(
+        data.coinType,
+        AIRDROPS,
+        NODES,
+        data.round,
+        SUI_CLOCK_OBJECT_ID,
+      );
+      signAndExecuteTransaction(
+        { transaction: res },
+        {
+          onSuccess: (result) => {
+            console.log({ digest: result.digest });
+            messageApi.info(`Success: ${result.digest}`);
+            setClaiming(false);
+          },
+          onError: ({ message }) => {
+            console.log(`Claim: ${message}`);
+            messageApi.error(`Error: ${message}`);
+            setClaiming(false);
+          },
         },
-        onError: (error) => {
-          console.log({ error });
-        },
-      },
-    );
-    console.log('Claim success:', response);
+      );
+    } catch ({ message }) {
+      console.log(`Claim: ${message}`);
+      messageApi.error(`Error: ${message}`);
+      setClaiming(false);
+    }
   };
 
   return (
@@ -69,20 +86,23 @@ const AirdropItem = (props: Props) => {
               <div className="text-xl font-semibold">
                 {getCoinTypeName(data.coinType)} - ROUND {data.round}
               </div>
-              <div className="bg-gradient-to-b from-[#3f6b47] to-[#093f13] rounded px-1 py-0.5">
-                {data.isOpen}
-              </div>
+              {isOngoing && (
+                <div className="bg-gradient-to-b from-[#3f6b47] to-[#093f13] rounded px-1 py-0.5">
+                  {ongoingText}
+                </div>
+              )}
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
-              <div>{data.startTime}</div>
+              <div>{formatTimestamp(Number(data.startTime))}</div>
               <div>~</div>
-              <div>{data.endTime}</div>
+              <div>{formatTimestamp(Number(data.endTime))}</div>
             </div>
           </div>
         </div>
       </div>
+      <div>{data.description}</div>
       <button
-        onClick={handleClaim}
+        onClick={claim}
         className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer ${
           claiming ? 'opacity-50 cursor-not-allowed' : ''
         }`}
@@ -91,7 +111,7 @@ const AirdropItem = (props: Props) => {
         {claiming ? 'Claiming...' : 'Claim'}
       </button>
       <div className="flex justify-between">
-        <div>{data.coinType}</div>
+        <div>{chainText}</div>
         <div className="flex justify-between items-center gap-2">
           <Image
             src="/bnb-bnb-logo.svg"
@@ -99,21 +119,20 @@ const AirdropItem = (props: Props) => {
             height="24"
             alt="bnb-bnb-logo"
           />
-          <div>BEP20</div>
+          <div>{getCoinTypeName(data.coinType)}</div>
         </div>
       </div>
       <div className="flex justify-between">
-        <div>totalShares</div>
+        <div>{totalCopies}</div>
         <div>{data.totalShares}</div>
       </div>
       <div className="flex justify-between">
-        <div>description</div>
-        <div>{data.description}</div>
+        <div>{rewardQuantityPerCopy}</div>
+        <div>
+          {divide(data.totalBalance.toString(), data.totalShares.toString())}
+        </div>
       </div>
-      <div className="flex justify-between">
-        <div>totalBalance</div>
-        <div>{data.totalBalance}</div>
-      </div>
+      {contextHolder}
     </div>
   );
 };

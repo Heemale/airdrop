@@ -13,6 +13,7 @@ import ConnectWallet from '@/components/ConnectWallet';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { PresaleContext } from '@/context/PresaleContext';
+import { message } from 'antd';
 
 interface Props {
   buyText: string;
@@ -25,6 +26,8 @@ const coinType: string = '0x2::sui::SUI';
 const Purchase = (props: Props) => {
   const { buyText, connectText, bindText } = props;
 
+  const [messageApi, contextHolder] = message.useMessage();
+
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
   const { inviter, setOpen, setInviter } = useContext(InviteDialogContext);
@@ -33,15 +36,6 @@ const Purchase = (props: Props) => {
   const buyNode = async () => {
     try {
       if (node && account && account.address) {
-        console.log({
-          coinType: coinType,
-          NODES: NODES,
-          INVITE: INVITE,
-          rank: node.rank,
-          wallet: null,
-          price: node.price,
-          address: account.address,
-        });
         const tx = await nodeClient.buy(
           coinType,
           NODES,
@@ -57,17 +51,19 @@ const Purchase = (props: Props) => {
           },
           {
             onSuccess: (result) => {
-              console.log({ result });
               console.log({ digest: result.digest });
+              messageApi.info(`Success: ${result.digest}`);
             },
-            onError: (error) => {
-              console.log({ error });
+            onError: ({ message }) => {
+              console.log(`BuyNode: ${message}`);
+              messageApi.error(`Error: ${message}`);
             },
           },
         );
       }
     } catch ({ message }) {
-      console.log({ message });
+      console.log(`BuyNode: ${message}`);
+      messageApi.error(`Error: ${message}`);
     }
   };
 
@@ -82,10 +78,6 @@ const Purchase = (props: Props) => {
         inviteClient.inviters(INVITE, account.address),
         inviteClient.root(INVITE),
       ]);
-      console.log({
-        inviter,
-        root,
-      });
       setInviter(inviter);
     }
   };
@@ -113,6 +105,7 @@ const Purchase = (props: Props) => {
       ) : (
         <ConnectWallet text={connectText} />
       )}
+      {contextHolder}
     </div>
   );
 };
