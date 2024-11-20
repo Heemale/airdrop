@@ -6,4 +6,5 @@ export const ERROR_CODE: Record<string, string> = {
   '3': 'ENotBuyNode',
   '4': 'ENodeSoldOut',
   '5': 'EExceedsPurchaseLimit',
+  '6': 'EInvalidCoinType',
 };

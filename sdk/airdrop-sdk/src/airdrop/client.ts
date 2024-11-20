@@ -204,10 +204,10 @@ export class AirdropClient {
     return tx;
   }
 
-  newNode(adminCap: string, receiver: string): Transaction {
+  newNode(T: string, adminCap: string, receiver: string): Transaction {
     const tx = new Transaction();
     tx.moveCall({
-      typeArguments: [],
+      typeArguments: [T],
       target: `${PACKAGE_ID}::${MODULE_CLOB}::new_node`,
       arguments: [tx.object(adminCap), tx.pure.address(receiver)],
     });
