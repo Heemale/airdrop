@@ -1,10 +1,10 @@
 import { signAndExecuteTransaction } from '@/sdk/utils';
 import { adminKeypair, airdropClient } from '@/sdk';
-import { ADMIN_CAP } from '@local/airdrop-sdk/utils';
+import { ADMIN_CAP, NODES } from '@local/airdrop-sdk/utils';
 
 const insertNode = async () => {
-  const nodes = 'NODE_OBJECT_ID'; // 替换为实际的 Nodes 对象 ID
-  const rank = 1; // 节点等级
+  const nodes = NODES; // 替换为实际的 Nodes 对象 ID
+  const rank = 2; // 节点等级
   const name = 'Example Node'; // 节点名称
   const description = 'This is an example node'; // 节点描述
   const limit = BigInt(10); // 每轮空投购买次数限制
