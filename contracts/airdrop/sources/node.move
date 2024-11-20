@@ -251,7 +251,7 @@ module airdrop::node {
     public fun node_list(nodes: &Nodes) {
         let length = vec_map::size(&nodes.nodes) as u8;
         let mut i: u8 = 1;
-        while (i < length + 2) {
+        while (i < length + 1) {
             let node = vec_map::get(&nodes.nodes, &i);
             event::emit(NodeInfo {
                 rank: node.rank,
