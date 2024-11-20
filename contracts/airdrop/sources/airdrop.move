@@ -311,8 +311,8 @@ module airdrop::airdrop {
 
     public fun airdrops(airdrops: &Airdrops) {
         let length = vec_map::size(&airdrops.airdrops);
-        let mut i = 0;
-        while (i < length + 1) {
+        let mut i = 1;
+        while (i < length + 2) {
             let airdrop = vec_map::get(&airdrops.airdrops, &i);
             event::emit(AirdropInfo {
                 round: airdrop.round,
