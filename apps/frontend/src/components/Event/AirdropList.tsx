@@ -60,9 +60,9 @@ const AirdropList = (props: Props) => {
       const airdropData = await airdropClient.airdrops(AIRDROPS);
       console.log({ airdropData });
       setAirdropList(airdropData);
-    } catch ({ message }) {
-      console.log(`getAirdropList error: ${message}`);
-      messageApi.error(`Error: ${message}`);
+    } catch (e: any) {
+      console.log(`getAirdropList error: ${e.messag}`);
+      messageApi.error(`Error: ${e.message}`);
     }
   };
 

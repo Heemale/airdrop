@@ -40,9 +40,9 @@ const PurchaseOrderData = (props: Props) => {
           coinType: '0x2::sui::SUI',
         });
         setBalance(res.totalBalance);
-      } catch ({ message }) {
-        console.log(`getBalance: ${message}`);
-        messageApi.error(`Error: ${message}`);
+      } catch (e: any) {
+        console.log(`getBalance: ${e.message}`);
+        messageApi.error(`Error: ${e.message}`);
       }
     }
   };

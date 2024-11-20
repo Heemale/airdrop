@@ -28,11 +28,11 @@ const NavBar = (props: Props) => {
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
       // 避免按 Tab 或 Shift 键时关闭抽屉
-      if (
-        event.type === 'keydown' &&
-        (event.key === 'Tab' || event.key === 'Shift')
-      ) {
-        return;
+      if (event instanceof KeyboardEvent) {
+        // 仅在是 KeyboardEvent 时检查 `key`
+        if (event.key === 'Tab' || event.key === 'Shift') {
+          return;
+        }
       }
       setDrawerOpen(open);
     };
@@ -78,12 +78,7 @@ const NavBar = (props: Props) => {
           >
             <List>
               {pages.map((page) => (
-                <ListItem
-                  button
-                  key={page.id}
-                  component={Link}
-                  href={page.link}
-                >
+                <ListItem key={page.id} component={Link} href={page.link}>
                   <ListItemText className="text-gradient" primary={page.name} />
                 </ListItem>
               ))}

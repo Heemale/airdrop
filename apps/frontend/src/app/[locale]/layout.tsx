@@ -25,7 +25,7 @@ const RootLayout = async ({
   params: Promise<{ locale: string }>;
 }>) => {
   const { locale } = await params;
-  const { resources } = await initTranslations(
+  const { t, resources } = await initTranslations(
     locale,
     i18nConfig.i18nNamespaces,
   );
@@ -40,7 +40,12 @@ const RootLayout = async ({
         >
           <Context>
             {children}
-            <InviteDialog />
+            <InviteDialog
+              bindInviter={t('Bind Inviter')}
+              inviterText={t('Inviter')}
+              noInviter={t('No Inviter')}
+              bindText={t('BIND')}
+            />
           </Context>
         </TranslationsProvider>
       </body>

@@ -62,9 +62,9 @@ const AirdropItem = (props: Props) => {
           },
         },
       );
-    } catch ({ message }) {
-      console.log(`Claim: ${message}`);
-      messageApi.error(`Error: ${message}`);
+    } catch (e: any) {
+      console.log(`Claim: ${e.message}`);
+      messageApi.error(`Error: ${e.message}`);
       setClaiming(false);
     }
   };

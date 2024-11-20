@@ -21,7 +21,7 @@ const AirdropsHeader = async (props: Props) => {
         <div className="w-1/2 h-1 bg-gradient-to-r from-[#ffbdad] to-[#e7534f] mx-auto mt-2 rounded-3xl"></div>
       </div>
       <Link href={'/airdrop-list'}>
-        <Button text={t('All Airdrops')} locale={locale} />
+        <Button text={t('All Airdrops')} />
       </Link>
     </div>
   );

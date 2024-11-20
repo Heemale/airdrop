@@ -39,6 +39,8 @@
   "After the issuance of Coral Token, points can be exchanged for tokens to participate in the CoralApp ecosystem’s shared governance and token incentive programs.":"After the issuance of Coral Token, points can be exchanged for tokens to participate in the CoralApp ecosystem’s shared governance and token incentive programs.",
   "Partner Airdrops":"Partner Airdrops",
   "Join CoralApp and receive exclusive airdrop rewards from ecosystem partners.":"Join CoralApp and receive exclusive airdrop rewards from ecosystem partners.",
+  "AI Intelligent Mining": "AI Intelligent Mining",
+  "As a smart device, CoralPhone provides mining rewards and adds value to the device.": "As a smart device, CoralPhone provides mining rewards and adds value to the device.",
   "Quality Project Airdrops":"Quality Project Airdrops",
   "Participate in CoralApp and have a chance to get airdrops from listing on top-tier exchanges and high-quality assets soon to be listed.":"Participate in CoralApp and have a chance to get airdrops from listing on top-tier exchanges and high-quality assets soon to be listed.",
   "All Airdrops":"All Airdrops",
@@ -55,5 +57,13 @@
   "CONNECT WALLET": "CONNECT WALLET",
   "ongoing": "ongoing",
   "Events": "Events",
-  "Airdrops": "Airdrops"
+  "Airdrops": "Airdrops",
+  "BIND INVITER": "BIND INVITER",
+  "Bind Inviter": "Bind Inviter",
+  "Inviter": "Inviter",
+  "No Inviter": "No Inviter",
+  "BIND": "BIND",
+  "Purchase Order": "Purchase Order",
+  "Quantity": "Quantity",
+  "Estimated Cost": "Estimated Cost"
 }

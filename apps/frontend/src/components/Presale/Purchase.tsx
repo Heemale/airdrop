@@ -61,9 +61,9 @@ const Purchase = (props: Props) => {
           },
         );
       }
-    } catch ({ message }) {
-      console.log(`BuyNode: ${message}`);
-      messageApi.error(`Error: ${message}`);
+    } catch (e: any) {
+      console.log(`BuyNode: ${e.message}`);
+      messageApi.error(`Error: ${e.message}`);
     }
   };
 

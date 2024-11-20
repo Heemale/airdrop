@@ -39,6 +39,8 @@
   "After the issuance of Coral Token, points can be exchanged for tokens to participate in the CoralApp ecosystem’s shared governance and token incentive programs.":"在珊瑚通证发行后，积分可以兑换通证，参与珊瑚应用生态系统的共享治理和通证激励计划。",
   "Partner Airdrops": "合作伙伴空投",
   "Join CoralApp and receive exclusive airdrop rewards from ecosystem partners.":"加入珊瑚应用，从生态系统合作伙伴那里获得独家空投奖励。",
+  "AI Intelligent Mining": "AI 智能采矿",
+  "As a smart device, CoralPhone provides mining rewards and adds value to the device.": "作为一款智能设备，CoralPhone 提供采矿奖励，并为设备增值。",
   "Quality Project Airdrops": "优质项目空投",
   "Participate in CoralApp and have a chance to get airdrops from listing on top-tier exchanges and high-quality assets soon to be listed.":"参与珊瑚应用，有机会获得顶级交易所上市和即将上市的优质资产空投。",
   "All Airdrops": "所有空投",
@@ -55,5 +57,13 @@
   "CONNECT WALLET": "连接钱包",
   "ongoing": "进行中",
   "Events": "事件",
-  "Airdrops": "空投"
+  "Airdrops": "空投",
+  "BIND INVITER": "绑定邀请人",
+  "Bind Inviter": "绑定邀请人",
+  "Inviter": "邀请人",
+  "No Inviter": "没有邀请人",
+  "BIND": "绑定",
+  "Purchase Order": "购买订单",
+  "Quantity": "数量",
+  "Estimated Cost": "估计成本"
 }

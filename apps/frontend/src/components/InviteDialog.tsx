@@ -13,7 +13,16 @@ import { INVITE } from '@local/airdrop-sdk/utils';
 import PinkSwitch from '@/components/PinkSwitch';
 import { message } from 'antd';
 
-const InviteDialog = () => {
+interface Props {
+  bindInviter: string;
+  inviterText: string;
+  noInviter: string;
+  bindText: string;
+}
+
+const InviteDialog = (props: Props) => {
+  const { bindInviter, bindText, inviterText, noInviter } = props;
+
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const { open, hasInviter, setOpen, setHasInviter } =
     useContext(InviteDialogContext);
@@ -49,9 +58,9 @@ const InviteDialog = () => {
           },
         },
       );
-    } catch ({ message }) {
-      console.log(`Bind: ${message}`);
-      messageApi.error(`Error: ${message}`);
+    } catch (e: any) {
+      console.log(`Bind: ${e.message}`);
+      messageApi.error(`Error: ${e.message}`);
     }
   };
 
@@ -76,7 +85,7 @@ const InviteDialog = () => {
       }}
     >
       <div className="flex flex-col gap-4 mx-4">
-        <div className="text-white font-bold">Bind Inviter</div>
+        <div className="text-white font-bold">{bindInviter}</div>
         <OutlinedInput
           id="outlined-adornment-weight"
           aria-describedby="outlined-weight-helper-text"
@@ -87,7 +96,7 @@ const InviteDialog = () => {
           //         </div>
           //     </InputAdornment>
           // }
-          placeholder={`inviter`}
+          placeholder={inviterText}
           sx={{
             background: '#2b2b2b',
             color: '#ffffff',
@@ -96,7 +105,7 @@ const InviteDialog = () => {
           value={inputValue} // 使用输入框的值作为value属性的值
           onChange={handleInputChange} // 处理输入框值的变化
         />
-        <div className="text-white font-bold">No Invite</div>
+        <div className="text-white font-bold">{noInviter}</div>
         <PinkSwitch
           checked={!hasInviter}
           onChange={() => setHasInviter(!hasInviter)}
@@ -107,7 +116,7 @@ const InviteDialog = () => {
             className="w-full relative inline-block bg-[url('/button_bg.png')] bg-cover text-white font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
             onClick={handleBind}
           >
-            BIND
+            {bindText}
           </button>
         </div>
       </div>

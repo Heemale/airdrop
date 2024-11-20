@@ -10,6 +10,7 @@ import { inviteClient } from '@/sdk';
 import { INVITE } from '@local/airdrop-sdk/utils';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
+import { message } from 'antd';
 
 interface Props {
   nextText: string;
@@ -22,6 +23,7 @@ const Next = (props: Props) => {
 
   const account = useCurrentAccount();
   const { inviter, setInviter, setOpen } = useContext(InviteDialogContext);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const bind = () => {
     setOpen(true);
@@ -37,7 +39,10 @@ const Next = (props: Props) => {
           inviteClient.root(INVITE),
         ]);
         setInviter(inviter);
-      } catch ({ message }) {}
+      } catch (e: any) {
+        console.log(`Claim: ${e.message}`);
+        messageApi.error(`Error: ${e.message}`);
+      }
     }
   };
 
@@ -62,6 +67,7 @@ const Next = (props: Props) => {
       ) : (
         <ConnectWallet text={connectText} />
       )}
+      {contextHolder}
     </div>
   );
 };
