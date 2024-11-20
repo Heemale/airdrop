@@ -4,26 +4,13 @@ import React, { useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import { useContext } from 'react';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
-import { OutlinedInput, Switch } from '@mui/material';
+import { OutlinedInput } from '@mui/material';
 import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { inviteClient } from '@/sdk';
 import { INVITE } from '@local/airdrop-sdk/utils';
-import { alpha, styled } from '@mui/material/styles';
-import { pink } from '@mui/material/colors';
-
-const PinkSwitch = styled(Switch)(({ theme }) => ({
-  '& .MuiSwitch-switchBase.Mui-checked': {
-    color: pink[600],
-    '&:hover': {
-      backgroundColor: alpha(pink[600], theme.palette.action.hoverOpacity),
-    },
-  },
-  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-    backgroundColor: pink[600],
-  },
-}));
+import PinkSwitch from '@/components/PinkSwitch';
 
 const InviteDialog = () => {
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();

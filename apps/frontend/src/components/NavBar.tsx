@@ -74,7 +74,6 @@ const NavBar = (props: Props) => {
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
           <div
             className="w-64 p-4 text-white bg-black h-full"
-            onClick={toggleDrawer(false)}
             onKeyDown={toggleDrawer(false)}
           >
             <List>
