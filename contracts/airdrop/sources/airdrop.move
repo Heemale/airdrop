@@ -10,7 +10,6 @@ module airdrop::airdrop {
     use sui::clock::{Self, Clock};
     use airdrop::invite::{Self, Invite};
     use airdrop::node::{Self, Nodes};
-    use std::debug;
 
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 1;
@@ -28,8 +27,12 @@ module airdrop::airdrop {
     // 空投列表对象
     public struct Airdrops has key, store {
         id: UID,
+        // 空投信息
         airdrops: VecMap<u64, Airdrop>,
+        // 资金池
         treasury_balances: Bag,
+        // 回合编号
+        round_index: u64,
     }
 
     // 空投对象
@@ -102,6 +105,7 @@ module airdrop::airdrop {
             id: object::new(ctx),
             airdrops: vec_map::empty(),
             treasury_balances: bag::new(ctx),
+            round_index: 0,
         };
         transfer::public_share_object(airdrops);
     }
@@ -112,7 +116,6 @@ module airdrop::airdrop {
      * @param T: 代币类型
      * @param _admin_cap: AdminCap对象
      * @param airdrops: airdrops对象
-     * @param round: 轮次
      * @param start_time: 开始时间
      * @param end_time: 结束时间
      * @param total_shares: 总份数
@@ -126,7 +129,6 @@ module airdrop::airdrop {
     entry fun insert<T>(
         _admin_cap: &AdminCap,
         airdrops: &mut Airdrops,
-        round: u64,
         start_time: u64,
         end_time: u64,
         total_shares: u64,
@@ -136,7 +138,9 @@ module airdrop::airdrop {
         ctx: &mut TxContext,
     ) {
         assert!(coin::value(&wallet) >= total_balance, ECoinBalanceNotEnough);
-        assert_round_exited(airdrops, round);
+
+        airdrops.round_index = airdrops.round_index +1;
+        let round = airdrops.round_index;
 
         // 处理多余的入金
         let sender = tx_context::sender(ctx);
@@ -150,7 +154,6 @@ module airdrop::airdrop {
 
         // 增加空投对象
         let aidrop = Airdrop {
-            // id: object::new(ctx),
             round,
             start_time,
             end_time,
@@ -239,10 +242,8 @@ module airdrop::airdrop {
         assert_no_remaining_shares(airdrop);
 
         node::update_purchased_quantity(nodes, sender, round);
-        debug::print(&airdrop.claimed_shares);
         let per_share_amount = airdrop.total_balance / airdrop.total_shares;
         airdrop.claimed_shares = airdrop.claimed_shares + 1;
-        debug::print(&airdrop.claimed_shares);
         let treasury_balance = bag::borrow_mut<u64, Balance<T>>(&mut airdrops.treasury_balances, round);
         let treasury_balance_part = balance::split<T>(treasury_balance, per_share_amount);
         let treasury_coina_part: Coin<T> = coin::from_balance<T>(treasury_balance_part, ctx);
@@ -278,14 +279,13 @@ module airdrop::airdrop {
     public fun insert_node(
         _admin_cap: &AdminCap,
         nodes: &mut Nodes,
-        rank: u8,
         name: vector<u8>,
         description: vector<u8>,
         limit: u64,
         price: u64,
         total_quantity: u64,
     ) {
-        node::insert(nodes, rank, name, description, limit, price, total_quantity);
+        node::insert(nodes, name, description, limit, price, total_quantity);
     }
 
     public fun remove_node(
@@ -306,7 +306,7 @@ module airdrop::airdrop {
         price: u64,
         total_quantity: u64,
     ) {
-        node::insert(nodes, rank, name, description, limit, price, total_quantity);
+        node::modify(nodes, rank, name, description, limit, price, total_quantity);
     }
 
     public fun airdrops(airdrops: &Airdrops) {

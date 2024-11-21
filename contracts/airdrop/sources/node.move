@@ -39,6 +39,8 @@ module airdrop::node {
         receiver: address,
         // 代币类型
         coin_type: TypeName,
+        // 节点编号
+        node_index: u8,
     }
 
     // 节点对象
@@ -99,6 +101,7 @@ module airdrop::node {
             users: vec_map::empty(),
             receiver,
             coin_type: type_name::get<T>(),
+            node_index: 0,
         };
         transfer::public_share_object(node);
     }
@@ -116,13 +119,14 @@ module airdrop::node {
      */
     public(package) fun insert(
         nodes: &mut Nodes,
-        rank: u8,
         name: vector<u8>,
         description: vector<u8>,
         limit: u64,
         price: u64,
         total_quantity: u64,
     ) {
+        nodes.node_index = nodes.node_index + 1;
+        let rank = nodes.node_index;
         let node = Node {
             rank,
             name,
@@ -255,7 +259,7 @@ module airdrop::node {
     }
 
     public fun is_already_buy_node(nodes: &Nodes, sender: address): bool {
-        vec_map::contains(nodes.users, &sender)
+        vec_map::contains(&nodes.users, &sender)
     }
 
     public fun node_list(nodes: &Nodes) {

@@ -78,7 +78,7 @@ module airdrop::invite {
     entry fun bind(invite: &mut Invite, inviter: address, ctx: &TxContext) {
         let sender = tx_context::sender(ctx);
         assert_invalid_sender(invite, sender);
-        assert_invalid_inviter(sender, inviter);
+        assert_invalid_inviter(invite, inviter);
         assert_already_bind_inviter(invite, sender);
         vec_map::insert(&mut invite.inviters, sender, inviter);
     }
@@ -113,8 +113,9 @@ module airdrop::invite {
         assert!(!(&sender == &invite.root), EInvalidSender);
     }
 
-    public fun assert_invalid_inviter(sender: address, inviter: address) {
-        assert!(!(&sender == &inviter), EInvalidInviter);
+    public fun assert_invalid_inviter(invite: &Invite, inviter: address) {
+        // 邀请人必须是根用户或者已绑定的用户
+        assert!(&inviter == &invite.root || vec_map::contains(&invite.inviters, &inviter), EInvalidInviter);
     }
 
     public fun assert_already_bind_inviter(invite: &Invite, sender: address) {
