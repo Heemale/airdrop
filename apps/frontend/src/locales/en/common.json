@@ -65,5 +65,6 @@
   "BIND": "BIND",
   "Purchase Order": "Purchase Order",
   "Quantity": "Quantity",
-  "Estimated Cost": "Estimated Cost"
+  "Estimated Cost": "Estimated Cost",
+  "Invalid Sui address": "Invalid Sui address"
 }

@@ -8,6 +8,7 @@ import { nodeClient } from '@/sdk';
 import { NODES } from '@local/airdrop-sdk/utils';
 import { convertSmallToLarge } from '@/utils/math';
 import { PresaleContext } from '@/context/PresaleContext';
+import { message } from 'antd';
 
 interface Props {
   nodeInfo: string;
@@ -50,6 +51,7 @@ const NodeData = (props: Props) => {
   } = props;
 
   const { node, setNode } = useContext(PresaleContext);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [nodeList, setNodeList] = useState<Array<NodeInfo>>([]);
   const defaultProps = {
@@ -131,6 +133,7 @@ const NodeData = (props: Props) => {
           <div className="flex flex-col justify-end text-xs">USDT</div>
         </div>
       </div>
+      {contextHolder}
     </>
   );
 };

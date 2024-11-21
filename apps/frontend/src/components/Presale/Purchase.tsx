@@ -14,6 +14,9 @@ import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { PresaleContext } from '@/context/PresaleContext';
 import { message } from 'antd';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import { sleep } from '@/utils/time';
 
 interface Props {
   buyText: string;
@@ -26,15 +29,17 @@ const coinType: string = '0x2::sui::SUI';
 const Purchase = (props: Props) => {
   const { buyText, connectText, bindText } = props;
 
-  const [messageApi, contextHolder] = message.useMessage();
-
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
   const { inviter, setOpen, setInviter } = useContext(InviteDialogContext);
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
+  const [loading, setLoading] = React.useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+
   const buyNode = async () => {
     try {
+      setLoading(true);
       if (node && account && account.address) {
         const tx = await nodeClient.buy(
           coinType,
@@ -50,13 +55,15 @@ const Purchase = (props: Props) => {
             transaction: tx,
           },
           {
-            onSuccess: (result) => {
+            onSuccess: async (result) => {
               console.log({ digest: result.digest });
               messageApi.info(`Success: ${result.digest}`);
+              setLoading(false);
             },
             onError: ({ message }) => {
               console.log(`BuyNode: ${message}`);
               messageApi.error(`Error: ${message}`);
+              setLoading(false);
             },
           },
         );
@@ -64,6 +71,7 @@ const Purchase = (props: Props) => {
     } catch (e: any) {
       console.log(`BuyNode: ${e.message}`);
       messageApi.error(`Error: ${e.message}`);
+      setLoading(false);
     }
   };
 
@@ -73,11 +81,7 @@ const Purchase = (props: Props) => {
 
   const updateInvite = async () => {
     if (account && account.address) {
-      // 查询邀请人和root
-      const [inviter, root] = await Promise.all([
-        inviteClient.inviters(INVITE, account.address),
-        inviteClient.root(INVITE),
-      ]);
+      const inviter = await inviteClient.inviters(INVITE, account.address);
       setInviter(inviter);
     }
   };
@@ -105,6 +109,12 @@ const Purchase = (props: Props) => {
       ) : (
         <ConnectWallet text={connectText} />
       )}
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {contextHolder}
     </div>
   );
