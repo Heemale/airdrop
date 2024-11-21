@@ -46,7 +46,6 @@ const Home = async (props: Props) => {
               {t(' Purchase CoralPhone to receive airdrop rewards!')}
             </div>
             <AirdropList
-              isOngoing
               ongoingText={t('ongoing')}
               chainText={t('Chain')}
               totalCopies={t('Total Copies')}

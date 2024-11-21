@@ -68,5 +68,8 @@
   "Estimated Cost": "估计成本",
   "Invalid Sui address": "非法Sui地址",
   "PURCHASED NODE": "已购买节点",
-  "UNPURCHASED NODE": "未购买节点"
+  "UNPURCHASED NODE": "未购买节点",
+  "Invite friends": "邀请朋友",
+  "Copy Success": "复制成功",
+  "No wallet is connected.": "未连接钱包"
 }

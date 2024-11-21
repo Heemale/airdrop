@@ -68,5 +68,8 @@
   "Estimated Cost": "Estimated Cost",
   "Invalid Sui address": "Invalid Sui address",
   "PURCHASED NODE": "PURCHASED NODE",
-  "UNPURCHASED NODE": "UNPURCHASED NODE"
+  "UNPURCHASED NODE": "UNPURCHASED NODE",
+  "Invite friends": "Invite friends",
+  "Copy Success": "Copy Success",
+  "No wallet is connected.": "No wallet is connected."
 }

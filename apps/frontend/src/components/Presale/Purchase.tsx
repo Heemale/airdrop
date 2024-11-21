@@ -40,8 +40,8 @@ const Purchase = (props: Props) => {
 
   const buyNode = async () => {
     try {
-      setLoading(true);
       if (node && account && account.address) {
+        setLoading(true);
         const tx = await nodeClient.buy(
           coinType,
           NODES,
@@ -60,6 +60,7 @@ const Purchase = (props: Props) => {
               console.log({ digest: result.digest });
               messageApi.info(`Success: ${result.digest}`);
               setLoading(false);
+              await getIsAlreadyBuyNode();
             },
             onError: ({ message }) => {
               console.log(`BuyNode: ${message}`);
@@ -108,6 +109,7 @@ const Purchase = (props: Props) => {
 
   useEffect(() => {
     updateInvite();
+    getIsAlreadyBuyNode();
   }, [account]);
 
   return (

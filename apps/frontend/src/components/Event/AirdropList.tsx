@@ -93,8 +93,11 @@ const AirdropList = (props: Props) => {
   };
 
   useEffect(() => {
-    getAirdropList();
     getIsAlreadyBuyNode();
+  }, [account]);
+
+  useEffect(() => {
+    getAirdropList();
   }, []);
 
   return (

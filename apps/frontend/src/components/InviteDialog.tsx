@@ -30,7 +30,6 @@ const InviteDialog = (props: Props) => {
 
   const [inputValue, setInputValue] = useState<string>('');
   const [loading, setLoading] = useState(false);
-  const [isBound, setIsBound] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
@@ -44,21 +43,10 @@ const InviteDialog = (props: Props) => {
     } else if (storedInviter) {
       setInputValue(storedInviter);
     }
-
-    // 检查是否已经绑定邀请人
-    if (storedInviter) {
-      setIsBound(true);
-    }
   }, [searchParams]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
-
-    if (isBound) {
-      messageApi.info('邀请人已绑定，无法修改。');
-      return;
-    }
-
     setInputValue(newValue);
     localStorage.setItem('inviter', newValue); // 动态更新 localStorage
   };
@@ -68,11 +56,6 @@ const InviteDialog = (props: Props) => {
   };
 
   const handleBind = async () => {
-    if (!inputValue) {
-      messageApi.warning('请输入有效的邀请人地址！');
-      return;
-    }
-
     try {
       setLoading(true);
       const tx = inviteClient.bind(INVITE, inputValue);
@@ -83,23 +66,22 @@ const InviteDialog = (props: Props) => {
         {
           onSuccess: async (result) => {
             console.log({ digest: result.digest });
-            messageApi.success(`绑定成功: ${result.digest}`);
+            messageApi.success(`Success: ${result.digest}`);
             setLoading(false);
-            setIsBound(true);
             await sleep(1);
             setOpen(false);
             router.push('/presale-comfirm');
           },
           onError: ({ message }) => {
             console.log(`Bind: ${message}`);
-            messageApi.error(`绑定失败: ${message}`);
+            messageApi.error(`Error: ${message}`);
             setLoading(false);
           },
         },
       );
-    } catch (e: any) {
+    } catch (e: Error) {
       console.log(`Bind: ${e.message}`);
-      messageApi.error(`绑定失败: ${e.message}`);
+      messageApi.error(`Error: ${e.message}`);
       setLoading(false);
     }
   };
@@ -137,15 +119,14 @@ const InviteDialog = (props: Props) => {
           color="secondary"
           value={inputValue}
           onChange={handleInputChange}
-          disabled={isBound} // 禁用输入框
+          // disabled={isBound} // 禁用输入框
         />
         <div className="w-full">
           <button
             className="w-full relative inline-block bg-[url('/button_bg.png')] bg-cover text-white font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
             onClick={handleBind}
-            disabled={isBound} // 禁用按钮
           >
-            {isBound ? '已绑定' : bindText}
+            {bindText}
           </button>
         </div>
       </div>
