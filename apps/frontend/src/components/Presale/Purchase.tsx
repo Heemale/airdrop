@@ -8,7 +8,7 @@ import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ConnectWallet from '@/components/ConnectWallet';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
@@ -16,18 +16,18 @@ import { PresaleContext } from '@/context/PresaleContext';
 import { message } from 'antd';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { sleep } from '@/utils/time';
 
 interface Props {
   buyText: string;
   connectText: string;
   bindText: string;
+  purchasedNodeText: string;
 }
 
 const coinType: string = '0x2::sui::SUI';
 
 const Purchase = (props: Props) => {
-  const { buyText, connectText, bindText } = props;
+  const { buyText, connectText, bindText, purchasedNodeText } = props;
 
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
@@ -36,6 +36,7 @@ const Purchase = (props: Props) => {
 
   const [loading, setLoading] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
 
   const buyNode = async () => {
     try {
@@ -79,10 +80,29 @@ const Purchase = (props: Props) => {
     setOpen(true);
   };
 
+  const getIsAlreadyBuyNode = async () => {
+    if (account && account.address) {
+      try {
+        const user = account.address;
+        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
+        setIsAlreadyBuyNode(isAlreadyBuyNode);
+      } catch (e: any) {
+        console.log(`getIsAlreadyBuyNode: ${e.message}`);
+        messageApi.error(`Error: ${e.message}`);
+      }
+    }
+  };
+
   const updateInvite = async () => {
     if (account && account.address) {
-      const inviter = await inviteClient.inviters(INVITE, account.address);
-      setInviter(inviter);
+      try {
+        const user = account.address;
+        const inviter = await inviteClient.inviters(INVITE, user);
+        setInviter(inviter);
+      } catch (e: any) {
+        console.log(`updateInvite: ${e.message}`);
+        messageApi.error(`Error: ${e.message}`);
+      }
     }
   };
 
@@ -99,11 +119,19 @@ const Purchase = (props: Props) => {
             text={bindText}
             onClick={bind}
           />
+        ) : isAlreadyBuyNode ? (
+          <button
+            className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
+            disabled
+          >
+            {purchasedNodeText}
+          </button>
         ) : (
           <Button
             className="text-white w-full"
             text={buyText}
             onClick={buyNode}
+            disabled
           />
         )
       ) : (

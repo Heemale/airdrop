@@ -1,4 +1,4 @@
-import { getType, extractSubStatus } from '.';
+import { getType, extractErrorCodeAndModule } from '.';
 
 describe('Test Utils', () => {
   it('getType', async () => {
@@ -10,7 +10,7 @@ describe('Test Utils', () => {
     expect(data).toStrictEqual(expectData);
   });
 
-  it('extractSubStatus', async () => {
+  it('extractErrorCodeAndModule', async () => {
     const error =
       'ExecutionError: ExecutionError { inner: ExecutionErrorInner { kind: MoveAbort(MoveLocation { module: ModuleId { addres\n' +
       's: 0xcc127d30e10942d166773c7f8ffe06483efd31578685834ec75e090ae0dde140, name: Identifier("airdrop") }, function: 4, instruction: 12, \n' +
@@ -18,8 +18,10 @@ describe('Test Utils', () => {
       '5be8b4609fe5271d7f33c4df132413f9ed0cc598e5099304b13884c::airdrop::invite at offset 12"), exec_state: None, location: Module(Module\n' +
       'Id { address: 0xcc127d30e10942d166773c7f8ffe06483efd31578685834ec75e090ae0dde140, name: Identifier("airdrop") }), indices: [], offse\n' +
       'ts: [(FunctionDefinitionIndex(4), 12)] }), command: Some(0) } }';
-    const data = extractSubStatus(error);
-    const expectData = 10086n;
-    expect(data).toStrictEqual(expectData);
+    const data = extractErrorCodeAndModule(error);
+    const expectErrorCode = 10086;
+    const expectModule = 'airdrop';
+    expect(data.errorCode).toStrictEqual(expectErrorCode);
+    expect(data.module).toStrictEqual(expectModule);
   });
 });

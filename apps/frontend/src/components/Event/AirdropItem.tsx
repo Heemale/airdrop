@@ -1,4 +1,5 @@
 'use client';
+
 import Image from 'next/image';
 import * as React from 'react';
 import { useState } from 'react';
@@ -11,6 +12,8 @@ import { message } from 'antd';
 import { getCoinTypeName } from '@/utils';
 import { formatTimestamp } from '@/utils/time';
 import { divide } from '@/utils/math';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export interface Props {
   data: AirdropInfo;
@@ -19,6 +22,9 @@ export interface Props {
   chainText: string;
   totalCopies: string;
   rewardQuantityPerCopy: string;
+  unpurchasedNode: string;
+  isAlreadyBuyNode: boolean;
+  claimText: string;
 }
 
 const AirdropItem = (props: Props) => {
@@ -29,16 +35,18 @@ const AirdropItem = (props: Props) => {
     chainText,
     totalCopies,
     rewardQuantityPerCopy,
+    unpurchasedNode,
+    isAlreadyBuyNode,
+    claimText,
   } = props;
 
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
-  const [loading, setLoading] = useState<boolean>(true);
-  const [claiming, setClaiming] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
 
   const claim = () => {
-    setClaiming(true);
+    setLoading(true);
     try {
       const res = airdropClient.claim(
         data.coinType,
@@ -53,19 +61,19 @@ const AirdropItem = (props: Props) => {
           onSuccess: (result) => {
             console.log({ digest: result.digest });
             messageApi.info(`Success: ${result.digest}`);
-            setClaiming(false);
+            setLoading(false);
           },
           onError: ({ message }) => {
             console.log(`Claim: ${message}`);
             messageApi.error(`Error: ${message}`);
-            setClaiming(false);
+            setLoading(false);
           },
         },
       );
     } catch (e: any) {
       console.log(`Claim: ${e.message}`);
       messageApi.error(`Error: ${e.message}`);
-      setClaiming(false);
+      setLoading(false);
     }
   };
 
@@ -101,15 +109,22 @@ const AirdropItem = (props: Props) => {
         </div>
       </div>
       <div>{data.description}</div>
-      <button
-        onClick={claim}
-        className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer ${
-          claiming ? 'opacity-50 cursor-not-allowed' : ''
-        }`}
-        disabled={claiming}
-      >
-        {claiming ? 'Claiming...' : 'Claim'}
-      </button>
+      {isAlreadyBuyNode ? (
+        <button
+          onClick={claim}
+          className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+        >
+          {claimText}
+        </button>
+      ) : (
+        <button
+          className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
+          disabled
+        >
+          {unpurchasedNode}
+        </button>
+      )}
+
       <div className="flex justify-between">
         <div>{chainText}</div>
         <div className="flex justify-between items-center gap-2">
@@ -132,6 +147,12 @@ const AirdropItem = (props: Props) => {
           {divide(data.totalBalance.toString(), data.totalShares.toString())}
         </div>
       </div>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       {contextHolder}
     </div>
   );

@@ -5,9 +5,10 @@ import AirdropItem from '@/components/Event/AirdropItem';
 import { useEffect, useState } from 'react';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
 import { getCurrentTimestampMs } from '@/utils/time';
-import { airdropClient } from '@/sdk';
-import { AIRDROPS } from '@local/airdrop-sdk/utils';
+import { airdropClient, nodeClient } from '@/sdk';
+import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { message } from 'antd';
+import { useCurrentAccount } from '@mysten/dapp-kit';
 
 interface Props {
   isOngoing?: boolean;
@@ -15,6 +16,8 @@ interface Props {
   chainText: string;
   totalCopies: string;
   rewardQuantityPerCopy: string;
+  unpurchasedNode: string;
+  claimText: string;
 }
 
 const startTime = BigInt(getCurrentTimestampMs());
@@ -50,10 +53,28 @@ const AirdropList = (props: Props) => {
     chainText,
     totalCopies,
     rewardQuantityPerCopy,
+    unpurchasedNode,
+    claimText,
   } = props;
 
+  const account = useCurrentAccount();
+
   const [airdropList, setAirdropList] = useState<Array<AirdropInfo>>([]);
+  const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
+
+  const getIsAlreadyBuyNode = async () => {
+    if (account && account.address) {
+      try {
+        const user = account.address;
+        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
+        setIsAlreadyBuyNode(isAlreadyBuyNode);
+      } catch (e: any) {
+        console.log(`getIsAlreadyBuyNode: ${e.message}`);
+        messageApi.error(`Error: ${e.message}`);
+      }
+    }
+  };
 
   const getAirdropList = async () => {
     try {
@@ -66,23 +87,57 @@ const AirdropList = (props: Props) => {
     }
   };
 
+  const checkIsGoing = (startTime: bigint, endTime: bigint): boolean => {
+    const timestampMs = getCurrentTimestampMs();
+    return timestampMs >= startTime && timestampMs <= endTime;
+  };
+
   useEffect(() => {
     getAirdropList();
+    getIsAlreadyBuyNode();
   }, []);
 
   return (
     <div className="flex flex-col gap-6">
-      {airdropList.map((item) => (
-        <AirdropItem
-          key={item.round.toString()}
-          data={item}
-          isOngoing={isOngoing}
-          ongoingText={ongoingText}
-          chainText={chainText}
-          totalCopies={totalCopies}
-          rewardQuantityPerCopy={rewardQuantityPerCopy}
-        />
-      ))}
+      {isOngoing
+        ? airdropList
+            .filter(
+              (item) =>
+                item.isOpen && checkIsGoing(item.startTime, item.endTime),
+            )
+            .map((item) => (
+              <AirdropItem
+                key={item.round.toString()}
+                data={item}
+                isOngoing={true}
+                ongoingText={ongoingText}
+                chainText={chainText}
+                totalCopies={totalCopies}
+                rewardQuantityPerCopy={rewardQuantityPerCopy}
+                unpurchasedNode={unpurchasedNode}
+                isAlreadyBuyNode={isAlreadyBuyNode}
+                claimText={claimText}
+              />
+            ))
+        : airdropList
+            .filter((item) => item.isOpen)
+            .map((item) => {
+              const isOngoing = checkIsGoing(item.startTime, item.endTime);
+              return (
+                <AirdropItem
+                  key={item.round.toString()}
+                  data={item}
+                  isOngoing={isOngoing}
+                  ongoingText={ongoingText}
+                  chainText={chainText}
+                  totalCopies={totalCopies}
+                  rewardQuantityPerCopy={rewardQuantityPerCopy}
+                  unpurchasedNode={unpurchasedNode}
+                  isAlreadyBuyNode={isAlreadyBuyNode}
+                  claimText={claimText}
+                />
+              );
+            })}
       {contextHolder}
     </div>
   );

@@ -1,13 +1,13 @@
+import type {
+  OrderArguments,
+  PaginatedEvents,
+  PaginationArguments,
+} from '@mysten/sui/client';
 import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
-import type {
-  PaginationArguments,
-  PaginatedEvents,
-  OrderArguments,
-} from '@mysten/sui/client';
 import { NodeInfo } from './types';
 
 export class NodeClient {
@@ -108,6 +108,23 @@ export class NodeClient {
       // @ts-ignore
       return customMapping(event?.parsedJson);
     });
+  }
+
+  async isAlreadyBuyNode(nodes: string, sender: string): Promise<boolean> {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::is_already_buy_node`,
+      arguments: [tx.object(nodes), tx.pure.address(sender)],
+    });
+    // @ts-ignore
+    const res: DevInspectResults =
+      await this.suiClient.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: normalizeSuiAddress('0x0'),
+      });
+    // @ts-ignore
+    return res?.results[0]?.returnValues[0][0];
   }
 
   async queryEvents(
