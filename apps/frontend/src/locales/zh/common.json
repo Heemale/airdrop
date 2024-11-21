@@ -24,7 +24,7 @@
   "BNB Airdrop Preview": "BNB 空投预告",
   "CoralApp & Skyark | TenJin NFT Airdrop Event Ann...": "珊瑚应用 & 天空之鹰 | 天神 NFT 空投活动公告...",
   "Ongoing Airdrops": "进行中的空投",
-  "Claim": "领取",
+  "CLAIM": "领取",
   "Chain": "链",
   "Total Copies": "总副本",
   "Reward Quantity per Copy": "每个副本的奖励数量",
@@ -67,5 +67,6 @@
   "Quantity": "数量",
   "Estimated Cost": "估计成本",
   "Invalid Sui address": "非法Sui地址",
-  "PURCHASED NODE": "已购买节点"
+  "PURCHASED NODE": "已购买节点",
+  "UNPURCHASED NODE": "未购买节点"
 }

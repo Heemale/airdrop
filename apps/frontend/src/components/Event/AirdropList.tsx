@@ -5,9 +5,10 @@ import AirdropItem from '@/components/Event/AirdropItem';
 import { useEffect, useState } from 'react';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
 import { getCurrentTimestampMs } from '@/utils/time';
-import { airdropClient } from '@/sdk';
-import { AIRDROPS } from '@local/airdrop-sdk/utils';
+import { airdropClient, nodeClient } from '@/sdk';
+import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { message } from 'antd';
+import { useCurrentAccount } from '@mysten/dapp-kit';
 
 interface Props {
   isOngoing?: boolean;
@@ -15,6 +16,8 @@ interface Props {
   chainText: string;
   totalCopies: string;
   rewardQuantityPerCopy: string;
+  unpurchasedNode: string;
+  claimText: string;
 }
 
 const startTime = BigInt(getCurrentTimestampMs());
@@ -50,10 +53,28 @@ const AirdropList = (props: Props) => {
     chainText,
     totalCopies,
     rewardQuantityPerCopy,
+    unpurchasedNode,
+    claimText,
   } = props;
 
+  const account = useCurrentAccount();
+
   const [airdropList, setAirdropList] = useState<Array<AirdropInfo>>([]);
+  const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
+
+  const getIsAlreadyBuyNode = async () => {
+    if (account && account.address) {
+      try {
+        const user = account.address;
+        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
+        setIsAlreadyBuyNode(isAlreadyBuyNode);
+      } catch (e: any) {
+        console.log(`getIsAlreadyBuyNode: ${e.message}`);
+        messageApi.error(`Error: ${e.message}`);
+      }
+    }
+  };
 
   const getAirdropList = async () => {
     try {
@@ -68,6 +89,7 @@ const AirdropList = (props: Props) => {
 
   useEffect(() => {
     getAirdropList();
+    getIsAlreadyBuyNode();
   }, []);
 
   return (
@@ -81,6 +103,9 @@ const AirdropList = (props: Props) => {
           chainText={chainText}
           totalCopies={totalCopies}
           rewardQuantityPerCopy={rewardQuantityPerCopy}
+          unpurchasedNode={unpurchasedNode}
+          isAlreadyBuyNode={isAlreadyBuyNode}
+          claimText={claimText}
         />
       ))}
       {contextHolder}

@@ -24,7 +24,7 @@
   "BNB Airdrop Preview": "BNB Airdrop Preview",
   "CoralApp & Skyark | TenJin NFT Airdrop Event Ann...": "CoralApp & Skyark | TenJin NFT Airdrop Event Ann...",
   "Ongoing Airdrops": "Ongoing Airdrops",
-  "Claim": "Claim",
+  "CLAIM": "CLAIM",
   "Chain":"Chain",
   "Total Copies":"Total Copies",
   "Reward Quantity per Copy":"Reward Quantity per Copy",
@@ -67,5 +67,6 @@
   "Quantity": "Quantity",
   "Estimated Cost": "Estimated Cost",
   "Invalid Sui address": "Invalid Sui address",
-  "PURCHASED NODE": "PURCHASED NODE"
+  "PURCHASED NODE": "PURCHASED NODE",
+  "UNPURCHASED NODE": "UNPURCHASED NODE"
 }
