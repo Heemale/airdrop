@@ -1,18 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Dialog from '@mui/material/Dialog';
-import { useContext } from 'react';
-import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { OutlinedInput } from '@mui/material';
-import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import { inviteClient } from '@/sdk';
 import { INVITE } from '@local/airdrop-sdk/utils';
 import { message } from 'antd';
 import { sleep } from '@/utils/time';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { InviteDialogContext } from '@/context/InviteDialogContext';
 
 interface Props {
   bindInviter: string;
@@ -22,24 +21,58 @@ interface Props {
 }
 
 const InviteDialog = (props: Props) => {
-  const { bindInviter, bindText, inviterText, noInviter } = props;
+  const { bindInviter, bindText, inviterText } = props;
 
   const router = useRouter();
+  const searchParams = useSearchParams(); // 获取 URL 的查询参数
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const { open, setOpen } = useContext(InviteDialogContext);
 
   const [inputValue, setInputValue] = useState<string>('');
-  const [loading, setLoading] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isBound, setIsBound] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setInputValue(event.target.value);
+  useEffect(() => {
+    // 从 URL 参数解析 inviter，并存入 localStorage
+    const inviterFromURL = searchParams?.get('inviter');
+    const storedInviter = localStorage.getItem('inviter');
+
+    if (inviterFromURL) {
+      localStorage.setItem('inviter', inviterFromURL); // 保存到 localStorage
+      setInputValue(inviterFromURL);
+    } else if (storedInviter) {
+      setInputValue(storedInviter);
+    }
+
+    // 检查是否已经绑定邀请人
+    if (storedInviter) {
+      setIsBound(true);
+    }
+  }, [searchParams]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+
+    if (isBound) {
+      messageApi.info('邀请人已绑定，无法修改。');
+      return;
+    }
+
+    setInputValue(newValue);
+    localStorage.setItem('inviter', newValue); // 动态更新 localStorage
+  };
 
   const handleClose = () => {
     setOpen(false);
   };
 
   const handleBind = async () => {
+    if (!inputValue) {
+      messageApi.warning('请输入有效的邀请人地址！');
+      return;
+    }
+
     try {
       setLoading(true);
       const tx = inviteClient.bind(INVITE, inputValue);
@@ -50,22 +83,23 @@ const InviteDialog = (props: Props) => {
         {
           onSuccess: async (result) => {
             console.log({ digest: result.digest });
-            messageApi.info(`Success: ${result.digest}`);
+            messageApi.success(`绑定成功: ${result.digest}`);
             setLoading(false);
+            setIsBound(true);
             await sleep(1);
             setOpen(false);
             router.push('/presale-comfirm');
           },
           onError: ({ message }) => {
             console.log(`Bind: ${message}`);
-            messageApi.error(`Error: ${message}`);
+            messageApi.error(`绑定失败: ${message}`);
             setLoading(false);
           },
         },
       );
     } catch (e: any) {
       console.log(`Bind: ${e.message}`);
-      messageApi.error(`Error: ${e.message}`);
+      messageApi.error(`绑定失败: ${e.message}`);
       setLoading(false);
     }
   };
@@ -101,15 +135,17 @@ const InviteDialog = (props: Props) => {
             color: '#ffffff',
           }}
           color="secondary"
-          value={inputValue} // 使用输入框的值作为value属性的值
-          onChange={handleInputChange} // 处理输入框值的变化
+          value={inputValue}
+          onChange={handleInputChange}
+          disabled={isBound} // 禁用输入框
         />
         <div className="w-full">
           <button
             className="w-full relative inline-block bg-[url('/button_bg.png')] bg-cover text-white font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
             onClick={handleBind}
+            disabled={isBound} // 禁用按钮
           >
-            {bindText}
+            {isBound ? '已绑定' : bindText}
           </button>
         </div>
       </div>

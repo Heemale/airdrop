@@ -3,6 +3,7 @@ import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
 import NavBar from './NavBar';
 import ConnectButton from '@/components/ConnectButton';
+import InviteButton from '@/components/InviteButton';
 
 interface Props {
   locale: string;
@@ -46,6 +47,7 @@ const NavBarWrapper = async (props: Props) => {
         };
       })}
     >
+      <InviteButton connectText={t('Invite friends')} />
       <ConnectButton connectText={t('CONNECT')} />
     </NavBar>
   );
