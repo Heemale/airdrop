@@ -124,7 +124,8 @@ export class NodeClient {
         sender: normalizeSuiAddress('0x0'),
       });
     // @ts-ignore
-    return res?.results[0]?.returnValues[0][0];
+    const value = res?.results[0]?.returnValues[0][0];
+    return value[0] !== 0;
   }
 
   async queryEvents(

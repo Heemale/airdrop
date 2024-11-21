@@ -29,7 +29,6 @@ export class AirdropClient {
     T: string,
     adminCap: string,
     airdrops: string,
-    round: bigint,
     startTime: bigint,
     endTime: bigint,
     totalShares: bigint,
@@ -47,7 +46,6 @@ export class AirdropClient {
         arguments: [
           tx.object(adminCap),
           tx.object(airdrops),
-          tx.pure.u64(round),
           tx.pure.u64(startTime),
           tx.pure.u64(endTime),
           tx.pure.u64(totalShares),
@@ -65,7 +63,6 @@ export class AirdropClient {
           arguments: [
             tx.object(adminCap),
             tx.object(airdrops),
-            tx.pure.u64(round),
             tx.pure.u64(startTime),
             tx.pure.u64(endTime),
             tx.pure.u64(totalShares),
@@ -94,7 +91,6 @@ export class AirdropClient {
           arguments: [
             tx.object(adminCap),
             tx.object(airdrops),
-            tx.pure.u64(round),
             tx.pure.u64(startTime),
             tx.pure.u64(endTime),
             tx.pure.u64(totalShares),
@@ -217,7 +213,6 @@ export class AirdropClient {
   insertNode(
     adminCap: string,
     nodes: string,
-    rank: number,
     name: string,
     description: string,
     limit: bigint,
@@ -231,7 +226,6 @@ export class AirdropClient {
       arguments: [
         tx.object(adminCap),
         tx.object(nodes),
-        tx.pure.u8(rank),
         tx.pure.string(name),
         tx.pure.string(description),
         tx.pure.u64(limit),
