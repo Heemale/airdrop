@@ -66,5 +66,6 @@
   "Purchase Order": "购买订单",
   "Quantity": "数量",
   "Estimated Cost": "估计成本",
-  "Invalid Sui address": "非法Sui地址"
+  "Invalid Sui address": "非法Sui地址",
+  "PURCHASED NODE": "已购买节点"
 }

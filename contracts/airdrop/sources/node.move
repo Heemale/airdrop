@@ -254,6 +254,10 @@ module airdrop::node {
         user_info.rank
     }
 
+    public fun is_already_buy_node(nodes: &Nodes, sender: address): bool {
+        vec_map::contains(nodes.users, &sender)
+    }
+
     public fun node_list(nodes: &Nodes) {
         let length = vec_map::size(&nodes.nodes) as u8;
         let mut i: u8 = 1;

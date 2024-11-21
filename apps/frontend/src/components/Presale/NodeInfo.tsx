@@ -26,6 +26,7 @@ const NodeInfo = async (props: Props) => {
         nextText={t('NEXT')}
         connectText={t('CONNECT WALLET')}
         bindText={t('BIND INVITER')}
+        purchasedNodeText={t('PURCHASED NODE')}
       />
     </>
   );
