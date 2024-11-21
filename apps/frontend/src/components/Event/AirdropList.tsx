@@ -87,6 +87,11 @@ const AirdropList = (props: Props) => {
     }
   };
 
+  const checkIsGoing = (startTime: bigint, endTime: bigint): boolean => {
+    const timestampMs = getCurrentTimestampMs();
+    return timestampMs >= startTime && timestampMs <= endTime;
+  };
+
   useEffect(() => {
     getAirdropList();
     getIsAlreadyBuyNode();
@@ -94,20 +99,45 @@ const AirdropList = (props: Props) => {
 
   return (
     <div className="flex flex-col gap-6">
-      {airdropList.map((item) => (
-        <AirdropItem
-          key={item.round.toString()}
-          data={item}
-          isOngoing={isOngoing}
-          ongoingText={ongoingText}
-          chainText={chainText}
-          totalCopies={totalCopies}
-          rewardQuantityPerCopy={rewardQuantityPerCopy}
-          unpurchasedNode={unpurchasedNode}
-          isAlreadyBuyNode={isAlreadyBuyNode}
-          claimText={claimText}
-        />
-      ))}
+      {isOngoing
+        ? airdropList
+            .filter(
+              (item) =>
+                item.isOpen && checkIsGoing(item.startTime, item.endTime),
+            )
+            .map((item) => (
+              <AirdropItem
+                key={item.round.toString()}
+                data={item}
+                isOngoing={true}
+                ongoingText={ongoingText}
+                chainText={chainText}
+                totalCopies={totalCopies}
+                rewardQuantityPerCopy={rewardQuantityPerCopy}
+                unpurchasedNode={unpurchasedNode}
+                isAlreadyBuyNode={isAlreadyBuyNode}
+                claimText={claimText}
+              />
+            ))
+        : airdropList
+            .filter((item) => item.isOpen)
+            .map((item) => {
+              const isOngoing = checkIsGoing(item.startTime, item.endTime);
+              return (
+                <AirdropItem
+                  key={item.round.toString()}
+                  data={item}
+                  isOngoing={isOngoing}
+                  ongoingText={ongoingText}
+                  chainText={chainText}
+                  totalCopies={totalCopies}
+                  rewardQuantityPerCopy={rewardQuantityPerCopy}
+                  unpurchasedNode={unpurchasedNode}
+                  isAlreadyBuyNode={isAlreadyBuyNode}
+                  claimText={claimText}
+                />
+              );
+            })}
       {contextHolder}
     </div>
   );
