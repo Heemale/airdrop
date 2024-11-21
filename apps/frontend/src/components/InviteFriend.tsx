@@ -19,6 +19,8 @@ const InviteFriend = (props: Props) => {
   const generateInviteLink = () => {
     if (account?.address) {
       return `${window.location.origin}?inviter=${account.address}`;
+    } else {
+      return '';
     }
   };
 

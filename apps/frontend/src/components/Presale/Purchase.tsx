@@ -133,7 +133,6 @@ const Purchase = (props: Props) => {
             className="text-white w-full"
             text={buyText}
             onClick={buyNode}
-            disabled
           />
         )
       ) : (

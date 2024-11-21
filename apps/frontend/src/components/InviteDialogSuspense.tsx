@@ -12,6 +12,7 @@ import { message } from 'antd';
 import { sleep } from '@/utils/time';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
+import { Suspense } from 'react';
 
 interface Props {
   bindInviter: string;
@@ -79,7 +80,7 @@ const InviteDialog = (props: Props) => {
           },
         },
       );
-    } catch (e: Error) {
+    } catch (e: any) {
       console.log(`Bind: ${e.message}`);
       messageApi.error(`Error: ${e.message}`);
       setLoading(false);
@@ -141,4 +142,18 @@ const InviteDialog = (props: Props) => {
   );
 };
 
-export default InviteDialog;
+const InviteDialogSuspense = (props: Props) => {
+  const { bindInviter, bindText, inviterText, noInviter } = props;
+  return (
+    <Suspense>
+      <InviteDialog
+        bindInviter={bindInviter}
+        inviterText={inviterText}
+        noInviter={noInviter}
+        bindText={bindText}
+      />
+    </Suspense>
+  );
+};
+
+export default InviteDialogSuspense;
