@@ -15,20 +15,21 @@ export const toHexString = (byteArray: Array<number>) => {
   }).join('');
 };
 
-export const extractSubStatus = (errorMessage: string): bigint | null => {
-  // Define a regex pattern to capture the number in `sub_status: Some(...)`
-  const regex = /sub_status: Some\((\d+)\)/;
+export const extractErrorCodeAndModule = (error: string) => {
+  const moduleRegex = /name:\s*Identifier\("([^"]+)"\)/;
+  const errorCodeRegex = /sub_status:\s*Some\((\d+)\)/;
 
-  // Use the regex to find the match
-  const match = errorMessage.match(regex);
+  const moduleMatch = error.match(moduleRegex);
+  const errorCodeMatch = error.match(errorCodeRegex);
 
-  if (match && match[1]) {
-    // Return the extracted number as an integer
-    return BigInt(match[1]);
-  }
+  const module = moduleMatch ? moduleMatch[1] : null;
+  const errorCode = errorCodeMatch ? Number(errorCodeMatch[1]) : null;
 
-  // Return null if no match is found
-  return null;
+  return {
+    module,
+    errorCode,
+  };
 };
 
 export * from './constants';
+export * from './error';
