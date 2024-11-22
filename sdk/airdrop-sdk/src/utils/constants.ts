@@ -1,19 +1,19 @@
 export const PACKAGE_ID =
-  '0xdc108f64920cadfad7c2d3b27db1e8ef5c28daef1b57e21e23becab68d723651';
+  '0x0ee2ffaae5bb8990206d745618e91835705250e6e208daf9ad19866d73e5da21';
 
 export const ADMIN_CAP =
-  '0x65b03ecce2146975a75842fff1ffc4a7cba2ca090951de5b0bca649c638f5ff5';
+  '0xd81880d6fa3d12ace751c027ad10ed48d44ca119cb70152f61ac7df6f5b38724';
 
 export const UPGRADE_CAP =
-  '0x99aba3e44abe771eb3f606e71d4aa73ef14c666eac816800f6ec73eeaafbba3f';
+  '0xdbc9c75751ebea5d6dbaa81eafa2b89fdeb0f03327530e28288b09da6e0d3305';
 
 export const INVITE =
-  '0xddc13f0b61b228f2ed42a094279f1997e388116a84127b4509a17a88956d3cd9';
+  '0x0df7525530150cc96bfdfbbf92b6daf620dfa2c133df73a3d6312176e9094ca6';
 
 export const NODES =
-  '0x2ae8d52d0931e528180fba675b1fce5b39ec4da1137b8a5ea64fda5aff40b124';
+  '0x5603cf8142558000c15055b726d18de0d6125f0627c32570f6d6fec04a5265a3';
 
 export const AIRDROPS =
-  '0x5752003896f1622a739376e59d66f7c5fd4532c3b2e11e635e027fbdbdd3f153';
+  '0xeb54e99ef3c6fde021ebc7a75b97bae19edcdcc19600a83de73ce6488c034325';
 
 export * from './constants';

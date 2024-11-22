@@ -6,7 +6,7 @@ import initTranslations from '@/app/i18n';
 import { dir } from 'i18next';
 import i18nConfig from '@/i18nConfig';
 import TranslationsProvider from '@/context/TranslationsProvider';
-import InviteDialog from '@/components/InviteDialog';
+import InviteDialogSuspense from '@/components/InviteDialogSuspense';
 
 export const metadata: Metadata = {
   title: 'Sui AirDrop',
@@ -40,7 +40,7 @@ const RootLayout = async ({
         >
           <Context>
             {children}
-            <InviteDialog
+            <InviteDialogSuspense
               bindInviter={t('Bind Inviter')}
               inviterText={t('Inviter')}
               noInviter={t('No Inviter')}

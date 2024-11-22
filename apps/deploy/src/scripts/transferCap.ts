@@ -1,6 +1,6 @@
 import { Transaction } from '@mysten/sui/transactions';
 import { signAndExecuteTransaction } from '@/sdk/utils';
-import { ADMIN_CAP } from '@local/airdrop-sdk/utils/constants';
+import { ADMIN_CAP } from '@local/airdrop-sdk/utils';
 import { ownerKeypair, adminKeypair } from '@/sdk';
 
 const transferCap = async () => {

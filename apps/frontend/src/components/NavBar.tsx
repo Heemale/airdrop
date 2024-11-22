@@ -14,14 +14,17 @@ import {
 import { useState } from 'react';
 import { Page } from './NavBarWrapper';
 import './sui-button.css';
+import InviteFriend from '@/components/InviteFriend';
 
 interface Props {
   pages: Array<Page>;
   children: React.ReactNode;
+  inviteFriendText: string;
+  copyText: string;
 }
 
 const NavBar = (props: Props) => {
-  const { pages, children } = props;
+  const { pages, children, inviteFriendText, copyText } = props;
   // 状态：抽屉是否打开
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   // 切换抽屉的状态
@@ -53,6 +56,10 @@ const NavBar = (props: Props) => {
               <div className="text-gradient">{page.name}</div>
             </Link>
           ))}
+          <InviteFriend
+            inviteFriendText={inviteFriendText}
+            copyText={copyText}
+          />
           <LanguageChanger />
           {children}
         </div>
@@ -82,6 +89,12 @@ const NavBar = (props: Props) => {
                   <ListItemText className="text-gradient" primary={page.name} />
                 </ListItem>
               ))}
+              <ListItem>
+                <InviteFriend
+                  inviteFriendText={inviteFriendText}
+                  copyText={copyText}
+                />
+              </ListItem>
               <ListItem>
                 <LanguageChanger />
               </ListItem>

@@ -37,7 +37,7 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
 
         // 实例化nodes对象
-        airdrop::new_node(
+        airdrop::new_node<SUI>(
             &adminCap,
             Receiver,
             ctx(&mut scenario)
@@ -51,7 +51,6 @@ module airdrop::airdrop_tests {
         // 添加节点信息
         node::insert(
             &mut nodes,
-            1, // 节点等级
             b"Node 1", // 节点名称
             b"Description of Node 1", // 节点描述
             3, // 每轮空投购买次数
@@ -82,7 +81,7 @@ module airdrop::airdrop_tests {
         let wallet = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
         test_scenario::next_tx(&mut scenario, User);
 
-        node::buy(
+        node::buy<SUI>(
             &mut nodes,
             &invite,
             1, // 节点等级
@@ -119,7 +118,6 @@ module airdrop::airdrop_tests {
         airdrop::insert<SUI>(
             &adminCap,
             &mut airdrops,
-            1, // round
             1000,
             2000,
             1,
