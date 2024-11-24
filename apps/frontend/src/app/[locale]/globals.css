@@ -14,8 +14,12 @@
 }
 
 @layer utilities {
+    :root {
+        --gradient-color-1: #ffbfb0;
+        --gradient-color-2: #e7534f;
+    }
     .text-gradient {
-        background: linear-gradient(45deg, #ffbfb0, #e7534f);
+        background: linear-gradient(45deg, var(--gradient-color-1), var(--gradient-color-2));
         background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
