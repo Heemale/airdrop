@@ -13,7 +13,7 @@
     [data-dapp-kit].Text_textVariants_weight_bold__2bv1ur4,
     [data-dapp-kit] .Text_textVariants_weight_bold__2bv1ur4 {
         color: #fff;
-        font-size: 0.6rem;
+        font-size: 0.8rem;
         line-height: 1rem;
     }
     [data-dapp-kit].Button_buttonVariants_variant_primary__x1s81q1:hover,
@@ -25,13 +25,13 @@
     [data-dapp-kit].Text_textVariants_mono_true__2bv1ur7,
     [data-dapp-kit] .Text_textVariants_mono_true__2bv1ur7 {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-        font-size: 0.6rem;
+        font-size: 0.8rem;
         line-height: 1rem;
     }
 
     [data-dapp-kit].AccountDropdownMenu_menuContent__div2ql2,
     [data-dapp-kit] .AccountDropdownMenu_menuContent__div2ql2{
-        font-size: 0.6rem;
+        font-size: 0.8rem;
         line-height: 1rem;
     }
 }
