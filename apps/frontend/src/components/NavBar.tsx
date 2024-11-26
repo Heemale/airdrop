@@ -53,7 +53,7 @@ const NavBar = (props: Props) => {
         <div className="hidden md:flex gap-10 items-center">
           {pages.map((page) => (
             <Link key={page.id} href={page.link}>
-              <div className="text-gradient">{page.name}</div>
+              <div className="text-white">{page.name}</div>
             </Link>
           ))}
           <InviteFriend
