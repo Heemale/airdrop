@@ -63,7 +63,7 @@ const Holder = async (props: Props) => {
             >
               {/* 标号在右上角，部分超出盒子 */}
               <div className="absolute -top-4 right-0 flex items-center">
-                <span className="text-7xl font-bold italic text-gradient">
+                <span className="text-7xl font-bold italic text-gradient px-2">
                   {benefit.number}
                 </span>
               </div>
