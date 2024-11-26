@@ -51,7 +51,7 @@ const Home = async (props: Props) => {
               totalCopies={t('Total Copies')}
               rewardQuantityPerCopy={t('Reward Quantity per Copy')}
               unpurchasedNode={t('UNPURCHASED NODE')}
-              claimText={'CLAIM'}
+              claimText={t('CLAIM')}
             />
           </div>
         </div>
