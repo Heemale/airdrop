@@ -15,10 +15,12 @@
 
 @layer utilities {
     .text-gradient {
-        background: linear-gradient(45deg, #ffbfb0, #e7534f);
+        background: linear-gradient(45deg, rgba(59, 169, 242, 1), rgba(59, 169, 242, 0.7));
         background-clip: text;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         color: transparent;
     }
 }
+
+
