@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { AIRDROPS } from '@local/airdrop-sdk/utils';
+import { AIRDROPS,NODES } from '@local/airdrop-sdk/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
+import { NodeInfo } from '@local/airdrop-sdk/node';
 import { Button, Table, message, Modal, Input, Form, DatePicker } from 'antd';
-import { airdropClient } from '@/sdk';
+import { airdropClient,nodeClient } from '@/sdk';
 import { ADMIN_CAP } from '@local/airdrop-sdk/utils';
 import ConnectButton from './components/ConnectButton';
 import { useCurrentAccount,useSignAndExecuteTransaction } from '@mysten/dapp-kit';
@@ -15,8 +16,12 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [showModal, setShowModal] = useState(false); // 控制弹窗显示
+  const [showNodeModal, setShowNodeModal] = useState(false); // 控制节点弹窗显示
+  const [editingNode, setEditingNode] = useState<NodeInfo | null>(null); // 当前编辑的节点信息
   const [form] = Form.useForm(); // 表单控制
   const account = useCurrentAccount();
+  const [ nodeForm] = Form.useForm(); // 节点表单控制
+  const [nodeList, setNodeList] = useState<NodeInfo[]>([]); // 节点列表数据
   const account1 = account?.address;
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
@@ -148,6 +153,94 @@ const AdminPage = () => {
     },
   ];
 
+// 获取节点列表
+const fetchNodeList = async () => {
+  try {
+    setLoading(true);
+    const list = await nodeClient.nodeList(NODES);
+    setNodeList(list);
+  } catch (error) {
+    messageApi.error('获取节点列表失败');
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+ // 修改节点信息
+ const handleUpdateNode = async (values: NodeInfo) => {
+  try {
+    if (!editingNode) return;
+
+    console.log('节点更新数据:', values.price);
+
+    const priceBigInt = BigInt(values.price || 0); // 提供默认值
+    console.log('节点更新数据:', values.price);
+
+    const result = await airdropClient.modifyNode(
+      ADMIN_CAP,
+      NODES,
+      values.rank,
+      values.name,
+      values.description,
+      priceBigInt
+    );
+    signAndExecuteTransaction(
+      { transaction: result },
+      {
+        onSuccess: async (tx) => {
+          console.log('节点更新成功:', tx.digest);
+          messageApi.success('节点更新成功');
+          setShowNodeModal(false);
+          fetchNodeList(); // 更新节点列表
+        },
+        onError: ({ message }) => {
+          console.error('节点更新失败:', message);
+          messageApi.error('节点更新失败');
+        },
+      }
+    );
+  } catch (error) {
+    messageApi.error('节点更新失败');
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+useEffect(() => {
+  fetchAirdropList();
+  fetchNodeList(); // 页面加载时获取节点列表
+}, []);
+
+ // 节点表格列配置
+ const nodeColumns = [
+  { title: '等级', dataIndex: 'rank', key: 'rank' },
+  { title: '称号', dataIndex: 'name', key: 'name' },
+  { title: '描述', dataIndex: 'description', key: 'description' },
+  { title: '价格', dataIndex: 'price', key: 'price' },
+  {
+    title: '操作',
+    key: 'actions',
+    render: (_: any, record: NodeInfo) => (
+      <Button
+        type="link"
+        onClick={() => {
+          setEditingNode(record);
+          setShowNodeModal(true);
+          nodeForm.setFieldsValue({
+            rank: record.rank,
+            name: record.name,
+            description: record.description,
+            price: record.price.toString(),
+          });
+        }}
+      >
+        修改
+      </Button>
+    ),
+  },
+];
   return (
     <div style={{ padding: '20px' }}>
       {contextHolder}
@@ -167,7 +260,6 @@ const AdminPage = () => {
         rowKey="round"
         loading={loading}
       />
-
       {/* 新建空投的弹窗 */}
       <Modal
         title="新建空投"
@@ -245,8 +337,69 @@ const AdminPage = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+      <h1>节点管理</h1>
+      <Table
+        dataSource={nodeList}
+        columns={nodeColumns}
+        rowKey="rank"
+        loading={loading}
+      />
+
+      {/* 修改节点信息弹窗 */}
+      <Modal
+        title="修改节点信息"
+        visible={showNodeModal}
+        onCancel={() => setShowNodeModal(false)}
+        footer={null}
+      >
+        <Form
+          form={nodeForm}
+          onFinish={handleUpdateNode}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+        >
+          <Form.Item
+            name="rank"
+            label="等级"
+            rules={[{ required: true, message: '请输入等级' }]}
+          >
+            <Input type="number" disabled />
+          </Form.Item>
+
+          <Form.Item
+            name="name"
+            label="称号"
+            rules={[{ required: true, message: '请输入称号' }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="description"
+            label="描述"
+            rules={[{ required: true, message: '请输入描述' }]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            name="price"
+            label="价格"
+            rules={[{ required: true, message: '请输入价格' }]}
+          >
+            <Input type="number" />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit" loading={loading} >
+              提交
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
+
   );
 };
-
 export default AdminPage;
