@@ -12,7 +12,7 @@ const BannerDescription = async (props: Props) => {
 
   return (
     <>
-      <div className="hidden sm:flex flex-col sm:gap-1 text-white text-lg">
+      <div className="hidden sm:flex flex-col sm:gap-1 text-white text-lg sm:-mt-12">
         <div>
           {t(
             'CoralPhone maximizes your advantages through a series of exclusive rewards',
@@ -29,7 +29,7 @@ const BannerDescription = async (props: Props) => {
           )}
         </div>
       </div>
-      <div className="sm:hidden flex flex-col sm:gap-1 text-white text-sm sm:text-lg">
+      <div className="sm:hidden flex flex-col sm:gap-1 text-white text-sm sm:text-lg -mt-2">
         <div>
           {t(
             'CoralPhone maximizes your advantages through a series of exclusive rewards designed to enhance your Web3 experience. From airdrops to passive income, CoralPhone users can enjoy unique benefits tailored to promote the Web3 lifestyle.',

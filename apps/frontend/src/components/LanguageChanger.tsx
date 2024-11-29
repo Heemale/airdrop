@@ -66,7 +66,7 @@ const LanguageChanger = () => {
   return (
     <div>
       <Image
-        src="/language.svg"
+        src="/language.png"
         alt="change language"
         width={24}
         height={24}

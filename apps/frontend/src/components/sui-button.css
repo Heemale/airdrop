@@ -5,8 +5,8 @@
     }
     [data-dapp-kit].Button_buttonVariants_variant_primary__x1s81q1,
     [data-dapp-kit] .Button_buttonVariants_variant_primary__x1s81q1 {
-        background-image: url(/button_bg.png);
-        /*background: linear-gradient(#705bfb, #9945fd, #c52efe);*/
+        /*background-image: url(/button_bg.png);*/
+        background: linear-gradient(to right, #40cafd, #1993ee);
         border-radius: 0.5rem;
         color: #fff;
     }
@@ -18,8 +18,8 @@
     }
     [data-dapp-kit].Button_buttonVariants_variant_primary__x1s81q1:hover,
     [data-dapp-kit] .Button_buttonVariants_variant_primary__x1s81q1:hover {
-        background-image: url(/button_bg.png);
-        /*background: linear-gradient(#705bfb, #9945fd, #c52efe);*/
+        /*background-image: url(/button_bg.png);*/
+        background: linear-gradient(to right, #40cafd, #1993ee);
         border-radius: 0.5rem;
     }
     [data-dapp-kit].Text_textVariants_mono_true__2bv1ur7,
@@ -43,8 +43,8 @@
     }
     [data-dapp-kit].Button_buttonVariants_variant_primary__x1s81q1,
     [data-dapp-kit] .Button_buttonVariants_variant_primary__x1s81q1 {
-        background-image: url(/button_bg.png);
-        /*background: linear-gradient(#705bfb, #9945fd, #c52efe);*/
+        /*background-image: url(/button_bg.png);*/
+        background: linear-gradient(to right, #40cafd, #1993ee);
         border-radius: 0.5rem;
         color: white;
     }
@@ -56,8 +56,8 @@
     }
     [data-dapp-kit].Button_buttonVariants_variant_primary__x1s81q1:hover,
     [data-dapp-kit] .Button_buttonVariants_variant_primary__x1s81q1:hover {
-        background-image: url(/button_bg.png);
-        /*background: linear-gradient(#705bfb, #9945fd, #c52efe);*/
+        /*background-image: url(/button_bg.png);*/
+        background: linear-gradient(to right, #40cafd, #1993ee);
         border-radius: 0.5rem;
     }
     [data-dapp-kit].Text_textVariants_mono_true__2bv1ur7,

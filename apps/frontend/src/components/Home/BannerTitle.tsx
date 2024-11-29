@@ -1,21 +1,16 @@
 import * as React from 'react';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import Image from "next/image";
 
-interface Props {
-  locale: string;
-}
-
-const BannerTitle = async (props: Props) => {
-  const { locale } = props;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
-
+const BannerTitle = async () => {
   return (
-    <div className="text-gradient flex flex-col gap-1 sm:gap-2 text-white text-3xl sm:text-7xl font-semibold">
-      <div>{t('Unlock Exclusive')}</div>
-      <div>{t('Rewards with')}</div>
-      <div>{t('CoralPhone')}</div>
-    </div>
+      <div className="-ml-16 sm:-ml-20">
+          <Image
+              src="/home_title1_zh.png"
+              width="500"
+              height="500"
+              alt="home_binance"
+          />
+      </div>
   );
 };
 

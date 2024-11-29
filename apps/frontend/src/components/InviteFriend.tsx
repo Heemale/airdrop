@@ -33,7 +33,7 @@ const InviteFriend = (props: Props) => {
       {contextHolder}
       {account?.address ? (
         <CopyToClipboard text={generateInviteLink()} onCopy={handleCopy}>
-          <div className="text-gradient cursor-pointer">{inviteFriendText}</div>
+          <div className="text-white cursor-pointer">{inviteFriendText}</div>
         </CopyToClipboard>
       ) : (
         <div className="text-gray-500 cursor-not-allowed">

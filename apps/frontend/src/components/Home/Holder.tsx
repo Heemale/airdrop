@@ -59,7 +59,7 @@ const Holder = async (props: Props) => {
           benefits.map((benefit, index) => (
             <div
               key={index.toString()}
-              className="relative bg-gradient-to-b from-[#222] to-[#010101] text-white border-black border rounded-2xl w-[335px] sm:w-[434px] h-[257px] sm:h-[364px] p-6 text-left"
+              className="relative bg-[url('/home_holder_card.png')] bg-contain bg-no-repeat text-white border-black border rounded-2xl w-[335px] sm:w-[434px] h-[257px] sm:h-[364px] p-6 text-left"
             >
               {/* 标号在右上角，部分超出盒子 */}
               <div className="absolute -top-4 right-0 flex items-center">
