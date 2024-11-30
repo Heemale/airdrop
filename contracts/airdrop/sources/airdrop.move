@@ -288,13 +288,13 @@ module airdrop::airdrop {
         node::insert(nodes, name, description, limit, price, total_quantity);
     }
 
-    public fun remove_node(
-        _admin_cap: &AdminCap,
-        nodes: &mut Nodes,
-        rank: u8
-    ) {
-        node::remove(nodes, rank);
-    }
+    // public fun remove_node(
+    //     _admin_cap: &AdminCap,
+    //     nodes: &mut Nodes,
+    //     rank: u8
+    // ) {
+    //     node::remove(nodes, rank);
+    // }
 
     public fun modify_node(
         _admin_cap: &AdminCap,

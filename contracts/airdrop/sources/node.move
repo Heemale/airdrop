@@ -66,6 +66,8 @@ module airdrop::node {
         rank: u8,
         // 已购买的数量：轮次 => 次数
         purchased_quantitys: Table<u64, u64>,
+        // 是否合法
+        is_invalid: bool
     }
 
     public struct NodeInfo has copy, drop {
@@ -168,14 +170,17 @@ module airdrop::node {
         rank: u8,
         name: vector<u8>,
         description: vector<u8>,
+        limit: u64,
         price: u64,
-    
+        total_quantity: u64,
     ) {
         let nodeMut: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
         nodeMut.rank = rank;
         nodeMut.name = name;
         nodeMut.description = description;
+        nodeMut.limit = limit;
         nodeMut.price = price;
+        nodeMut.total_quantity = total_quantity;
     }
 
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
@@ -226,6 +231,7 @@ module airdrop::node {
         let user = User {
             rank: node.rank,
             purchased_quantitys: table::new(ctx),
+            is_invalid: true,
         };
         vec_map::insert(&mut nodes.users, sender, user);
         // 更新节点信息
@@ -246,6 +252,43 @@ module airdrop::node {
         transfer::public_transfer(wallet, nodes.receiver);
     }
 
+    entry fun transfer(
+        nodes: &mut Nodes,
+        receiver: address,
+        ctx: &mut TxContext,
+    ) {
+        let sender = tx_context::sender(ctx);
+        let rank = nodesRank(nodes, sender);
+        let node: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
+
+        // 节点发送人必须已购买节点
+        assert_already_buy_node(&nodes.users, sender);
+        // 节点接收人必须未拥有节点
+        assert_not_buy_node(&nodes.users, receiver);
+        // 更新节点发送人信息
+
+        let node_sender: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
+        node_sender.rank = 0;
+        node_sender.is_invalid = false;
+
+        // 更新节点接收人信息
+        // 如果数组中存在，更新rank和is_invalid
+        // 否则直接写入
+        let is_exists = vec_map::contains(&nodes.users, &receiver);
+        if (is_exists) {
+            let node_receiver: &mut User = vec_map::get_mut(&mut nodes.users, &receiver);
+            node_receiver.rank = rank;
+            node_receiver.is_invalid = true;
+        } else {
+            let node_receiver = User {
+                rank: node.rank,
+                purchased_quantitys: table::new(ctx),
+                is_invalid: true,
+            };
+            vec_map::insert(&mut nodes.users, receiver, node_receiver);
+        }
+    }
+
     public fun receiver(nodes: &Nodes): address {
         nodes.receiver
     }
@@ -256,7 +299,13 @@ module airdrop::node {
     }
 
     public fun is_already_buy_node(nodes: &Nodes, sender: address): bool {
-        vec_map::contains(&nodes.users, &sender)
+        let is_exists = vec_map::contains(&nodes.users, &sender);
+        if (is_exists) {
+            let user: &User = vec_map::get(&nodes.users, &sender);
+            user.is_invalid
+        } else {
+            false
+        }
     }
 
     public fun node_list(nodes: &Nodes) {
@@ -280,11 +329,25 @@ module airdrop::node {
     // === Assertions ===
 
     public fun assert_already_buy_node(users: &VecMap<address, User>, sender: address) {
-        assert!(!vec_map::contains(users, &sender), EAlreadyBuyNode);
+        // 必须满足以下条件任意一个，否则abort
+        // 1.不存在数组中
+        // 2.存在数组中，但is_invalid为false
+        let is_exists = vec_map::contains(users, &sender);
+        assert!(!is_exists, EAlreadyBuyNode);
+        if (is_exists) {
+            let user: &User = vec_map::get(users, &sender);
+            assert!(!user.is_invalid, EAlreadyBuyNode);
+        }
     }
 
     public fun assert_not_buy_node(users: &VecMap<address, User>, sender: address) {
-        assert!(vec_map::contains(users, &sender), ENotBuyNode);
+        // 必须满足以下条件任意一个，否则abort
+        // 1.存在数组中，且is_invalid为true
+        let is_exists = vec_map::contains(users, &sender);
+        if (is_exists) {
+            let user: &User = vec_map::get(users, &sender);
+            assert!(user.is_invalid, ENotBuyNode);
+        }
     }
 
     public fun assert_node_sold_out(node: &Node) {
