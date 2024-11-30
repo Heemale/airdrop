@@ -252,7 +252,9 @@ export class AirdropClient {
     rank: number,
     name: string,
     description: string,
-    price: bigint, 
+    limit: bigint,
+    price: bigint,
+    totalQuantity: bigint,
   ): Transaction {
     const tx = new Transaction();
     tx.moveCall({
@@ -264,7 +266,9 @@ export class AirdropClient {
         tx.pure.u8(rank),
         tx.pure.string(name),
         tx.pure.string(description),
+        tx.pure.u64(limit),
         tx.pure.u64(price),
+        tx.pure.u64(totalQuantity),
       ],
     });
     return tx;

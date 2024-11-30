@@ -76,6 +76,16 @@ export class NodeClient {
     return tx;
   }
 
+  async transfer(nodes: string, receiver: string): Promise<Transaction> {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::transfer`,
+      arguments: [tx.object(nodes), tx.pure.address(receiver)],
+    });
+    return tx;
+  }
+
   async nodeList(nodes: string): Promise<Array<NodeInfo>> {
     const tx = new Transaction();
     tx.moveCall({
