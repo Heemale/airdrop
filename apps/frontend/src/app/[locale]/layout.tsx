@@ -9,8 +9,8 @@ import TranslationsProvider from '@/context/TranslationsProvider';
 import InviteDialogSuspense from '@/components/InviteDialogSuspense';
 
 export const metadata: Metadata = {
-  title: 'Sui AirDrop',
-  description: 'Sui AirDrop',
+  title: 'Mercury World',
+  description: 'Mercury World',
 };
 
 export const generateStaticParams = () => {

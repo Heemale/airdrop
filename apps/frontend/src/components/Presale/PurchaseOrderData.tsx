@@ -68,14 +68,14 @@ const PurchaseOrderData = (props: Props) => {
           {node ? convertSmallToLarge(node.price.toString(), 9) : '-'} USDT
         </div>
       </div>
-      <div className="flex justify-between text-gray-500 text-sm">
+      <div className="flex justify-between text-sm">
         <div>
           {priceDetail}:
           {node ? '1 x ' + convertSmallToLarge(node.price.toString(), 9) : '-'}{' '}
           USDT
         </div>
       </div>
-      <div className="flex justify-between text-gray-500 text-sm">
+      <div className="flex justify-between text-sm">
         <div>
           {walletBalance}: {balance ? convertSmallToLarge(balance, 9) : '-'}{' '}
           USDT

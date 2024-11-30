@@ -117,14 +117,14 @@ const InviteDialog = (props: Props) => {
             background: '#2b2b2b',
             color: '#ffffff',
           }}
-          color="secondary"
+          color="primary"
           value={inputValue}
           onChange={handleInputChange}
           // disabled={isBound} // 禁用输入框
         />
         <div className="w-full">
           <button
-            className="w-full relative inline-block bg-[url('/button_bg.png')] bg-cover text-white font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
+            className="w-full relative inline-block bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-white font-bold text-center text-lg py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
             onClick={handleBind}
           >
             {bindText}

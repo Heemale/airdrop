@@ -13,7 +13,7 @@ const Button = (props: Props) => {
 
   return (
     <button
-      className={`${className && className} relative inline-block bg-[url('/button_bg.png')] bg-cover text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+      className={`${className && className} relative inline-block bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-black font-bold text-center text-lg py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
       onClick={onClick}
     >
       {text}

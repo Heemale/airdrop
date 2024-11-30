@@ -14,6 +14,7 @@ const benefits = [
     description:
       'The more and longer you hold, the more your points will add up, granting higher levels of benefits.',
     icon: '/home_icon1.png',
+    numberIcon: '/home_number_icon1.png',
   },
   {
     number: '02',
@@ -21,6 +22,7 @@ const benefits = [
     description:
       'After the issuance of Coral Token, points can be exchanged for tokens to participate in the CoralApp ecosystem’s shared governance and token incentive programs.',
     icon: '/home_icon2.png',
+    numberIcon: '/home_number_icon2.png',
   },
   {
     number: '03',
@@ -28,6 +30,7 @@ const benefits = [
     description:
       'Join CoralApp and receive exclusive airdrop rewards from ecosystem partners.',
     icon: '/home_icon3.png',
+    numberIcon: '/home_number_icon3.png',
   },
   {
     number: '04',
@@ -35,6 +38,7 @@ const benefits = [
     description:
       'As a smart device, CoralPhone provides mining rewards and adds value to the device.',
     icon: '/home_icon4.png',
+    numberIcon: '/home_number_icon4.png',
   },
   {
     number: '05',
@@ -42,6 +46,7 @@ const benefits = [
     description:
       'Participate in CoralApp and have a chance to get airdrops from listing on top-tier exchanges and high-quality assets soon to be listed.',
     icon: '/home_icon5.png',
+    numberIcon: '/home_number_icon5.png',
   },
 ];
 
@@ -54,29 +59,32 @@ const Holder = async (props: Props) => {
       <h2 className="text-xl sm:text-6xl font-bold text-gradient mb-12">
         {t('CoralPhone Holder Benefits')}
       </h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-16 w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
         {benefits &&
           benefits.map((benefit, index) => (
             <div
               key={index.toString()}
-              className="relative bg-[url('/home_holder_card.png')] bg-contain bg-no-repeat text-white border-black border rounded-2xl w-[335px] sm:w-[434px] h-[257px] sm:h-[364px] p-6 text-left"
+              className="flex flex-col sm:gap-1 bg-[url('/home_holder_card.png')] bg-contain bg-no-repeat text-white w-[335px] sm:w-[402px] h-[257px] p-5 sm:p-6"
             >
-              {/* 标号在右上角，部分超出盒子 */}
-              <div className="absolute -top-4 right-0 flex items-center">
-                <span className="text-7xl font-bold italic text-gradient px-2">
-                  {benefit.number}
-                </span>
+              <div className="flex flex-row-reverse sm:mt-2">
+                <Image
+                  src={benefit.numberIcon}
+                  alt="Icon"
+                  width={60}
+                  height={60}
+                />
               </div>
-              {/* 图标在左上角 */}
-              <div className="absolute top-6 left-6">
-                <Image src={benefit.icon} alt="Icon" width={50} height={50} />
+              <div className="flex gap-4 mt-2 sm:mt-4 place-items-center">
+                <div className="flex-none">
+                  <Image src={benefit.icon} alt="Icon" width={40} height={40} />
+                </div>
+                <div className="sm:text-xl font-semibold">
+                  {t(benefit.title)}
+                </div>
               </div>
-              <h3 className="text-lg font-semibold mt-20">
-                {index + 1}.{t(benefit.title)}
-              </h3>
-              <p className="text-sm leading-relaxed mt-2">
+              <div className="text-xs sm:text-sm leading-relaxed mt-2">
                 {t(benefit.description)}
-              </p>
+              </div>
             </div>
           ))}
       </div>

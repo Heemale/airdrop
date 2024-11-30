@@ -75,7 +75,7 @@ const NodeData = (props: Props) => {
       </div>
       <div className="flex justify-between items-center gap-12">
         <div>{nodeName}</div>
-        <div className="grow">
+        <div>
           <Autocomplete
             {...defaultProps}
             id="controlled-demo"
@@ -88,10 +88,16 @@ const NodeData = (props: Props) => {
                 {...params}
                 sx={{
                   backgroundColor: 'white', // 设置背景色为白色
+                  height: '35px', // 设置高度为 35px
+                  '& .MuiInputBase-root': {
+                    height: '100%', // 确保输入框内部元素填充整个高度
+                  },
                 }}
               />
             )}
             sx={{
+              width: '300px', // 设置宽度为 300px
+              height: '35px', // 设置高度为 35px
               '& .MuiAutocomplete-listbox': {
                 backgroundColor: 'white', // 设置下拉框的背景色
                 color: 'black', // 设置下拉项的文字颜色
@@ -102,7 +108,7 @@ const NodeData = (props: Props) => {
                 },
               },
             }}
-            fullWidth
+            fullWidth={false} // 禁用默认的 fullWidth 以应用自定义宽度
           />
         </div>
       </div>
