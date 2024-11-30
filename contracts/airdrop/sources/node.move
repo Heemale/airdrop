@@ -170,17 +170,13 @@ module airdrop::node {
         rank: u8,
         name: vector<u8>,
         description: vector<u8>,
-        limit: u64,
         price: u64,
-        total_quantity: u64,
     ) {
         let nodeMut: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
         nodeMut.rank = rank;
         nodeMut.name = name;
         nodeMut.description = description;
-        nodeMut.limit = limit;
         nodeMut.price = price;
-        nodeMut.total_quantity = total_quantity;
     }
 
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
