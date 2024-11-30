@@ -18,7 +18,7 @@ const AirdropsHeader = async (props: Props) => {
         <div className="text-white text-xl font-bold">
           {t('Ongoing Airdrops')}
         </div>
-        <div className="w-1/2 h-1 bg-gradient-to-r from-[#ffbdad] to-[#e7534f] mx-auto mt-2 rounded-3xl"></div>
+        <div className="w-1/2 h-1 bg-gradient-to-r from-[#40cafd] to-[#1993ee] mx-auto mt-2 rounded-3xl"></div>
       </div>
       <Link href={'/airdrop-list'}>
         <Button text={t('All Airdrops')} />
