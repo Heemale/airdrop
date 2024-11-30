@@ -302,11 +302,9 @@ module airdrop::airdrop {
         rank: u8,
         name: vector<u8>,
         description: vector<u8>,
-        limit: u64,
         price: u64,
-        total_quantity: u64,
     ) {
-        node::modify(nodes, rank, name, description, limit, price, total_quantity);
+        node::modify(nodes, rank, name, description,  price);
     }
 
     public fun airdrops(airdrops: &Airdrops) {
