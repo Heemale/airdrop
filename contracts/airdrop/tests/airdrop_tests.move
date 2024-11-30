@@ -90,7 +90,7 @@ module airdrop::airdrop_tests {
         );
         test_scenario::next_tx(&mut scenario, User);
         // 验证购买的节点等级
-        assert!(node::nodesRank(&nodes, User) == 1, 1002);
+        assert!(node::nodes_rank(&nodes, User) == 1, 1002);
 
         // 检查接收人接收到的资金
         let receiver_coin: Coin<SUI> = test_scenario::take_from_address<Coin<SUI>>(

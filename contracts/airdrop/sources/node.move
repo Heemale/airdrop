@@ -258,7 +258,7 @@ module airdrop::node {
         ctx: &mut TxContext,
     ) {
         let sender = tx_context::sender(ctx);
-        let rank = nodesRank(nodes, sender);
+        let rank = nodes_rank(nodes, sender);
         let node: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
 
         // 节点发送人必须已购买节点
@@ -293,7 +293,7 @@ module airdrop::node {
         nodes.receiver
     }
 
-    public fun nodesRank(nodes: &Nodes, sender: address): u8 {
+    public fun nodes_rank(nodes: &Nodes, sender: address): u8 {
         let user_info = vec_map::get(&nodes.users, &sender);
         user_info.rank
     }
