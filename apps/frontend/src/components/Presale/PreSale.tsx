@@ -11,19 +11,11 @@ const PreSale = (props: Props) => {
   const { locale, children } = props;
 
   return (
-    <div className="bg-[url('/presale_bg.jpg')] bg-cover bg-no-repeat h-[700px] flex flex-col gap-24 sm:gap-64 sm:my-5">
+    <div className="flex flex-col gap-24 sm:gap-64 sm:my-5">
       <div className="flex flex-col gap-24 sm:gap-48 items-center">
         <div className="flex flex-col gap-8 sm:gap-20">
-          <BuyNodeTitle locale={locale} />
-          <div className="flex flex-col sm:flex-row justify-between mx-10">
-            <div className="w-[343px] sm:w-[800px]">
-              {/*<Image*/}
-              {/*  src="/sonic-hyperfuse.png"*/}
-              {/*  width="800"*/}
-              {/*  height="450"*/}
-              {/*  alt="sonic-hyperfuse"*/}
-              {/*/>*/}
-            </div>
+          <div className="flex flex-col sm:flex-row justify-between mx-10 sm:mt-48">
+            <div className="w-[343px] sm:w-[800px]"></div>
             <div className="font-manrope flex flex-col justify-center gap-4 text-white sm:w-[456px]">
               {children}
             </div>

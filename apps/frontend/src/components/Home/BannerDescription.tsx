@@ -11,7 +11,7 @@ const BannerDescription = async (props: Props) => {
   const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
 
   return (
-    <>
+    <div className="w-3/4">
       <div className="hidden sm:flex flex-col sm:gap-1 text-white text-lg sm:-mt-12">
         <div>
           {t(
@@ -36,7 +36,7 @@ const BannerDescription = async (props: Props) => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

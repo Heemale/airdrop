@@ -41,7 +41,7 @@ const NavBar = (props: Props) => {
     };
 
   return (
-    <div className="bg-black flex flex-col items-center">
+    <div className="flex flex-col items-center">
       <div className="w-full max-w-screen-xl flex justify-between items-center py-5 px-4">
         <div className="w-[115px] sm:w-[320px] items-center">
           <Link href={'/'}>

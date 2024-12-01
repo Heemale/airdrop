@@ -1,7 +1,7 @@
 import * as React from 'react';
-import Image from 'next/image';
 import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
+import BannerBottom from '@/components/Home/BannerBottom';
 
 interface Props {
   locale: string;
@@ -12,25 +12,32 @@ const About = async (props: Props) => {
   const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
 
   return (
-    <div className="max-w-screen-xl flex flex-col lg:flex-row items-center gap-10 px-4 text-white">
-      <div className="flex-1 about-info">
-        <h2 className="text-xl sm:text-6xl font-bold text-gradient">
-          {t('About CoralApp')}
-        </h2>
-        <p className="mt-5 text-sm sm:text-lg leading-relaxed">
+    <div className="bg-[url('/home_banner_bg2.jpg')] bg-cover bg-right max-w-screen-xl flex flex-col lg:flex-row items-center gap-2 sm:gap-10 px-4 text-white h-[780px] mx-auto">
+      <div className="flex-1">
+        <div className="mb-2 sm:mb-8">
+          <div className="flex gap-4 justify-center sm:justify-start sm:gap-10">
+            <BannerBottom />
+          </div>
+        </div>
+        <div className="flex flex-col sm:flex-row sm:gap-2 items-center text-2xl sm:text-3xl font-bold text-gradient">
+          <div>{t('About Mercury World')}</div>
+          <div className="hidden sm:flex">-</div>
+          <div>Mercury World</div>
+        </div>
+        <div className="mt-10 text-sm sm:text-lg leading-relaxed">
           {t(
-            'CoralApp is a pioneering mobile ecosystem for multi-chain environmentswhich was admitted into Binance Labs Incubation. CoralApp recentlylaunched its first Web3 phone, the CoralApp. CoralApp features arevolutionary Coral OS + Mobile Stack, which optimizes Android OS andsmart devices from the ground up, creating a smoother entry point toWeb3 and strengthening the mobile infrastructure of the blockchainindustry',
+            'Mercury World is an equity aggregation platform built on the Sui blockchain. It links community organizations through the marketing jelly and analysis platform of the DAO community, and benefits from transparent information on the chain for recommendation records, reward distribution, and equity distribution, so as to expand the influence of the platform and allow more people to share the benefits of the Sui ecosystem.',
           )}
-        </p>
+        </div>
       </div>
       <div className="relative w-60 sm:w-96 about-img">
-        <Image
-          src="/home_banner2.gif" // 请替换为实际的图片路径
-          alt="CoralApp Phone"
-          width={320}
-          height={640}
-          className="object-contain"
-        />
+        {/*<Image*/}
+        {/*  src="/home_banner2.gif" // 请替换为实际的图片路径*/}
+        {/*  alt="CoralApp Phone"*/}
+        {/*  width={320}*/}
+        {/*  height={640}*/}
+        {/*  className="object-contain"*/}
+        {/*/>*/}
       </div>
     </div>
   );

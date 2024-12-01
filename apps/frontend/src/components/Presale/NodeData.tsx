@@ -87,10 +87,20 @@ const NodeData = (props: Props) => {
               <TextField
                 {...params}
                 sx={{
-                  backgroundColor: 'white', // 设置背景色为白色
-                  height: '35px', // 设置高度为 35px
+                  backgroundColor: 'transparent', // 设置输入框背景为透明
+                  height: '35px', // 保持输入框高度
                   '& .MuiInputBase-root': {
-                    height: '100%', // 确保输入框内部元素填充整个高度
+                    backgroundColor: 'transparent', // 内部元素也透明
+                    height: '100%', // 确保填充整个高度
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'lightgray', // 去掉边框颜色
+                  },
+                  '&:hover .MuiOutlinedInput-notchedOutline': {
+                    borderColor: 'lightgray', // 鼠标悬浮时边框颜色
+                  },
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#40cafd', // 聚焦时边框颜色
                   },
                 }}
               />
@@ -105,6 +115,14 @@ const NodeData = (props: Props) => {
               '& .MuiAutocomplete-option': {
                 '&:hover': {
                   backgroundColor: 'lightgray', // 设置悬浮时的背景色
+                },
+              },
+              '@media (max-width: 640px)': {
+                width: '200px', // 屏幕宽度小于 640px 时，宽度改为 200px
+              },
+              '& .MuiAutocomplete-endAdornment': {
+                '& .MuiSvgIcon-root': {
+                  color: 'white', // 设置下拉三角形为白色
                 },
               },
             }}
