@@ -5,7 +5,7 @@ import Announcement from '@/components/Event/Announcement';
 import AirdropsHeader from '@/components/Event/AirdropsHeader';
 import AirdropList from '@/components/Event/AirdropList';
 import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import i18nConfig from '@/app/i18n/i18nConfig';
 
 interface Props {
   params: Promise<{ locale: string }>;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import i18nConfig from '@/app/i18n/i18nConfig';
 import PurchaseOrderData from '@/components/Presale/PurchaseOrderData';
 import Purchase from '@/components/Presale/Purchase';
 

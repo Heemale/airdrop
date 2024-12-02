@@ -3,7 +3,7 @@ import UpdateData from '@/components/Home/UpdateData';
 import Always from '@/components/Home/Always';
 import * as React from 'react';
 import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import i18nConfig from '@/app/i18n/i18nConfig';
 
 interface Props {
   locale: string;

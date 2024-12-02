@@ -6,7 +6,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useRouter, usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
-import i18nConfig from '@/i18nConfig';
+import i18nConfig from '@/app/i18n/i18nConfig';
 
 interface LanguageType {
   key: string;

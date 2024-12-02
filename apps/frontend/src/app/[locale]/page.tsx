@@ -9,17 +9,24 @@ import BannerTitle from '@/components/Home/BannerTitle';
 import BannerDescription from '@/components/Home/BannerDescription';
 import Moon from '@/components/Home/Moon';
 import BannerBottom from '@/components/Home/BannerBottom';
-
-interface Props {
-  params: Promise<{ locale: string }>;
-}
-
-const Home = async (props: Props) => {
-  const { params } = props;
-  const { locale } = await params;
-
-  return (
-    <>
+import TranslationsProvider from '@/context/TranslationsProvider';
+import initTranslations from '@/app/i18n';
+import getNamespaces from '@/app/i18n/i18nConfig';
+export default async function Home({
+  params: { locale },
+}: {
+  params: { locale: string };
+}) {
+  const ns = getNamespaces();
+  const { resources } = await initTranslations(locale, ns);
+   return (
+<>
+    <TranslationsProvider
+    namespaces={ns}
+    locale={locale}
+    resources={resources}
+  >
+    
       <div className="bg-center bg-no-repeat flex flex-col gap-24 sm:gap-64 my-5">
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <div className="flex flex-col gap-8 sm:gap-20">
@@ -31,8 +38,9 @@ const Home = async (props: Props) => {
           </div>
         </div>
       </div>
+      </TranslationsProvider>
     </>
   );
 };
 
-export default Home;
+

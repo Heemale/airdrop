@@ -1,6 +1,6 @@
 import * as React from 'react';
 import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import i18nConfig from '@/app/i18n/i18nConfig';
 import NavBar from './NavBar';
 import ConnectButton from '@/components/ConnectButton';
 

@@ -3,8 +3,9 @@ import './globals.css';
 import '@mysten/dapp-kit/dist/index.css';
 import Context from '@/context/Context';
 import initTranslations from '@/app/i18n';
-import { dir } from 'i18next';
-import i18nConfig from '@/i18nConfig';
+import { dir } from "i18next";
+import i18nConfig from "../i18n/i18nConfig";
+
 import TranslationsProvider from '@/context/TranslationsProvider';
 import InviteDialogSuspense from '@/components/InviteDialogSuspense';
 
@@ -13,31 +14,21 @@ export const metadata: Metadata = {
   description: 'Mercury World',
 };
 
-export const generateStaticParams = () => {
+export function generateStaticParams() {
   return i18nConfig.locales.map((locale) => ({ locale }));
-};
+}
 
-const RootLayout = async ({
+export default function RootLayout({
   children,
-  params,
-}: Readonly<{
+  params: { locale },
+}: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
-}>) => {
-  const { locale } = await params;
-  const { t, resources } = await initTranslations(
-    locale,
-    i18nConfig.i18nNamespaces,
-  );
-
+  params: { locale: string };
+}) {
   return (
-    <html lang={locale} dir={dir(locale)}>
+    <html lang={locale} dir={dir(locale)} data-theme='winter'>
       <body className="bg-black">
-        <TranslationsProvider
-          namespaces={i18nConfig.i18nNamespaces}
-          locale={locale}
-          resources={resources}
-        >
+
           <Context>
             {children}
             <InviteDialogSuspense
@@ -47,10 +38,9 @@ const RootLayout = async ({
               bindText={t('BIND')}
             />
           </Context>
-        </TranslationsProvider>
+       
       </body>
     </html>
   );
 };
 
-export default RootLayout;

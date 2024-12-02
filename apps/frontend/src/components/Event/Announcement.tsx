@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import * as React from 'react';
 import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import i18nConfig from '@/app/i18n/i18nConfig';
 
 interface Props {
   locale: string;

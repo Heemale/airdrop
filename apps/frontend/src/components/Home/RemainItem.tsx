@@ -2,7 +2,7 @@ import * as React from 'react';
 import RemainText from '@/components/Home/RemainText';
 import NumberPlate2 from '@/components/Home/NumberPlate2';
 import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import i18nConfig from '@/app/i18n/i18nConfig';
 
 interface Props {
   text: string;
