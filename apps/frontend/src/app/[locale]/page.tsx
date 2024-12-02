@@ -1,14 +1,9 @@
-import NavBarWrapper from '@/components/NavBarWrapper';
 import * as React from 'react';
 import Remain from '@/components/Home/Remain';
 import Banner from '@/components/Home/Banner';
 import Sale from '@/components/Home/Sale';
 import About from '@/components/Home/About';
 import Holder from '@/components/Home/Holder';
-import BannerTitle from '@/components/Home/BannerTitle';
-import BannerDescription from '@/components/Home/BannerDescription';
-import Moon from '@/components/Home/Moon';
-import BannerBottom from '@/components/Home/BannerBottom';
 
 interface Props {
   params: Promise<{ locale: string }>;

@@ -14,6 +14,7 @@ import { formatTimestamp } from '@/utils/time';
 import { divide } from '@/utils/math';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useClientTranslation } from '@/hook';
 
 export interface Props {
   data: AirdropInfo;
@@ -40,6 +41,7 @@ const AirdropItem = (props: Props) => {
     claimText,
   } = props;
 
+  const { t } = useClientTranslation();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -114,7 +116,7 @@ const AirdropItem = (props: Props) => {
           onClick={claim}
           className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
         >
-          {claimText}
+          {t(claimText)}
         </button>
       ) : (
         <button

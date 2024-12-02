@@ -1,14 +1,19 @@
 import { createInstance, Resource, i18n } from 'i18next';
 import { initReactI18next } from 'react-i18next/initReactI18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
-import i18nConfig from '@/i18nConfig';
+import { getOptions } from '@/i18nConfig';
+import { ITran } from '@/app/i18n/type';
 
 const initTranslations = async (
   locale: string,
   namespaces: string[],
   i18nInstance?: i18n,
   resources?: Resource,
-) => {
+): Promise<{
+  i18n: i18n;
+  resources: Resource;
+  t: any;
+}> => {
   i18nInstance = i18nInstance || createInstance();
 
   i18nInstance.use(initReactI18next);
@@ -22,21 +27,19 @@ const initTranslations = async (
     );
   }
 
-  await i18nInstance.init({
-    lng: locale,
-    resources,
-    fallbackLng: i18nConfig.defaultLocale,
-    supportedLngs: i18nConfig.locales,
-    defaultNS: namespaces[0],
-    fallbackNS: namespaces[0],
-    ns: namespaces,
-    preload: resources ? [] : i18nConfig.locales,
-  });
+  await i18nInstance.init(getOptions(locale, namespaces, resources));
+
+  const t: ITran = (key, namespace, occupied) => {
+    return (i18nInstance.t as any)(key, {
+      ns: namespace ?? 'common',
+      ...occupied,
+    });
+  };
 
   return {
     i18n: i18nInstance,
     resources: i18nInstance.services.resourceStore.data,
-    t: i18nInstance.t as any,
+    t,
   };
 };
 
