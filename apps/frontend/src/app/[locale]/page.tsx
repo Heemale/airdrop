@@ -19,8 +19,8 @@ const Home = async (props: Props) => {
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <div className="flex flex-col gap-8 sm:gap-20">
             <Banner locale={locale} />
-            <Sale locale={locale} />
-            <Remain locale={locale} />
+            {/*<Sale locale={locale} />*/}
+            {/*<Remain locale={locale} />*/}
             <About locale={locale} />
             <Holder locale={locale} />
           </div>

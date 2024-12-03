@@ -85,7 +85,7 @@ const AirdropItem = (props: Props) => {
         <div className="flex gap-2">
           <div className="w-[50px] sm:w-[70px]">
             <Image
-              src= {data.image_url}
+              src={data.image_url ? data.image_url : '/favicon.ico'}
               width="70"
               height="70"
               alt="bnb-bnb-logo"
@@ -131,10 +131,10 @@ const AirdropItem = (props: Props) => {
         <div>{chainText}</div>
         <div className="flex justify-between items-center gap-2">
           <Image
-            src="/bnb-bnb-logo.svg"
-            width="24"
-            height="24"
-            alt="bnb-bnb-logo"
+            src="/sui-sui-logo.png"
+            width="20"
+            height="20"
+            alt="sui-sui-logo"
           />
           <div>{getCoinTypeName(data.coinType)}</div>
         </div>

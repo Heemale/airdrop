@@ -11,6 +11,7 @@ import { INVITE, NODES } from '@local/airdrop-sdk/utils';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { message } from 'antd';
+import { PresaleContext } from '@/context/PresaleContext';
 
 interface Props {
   nextText: string;
@@ -23,6 +24,7 @@ const Next = (props: Props) => {
   const { nextText, connectText, bindText, purchasedNodeText } = props;
 
   const account = useCurrentAccount();
+  const { node } = useContext(PresaleContext);
   const { inviter, setInviter, setOpen } = useContext(InviteDialogContext);
   const [messageApi, contextHolder] = message.useMessage();
   const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
@@ -80,8 +82,15 @@ const Next = (props: Props) => {
               >
                 {purchasedNodeText}
               </button>
-            ) : (
+            ) : node ? (
               <Button className="text-white w-full" text={nextText} />
+            ) : (
+              <button
+                className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
+                disabled
+              >
+                {nextText}
+              </button>
             )}
           </Link>
         )

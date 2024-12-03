@@ -22,7 +22,6 @@ interface Props {
 
 const startTime = BigInt(getCurrentTimestampMs());
 
-
 const AirdropList = (props: Props) => {
   const {
     isOngoing,

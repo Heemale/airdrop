@@ -14,7 +14,7 @@ const About = async (props: Props) => {
   return (
     <div className="bg-[url('/home_banner_bg2.jpg')] bg-cover bg-right max-w-screen-xl flex flex-col lg:flex-row items-center gap-2 sm:gap-10 px-4 text-white h-[780px] mx-auto">
       <div className="flex-1">
-        <div className="mb-2 sm:mb-8">
+        <div className="hidden sm:flex mb-2 sm:mb-8">
           <div className="flex gap-4 justify-center sm:justify-start sm:gap-10">
             <BannerBottom />
           </div>

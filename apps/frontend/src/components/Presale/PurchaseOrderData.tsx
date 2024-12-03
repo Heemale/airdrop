@@ -7,6 +7,7 @@ import { convertSmallToLarge } from '@/utils/math';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { suiClient } from '@/sdk';
 import { message } from 'antd';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   purchaseOrder: string;
@@ -27,6 +28,7 @@ const PurchaseOrderData = (props: Props) => {
     walletBalance,
   } = props;
 
+  const router = useRouter();
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
   const [balance, setBalance] = useState<string | null>(null);
@@ -50,6 +52,12 @@ const PurchaseOrderData = (props: Props) => {
   useEffect(() => {
     getBalance();
   }, [account]);
+
+  useEffect(() => {
+    if (!node) {
+      router.push('/presale');
+    }
+  }, [node]);
 
   return (
     <>

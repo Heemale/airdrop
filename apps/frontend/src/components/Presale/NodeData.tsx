@@ -70,8 +70,8 @@ const NodeData = (props: Props) => {
 
   return (
     <>
-      <div className="font-orbitron text-2xl">
-        <div>{nodeInfo}</div>
+      <div className="font-bold text-gradient font-orbitron text-2xl">
+        <div className="text-center sm:text-start">{nodeInfo}</div>
       </div>
       <div className="flex justify-between items-center gap-12">
         <div>{nodeName}</div>
@@ -92,12 +92,13 @@ const NodeData = (props: Props) => {
                   '& .MuiInputBase-root': {
                     backgroundColor: 'transparent', // 内部元素也透明
                     height: '100%', // 确保填充整个高度
+                    color: 'white', // 设置输入框内文字颜色
                   },
                   '& .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'lightgray', // 去掉边框颜色
+                    borderColor: 'white', // 去掉边框颜色
                   },
                   '&:hover .MuiOutlinedInput-notchedOutline': {
-                    borderColor: 'lightgray', // 鼠标悬浮时边框颜色
+                    borderColor: '#40cafd', // 鼠标悬浮时边框颜色
                   },
                   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
                     borderColor: '#40cafd', // 聚焦时边框颜色
@@ -132,7 +133,7 @@ const NodeData = (props: Props) => {
       </div>
       <div className="flex justify-between">
         <div>{currentTier}</div>
-        <div>{node ? node.rank : '-'}</div>
+        <div>LV {node ? node.rank : '-'}</div>
       </div>
       <div className="flex justify-between">
         <div>{remainingAndTotalNodes}</div>
@@ -148,13 +149,16 @@ const NodeData = (props: Props) => {
       <div className="flex justify-between">
         <div>{nodePrice}</div>
         <div className="flex gap-0.5">
-          <div>1</div>
-          <div className="flex flex-col justify-end text-xs">Node</div>
-          <div>=</div>
-          <div>
-            {node ? convertSmallToLarge(node.price.toString(), 9) : '-'}
+          {/*<div>1</div>*/}
+          {/*<div className="flex flex-col justify-end text-xs">Node</div>*/}
+          {/*<div>=</div>*/}
+          {/*<div>*/}
+          {/*  {node ? convertSmallToLarge(node.price.toString(), 9) : '-'}*/}
+          {/*</div>*/}
+          {/*<div className="flex flex-col justify-end text-xs">USDT</div>*/}
+          <div className="flex flex-col justify-end">
+            {node ? convertSmallToLarge(node.price.toString(), 9) : '-'} USDT
           </div>
-          <div className="flex flex-col justify-end text-xs">USDT</div>
         </div>
       </div>
       {contextHolder}

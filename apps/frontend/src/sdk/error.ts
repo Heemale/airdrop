@@ -8,7 +8,7 @@ interface Props {
   locale: string;
 }
 
-export const handleTxError =  async (e: Error,props: Props) => {
+export const handleTxError = async (e: Error, props: Props) => {
   const { locale } = props;
   const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
   const { module, errorCode } = extractErrorCodeAndModule(e.message);

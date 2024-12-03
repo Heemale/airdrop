@@ -16,7 +16,7 @@ const PreSale = (props: Props) => {
         <div className="flex flex-col gap-8 sm:gap-20">
           <div className="flex flex-col sm:flex-row justify-between mx-10 sm:mt-48">
             <div className="w-[343px] sm:w-[800px]"></div>
-            <div className="font-manrope flex flex-col justify-center gap-4 text-white sm:w-[456px]">
+            <div className="font-manrope flex flex-col justify-center gap-6 text-white sm:w-[456px]">
               {children}
             </div>
           </div>
