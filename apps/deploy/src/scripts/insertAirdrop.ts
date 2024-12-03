@@ -10,6 +10,7 @@ const insertAirdrop = async () => {
   const totalShares = BigInt(100); // 空投份额
   const totalBalance = BigInt(100000000); // 总金额
   const description = 'Example Airdrop 1'; // 空投描述
+  const image_url = 'http://localhost:3000/01.png'; // 空投图片 URL
   const amount = BigInt(100000000);
   const owner = adminKeypair.toSuiAddress(); // 使用管理员地址作为所有者
 
@@ -23,6 +24,7 @@ const insertAirdrop = async () => {
     totalShares,
     totalBalance,
     description,
+    image_url,
     null,
     amount,
     owner,

@@ -258,9 +258,9 @@ module airdrop::node {
         let node: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
 
         // 节点发送人必须已购买节点
-        assert_already_buy_node(&nodes.users, sender);
+        assert_not_buy_node(&nodes.users, sender);
         // 节点接收人必须未拥有节点
-        assert_not_buy_node(&nodes.users, receiver);
+        assert_already_buy_node(&nodes.users, receiver);
         // 更新节点发送人信息
 
         let node_sender: &mut User = vec_map::get_mut(&mut nodes.users, &sender);

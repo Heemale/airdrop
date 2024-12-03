@@ -85,7 +85,7 @@ const AirdropItem = (props: Props) => {
         <div className="flex gap-2">
           <div className="w-[50px] sm:w-[70px]">
             <Image
-              src="/bnb-bnb-logo.svg"
+              src= {data.image_url}
               width="70"
               height="70"
               alt="bnb-bnb-logo"

@@ -71,5 +71,21 @@
   "UNPURCHASED NODE": "UNPURCHASED NODE",
   "Invite friends": "Invite friends",
   "Copy Success": "Copy Success",
-  "No wallet is connected.": "No wallet is connected."
+  "No wallet is connected.": "No wallet is connected.",
+  "airdrop_ECoinBalanceNotEnough": "Insufficient balance",
+  "airdrop_ERoundNotFound": "The airdrop round cannot be found",
+  "airdrop_ERoundExited": "Round already exists",
+  "airdrop_EInvalidClaimTime": "Not within the airdrop claiming time",
+  "airdrop_ENoRemainingShares": "No airdrops to claim",
+
+  "invite_EInvalidSender": "Illegal caller",
+  "invite_EInvalidInviter": "Illegal inviter",
+  "invite_EAlreadyBindInviter": "Inviter has been bound",
+  "invite_ENotBindInviter": "Inviter not bound",
+
+  "node_EAlreadyBuyNode": " Node purchased",
+  "node_ENotBuyNode": "Node not purchased",
+  "node_ENodeSoldOut": "Node is sold out",
+  "node_EExceedsPurchaseLimi": "Purchase limit exceeded",
+  "node_EInvalidCoinType": "Illegal token type"
 }

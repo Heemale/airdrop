@@ -34,6 +34,7 @@ export class AirdropClient {
     totalShares: bigint,
     totalBalance: bigint,
     description: string,
+    image_url: string,
     wallet: string | null,
     amount: bigint | null,
     owner: string,
@@ -51,6 +52,7 @@ export class AirdropClient {
           tx.pure.u64(totalShares),
           tx.pure.u64(totalBalance),
           tx.pure.string(description),
+          tx.pure.string(image_url),
           tx.object(wallet),
         ],
       });
@@ -68,6 +70,7 @@ export class AirdropClient {
             tx.pure.u64(totalShares),
             tx.pure.u64(totalBalance),
             tx.pure.string(description),
+            tx.pure.string(image_url),
             coin,
           ],
         });
@@ -96,6 +99,7 @@ export class AirdropClient {
             tx.pure.u64(totalShares),
             tx.pure.u64(totalBalance),
             tx.pure.string(description),
+            tx.pure.string(image_url),
             coin,
           ],
         });
@@ -301,6 +305,7 @@ export class AirdropClient {
       totalBalance: rawEvent.total_balance as bigint,
       isOpen: rawEvent.is_open as boolean,
       description: decoder.decode(new Uint8Array(rawEvent.description)),
+      image_url: decoder.decode(new Uint8Array(rawEvent.image_url)),
       coinType: rawEvent.coin_type.name as string,
     });
 
