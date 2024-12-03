@@ -21,30 +21,7 @@ interface Props {
 }
 
 const startTime = BigInt(getCurrentTimestampMs());
-const airdropData: Array<AirdropInfo> = [
-  {
-    round: BigInt(1),
-    startTime: startTime, // 开始时间（当前时间戳）
-    endTime: startTime + BigInt(3600), // 结束时间（1小时后）
-    totalShares: BigInt(100), // 空投份额
-    totalBalance: BigInt(10), // 总金额
-    description: 'Example Airdrop 1', // 空投描述
-    claimedShares: BigInt(0),
-    coinType: '0x2::sui::SUI',
-    isOpen: true,
-  },
-  {
-    round: BigInt(2),
-    startTime: startTime, // 开始时间（当前时间戳）
-    endTime: startTime + BigInt(3600), // 结束时间（1小时后）
-    totalShares: BigInt(100), // 空投份额
-    totalBalance: BigInt(10), // 总金额
-    description: 'Example Airdrop 2', // 空投描述
-    claimedShares: BigInt(0),
-    coinType: '0x2::sui::SUI',
-    isOpen: true,
-  },
-];
+
 
 const AirdropList = (props: Props) => {
   const {

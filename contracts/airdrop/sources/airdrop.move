@@ -54,7 +54,9 @@ module airdrop::airdrop {
         // 描述
         description: vector<u8>,
         // 货币类型
-        coin_type: TypeName
+        coin_type: TypeName,
+        image_url: vector<u8>,
+
     }
 
     // 管理员权限对象
@@ -81,6 +83,7 @@ module airdrop::airdrop {
         description: vector<u8>,
         // 货币类型
         coin_type: TypeName,
+        image_url: vector<u8>,
     }
 
     fun init(ctx: &mut TxContext) {
@@ -135,6 +138,7 @@ module airdrop::airdrop {
         total_balance: u64,
         description: vector<u8>,
         mut wallet: Coin<T>,
+        image_url: vector<u8>,
         ctx: &mut TxContext,
     ) {
         assert!(coin::value(&wallet) >= total_balance, ECoinBalanceNotEnough);
@@ -163,6 +167,7 @@ module airdrop::airdrop {
             is_open: true,
             description,
             coin_type,
+            image_url,
         };
         vec_map::insert(&mut airdrops.airdrops, round, aidrop);
         bag::add(&mut airdrops.treasury_balances, round, coin::into_balance(wallet));
@@ -321,6 +326,7 @@ module airdrop::airdrop {
                 total_balance: airdrop.total_balance,
                 is_open: airdrop.is_open,
                 description: airdrop.description,
+                image_url: airdrop.image_url,
                 coin_type: airdrop.coin_type,
             });
             i = i + 1;

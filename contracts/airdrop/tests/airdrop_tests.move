@@ -12,6 +12,7 @@ module airdrop::airdrop_tests {
     const Admin: address = @0x1;
     const Receiver: address = @0x2;
     const User: address = @0x3;
+    const User2: address = @0x4;
 
 
     #[test]
@@ -109,10 +110,10 @@ module airdrop::airdrop_tests {
         );
         assert!(coin::value(&inviter_coin) == 20, 1004);
         transfer::public_transfer(inviter_coin, inviter);
-
+       
+        test_scenario::next_tx(&mut scenario, Admin);
         let wallet11 = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
 
-        test_scenario::next_tx(&mut scenario, Admin);
 
         //添加空投信息
         airdrop::insert<SUI>(
@@ -124,6 +125,7 @@ module airdrop::airdrop_tests {
             100000,
             b"Test Airdrop",
             wallet11,
+            b"http://localhost:3000/01.png",
             ctx(&mut scenario),
         );
         test_scenario::next_tx(&mut scenario, Admin);
@@ -145,6 +147,13 @@ module airdrop::airdrop_tests {
         clock::destroy_for_testing(clock);
         test_scenario::next_tx(&mut scenario, User);
 
+ test_scenario::next_tx(&mut scenario, User);
+
+        //检查节点转让
+        node::transfer(&mut nodes,  User2, ctx(&mut scenario));
+        //检查节点等级
+        assert!(node::nodes_rank(&nodes, User2) == 1, 1002);
+        assert!(node::is_already_buy_node(&nodes,User) == false, 1003);
         // === 模拟管理员结束空投 ===
         test_scenario::next_tx(&mut scenario, Admin);
         transfer::public_transfer(adminCap, Admin);

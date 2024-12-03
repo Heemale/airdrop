@@ -71,5 +71,24 @@
   "UNPURCHASED NODE": "未购买节点",
   "Invite friends": "邀请朋友",
   "Copy Success": "复制成功",
-  "No wallet is connected.": "未连接钱包"
+  "No wallet is connected.": "未连接钱包",
+  "airdrop_ECoinBalanceNotEnough": "余额不足",
+  "airdrop_ERoundNotFound": "找不到该轮空投",
+  "airdrop_ERoundExited": "轮次已存在",
+  "airdrop_EInvalidClaimTime": "不在空投领取时间内",
+  "airdrop_ENoRemainingShares": "无可领取的空投",
+
+  "invite_EInvalidSender": "非法调用人",
+  "invite_EInvalidInviter": "非法邀请人",
+  "invite_EAlreadyBindInviter": "已绑定邀请人",
+  "invite_ENotBindInviter": "未绑定邀请人",
+
+  "node_EAlreadyBuyNode": " 已购买节点",
+  "node_ENotBuyNode": "未购买节点",
+  "node_ENodeSoldOut": "节点已售罄",
+  "node_EExceedsPurchaseLimi": "超出购买限额",
+  "node_EInvalidCoinType": "非法代币类型"
+
+
+
 }
