@@ -12,7 +12,7 @@ const About = async (props: Props) => {
   const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
 
   return (
-    <div className="bg-[url('/home_banner_bg2.jpg')] bg-cover bg-right max-w-screen-xl flex flex-col lg:flex-row items-center gap-2 sm:gap-10 px-4 text-white h-[780px] mx-auto">
+    <div className="bg-[url('/home_banner_bg2_2.png')] bg-center bg-contain bg-no-repeat sm:bg-[url('/home_banner_bg2.jpg')] sm:bg-right max-w-screen-xl flex flex-col lg:flex-row items-center gap-2 sm:gap-10 px-4 text-white h-[780px] mx-auto">
       <div className="flex-1">
         <div className="hidden sm:flex mb-2 sm:mb-8">
           <div className="flex gap-4 justify-center sm:justify-start sm:gap-10">
