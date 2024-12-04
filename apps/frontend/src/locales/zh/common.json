@@ -87,7 +87,9 @@
   "node_ENotBuyNode": "未购买节点",
   "node_ENodeSoldOut": "节点已售罄",
   "node_EExceedsPurchaseLimi": "超出购买限额",
-  "node_EInvalidCoinType": "非法代币类型"
+  "node_EInvalidCoinType": "非法代币类型",
+  "TRANSFER NODE": "转让节点",
+  "Enter receiver is address": "输入接收者地址"
 
 
 

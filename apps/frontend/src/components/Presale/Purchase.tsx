@@ -107,6 +107,9 @@ const Purchase = (props: Props) => {
     }
   };
 
+
+
+
   useEffect(() => {
     updateInvite();
     getIsAlreadyBuyNode();
