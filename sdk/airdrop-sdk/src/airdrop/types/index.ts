@@ -15,6 +15,7 @@ export interface AirdropInfo {
   isOpen: boolean;
   // 描述
   description: string;
+  // 图片链接
   image_url: string;
   // 货币类型
   coinType: string;

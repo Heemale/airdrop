@@ -15,6 +15,7 @@ import { divide } from '@/utils/math';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
+import { handleTxError } from '@/sdk/error';
 
 export interface Props {
   data: AirdropInfo;
@@ -67,7 +68,7 @@ const AirdropItem = (props: Props) => {
           },
           onError: ({ message }) => {
             console.log(`Claim: ${message}`);
-            messageApi.error(`Error: ${message}`);
+            messageApi.error(`Error: ${t(handleTxError(message))}`);
             setLoading(false);
           },
         },

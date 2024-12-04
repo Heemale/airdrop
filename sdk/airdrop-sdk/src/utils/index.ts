@@ -15,19 +15,23 @@ export const toHexString = (byteArray: Array<number>) => {
   }).join('');
 };
 
-export const extractErrorCodeAndModule = (error: string) => {
-  const moduleRegex = /name:\s*Identifier\("([^"]+)"\)/;
-  const errorCodeRegex = /sub_status:\s*Some\((\d+)\)/;
-
-  const moduleMatch = error.match(moduleRegex);
-  const errorCodeMatch = error.match(errorCodeRegex);
-
+export const extractErrorCodeAndModule = (
+  errorMessage: string,
+): {
+  module: string | null;
+  errorCode: number | null;
+} => {
+  const moduleMatch = errorMessage.match(/Identifier\("([^"]+)"\)/);
   const module = moduleMatch ? moduleMatch[1] : null;
-  const errorCode = errorCodeMatch ? Number(errorCodeMatch[1]) : null;
+
+  const moveAbortMatch = errorMessage.match(/MoveAbort\((.*?)\) in command/);
+  const errorCode = moveAbortMatch
+    ? (moveAbortMatch[1].match(/, (\d+)$/)?.[1] ?? null)
+    : null;
 
   return {
     module,
-    errorCode,
+    errorCode: errorCode ? parseInt(errorCode, 10) : null,
   };
 };
 
