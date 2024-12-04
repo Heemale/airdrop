@@ -52,8 +52,8 @@ export class AirdropClient {
           tx.pure.u64(totalShares),
           tx.pure.u64(totalBalance),
           tx.pure.string(description),
-          tx.pure.string(image_url),
           tx.object(wallet),
+          tx.pure.string(image_url),
         ],
       });
     } else {
@@ -70,8 +70,8 @@ export class AirdropClient {
             tx.pure.u64(totalShares),
             tx.pure.u64(totalBalance),
             tx.pure.string(description),
-            tx.pure.string(image_url),
             coin,
+            tx.pure.string(image_url),
           ],
         });
       } else {
