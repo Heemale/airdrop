@@ -37,6 +37,7 @@ const PurchaseOrder = async (props: Props) => {
             connectText={t('CONNECT WALLET')}
             bindText={t('BIND INVITER')}
             purchasedNodeText={t('PURCHASED NODE')}
+            
           />
         </div>
       </div>

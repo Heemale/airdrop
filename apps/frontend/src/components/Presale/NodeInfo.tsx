@@ -3,6 +3,7 @@ import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
 import NodeData from '@/components/Presale/NodeData';
 import Next from '@/components/Presale/Next';
+import TransferNode from './transferNode';
 
 interface Props {
   locale: string;
@@ -27,6 +28,11 @@ const NodeInfo = async (props: Props) => {
         connectText={t('CONNECT WALLET')}
         bindText={t('BIND INVITER')}
         purchasedNodeText={t('PURCHASED NODE')}
+      />
+      <TransferNode 
+      transferText={t('TRANSFER NODE')}
+      connectText={t('CONNECT WALLET')}
+      placeholderText={t('Enter receiver is address')}
       />
     </>
   );

@@ -87,5 +87,7 @@
   "node_ENotBuyNode": "Node not purchased",
   "node_ENodeSoldOut": "Node is sold out",
   "node_EExceedsPurchaseLimi": "Purchase limit exceeded",
-  "node_EInvalidCoinType": "Illegal token type"
+  "node_EInvalidCoinType": "Illegal token type",
+  "TRANSFER NODES": "TRANSFER NODES",
+  "Enter receiver is address": "Enter receiver is address"
 }
