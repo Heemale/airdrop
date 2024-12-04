@@ -89,5 +89,7 @@
   "node_EExceedsPurchaseLimi": "Purchase limit exceeded",
   "node_EInvalidCoinType": "Illegal token type",
   "TRANSFER NODES": "TRANSFER NODES",
-  "Enter receiver is address": "Enter receiver is address"
+  "Please enter the node recipient": "Please enter the node recipient",
+  "Please enter a valid receiver address.": "Please enter a valid receiver address.",
+  "Rejected from user": "Rejected from user"
 }

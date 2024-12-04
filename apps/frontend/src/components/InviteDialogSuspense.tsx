@@ -71,7 +71,7 @@ const InviteDialog = (props: Props) => {
             setLoading(false);
             await sleep(1);
             setOpen(false);
-            router.push('/presale-comfirm');
+            router.push('/presale-confirm');
           },
           onError: ({ message }) => {
             console.log(`Bind: ${message}`);
@@ -93,7 +93,7 @@ const InviteDialog = (props: Props) => {
       open={open}
       PaperProps={{
         style: {
-          width: '95vw',
+          width: '90vw',
           height: '64vh',
           maxWidth: '500px',
           maxHeight: '400px',

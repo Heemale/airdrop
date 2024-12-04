@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Button from '@/components/Button';
 import { nodeClient } from '@/sdk';
 import { NODES } from '@local/airdrop-sdk/utils';
 
@@ -9,9 +8,9 @@ import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { message } from 'antd';
-
+import { PresaleContext } from '@/context/PresaleContext';
 
 interface Props {
   transferText: string;
@@ -19,11 +18,11 @@ interface Props {
   placeholderText: string;
 }
 
-
 const TransferNode = (props: Props) => {
   const { transferText, connectText, placeholderText } = props;
 
   const account = useCurrentAccount();
+  const { node } = useContext(PresaleContext);
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
 
   const [loading, setLoading] = React.useState(false);
@@ -69,7 +68,7 @@ const TransferNode = (props: Props) => {
 
   return (
     <div className="col-span-2">
-      {account ? (
+      {account && node && (
         <>
           <input
             type="text"
@@ -78,18 +77,14 @@ const TransferNode = (props: Props) => {
             placeholder={placeholderText}
             className="w-full mb-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <Button
-            className="text-white w-full"
-            text={transferText}
+          <button
+            className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
             onClick={transferNode}
-          />
+          >
+            {transferText}
+          </button>
         </>
-      ) : (
-        <div className="text-center">
-          <Button className="text-white w-full" text={connectText} />
-        </div>
       )}
-      
       {contextHolder}
     </div>
   );

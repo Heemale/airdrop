@@ -89,8 +89,7 @@
   "node_EExceedsPurchaseLimi": "超出购买限额",
   "node_EInvalidCoinType": "非法代币类型",
   "TRANSFER NODE": "转让节点",
-  "Enter receiver is address": "输入接收者地址"
-
-
-
+  "Please enter the node recipient": "请输入节点接收人",
+  "Please enter a valid receiver address.": "请输入合法的接收人地址",
+  "Rejected from user": "用户拒绝签名"
 }
