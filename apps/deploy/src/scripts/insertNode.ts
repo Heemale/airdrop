@@ -4,8 +4,8 @@ import { ADMIN_CAP, NODES } from '@local/airdrop-sdk/utils';
 
 const insertNode = async () => {
   const nodes = NODES; // 替换为实际的 Nodes 对象 ID
-  const name = 'Example Node 1'; // 节点名称
-  const description = 'This is an example node 1'; // 节点描述
+  const name = 'Example Node 2'; // 节点名称
+  const description = 'This is an example node 2'; // 节点描述
   const limit = BigInt(1); // 每轮空投购买次数限制
   const price = BigInt(1000000); // 节点价格
   const total_quantity = BigInt(100); // 总数量

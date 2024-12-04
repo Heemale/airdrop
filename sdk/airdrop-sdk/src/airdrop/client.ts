@@ -34,8 +34,8 @@ export class AirdropClient {
     totalShares: bigint,
     totalBalance: bigint,
     description: string,
-    image_url: string,
     wallet: string | null,
+    image_url: string,
     amount: bigint | null,
     owner: string,
   ): Promise<Transaction> {
@@ -52,8 +52,9 @@ export class AirdropClient {
           tx.pure.u64(totalShares),
           tx.pure.u64(totalBalance),
           tx.pure.string(description),
-          tx.pure.string(image_url),
           tx.object(wallet),
+          tx.pure.string(image_url),
+
         ],
       });
     } else {
@@ -70,8 +71,8 @@ export class AirdropClient {
             tx.pure.u64(totalShares),
             tx.pure.u64(totalBalance),
             tx.pure.string(description),
-            tx.pure.string(image_url),
             coin,
+            tx.pure.string(image_url),
           ],
         });
       } else {
@@ -99,8 +100,9 @@ export class AirdropClient {
             tx.pure.u64(totalShares),
             tx.pure.u64(totalBalance),
             tx.pure.string(description),
-            tx.pure.string(image_url),
             coin,
+            tx.pure.string(image_url),
+
           ],
         });
       }
@@ -256,9 +258,7 @@ export class AirdropClient {
     rank: number,
     name: string,
     description: string,
-    limit: bigint,
     price: bigint,
-    totalQuantity: bigint,
   ): Transaction {
     const tx = new Transaction();
     tx.moveCall({
@@ -270,9 +270,7 @@ export class AirdropClient {
         tx.pure.u8(rank),
         tx.pure.string(name),
         tx.pure.string(description),
-        tx.pure.u64(limit),
         tx.pure.u64(price),
-        tx.pure.u64(totalQuantity),
       ],
     });
     return tx;

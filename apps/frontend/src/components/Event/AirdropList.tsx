@@ -9,6 +9,8 @@ import { airdropClient, nodeClient } from '@/sdk';
 import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { message } from 'antd';
 import { useCurrentAccount } from '@mysten/dapp-kit';
+import { handleTxError } from '@/sdk/error';
+import { useClientTranslation } from '@/hook';
 
 interface Props {
   isOngoing?: boolean;
@@ -21,6 +23,7 @@ interface Props {
 }
 
 const startTime = BigInt(getCurrentTimestampMs());
+const { t } = useClientTranslation();
 
 const AirdropList = (props: Props) => {
   const {
@@ -47,7 +50,7 @@ const AirdropList = (props: Props) => {
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
-        messageApi.error(`Error: ${e.message}`);
+        messageApi.error(`Error:  ${t(handleTxError(e.message))}`);
       }
     }
   };
@@ -59,7 +62,7 @@ const AirdropList = (props: Props) => {
       setAirdropList(airdropData);
     } catch (e: any) {
       console.log(`getAirdropList error: ${e.messag}`);
-      messageApi.error(`Error: ${e.message}`);
+      messageApi.error(`Error: ${t(handleTxError(e.message))}`);
     }
   };
 

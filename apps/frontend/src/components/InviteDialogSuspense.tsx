@@ -13,6 +13,8 @@ import { sleep } from '@/utils/time';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { Suspense } from 'react';
+import { handleTxError } from '@/sdk/error';
+import { useClientTranslation } from '@/hook';
 
 interface Props {
   bindInviter: string;
@@ -20,7 +22,7 @@ interface Props {
   noInviter: string;
   bindText: string;
 }
-
+const { t } = useClientTranslation();
 const InviteDialog = (props: Props) => {
   const { bindInviter, bindText, inviterText } = props;
 
@@ -75,14 +77,14 @@ const InviteDialog = (props: Props) => {
           },
           onError: ({ message }) => {
             console.log(`Bind: ${message}`);
-            messageApi.error(`Error: ${message}`);
+            messageApi.error(`Error: ${t(handleTxError(message))}`);
             setLoading(false);
           },
         },
       );
     } catch (e: any) {
       console.log(`Bind: ${e.message}`);
-      messageApi.error(`Error: ${e.message}`);
+      messageApi.error(`Error: ${t(handleTxError(e.message))}`);
       setLoading(false);
     }
   };

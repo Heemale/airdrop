@@ -8,6 +8,8 @@ import { useCurrentAccount } from '@mysten/dapp-kit';
 import { suiClient } from '@/sdk';
 import { message } from 'antd';
 import { useRouter } from 'next/navigation';
+import { useClientTranslation } from '@/hook';
+import { handleTxError } from '@/sdk/error';
 
 interface Props {
   purchaseOrder: string;
@@ -27,6 +29,7 @@ const PurchaseOrderData = (props: Props) => {
     priceDetail,
     walletBalance,
   } = props;
+  const { t } = useClientTranslation();
 
   const router = useRouter();
   const account = useCurrentAccount();
@@ -44,7 +47,7 @@ const PurchaseOrderData = (props: Props) => {
         setBalance(res.totalBalance);
       } catch (e: any) {
         console.log(`getBalance: ${e.message}`);
-        messageApi.error(`Error: ${e.message}`);
+        messageApi.error(`Error: ${t(handleTxError(e.message))}`);
       }
     }
   };
