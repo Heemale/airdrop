@@ -3,6 +3,8 @@
 import * as React from 'react';
 import { nodeClient } from '@/sdk';
 import { NODES } from '@local/airdrop-sdk/utils';
+import { useClientTranslation } from '@/hook';
+import { handleTxError } from '@/sdk/error';
 
 import {
   useCurrentAccount,
@@ -20,6 +22,7 @@ interface Props {
 
 const TransferNode = (props: Props) => {
   const { transferText, connectText, placeholderText } = props;
+  const { t } = useClientTranslation();
 
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
@@ -51,7 +54,7 @@ const TransferNode = (props: Props) => {
             },
             onError: ({ message }) => {
               console.log(`TransferNode: ${message}`);
-              messageApi.error(`Error: ${message}`);
+              messageApi.error(`Error: ${t(handleTxError(message))}`);
               setLoading(false);
             },
           },
@@ -61,7 +64,7 @@ const TransferNode = (props: Props) => {
       }
     } catch (e: any) {
       console.log(`TransferNode: ${e.message}`);
-      messageApi.error(`Error: ${e.message}`);
+      messageApi.error(`Error:${t(handleTxError(e.message))}`);
       setLoading(false);
     }
   };

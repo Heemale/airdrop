@@ -16,6 +16,8 @@ import { PresaleContext } from '@/context/PresaleContext';
 import { message } from 'antd';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useClientTranslation } from '@/hook';
+import { handleTxError } from '@/sdk/error';
 
 interface Props {
   buyText: string;
@@ -33,6 +35,7 @@ const Purchase = (props: Props) => {
   const { node } = useContext(PresaleContext);
   const { inviter, setOpen, setInviter } = useContext(InviteDialogContext);
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const { t } = useClientTranslation();
 
   const [loading, setLoading] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -64,7 +67,7 @@ const Purchase = (props: Props) => {
             },
             onError: ({ message }) => {
               console.log(`BuyNode: ${message}`);
-              messageApi.error(`Error: ${message}`);
+              messageApi.error(`Error:${t(handleTxError(message))}`);
               setLoading(false);
             },
           },
@@ -72,7 +75,7 @@ const Purchase = (props: Props) => {
       }
     } catch (e: any) {
       console.log(`BuyNode: ${e.message}`);
-      messageApi.error(`Error: ${e.message}`);
+      messageApi.error(`Error:${t(handleTxError(e.message))}`);
       setLoading(false);
     }
   };
@@ -89,7 +92,7 @@ const Purchase = (props: Props) => {
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
-        messageApi.error(`Error: ${e.message}`);
+        messageApi.error(`Error: ${t(handleTxError(e.message))}`);
       }
     }
   };
@@ -102,7 +105,7 @@ const Purchase = (props: Props) => {
         setInviter(inviter);
       } catch (e: any) {
         console.log(`updateInvite: ${e.message}`);
-        messageApi.error(`Error: ${e.message}`);
+        messageApi.error(`Error: ${t(handleTxError(e.message))}`);
       }
     }
   };

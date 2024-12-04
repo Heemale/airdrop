@@ -8,10 +8,10 @@ const insertAirdrop = async () => {
   const startTime = BigInt(Math.floor(Date.now())) + BigInt(86400 * 1000 * 7); // 开始时间（当前时间戳）
   const endTime = startTime + BigInt(86400 * 1000 * 7); // 结束时间（1小时后）
   const totalShares = BigInt(100); // 空投份额
-  const totalBalance = BigInt(100000000); // 总金额
-  const description = 'Example Airdrop 1'; // 空投描述
+  const totalBalance = BigInt(1000); // 总金额
+  const description = 'Example Airdrop 2'; // 空投描述
   const image_url = 'http://localhost:3000/01.png'; // 空投图片 URL
-  const amount = BigInt(100000000);
+  const amount = BigInt(1000);
   const owner = adminKeypair.toSuiAddress(); // 使用管理员地址作为所有者
 
   // 调用 insert 方法创建添加空投的交易
@@ -24,8 +24,8 @@ const insertAirdrop = async () => {
     totalShares,
     totalBalance,
     description,
-    image_url,
     null,
+    image_url,
     amount,
     owner,
   );

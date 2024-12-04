@@ -16,6 +16,7 @@ import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { message } from 'antd';
 import { PresaleContext } from '@/context/PresaleContext';
 import { useClientTranslation } from '@/hook';
+import { handleTxError } from '@/sdk/error';
 
 interface Props {
   nextText: string;
@@ -52,7 +53,7 @@ const Next = (props: Props) => {
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
-        messageApi.error(`Error: ${e.message}`);
+        messageApi.error(`Error: ${t(handleTxError(e.message))}`);
       }
     }
   };
@@ -65,7 +66,7 @@ const Next = (props: Props) => {
         setInviter(inviter);
       } catch (e: any) {
         console.log(`updateInvite: ${e.message}`);
-        messageApi.error(`Error: ${e.message}`);
+        messageApi.error(`Error: ${t(handleTxError(e.message))}`);
       }
     }
   };
@@ -92,7 +93,7 @@ const Next = (props: Props) => {
             },
             onError: ({ message }) => {
               console.log(`TransferNode: ${message}`);
-              messageApi.error(`Error: ${t(message)}`);
+              messageApi.error(`Error:${t(handleTxError(message))}`);
               setLoading(false);
             },
           },
@@ -102,7 +103,7 @@ const Next = (props: Props) => {
       }
     } catch (e: any) {
       console.log(`TransferNode: ${e.message}`);
-      messageApi.error(`Error: ${e.message}`);
+      messageApi.error(`Error:${t(handleTxError(e.message))}`);
       setLoading(false);
     }
   };

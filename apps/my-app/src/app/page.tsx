@@ -73,7 +73,7 @@ const AdminPage = () => {
       const startTime = dayjs(values.startTime).valueOf(); // 转换为毫秒级时间戳
       const endTime = dayjs(values.endTime).valueOf(); // 转换为毫秒级时间戳
 
-      const { totalShares, totalBalance, description, amount,coinType } = values;
+      const { totalShares, totalBalance, description,image_url, amount,coinType } = values;
 
       // 调用 airdropClient.insert 方法
       const result = await airdropClient.insert(
@@ -85,6 +85,7 @@ const AdminPage = () => {
         BigInt(totalShares), 
         BigInt(totalBalance), 
         description, 
+        image_url,
         null, // 连接的钱包地址
         BigInt(amount), 
         account1
@@ -320,7 +321,13 @@ useEffect(() => {
           >
             <Input placeholder="请输入描述" />
           </Form.Item>
-
+          <Form.Item
+            name="image_url"
+            label="图片"
+            rules={[{ required: true, message: '请输入图片' }]}
+          >
+            <Input placeholder="请输入图片" />
+          </Form.Item>
           <Form.Item
             name="amount"
             label="金额"
