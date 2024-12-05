@@ -14,7 +14,7 @@ interface Props {
   nodeInfo: string;
   nodeName: string;
   currentTier: string;
-  remainingAndTotalNodes: string;
+  remaining: string;
   allowedPurchaseAmount: string;
   nodePrice: string;
 }
@@ -45,7 +45,7 @@ const NodeData = (props: Props) => {
     nodeInfo,
     nodeName,
     currentTier,
-    remainingAndTotalNodes,
+    remaining,
     allowedPurchaseAmount,
     nodePrice,
   } = props;
@@ -136,10 +136,9 @@ const NodeData = (props: Props) => {
         <div>LV {node ? node.rank : '-'}</div>
       </div>
       <div className="flex justify-between">
-        <div>{remainingAndTotalNodes}</div>
+        <div>{remaining}</div>
         <div>
           {node ? node.total_quantity - node.purchased_quantity : '-'}/
-          {node ? node.total_quantity : '-'}
         </div>
       </div>
       <div className="flex justify-between">

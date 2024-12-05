@@ -16,12 +16,12 @@ const NodeInfo = async (props: Props) => {
   return (
     <>
       <NodeData
-        nodeInfo={t('Node Info')}
-        nodeName={t('Node Name')}
+        nodeInfo={t('Equity Info')}
+        nodeName={t('Equity Name')}
         currentTier={t('Current Tier')}
-        remainingAndTotalNodes={t('Remaining/Total Nodes')}
+        remaining={t('Remaining Nodes')}
         allowedPurchaseAmount={t('Allowed Purchase Amount')}
-        nodePrice={t('Node Price')}
+        nodePrice={t('Equity Price')}
       />
       <Next
         nextText={t('NEXT')}
