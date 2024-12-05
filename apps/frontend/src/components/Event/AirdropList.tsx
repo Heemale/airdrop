@@ -23,7 +23,6 @@ interface Props {
 }
 
 const startTime = BigInt(getCurrentTimestampMs());
-const { t } = useClientTranslation();
 
 const AirdropList = (props: Props) => {
   const {
@@ -37,6 +36,7 @@ const AirdropList = (props: Props) => {
   } = props;
 
   const account = useCurrentAccount();
+  const { t } = useClientTranslation();
 
   const [airdropList, setAirdropList] = useState<Array<AirdropInfo>>([]);
   const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);

@@ -22,10 +22,10 @@ interface Props {
   noInviter: string;
   bindText: string;
 }
-const { t } = useClientTranslation();
 const InviteDialog = (props: Props) => {
   const { bindInviter, bindText, inviterText } = props;
 
+  const { t } = useClientTranslation();
   const router = useRouter();
   const searchParams = useSearchParams(); // 获取 URL 的查询参数
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
