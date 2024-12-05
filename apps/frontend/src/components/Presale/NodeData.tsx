@@ -137,9 +137,7 @@ const NodeData = (props: Props) => {
       </div>
       <div className="flex justify-between">
         <div>{remaining}</div>
-        <div>
-          {node ? node.total_quantity - node.purchased_quantity : '-'}/
-        </div>
+        <div>{node ? node.total_quantity - node.purchased_quantity : '-'}/</div>
       </div>
       <div className="flex justify-between">
         <div>{allowedPurchaseAmount}</div>
