@@ -54,7 +54,6 @@ export class AirdropClient {
           tx.pure.string(description),
           tx.object(wallet),
           tx.pure.string(image_url),
-
         ],
       });
     } else {
