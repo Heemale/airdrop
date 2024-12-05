@@ -101,7 +101,6 @@ export class AirdropClient {
             tx.pure.string(description),
             coin,
             tx.pure.string(image_url),
-
           ],
         });
       }

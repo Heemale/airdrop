@@ -138,6 +138,27 @@ export class NodeClient {
     return value[0] !== 0;
   }
 
+  async remainingQuantityOfClaim(nodes: string, sender: string, round: bigint) {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::remaining_quantity_of_claim`,
+      arguments: [
+        tx.object(nodes),
+        tx.pure.address(sender),
+        tx.pure.u64(round),
+      ],
+    });
+    // @ts-ignore
+    const res: DevInspectResults =
+      await this.suiClient.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: normalizeSuiAddress('0x0'),
+      });
+    // @ts-ignore
+    return res?.results[0]?.returnValues[0][0];
+  }
+
   async queryEvents(
     eventName: string,
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
