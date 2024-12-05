@@ -22,7 +22,7 @@ const Home = async (props: Props) => {
           <div className="w-full max-w-[1260px] flex flex-col gap-6 text-white">
             <Link href={'/event'} className="cursor-pointer">
               {'< '}
-              {t('Events')}
+              {t('Airdrops')}
             </Link>
             <div className="flex gap-6">
               <Link href={'/airdrop-list'}>
@@ -43,12 +43,12 @@ const Home = async (props: Props) => {
               </Link>
             </div>
             <div className="text-sm">
-              {t(' Purchase CoralPhone to receive airdrop rewards!')}
+              {t('Purchase equity status to receive airdrop rewards!')}
             </div>
             <AirdropList
               ongoingText={t('ongoing')}
               chainText={t('Chain')}
-              totalCopies={t('Total Copies')}
+              totalCopies={t('Total quantity')}
               rewardQuantityPerCopy={t('Reward Quantity per Copy')}
               unpurchasedNode={t('UNPURCHASED NODE')}
               claimText={t('CLAIM')}

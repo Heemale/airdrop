@@ -104,8 +104,7 @@ const AirdropItem = (props: Props) => {
               )}
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
-              <div>{formatTimestamp(Number(data.startTime))}</div>
-              <div>~</div>
+              <div>{formatTimestamp(Number(data.startTime))}</div> <div>~</div>
               <div>{formatTimestamp(Number(data.endTime))}</div>
             </div>
           </div>

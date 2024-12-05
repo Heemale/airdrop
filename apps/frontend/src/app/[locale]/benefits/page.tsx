@@ -21,7 +21,7 @@ const Home = async (props: Props) => {
           <div className="w-full max-w-[1260px] flex flex-col gap-6 text-white">
             <Link href={'/event'} className="cursor-pointer">
               {'< '}
-              {t('Events')}
+              {t('Airdrops')}
             </Link>
             <div className="flex gap-6">
               <Link href={'/airdrop-list'}>

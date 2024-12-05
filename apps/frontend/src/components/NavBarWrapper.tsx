@@ -22,7 +22,7 @@ const pages: Array<Page> = [
   },
   {
     id: '1',
-    name: 'Presale',
+    name: 'Equity subscription',
     link: '/presale',
   },
   {
