@@ -51,7 +51,7 @@ module airdrop::node {
         name: vector<u8>,
         // 描述
         description: vector<u8>,
-        // 每轮空投购买次数
+        // 每轮可领取空投数量
         limit: u64,
         // 价格
         price: u64,
@@ -64,8 +64,8 @@ module airdrop::node {
     public struct User has store {
         // 等级
         rank: u8,
-        // 已购买的数量：轮次 => 次数
-        purchased_quantitys: Table<u64, u64>,
+        // 已领取空投数量：轮次 => 次数
+        limits: Table<u64, u64>,
         // 是否合法
         is_invalid: bool
     }
@@ -183,12 +183,12 @@ module airdrop::node {
         assert_not_buy_node(&nodes.users, sender);
         let user: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
         let node = vec_map::get(&nodes.nodes, &user.rank);
-        if (table::contains(&user.purchased_quantitys, round)) {
-            let purchased_quantity: &mut u64 = table::borrow_mut(&mut user.purchased_quantitys, round);
+        if (table::contains(&user.limits, round)) {
+            let purchased_quantity: &mut u64 = table::borrow_mut(&mut user.limits, round);
             assert_exceeds_purchase_limit(node, *purchased_quantity);
             *purchased_quantity + 1;
         }else {
-            table::add(&mut user.purchased_quantitys, round, 1);
+            table::add(&mut user.limits, round, 1);
         }
     }
 
@@ -226,7 +226,7 @@ module airdrop::node {
         // 更新用户信息
         let user = User {
             rank: node.rank,
-            purchased_quantitys: table::new(ctx),
+            limits: table::new(ctx),
             is_invalid: true,
         };
         vec_map::insert(&mut nodes.users, sender, user);
@@ -278,7 +278,7 @@ module airdrop::node {
         } else {
             let node_receiver = User {
                 rank: node.rank,
-                purchased_quantitys: table::new(ctx),
+                limits: table::new(ctx),
                 is_invalid: true,
             };
             vec_map::insert(&mut nodes.users, receiver, node_receiver);
@@ -292,6 +292,31 @@ module airdrop::node {
     public fun nodes_rank(nodes: &Nodes, sender: address): u8 {
         let user_info = vec_map::get(&nodes.users, &sender);
         user_info.rank
+    }
+
+    public fun remaining_quantity_of_claim(nodes: &Nodes, sender: address, round: u64): u64 {
+        let is_exists = vec_map::contains(&nodes.users, &sender);
+        if (is_exists) {
+            let user: &User = vec_map::get(&nodes.users, &sender);
+
+            let is_exists = vec_map::contains(&nodes.nodes, &user.rank);
+            if (is_exists) {
+                let node: &Node = vec_map::get(&nodes.nodes, &user.rank);
+                let node_purchased_quantity = node.limit;
+
+                let is_exists = table::contains(&user.limits, round);
+                if (is_exists) {
+                    let user_purchased_quantity: &u64 = table::borrow(&user.limits, round);
+                    node_purchased_quantity - *user_purchased_quantity
+                } else {
+                    0
+                }
+            } else {
+                0
+            }
+        } else {
+            0
+        }
     }
 
     public fun is_already_buy_node(nodes: &Nodes, sender: address): bool {

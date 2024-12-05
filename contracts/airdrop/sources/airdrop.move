@@ -143,7 +143,7 @@ module airdrop::airdrop {
     ) {
         assert!(coin::value(&wallet) >= total_balance, ECoinBalanceNotEnough);
 
-        airdrops.round_index = airdrops.round_index +1;
+        airdrops.round_index = airdrops.round_index + 1;
         let round = airdrops.round_index;
 
         // 处理多余的入金
@@ -309,7 +309,7 @@ module airdrop::airdrop {
         description: vector<u8>,
         price: u64,
     ) {
-        node::modify(nodes, rank, name, description,  price);
+        node::modify(nodes, rank, name, description, price);
     }
 
     public fun airdrops(airdrops: &Airdrops) {
