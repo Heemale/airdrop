@@ -31,6 +31,7 @@ const AdminPage = () => {
     try {
       setLoading(true);
       const list = await airdropClient.airdrops(AIRDROPS);
+      console.log('Airdrop list:', list);
       setAirdropList(list);
     } catch (error) {
       messageApi.error('获取空投列表失败');
@@ -46,12 +47,13 @@ const AdminPage = () => {
       messageApi.error('请先连接钱包');
       return;
     }
-
     try {
       setLoading(true);
       const result = await airdropClient.withdraw(coinType, ADMIN_CAP, AIRDROPS, round);
       console.log("Withdraw transaction result:", result); // 打印结果
       messageApi.success('提款成功');
+      const list = await airdropClient.airdrops(AIRDROPS);
+      console.log('Airdrop list:', list);
       fetchAirdropList(); // 更新空投列表
     } catch (error) {
       messageApi.error('提款失败');
@@ -141,6 +143,8 @@ const AdminPage = () => {
     },
     { title: '描述', dataIndex: 'description', key: 'description' },
     { title: '币种', dataIndex: 'coinType', key: 'coinType' },
+    { title: '图片链接', dataIndex: 'image_url', key: 'image_url' },
+    { title: '剩余金额', dataIndex: 'remaining_balance', key: 'remaining_balance' },
     {
       title: '操作',
       key: 'actions',
