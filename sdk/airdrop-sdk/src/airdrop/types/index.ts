@@ -19,4 +19,6 @@ export interface AirdropInfo {
   image_url: string;
   // 货币类型
   coinType: string;
+  //剩余金额
+  remaining_balance: bigint;
 }

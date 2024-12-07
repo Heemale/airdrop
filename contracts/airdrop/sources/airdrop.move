@@ -56,6 +56,8 @@ module airdrop::airdrop {
         // 货币类型
         coin_type: TypeName,
         image_url: vector<u8>,
+        //剩余金额
+        remaining_balance: u64,
 
     }
 
@@ -84,6 +86,7 @@ module airdrop::airdrop {
         // 货币类型
         coin_type: TypeName,
         image_url: vector<u8>,
+        remaining_balance: u64,
     }
 
     fun init(ctx: &mut TxContext) {
@@ -168,6 +171,7 @@ module airdrop::airdrop {
             description,
             coin_type,
             image_url,
+            remaining_balance: total_balance,
         };
         vec_map::insert(&mut airdrops.airdrops, round, aidrop);
         bag::add(&mut airdrops.treasury_balances, round, coin::into_balance(wallet));
@@ -226,6 +230,9 @@ module airdrop::airdrop {
         let aidrop_balance: &mut Balance<T> = bag::borrow_mut(&mut airdrops.treasury_balances, round);
         let treasury_balance = balance::withdraw_all(aidrop_balance);
         let treasury_coin = coin::from_balance(treasury_balance, ctx);
+        let airdrop: &mut Airdrop = vec_map::get_mut(&mut airdrops.airdrops, &round);
+        airdrop.is_open = false;
+        airdrop.remaining_balance = 0;
         transfer::public_transfer(treasury_coin, sender);
     }
 
@@ -249,6 +256,7 @@ module airdrop::airdrop {
         node::update_purchased_quantity(nodes, sender, round);
         let per_share_amount = airdrop.total_balance / airdrop.total_shares;
         airdrop.claimed_shares = airdrop.claimed_shares + 1;
+        airdrop.remaining_balance = airdrop.remaining_balance - per_share_amount;
         let treasury_balance = bag::borrow_mut<u64, Balance<T>>(&mut airdrops.treasury_balances, round);
         let treasury_balance_part = balance::split<T>(treasury_balance, per_share_amount);
         let treasury_coina_part: Coin<T> = coin::from_balance<T>(treasury_balance_part, ctx);
@@ -328,6 +336,7 @@ module airdrop::airdrop {
                 description: airdrop.description,
                 image_url: airdrop.image_url,
                 coin_type: airdrop.coin_type,
+                remaining_balance: airdrop.remaining_balance,
             });
             i = i + 1;
         };

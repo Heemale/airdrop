@@ -303,6 +303,7 @@ export class AirdropClient {
       description: decoder.decode(new Uint8Array(rawEvent.description)),
       image_url: decoder.decode(new Uint8Array(rawEvent.image_url)),
       coinType: rawEvent.coin_type.name as string,
+      remaining_balance: rawEvent.remaining_balance as bigint,
     });
 
     return events.map((event) => {

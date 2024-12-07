@@ -10,41 +10,41 @@ interface Props {
 const benefits = [
   {
     number: '01',
-    title: 'Diamond Hand Incentives',
+    title: 'Long-lasting and sustainable dividends',
     description:
-      'The more and longer you hold, the more your points will add up, granting higher levels of benefits.',
+      'The higher the equity status, the more creation equity you can own and the more sustainable dividends you will receive.',
     icon: '/home_icon1.png',
     numberIcon: '/home_number_icon1.png',
   },
   {
     number: '02',
-    title: 'Rights and interests of token exchange',
+    title: 'High-quality projects receive priority',
     description:
-      'After the issuance of Coral Token, points can be exchanged for tokens to participate in the CoralApp ecosystem’s shared governance and token incentive programs.',
+      'By participating in Mercury World, you will have the opportunity to obtain the IDO whitelist and priority airdrop rights for high-quality assets that will be launched soon, led by top venture capital institutions and leading exchanges.',
     icon: '/home_icon2.png',
     numberIcon: '/home_number_icon2.png',
   },
   {
     number: '03',
-    title: 'Partner Airdrops',
+    title: 'A large number of ecological airdrops',
     description:
-      'Join CoralApp and receive exclusive airdrop rewards from ecosystem partners.',
+      'As long as you join Mercury World, you can receive a wide variety of potential project airdrop rewards.',
     icon: '/home_icon3.png',
     numberIcon: '/home_number_icon3.png',
   },
   {
     number: '04',
-    title: 'AI Intelligent Mining',
+    title: 'Participation is mining',
     description:
-      'As a smart device, CoralPhone provides mining rewards and adds value to the device.',
+      'Once you obtain the rights status of Mercury World, you can obtain the mining rewards of the platform. The higher the status, the more and continuous the rewards will be.',
     icon: '/home_icon4.png',
     numberIcon: '/home_number_icon4.png',
   },
   {
     number: '05',
-    title: 'Quality Project Airdrops',
+    title: 'Obtain exclusive identity NFT',
     description:
-      'Participate in CoralApp and have a chance to get airdrops from listing on top-tier exchanges and high-quality assets soon to be listed.',
+      'Holding exclusive identity NFT, you can immediately share the markets continuous channel income. The higher the NFT level, you also have the right to propose, and receive bonuses and permanent dividends for proposal approval.',
     icon: '/home_icon5.png',
     numberIcon: '/home_number_icon5.png',
   },
@@ -57,7 +57,7 @@ const Holder = async (props: Props) => {
   return (
     <div className="max-w-screen-xl flex flex-col items-start text-white mx-auto">
       <h2 className="text-xl sm:text-6xl font-bold text-gradient mb-12">
-        {t('CoralPhone Holder Benefits')}
+        {t('Exclusive benefits for holding Mercury World rights and status')}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
         {benefits &&

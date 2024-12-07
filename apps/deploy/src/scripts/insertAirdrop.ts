@@ -28,6 +28,7 @@ const insertAirdrop = async () => {
     image_url,
     amount,
     owner,
+    
   );
 
   // 签名并执行交易
