@@ -31,8 +31,8 @@
   "Ongoing Airdrops": "进行中的空投",
   "CLAIM": "领取",
   "Chain": "链",
-  "Total quantity": "总数量",
-  "Reward Quantity per Copy": "每个地址的奖励数量",
+  "Total number of copies": "总份数",
+  "Reward Quantity per Copy": "每份奖励数量",
   "My Airdrop Benefits": "我的空投奖励",
   "Purchase equity status to receive airdrop rewards!": "购买权益身份以获得空投奖励！",
   "About Mercury World": "关于水星世界",
@@ -93,5 +93,6 @@
   "TRANSFER NODE": "转让节点",
   "Please enter the node recipient": "请输入节点接收人",
   "Please enter a valid receiver address.": "请输入合法的接收人地址",
-  "Rejected from user": "用户拒绝签名"
+  "Rejected from user": "用户拒绝签名",
+  "Number of copies available": "可领取份数"
 }

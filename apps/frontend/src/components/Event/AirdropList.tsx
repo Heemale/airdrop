@@ -87,6 +87,7 @@ const AirdropList = (props: Props) => {
               (item) =>
                 item.isOpen && checkIsGoing(item.startTime, item.endTime),
             )
+            .sort((a, b) => (b.round > a.round ? 1 : -1)) // 按照 round 从大到小排序
             .map((item) => (
               <AirdropItem
                 key={item.round.toString()}
@@ -103,6 +104,7 @@ const AirdropList = (props: Props) => {
             ))
         : airdropList
             .filter((item) => item.isOpen)
+            .sort((a, b) => (b.round > a.round ? 1 : -1)) // 按照 round 从大到小排序
             .map((item) => {
               const isOngoing = checkIsGoing(item.startTime, item.endTime);
               return (

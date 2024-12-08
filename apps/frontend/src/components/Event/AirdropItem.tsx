@@ -2,20 +2,24 @@
 
 import Image from 'next/image';
 import * as React from 'react';
-import { useState } from 'react';
-import { airdropClient } from '@/sdk';
+import { useEffect, useState } from 'react';
+import { airdropClient, nodeClient } from '@/sdk';
 import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
-import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+} from '@mysten/dapp-kit';
 import { message } from 'antd';
 import { getCoinTypeName } from '@/utils';
-import { formatTimestamp } from '@/utils/time';
+import { formatTimestamp, sleep } from '@/utils/time';
 import { divide } from '@/utils/math';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
+import { useRouter } from 'next/navigation';
 
 export interface Props {
   data: AirdropInfo;
@@ -43,8 +47,11 @@ const AirdropItem = (props: Props) => {
   } = props;
 
   const { t } = useClientTranslation();
+  const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const router = useRouter();
 
+  const [remainingClaimTimes, setRemainingClaimTimes] = useState<bigint>(0n);
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -61,10 +68,12 @@ const AirdropItem = (props: Props) => {
       signAndExecuteTransaction(
         { transaction: res },
         {
-          onSuccess: (result) => {
+          onSuccess: async (result) => {
             console.log({ digest: result.digest });
             messageApi.info(`Success: ${result.digest}`);
             setLoading(false);
+            await sleep(2);
+            router.refresh();
           },
           onError: ({ message }) => {
             console.log(`Claim: ${message}`);
@@ -79,6 +88,24 @@ const AirdropItem = (props: Props) => {
       setLoading(false);
     }
   };
+
+  const remainingQuantityOfClaim = async () => {
+    if (!account) return;
+    try {
+      const times = await nodeClient.remainingQuantityOfClaim(
+        NODES,
+        account.address,
+        data.round,
+      );
+      setRemainingClaimTimes(BigInt(times));
+    } catch ({ message }) {
+      console.log(`fetch remainingQuantityOfClaim error: ${message}`);
+    }
+  };
+
+  useEffect(() => {
+    remainingQuantityOfClaim();
+  }, [data]);
 
   return (
     <div className="bg-gradient-to-b from-[#010101] to-[#222] flex flex-col gap-4 sm:gap-6 border border-gray-600 rounded-3xl px-3 sm:px-6 py-8 text-white">
@@ -104,38 +131,29 @@ const AirdropItem = (props: Props) => {
               )}
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
-              <div>{formatTimestamp(Number(data.startTime))}</div> <div>~</div>
+              <div>{formatTimestamp(Number(data.startTime))}</div>
+              <div>~</div>
               <div>{formatTimestamp(Number(data.endTime))}</div>
             </div>
           </div>
         </div>
       </div>
       <div>{data.description}</div>
-      {isAlreadyBuyNode ? (
-        isOngoing ? (
-          <button
-            onClick={claim}
-            className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
-          >
-            {t(claimText)}
-          </button>
-        ) : (
-          <button
-            className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
-            disabled
-          >
-            {t(claimText)}
-          </button>
-        )
+      {isAlreadyBuyNode && isOngoing && remainingClaimTimes > 0n ? (
+        <button
+          onClick={claim}
+          className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+        >
+          {t(claimText)}
+        </button>
       ) : (
         <button
           className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
           disabled
         >
-          {unpurchasedNode}
+          {t(claimText)}
         </button>
       )}
-
       <div className="flex justify-between">
         <div>{chainText}</div>
         <div className="flex justify-between items-center gap-2">
@@ -151,6 +169,14 @@ const AirdropItem = (props: Props) => {
       <div className="flex justify-between">
         <div>{totalCopies}</div>
         <div>{data.totalShares}</div>
+      </div>
+      <div className="flex justify-between">
+        <div>剩余份数</div>
+        <div>{data.totalShares - data.claimedShares}</div>
+      </div>
+      <div className="flex justify-between">
+        <div>{t('Number of copies available')}</div>
+        <div>{remainingClaimTimes}</div>
       </div>
       <div className="flex justify-between">
         <div>{rewardQuantityPerCopy}</div>

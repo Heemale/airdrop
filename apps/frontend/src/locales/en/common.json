@@ -31,7 +31,7 @@
   "Ongoing Airdrops": "Ongoing Airdrops",
   "CLAIM": "CLAIM",
   "Chain": "Chain",
-  "Total quantity": "Total quantity",
+  "Total number of copies": "Total number of copies",
   "Reward Quantity per Copy": "Reward Quantity per Copy",
   "My Airdrop Benefits": "My Airdrop Benefits",
   "Purchase equity status to receive airdrop rewards!": "Purchase equity status to receive airdrop rewards!",
@@ -93,5 +93,6 @@
   "TRANSFER NODE": "TRANSFER NODE",
   "Please enter the node recipient": "Please enter the node recipient",
   "Please enter a valid receiver address.": "Please enter a valid receiver address.",
-  "Rejected from user": "Rejected from user"
+  "Rejected from user": "Rejected from user",
+  "Number of copies available": "Number of copies available"
 }

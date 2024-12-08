@@ -31,7 +31,7 @@ const Home = async (props: Props) => {
               isOngoing
               ongoingText={t('ongoing')}
               chainText={t('Chain')}
-              totalCopies={t('Total quantity')}
+              totalCopies={t('Total number of copies')}
               rewardQuantityPerCopy={t('Reward Quantity per Copy')}
               unpurchasedNode={t('UNPURCHASED NODE')}
               claimText={'CLAIM'}

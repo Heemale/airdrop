@@ -9,6 +9,7 @@ import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
 import { NodeInfo } from './types';
+import { bcs } from '@mysten/sui/bcs';
 
 export class NodeClient {
   constructor(public suiClient: SuiClient) {}
@@ -156,7 +157,7 @@ export class NodeClient {
         sender: normalizeSuiAddress('0x0'),
       });
     // @ts-ignore
-    return res?.results[0]?.returnValues[0][0];
+    return bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0]));
   }
 
   async queryEvents(
