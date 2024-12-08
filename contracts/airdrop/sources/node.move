@@ -295,21 +295,24 @@ module airdrop::node {
     }
 
     public fun remaining_quantity_of_claim(nodes: &Nodes, sender: address, round: u64): u64 {
+        // 是否注册
         let is_exists = vec_map::contains(&nodes.users, &sender);
         if (is_exists) {
             let user: &User = vec_map::get(&nodes.users, &sender);
 
+            // 是否购买节点
             let is_exists = vec_map::contains(&nodes.nodes, &user.rank);
             if (is_exists) {
                 let node: &Node = vec_map::get(&nodes.nodes, &user.rank);
                 let node_purchased_quantity = node.limit;
 
+                // 当前轮是否领取过空投
                 let is_exists = table::contains(&user.limits, round);
                 if (is_exists) {
                     let user_purchased_quantity: &u64 = table::borrow(&user.limits, round);
                     node_purchased_quantity - *user_purchased_quantity
                 } else {
-                    0
+                    node_purchased_quantity
                 }
             } else {
                 0
