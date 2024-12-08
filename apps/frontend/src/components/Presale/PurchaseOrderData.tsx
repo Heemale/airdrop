@@ -10,6 +10,7 @@ import { message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
+import { PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
 
 interface Props {
   purchaseOrder: string;
@@ -42,7 +43,7 @@ const PurchaseOrderData = (props: Props) => {
       try {
         const res = await suiClient.getBalance({
           owner: account.address,
-          coinType: '0x2::sui::SUI',
+          coinType: PAY_COIN_TYPE,
         });
         setBalance(res.totalBalance);
       } catch (e: any) {

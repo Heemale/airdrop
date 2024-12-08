@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { airdropClient, nodeClient } from '@/sdk';
+import { airdropClient, getCoinMetaData, nodeClient } from '@/sdk';
 import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
@@ -12,14 +12,15 @@ import {
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
 import { message } from 'antd';
-import { getCoinTypeName } from '@/utils';
+import { getCoinTypeName, isHexString } from '@/utils';
 import { formatTimestamp, sleep } from '@/utils/time';
-import { divide } from '@/utils/math';
+import { convertSmallToLarge, divide } from '@/utils/math';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
 import { useRouter } from 'next/navigation';
+import type { CoinMetadata } from '@mysten/sui/client';
 
 export interface Props {
   data: AirdropInfo;
@@ -52,6 +53,7 @@ const AirdropItem = (props: Props) => {
   const router = useRouter();
 
   const [remainingClaimTimes, setRemainingClaimTimes] = useState<bigint>(0n);
+  const [coinMetaData, setCoinMetaData] = useState<CoinMetadata | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -103,8 +105,36 @@ const AirdropItem = (props: Props) => {
     }
   };
 
+  const fetchCoinMetaData = async () => {
+    const coinType = isHexString(data.coinType)
+      ? data.coinType
+      : '0x' + data.coinType;
+    // @ts-ignore
+    const coinMetaData = await getCoinMetaData({
+      coinType,
+    });
+    setCoinMetaData(coinMetaData);
+  };
+
+  const coinImage = () => {
+    if (!coinMetaData) return '/favicon.ico';
+    // @ts-ignore
+    if (coinMetaData.iconUrl) {
+      // @ts-ignore
+      return coinMetaData.iconUrl;
+    } else {
+      // @ts-ignore
+      if (coin && coin.symbol === 'SUI') {
+        return '/sui-sui-logo.png';
+      }
+    }
+
+    return '/favicon.ico';
+  };
+
   useEffect(() => {
     remainingQuantityOfClaim();
+    fetchCoinMetaData();
   }, [data]);
 
   return (
@@ -112,16 +142,11 @@ const AirdropItem = (props: Props) => {
       <div className="flex justify-between">
         <div className="flex gap-2">
           <div className="w-[50px] sm:w-[70px]">
-            <Image
-              src={data.image_url ? data.image_url : '/favicon.ico'}
-              width="70"
-              height="70"
-              alt="bnb-bnb-logo"
-            />
+            <Image src={coinImage()} width="70" height="70" alt="coin-image" />
           </div>
           <div className="flex flex-col justify-between">
             <div className="flex gap-2">
-              <div className="text-xl font-semibold">
+              <div className="text-lg font-semibold">
                 {getCoinTypeName(data.coinType)} - ROUND {data.round}
               </div>
               {isOngoing && (
@@ -163,7 +188,7 @@ const AirdropItem = (props: Props) => {
             height="20"
             alt="sui-sui-logo"
           />
-          <div>{getCoinTypeName(data.coinType)}</div>
+          <div>SUI</div>
         </div>
       </div>
       <div className="flex justify-between">
@@ -181,7 +206,15 @@ const AirdropItem = (props: Props) => {
       <div className="flex justify-between">
         <div>{rewardQuantityPerCopy}</div>
         <div>
-          {divide(data.totalBalance.toString(), data.totalShares.toString())}
+          {coinMetaData
+            ? convertSmallToLarge(
+                divide(
+                  data.totalBalance.toString(),
+                  data.totalShares.toString(),
+                ),
+                coinMetaData.decimals.toString(),
+              )
+            : '-'}
         </div>
       </div>
       <Backdrop

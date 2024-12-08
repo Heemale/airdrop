@@ -58,7 +58,6 @@ const AirdropList = (props: Props) => {
   const getAirdropList = async () => {
     try {
       const airdropData = await airdropClient.airdrops(AIRDROPS);
-      console.log({ airdropData });
       setAirdropList(airdropData);
     } catch (e: any) {
       console.log(`getAirdropList error: ${e.messag}`);

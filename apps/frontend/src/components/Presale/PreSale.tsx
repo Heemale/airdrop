@@ -1,14 +1,11 @@
-import BuyNodeTitle from '@/components/Presale/BuyNodeTitle';
-import Image from 'next/image';
 import * as React from 'react';
 
 interface Props {
-  locale: string;
   children: React.ReactNode;
 }
 
 const PreSale = (props: Props) => {
-  const { locale, children } = props;
+  const { children } = props;
 
   return (
     <div className="flex flex-col gap-24 sm:gap-64 sm:my-5">

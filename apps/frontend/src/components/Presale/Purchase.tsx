@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Button from '@/components/Button';
 import { inviteClient, nodeClient } from '@/sdk';
-import { NODES, INVITE } from '@local/airdrop-sdk/utils';
+import { NODES, INVITE, PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
@@ -26,8 +26,6 @@ interface Props {
   purchasedNodeText: string;
 }
 
-const coinType: string = '0x2::sui::SUI';
-
 const Purchase = (props: Props) => {
   const { buyText, connectText, bindText, purchasedNodeText } = props;
 
@@ -46,7 +44,7 @@ const Purchase = (props: Props) => {
       if (node && account && account.address) {
         setLoading(true);
         const tx = await nodeClient.buy(
-          coinType,
+          PAY_COIN_TYPE,
           NODES,
           INVITE,
           node.rank,
