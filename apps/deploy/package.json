@@ -11,7 +11,9 @@
     "bind": "npx ts-node -r tsconfig-paths/register src/scripts/test/bind.ts",
     "inviters": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviters.ts",
     "insertNode": "npx ts-node -r tsconfig-paths/register src/scripts/insertNode.ts",
-    "insertAirdrop": "npx ts-node -r tsconfig-paths/register src/scripts/insertAirdrop.ts"
+    "insertAirdrop": "npx ts-node -r tsconfig-paths/register src/scripts/insertAirdrop.ts",
+    "init": "npx ts-node -r tsconfig-paths/register src/scripts/init.ts",
+    "initNodes": "npx ts-node -r tsconfig-paths/register src/scripts/initNodes.ts"
   },
   "keywords": [],
   "author": "",

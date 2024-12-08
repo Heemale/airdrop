@@ -3,32 +3,43 @@ import { adminKeypair, airdropClient } from '@/sdk';
 import { ADMIN_CAP, AIRDROPS } from '@local/airdrop-sdk/utils';
 
 const insertAirdrop = async () => {
-  const T = '0x2::sui::SUI'; // 替换为实际的代币类型，例如 SUI 或其他代币类型
-  const airdrops = AIRDROPS; // 替换为实际的 Airdrop 对象 ID
-  const startTime = BigInt(Math.floor(Date.now())) + BigInt(86400 * 1000 * 7); // 开始时间（当前时间戳）
-  const endTime = startTime + BigInt(86400 * 1000 * 7); // 结束时间（1小时后）
+  // const T =
+  //   '0x317a8a0bbbb9f044e3c35d36858b3b5c9c30297dec88200c8a2ef5e75611e5e5::fbtc::FBTC'; // 替换为实际的代币类型，例如 SUI 或其他代币类型
+  // // const startTime = BigInt(Math.floor(Date.now())) + BigInt(86400 * 1000 * 7); // 开始时间
+  // // const endTime = startTime + BigInt(86400 * 1000 * 7); // 结束时间
+  // const startTime = BigInt(Math.floor(Date.now())); // 开始时间
+  // const endTime = startTime + BigInt(86400 * 1000 * 7); // 结束时间
+  // const totalShares = BigInt(100); // 空投份额
+  // const totalBalance = BigInt(10000000000); // 总金额
+  // const description = 'FBTC Airdrop'; // 空投描述
+  // const imageUrl = ''; // 空投图片 URL
+  // const owner = adminKeypair.toSuiAddress(); // 使用管理员地址作为所有者
+
+  const T =
+    '0x317a8a0bbbb9f044e3c35d36858b3b5c9c30297dec88200c8a2ef5e75611e5e5::fdoge::FDOGE'; // 替换为实际的代币类型，例如 SUI 或其他代币类型
+  // const startTime = BigInt(Math.floor(Date.now())) + BigInt(86400 * 1000 * 7); // 开始时间
+  // const endTime = startTime + BigInt(86400 * 1000 * 7); // 结束时间
+  const startTime = BigInt(Math.floor(Date.now())); // 开始时间
+  const endTime = startTime + BigInt(86400 * 1000 * 15); // 结束时间
   const totalShares = BigInt(100); // 空投份额
-  const totalBalance = BigInt(1000); // 总金额
-  const description = 'Example Airdrop 2'; // 空投描述
-  const image_url = 'http://localhost:3000/01.png'; // 空投图片 URL
-  const amount = BigInt(1000);
+  const totalBalance = BigInt(100000000000); // 总金额
+  const description = 'FDOGE Airdrop'; // 空投描述
+  const imageUrl = ''; // 空投图片 URL
   const owner = adminKeypair.toSuiAddress(); // 使用管理员地址作为所有者
 
-  // 调用 insert 方法创建添加空投的交易
   const tx = await airdropClient.insert(
     T,
     ADMIN_CAP,
-    airdrops,
+    AIRDROPS,
     startTime,
     endTime,
     totalShares,
     totalBalance,
     description,
     null,
-    image_url,
-    amount,
+    imageUrl,
+    totalBalance,
     owner,
-    
   );
 
   // 签名并执行交易
