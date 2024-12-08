@@ -55,7 +55,7 @@ const Holder = async (props: Props) => {
   const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
 
   return (
-    <div className="max-w-screen-xl flex flex-col items-start text-white mx-auto">
+    <div className="max-w-screen-xl flex flex-col items-start text-white mx-auto -mt-48 sm:mt-0 px-4">
       <h2 className="text-xl sm:text-6xl font-bold text-gradient mb-12">
         {t('Exclusive benefits for holding Mercury World rights and status')}
       </h2>
@@ -64,7 +64,7 @@ const Holder = async (props: Props) => {
           benefits.map((benefit, index) => (
             <div
               key={index.toString()}
-              className="flex flex-col sm:gap-1 bg-[url('/home_holder_card.png')] bg-contain bg-no-repeat text-white w-[335px] sm:w-[402px] h-[257px] p-5 sm:p-6"
+              className="flex flex-col sm:gap-1 bg-[url('/home_holder_card.png')] bg-[length:335px_257px] sm:bg-[length:402px_280px] bg-no-repeat text-white w-[335px] sm:w-[402px] h-[257px] sm:h-[280px] p-5 sm:p-6"
             >
               <div className="flex flex-row-reverse sm:mt-2">
                 <Image
