@@ -1,19 +1,19 @@
-module token::fsui {
+module token::fdoge {
 
     use sui::coin::{Self, TreasuryCap};
     use sui::url;
 
-    public struct FSUI has drop {}
+    public struct FDOGE has drop {}
 
-    fun init(witness: FSUI, ctx: &mut TxContext) {
+    fun init(witness: FDOGE, ctx: &mut TxContext) {
         let (treasury, metadata) = coin::create_currency(
             witness,
             9,
-            b"FSUI",
-            b"FSUI",
-            b"FSUI Coin",
+            b"FDOGE",
+            b"FDOGE",
+            b"Faker doge coin",
             option::some(
-                url::new_unsafe_from_bytes(b"https://cryptologos.cc/logos/sui-sui-logo.png?v=035")
+                url::new_unsafe_from_bytes(b"https://cryptologos.cc/logos/dogecoin-doge-logo.png?v=040")
             ),
             ctx
         );
@@ -22,7 +22,7 @@ module token::fsui {
     }
 
     public entry fun mint(
-        treasury_cap: &mut TreasuryCap<FSUI>, amount: u64, recipient: address, ctx: &mut TxContext
+        treasury_cap: &mut TreasuryCap<FDOGE>, amount: u64, recipient: address, ctx: &mut TxContext
     ) {
         coin::mint_and_transfer(treasury_cap, amount, recipient, ctx);
     }
