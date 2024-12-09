@@ -50,19 +50,31 @@ const AdminPage = () => {
     try {
       setLoading(true);
       const result = await airdropClient.withdraw(coinType, ADMIN_CAP, AIRDROPS, round);
-      console.log("Withdraw transaction result:", result); // 打印结果
-      messageApi.success('提款成功');
-      const list = await airdropClient.airdrops(AIRDROPS);
-      console.log('Airdrop list:', list);
-      fetchAirdropList(); // 更新空投列表
+      signAndExecuteTransaction(
+        {
+          transaction: result,
+        },
+        {
+          onSuccess: async (tx) => {
+            console.log({ digest: tx.digest });
+            messageApi.info(`Success: ${tx.digest}`);
+            setLoading(false);
+            await fetchAirdropList();
+          },
+          onError: ({ message }) => {
+            console.log(`新建空投失败: ${message}`);
+            messageApi.error(`Error: ${message}`);
+            setLoading(false);
+          },
+        },
+      );
     } catch (error) {
-      messageApi.error('提款失败');
-      console.error("Withdraw error:", error);
+      messageApi.error('提取失败');
+      console.error(" error:", error);
     } finally {
       setLoading(false);
     }
   };
-
   // 新建空投功能
   const handleCreateAirdrop = async (values: any) => {
     try {
