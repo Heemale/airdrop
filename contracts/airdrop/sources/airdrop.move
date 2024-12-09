@@ -55,8 +55,9 @@ module airdrop::airdrop {
         description: vector<u8>,
         // 货币类型
         coin_type: TypeName,
+        // 空投图片
         image_url: vector<u8>,
-        //剩余金额
+        // 空投剩余资金
         remaining_balance: u64,
 
     }
@@ -85,7 +86,9 @@ module airdrop::airdrop {
         description: vector<u8>,
         // 货币类型
         coin_type: TypeName,
+        // 空投图片
         image_url: vector<u8>,
+        // 空投剩余资金
         remaining_balance: u64,
     }
 
@@ -300,14 +303,6 @@ module airdrop::airdrop {
     ) {
         node::insert(nodes, name, description, limit, price, total_quantity);
     }
-
-    // public fun remove_node(
-    //     _admin_cap: &AdminCap,
-    //     nodes: &mut Nodes,
-    //     rank: u8
-    // ) {
-    //     node::remove(nodes, rank);
-    // }
 
     public fun modify_node(
         _admin_cap: &AdminCap,

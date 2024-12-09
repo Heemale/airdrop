@@ -2,7 +2,6 @@ module airdrop::node {
     // === Imports ===
 
     use sui::vec_map::{Self, VecMap};
-    use sui::table::{Self, Table};
     use sui::coin::{Self, Coin};
     use sui::event;
     use airdrop::invite::{Self, Invite};
@@ -41,6 +40,10 @@ module airdrop::node {
         coin_type: TypeName,
         // 节点编号
         node_index: u8,
+        // 节点序号
+        node_num_index: u64,
+        // 已领取空投数量：节点序号 => 轮次 => 次数
+        limits: VecMap<u64, VecMap<u64, u64>>
     }
 
     // 节点对象
@@ -64,8 +67,8 @@ module airdrop::node {
     public struct User has store {
         // 等级
         rank: u8,
-        // 已领取空投数量：轮次 => 次数
-        limits: Table<u64, u64>,
+        // 节点序列号
+        node_num: u64,
         // 是否合法
         is_invalid: bool
     }
@@ -104,6 +107,8 @@ module airdrop::node {
             receiver,
             coin_type: type_name::get<T>(),
             node_index: 0,
+            node_num_index: 0,
+            limits: vec_map::empty(),
         };
         transfer::public_share_object(node);
     }
@@ -179,16 +184,28 @@ module airdrop::node {
         nodeMut.price = price;
     }
 
+    // 更新某个节点在某个回合购买次数
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
         assert_not_buy_node(&nodes.users, sender);
         let user: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
-        let node = vec_map::get(&nodes.nodes, &user.rank);
-        if (table::contains(&user.limits, round)) {
-            let purchased_quantity: &mut u64 = table::borrow_mut(&mut user.limits, round);
-            assert_exceeds_purchase_limit(node, *purchased_quantity);
-            *purchased_quantity + 1;
-        }else {
-            table::add(&mut user.limits, round, 1);
+
+        // 此节点是否领取过空投
+        let is_exists = vec_map::contains(&nodes.limits, &user.node_num);
+        if (is_exists) {
+            let round_map_times = vec_map::get_mut(&mut nodes.limits, &user.node_num);
+
+            // 此节点是否领取过当前轮空投
+            let is_exists = vec_map::contains(round_map_times, &round);
+            if (is_exists) {
+                let user_purchased_quantity = vec_map::get_mut(round_map_times, &round);
+                *user_purchased_quantity + 1;
+            } else {
+                round_map_times.insert(round, 1 as u64);
+            }
+        } else {
+            let mut round_map_times = vec_map::empty<u64, u64>();
+            round_map_times.insert(round, 1 as u64);
+            nodes.limits.insert(user.node_num, round_map_times);
         }
     }
 
@@ -217,6 +234,7 @@ module airdrop::node {
 
         let sender = tx_context::sender(ctx);
         invite::assert_not_bind_inviter(invite, sender);
+        nodes.node_num_index = nodes.node_num_index + 1;
 
         let node: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
         assert!(coin::value(&wallet) >= node.price, ECoinBalanceNotEnough);
@@ -226,10 +244,11 @@ module airdrop::node {
         // 更新用户信息
         let user = User {
             rank: node.rank,
-            limits: table::new(ctx),
+            node_num: nodes.node_num_index,
             is_invalid: true,
         };
         vec_map::insert(&mut nodes.users, sender, user);
+
         // 更新节点信息
         node.purchased_quantity = node.purchased_quantity + 1;
 
@@ -251,38 +270,40 @@ module airdrop::node {
     entry fun transfer(
         nodes: &mut Nodes,
         receiver: address,
-        ctx: &mut TxContext,
+        ctx: &TxContext,
     ) {
         let sender = tx_context::sender(ctx);
         let rank = nodes_rank(nodes, sender);
-        let node: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
+        let node = vec_map::get(&nodes.nodes, &rank);
 
         // 节点发送人必须已购买节点
         assert_not_buy_node(&nodes.users, sender);
         // 节点接收人必须未拥有节点
         assert_already_buy_node(&nodes.users, receiver);
-        // 更新节点发送人信息
 
         let node_sender: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
+        let node_num: u64 = node_sender.node_num;
+        // 更新节点发送人信息
         node_sender.rank = 0;
+        node_sender.node_num = 0;
         node_sender.is_invalid = false;
 
-        // 更新节点接收人信息
-        // 如果数组中存在，更新rank和is_invalid
-        // 否则直接写入
         let is_exists = vec_map::contains(&nodes.users, &receiver);
+        // 更新节点接收人信息
         if (is_exists) {
             let node_receiver: &mut User = vec_map::get_mut(&mut nodes.users, &receiver);
             node_receiver.rank = rank;
+            node_receiver.node_num = node_num;
             node_receiver.is_invalid = true;
-        } else {
+        }
+        else {
             let node_receiver = User {
                 rank: node.rank,
-                limits: table::new(ctx),
+                node_num,
                 is_invalid: true,
             };
             vec_map::insert(&mut nodes.users, receiver, node_receiver);
-        }
+        };
     }
 
     public fun receiver(nodes: &Nodes): address {
@@ -295,7 +316,7 @@ module airdrop::node {
     }
 
     public fun remaining_quantity_of_claim(nodes: &Nodes, sender: address, round: u64): u64 {
-        // 是否注册
+        // 是否绑定邀请关系
         let is_exists = vec_map::contains(&nodes.users, &sender);
         if (is_exists) {
             let user: &User = vec_map::get(&nodes.users, &sender);
@@ -306,11 +327,19 @@ module airdrop::node {
                 let node: &Node = vec_map::get(&nodes.nodes, &user.rank);
                 let node_purchased_quantity = node.limit;
 
-                // 当前轮是否领取过空投
-                let is_exists = table::contains(&user.limits, round);
+                // 此节点是否领取过空投
+                let is_exists = vec_map::contains(&nodes.limits, &user.node_num);
                 if (is_exists) {
-                    let user_purchased_quantity: &u64 = table::borrow(&user.limits, round);
-                    node_purchased_quantity - *user_purchased_quantity
+                    let round_map_times = vec_map::get(&nodes.limits, &user.node_num);
+
+                    // 此节点是否领取过当前轮空投
+                    let is_exists = vec_map::contains(round_map_times, &round);
+                    if (is_exists) {
+                        let user_purchased_quantity: &u64 = vec_map::get(round_map_times, &round);
+                        node_purchased_quantity - *user_purchased_quantity
+                    } else {
+                        node_purchased_quantity
+                    }
                 } else {
                     node_purchased_quantity
                 }
