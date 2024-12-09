@@ -52,7 +52,9 @@ const AirdropItem = (props: Props) => {
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const router = useRouter();
 
-  const [remainingClaimTimes, setRemainingClaimTimes] = useState<bigint>(0n);
+  const [remainingClaimTimes, setRemainingClaimTimes] = useState<bigint>(
+    BigInt(0),
+  );
   const [coinMetaData, setCoinMetaData] = useState<CoinMetadata | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -100,8 +102,9 @@ const AirdropItem = (props: Props) => {
         data.round,
       );
       setRemainingClaimTimes(BigInt(times));
-    } catch ({ message }) {
-      console.log(`fetch remainingQuantityOfClaim error: ${message}`);
+    } catch (e) {
+      // @ts-ignore
+      console.log(`fetch remainingQuantityOfClaim error: ${e.message}`);
     }
   };
 
@@ -164,7 +167,7 @@ const AirdropItem = (props: Props) => {
         </div>
       </div>
       <div>{data.description}</div>
-      {isAlreadyBuyNode && isOngoing && remainingClaimTimes > 0n ? (
+      {isAlreadyBuyNode && isOngoing && remainingClaimTimes > BigInt(0) ? (
         <button
           onClick={claim}
           className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}

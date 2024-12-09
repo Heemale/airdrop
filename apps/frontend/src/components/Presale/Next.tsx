@@ -113,10 +113,6 @@ const Next = (props: Props) => {
     getIsAlreadyBuyNode();
   }, [account]);
 
-  useEffect(() => {
-    console.log({ receiver });
-  }, [receiver]);
-
   return (
     <div>
       {account ? (

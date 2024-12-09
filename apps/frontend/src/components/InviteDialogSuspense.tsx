@@ -5,16 +5,20 @@ import Dialog from '@mui/material/Dialog';
 import { OutlinedInput } from '@mui/material';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useSignAndExecuteTransaction } from '@mysten/dapp-kit';
+import {
+  useCurrentAccount,
+  useSignAndExecuteTransaction,
+} from '@mysten/dapp-kit';
 import { inviteClient } from '@/sdk';
 import { INVITE } from '@local/airdrop-sdk/utils';
 import { message } from 'antd';
 import { sleep } from '@/utils/time';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { Suspense } from 'react';
 import { handleTxError } from '@/sdk/error';
 import { useClientTranslation } from '@/hook';
+import i18nConfig from '@/i18nConfig';
 
 interface Props {
   bindInviter: string;
@@ -27,7 +31,9 @@ const InviteDialog = (props: Props) => {
 
   const { t } = useClientTranslation();
   const router = useRouter();
-  const searchParams = useSearchParams(); // 获取 URL 的查询参数
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const { open, setOpen } = useContext(InviteDialogContext);
 
@@ -35,23 +41,9 @@ const InviteDialog = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
-  useEffect(() => {
-    // 从 URL 参数解析 inviter，并存入 localStorage
-    const inviterFromURL = searchParams?.get('inviter');
-    const storedInviter = localStorage.getItem('inviter');
-
-    if (inviterFromURL) {
-      localStorage.setItem('inviter', inviterFromURL); // 保存到 localStorage
-      setInputValue(inviterFromURL);
-    } else if (storedInviter) {
-      setInputValue(storedInviter);
-    }
-  }, [searchParams]);
-
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = event.target.value;
     setInputValue(newValue);
-    localStorage.setItem('inviter', newValue); // 动态更新 localStorage
   };
 
   const handleClose = () => {
@@ -88,6 +80,31 @@ const InviteDialog = (props: Props) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // 访问首页才更新inviter
+    const pathnameHandled = pathname.startsWith('/')
+      ? pathname.slice(1)
+      : pathname;
+    if (
+      pathnameHandled === '' ||
+      i18nConfig.locales.includes(pathnameHandled)
+    ) {
+      const inviter = searchParams?.get('inviter');
+      setInputValue(inviter ? inviter : '');
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    // 切换账号要清除inviter
+    if (account) {
+      const addressBefore = localStorage.getItem('address');
+      if (addressBefore && addressBefore !== '') {
+        setInputValue('');
+      }
+      localStorage.setItem('address', account.address);
+    }
+  }, [account]);
 
   return (
     <Dialog
