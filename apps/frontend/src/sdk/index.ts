@@ -4,6 +4,8 @@ import { AirdropClient } from '@local/airdrop-sdk/airdrop';
 import { InviteClient } from '@local/airdrop-sdk/invite';
 import { NodeClient } from '@local/airdrop-sdk/node';
 import type { GetCoinMetadataParams, CoinMetadata } from '@mysten/sui/client';
+import { Transaction } from '@mysten/sui/transactions';
+import type { DevInspectResults } from '@mysten/sui/client';
 
 export const suiClient = new SuiClient({ url: RPC });
 export const airdropClient = new AirdropClient(suiClient);
@@ -14,4 +16,24 @@ export const getCoinMetaData = async (
   input: GetCoinMetadataParams,
 ): Promise<CoinMetadata | null> => {
   return suiClient.getCoinMetadata(input);
+};
+
+export const devInspectTransactionBlock = async (
+  tx: Transaction,
+  sender: string,
+): Promise<DevInspectResults> => {
+  return await suiClient.devInspectTransactionBlock({
+    transactionBlock: tx,
+    sender,
+  });
+};
+
+export const simulationTransaction = async (
+  tx: Transaction,
+  sender: string,
+) => {
+  const res = await devInspectTransactionBlock(tx, sender);
+  if (res.effects.status.status === 'failure') {
+    throw new Error(res.effects.status.error);
+  }
 };

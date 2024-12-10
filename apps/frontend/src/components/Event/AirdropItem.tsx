@@ -3,7 +3,12 @@
 import Image from 'next/image';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { airdropClient, getCoinMetaData, nodeClient } from '@/sdk';
+import {
+  airdropClient,
+  getCoinMetaData,
+  nodeClient,
+  simulationTransaction,
+} from '@/sdk';
 import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
@@ -59,18 +64,20 @@ const AirdropItem = (props: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
 
-  const claim = () => {
+  const claim = async () => {
+    if (!account) return;
     setLoading(true);
     try {
-      const res = airdropClient.claim(
+      const tx = airdropClient.claim(
         data.coinType,
         AIRDROPS,
         NODES,
         data.round,
         SUI_CLOCK_OBJECT_ID,
       );
+      await simulationTransaction(tx, account.address);
       signAndExecuteTransaction(
-        { transaction: res },
+        { transaction: tx },
         {
           onSuccess: async (result) => {
             console.log({ digest: result.digest });
