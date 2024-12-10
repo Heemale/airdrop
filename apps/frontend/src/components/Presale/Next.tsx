@@ -9,7 +9,7 @@ import {
 } from '@mysten/dapp-kit';
 import { useContext, useEffect, useState } from 'react';
 import ConnectWallet from '@/components/ConnectWallet';
-import { inviteClient, nodeClient } from '@/sdk';
+import { inviteClient, nodeClient,  simulationTransaction } from '@/sdk';
 import { INVITE, NODES } from '@local/airdrop-sdk/utils';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
@@ -80,6 +80,8 @@ const Next = (props: Props) => {
       if (account && account.address && receiver) {
         setLoading(true);
         const tx = await nodeClient.transfer(NODES, receiver);
+        await simulationTransaction(tx, account.address);
+
         signAndExecuteTransaction(
           {
             transaction: tx,

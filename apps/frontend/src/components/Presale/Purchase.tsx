@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Button from '@/components/Button';
-import { inviteClient, nodeClient } from '@/sdk';
+import { inviteClient, nodeClient,  simulationTransaction } from '@/sdk';
 import { NODES, INVITE, PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
 import {
   useCurrentAccount,
@@ -52,6 +52,8 @@ const Purchase = (props: Props) => {
           node.price,
           account.address,
         );
+        await simulationTransaction(tx, account.address);
+
         signAndExecuteTransaction(
           {
             transaction: tx,

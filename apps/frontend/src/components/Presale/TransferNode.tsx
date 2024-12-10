@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { nodeClient } from '@/sdk';
+import { nodeClient,simulationTransaction, } from '@/sdk';
 import { NODES } from '@local/airdrop-sdk/utils';
 import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
@@ -41,6 +41,8 @@ const TransferNode = (props: Props) => {
       if (account && account.address && receiver) {
         setLoading(true);
         const tx = await nodeClient.transfer(NODES, receiver);
+        await simulationTransaction(tx, account.address);
+
         signAndExecuteTransaction(
           {
             transaction: tx,

@@ -72,11 +72,28 @@ module airdrop::airdrop_tests {
 
         // 绑定邀请关系
         invite::bind(&mut invite, Admin, ctx(&mut scenario));
-        test_scenario::next_tx(&mut scenario, User);
 
         // 读取邀请关系
         let inviter = invite::inviters(&invite, User);
         assert!(inviter == Admin, 1004);
+airdrop::new_invite(
+            &adminCap,
+            User,
+            200, // 邀请费用
+            ctx(&mut scenario)
+        );
+
+        test_scenario::next_tx(&mut scenario, User2);
+
+        let mut invite2 = test_scenario::take_shared<Invite>(&scenario); // 获取 Invite 对象
+
+        // 绑定邀请关系
+        invite::bind(&mut invite2, User, ctx(&mut scenario));
+
+
+        // 读取邀请关系
+        let inviter = invite::inviters(&invite2, User2);
+        assert!(inviter == User, 1009);
 
         // 模拟用户购买节点
         let wallet = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
@@ -154,11 +171,16 @@ module airdrop::airdrop_tests {
         //检查节点等级
         assert!(node::nodes_rank(&nodes, User2) == 1, 1002);
         assert!(node::is_already_buy_node(&nodes,User) == false, 1003);
+        assert!(node::remaining_quantity_of_claim(&nodes,User,1) == 0, 1000);
+        assert!(node::remaining_quantity_of_claim(&nodes,User2,1) == 2, 1000);
+
+
         // === 模拟管理员结束空投 ===
         test_scenario::next_tx(&mut scenario, Admin);
         transfer::public_transfer(adminCap, Admin);
         test_scenario::return_shared(nodes);
         test_scenario::return_shared(invite);
+        test_scenario::return_shared(invite2);
         test_scenario::return_shared(airdrops);
         test_scenario::end(scenario);
     }

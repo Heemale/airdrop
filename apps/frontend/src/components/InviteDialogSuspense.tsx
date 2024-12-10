@@ -9,7 +9,7 @@ import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { inviteClient } from '@/sdk';
+import { inviteClient,  simulationTransaction,} from '@/sdk';
 import { INVITE } from '@local/airdrop-sdk/utils';
 import { message } from 'antd';
 import { sleep } from '@/utils/time';
@@ -51,9 +51,12 @@ const InviteDialog = (props: Props) => {
   };
 
   const handleBind = async () => {
+    if (!account) return;
+    setLoading(true);
     try {
-      setLoading(true);
       const tx = inviteClient.bind(INVITE, inputValue);
+      await simulationTransaction(tx, account.address);
+
       signAndExecuteTransaction(
         {
           transaction: tx,
