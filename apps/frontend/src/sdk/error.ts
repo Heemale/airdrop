@@ -1,16 +1,31 @@
 import {
   extractErrorCodeAndModule,
+  extractErrorCodeAndModuleByDev,
   ERROR_CODE,
 } from '@local/airdrop-sdk/utils';
-interface Props {
-  locale: string;
-}
 
 export const handleTxError = (message: string) => {
   const { module, errorCode } = extractErrorCodeAndModule(message);
-  if (module && errorCode) {
-    const errorMessage = ERROR_CODE[module][errorCode.toString()];
-    return errorMessage ? `${module}_${errorMessage}` : message;
+
+  if (!module || !errorCode) {
+    return message;
   }
-  return message;
+
+  const moduleErrors = ERROR_CODE?.[module];
+  const errorMessage = moduleErrors?.[errorCode.toString()];
+
+  return errorMessage ? `${module}_${errorMessage}` : message;
+};
+
+export const handleDevTxError = (message: string) => {
+  const { module, errorCode } = extractErrorCodeAndModuleByDev(message);
+
+  if (!module || !errorCode) {
+    return message;
+  }
+
+  const moduleErrors = ERROR_CODE?.[module];
+  const errorMessage = moduleErrors?.[errorCode.toString()];
+
+  return errorMessage ? `${module}_${errorMessage}` : message;
 };

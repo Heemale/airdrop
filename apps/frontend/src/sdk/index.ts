@@ -28,12 +28,11 @@ export const devInspectTransactionBlock = async (
   });
 };
 
-export const simulationTransaction = async (
-  tx: Transaction,
-  sender: string,
-) => {
+export const devTransaction = async (tx: Transaction, sender: string) => {
   const res = await devInspectTransactionBlock(tx, sender);
+  // @ts-ignore
   if (res.effects.status.status === 'failure') {
+    // @ts-ignore
     throw new Error(res.effects.status.error);
   }
 };

@@ -1,10 +1,10 @@
 'use client';
 
 import * as React from 'react';
-import { nodeClient,simulationTransaction, } from '@/sdk';
+import { nodeClient, devTransaction } from '@/sdk';
 import { NODES } from '@local/airdrop-sdk/utils';
 import { useClientTranslation } from '@/hook';
-import { handleTxError } from '@/sdk/error';
+import { handleDevTxError, handleTxError } from '@/sdk/error';
 
 import {
   useCurrentAccount,
@@ -41,7 +41,14 @@ const TransferNode = (props: Props) => {
       if (account && account.address && receiver) {
         setLoading(true);
         const tx = await nodeClient.transfer(NODES, receiver);
-        await simulationTransaction(tx, account.address);
+
+        try {
+          await devTransaction(tx, account.address);
+        } catch (e: any) {
+          messageApi.error(`${t(handleDevTxError(e.message.trim()))}`);
+          setLoading(false);
+          return;
+        }
 
         signAndExecuteTransaction(
           {
@@ -56,7 +63,7 @@ const TransferNode = (props: Props) => {
             },
             onError: ({ message }) => {
               console.log(`TransferNode: ${message}`);
-              messageApi.error(`Error: ${t(handleTxError(message))}`);
+              messageApi.error(`${t(handleTxError(message.trim()))}`);
               setLoading(false);
             },
           },
@@ -66,7 +73,7 @@ const TransferNode = (props: Props) => {
       }
     } catch (e: any) {
       console.log(`TransferNode: ${e.message}`);
-      messageApi.error(`Error:${t(handleTxError(e.message))}`);
+      messageApi.error(`${t(handleTxError(e.message.trim()))}`);
       setLoading(false);
     }
   };

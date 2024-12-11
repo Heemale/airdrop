@@ -35,5 +35,34 @@ export const extractErrorCodeAndModule = (
   };
 };
 
+export const extractErrorCodeAndModuleByDev = (
+  message: string,
+): {
+  module: string | null;
+  errorCode: number | null;
+} => {
+  // 提取括号内的内容
+  const moveAbortContent = message.match(/MoveAbort\((.*)\) in command/);
+
+  if (!moveAbortContent) {
+    return { module: null, errorCode: null };
+  }
+
+  const content = moveAbortContent[1];
+
+  // 提取模块名
+  const moduleMatch = content.match(/Identifier\("([^"]+)"\)/);
+  const module = moduleMatch ? moduleMatch[1] : null;
+
+  // 提取错误码
+  const lastCommaIndex = content.lastIndexOf(',');
+  const errorCode =
+    lastCommaIndex !== -1
+      ? parseInt(content.substring(lastCommaIndex + 1).trim(), 10)
+      : null;
+
+  return { module, errorCode };
+};
+
 export * from './constants';
 export * from './error';

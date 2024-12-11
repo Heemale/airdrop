@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Button from '@/components/Button';
-import { inviteClient, nodeClient,  simulationTransaction } from '@/sdk';
+import { inviteClient, nodeClient, devTransaction } from '@/sdk';
 import { NODES, INVITE, PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
 import {
   useCurrentAccount,
@@ -17,7 +17,7 @@ import { message } from 'antd';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
-import { handleTxError } from '@/sdk/error';
+import { handleDevTxError, handleTxError } from '@/sdk/error';
 
 interface Props {
   buyText: string;
@@ -52,7 +52,14 @@ const Purchase = (props: Props) => {
           node.price,
           account.address,
         );
-        await simulationTransaction(tx, account.address);
+
+        try {
+          await devTransaction(tx, account.address);
+        } catch (e: any) {
+          messageApi.error(`${t(handleDevTxError(e.message.trim()))}`);
+          setLoading(false);
+          return;
+        }
 
         signAndExecuteTransaction(
           {
@@ -67,7 +74,7 @@ const Purchase = (props: Props) => {
             },
             onError: ({ message }) => {
               console.log(`BuyNode: ${message}`);
-              messageApi.error(`Error:${t(handleTxError(message))}`);
+              messageApi.error(`${t(handleTxError(message.trim()))}`);
               setLoading(false);
             },
           },
@@ -75,7 +82,7 @@ const Purchase = (props: Props) => {
       }
     } catch (e: any) {
       console.log(`BuyNode: ${e.message}`);
-      messageApi.error(`Error:${t(handleTxError(e.message))}`);
+      messageApi.error(`${t(handleTxError(e.message.trim()))}`);
       setLoading(false);
     }
   };
@@ -92,7 +99,7 @@ const Purchase = (props: Props) => {
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
-        messageApi.error(`Error: ${t(handleTxError(e.message))}`);
+        messageApi.error(`Error: ${t(handleTxError(e.message.trim()))}`);
       }
     }
   };
@@ -105,7 +112,7 @@ const Purchase = (props: Props) => {
         setInviter(inviter);
       } catch (e: any) {
         console.log(`updateInvite: ${e.message}`);
-        messageApi.error(`Error: ${t(handleTxError(e.message))}`);
+        messageApi.error(`Error: ${t(handleTxError(e.message.trim()))}`);
       }
     }
   };

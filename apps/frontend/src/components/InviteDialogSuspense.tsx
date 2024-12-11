@@ -9,14 +9,14 @@ import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { inviteClient,  simulationTransaction,} from '@/sdk';
+import { inviteClient, devTransaction } from '@/sdk';
 import { INVITE } from '@local/airdrop-sdk/utils';
 import { message } from 'antd';
 import { sleep } from '@/utils/time';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { Suspense } from 'react';
-import { handleTxError } from '@/sdk/error';
+import { handleTxError, handleDevTxError } from '@/sdk/error';
 import { useClientTranslation } from '@/hook';
 import i18nConfig from '@/i18nConfig';
 
@@ -55,7 +55,14 @@ const InviteDialog = (props: Props) => {
     setLoading(true);
     try {
       const tx = inviteClient.bind(INVITE, inputValue);
-      await simulationTransaction(tx, account.address);
+
+      try {
+        await devTransaction(tx, account.address);
+      } catch (e: any) {
+        messageApi.error(`${t(handleDevTxError(e.message.trim()))}`);
+        setLoading(false);
+        return;
+      }
 
       signAndExecuteTransaction(
         {
@@ -72,14 +79,14 @@ const InviteDialog = (props: Props) => {
           },
           onError: ({ message }) => {
             console.log(`Bind: ${message}`);
-            messageApi.error(`Error: ${t(handleTxError(message))}`);
+            messageApi.error(`${t(handleTxError(message.trim()))}`);
             setLoading(false);
           },
         },
       );
     } catch (e: any) {
       console.log(`Bind: ${e.message}`);
-      messageApi.error(`Error: ${t(handleTxError(e.message))}`);
+      messageApi.error(`${t(handleTxError(e.message.trim()))}`);
       setLoading(false);
     }
   };

@@ -9,14 +9,14 @@ import {
 } from '@mysten/dapp-kit';
 import { useContext, useEffect, useState } from 'react';
 import ConnectWallet from '@/components/ConnectWallet';
-import { inviteClient, nodeClient,  simulationTransaction } from '@/sdk';
+import { inviteClient, nodeClient, devTransaction } from '@/sdk';
 import { INVITE, NODES } from '@local/airdrop-sdk/utils';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { message } from 'antd';
 import { PresaleContext } from '@/context/PresaleContext';
 import { useClientTranslation } from '@/hook';
-import { handleTxError } from '@/sdk/error';
+import { handleDevTxError, handleTxError } from '@/sdk/error';
 
 interface Props {
   nextText: string;
@@ -80,7 +80,14 @@ const Next = (props: Props) => {
       if (account && account.address && receiver) {
         setLoading(true);
         const tx = await nodeClient.transfer(NODES, receiver);
-        await simulationTransaction(tx, account.address);
+
+        try {
+          await devTransaction(tx, account.address);
+        } catch (e: any) {
+          messageApi.error(`${t(handleDevTxError(e.message.trim()))}`);
+          setLoading(false);
+          return;
+        }
 
         signAndExecuteTransaction(
           {
@@ -95,7 +102,7 @@ const Next = (props: Props) => {
             },
             onError: ({ message }) => {
               console.log(`TransferNode: ${message}`);
-              messageApi.error(`Error:${t(handleTxError(message))}`);
+              messageApi.error(`${t(handleTxError(message.trim()))}`);
               setLoading(false);
             },
           },
@@ -105,7 +112,7 @@ const Next = (props: Props) => {
       }
     } catch (e: any) {
       console.log(`TransferNode: ${e.message}`);
-      messageApi.error(`Error:${t(handleTxError(e.message))}`);
+      messageApi.error(`${t(handleTxError(e.message.trim()))}`);
       setLoading(false);
     }
   };

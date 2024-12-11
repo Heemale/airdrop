@@ -88,11 +88,12 @@
   "node_EAlreadyBuyNode": " 已购买节点",
   "node_ENotBuyNode": "未购买节点",
   "node_ENodeSoldOut": "节点已售罄",
-  "node_EExceedsPurchaseLimi": "超出购买限额",
+  "node_EExceedsPurchaseLimit": "超出购买限额",
   "node_EInvalidCoinType": "非法代币类型",
   "TRANSFER NODE": "转让节点",
   "Please enter the node recipient": "请输入节点接收人",
   "Please enter a valid receiver address.": "请输入合法的接收人地址",
   "Rejected from user": "用户拒绝签名",
-  "Number of copies available": "可领取份数"
+  "Number of copies available": "可领取份数",
+  "Error": "异常"
 }

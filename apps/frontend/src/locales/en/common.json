@@ -88,11 +88,12 @@
   "node_EAlreadyBuyNode": " Node purchased",
   "node_ENotBuyNode": "Node not purchased",
   "node_ENodeSoldOut": "Node is sold out",
-  "node_EExceedsPurchaseLimi": "Purchase limit exceeded",
+  "node_EExceedsPurchaseLimit": "Purchase limit exceeded",
   "node_EInvalidCoinType": "Illegal token type",
   "TRANSFER NODE": "TRANSFER NODE",
   "Please enter the node recipient": "Please enter the node recipient",
   "Please enter a valid receiver address.": "Please enter a valid receiver address.",
   "Rejected from user": "Rejected from user",
-  "Number of copies available": "Number of copies available"
+  "Number of copies available": "Number of copies available",
+  "Error": "Error"
 }

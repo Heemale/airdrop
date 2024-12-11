@@ -7,7 +7,7 @@ import {
   airdropClient,
   getCoinMetaData,
   nodeClient,
-  simulationTransaction,
+  devTransaction,
 } from '@/sdk';
 import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
@@ -23,7 +23,7 @@ import { convertSmallToLarge, divide } from '@/utils/math';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
-import { handleTxError } from '@/sdk/error';
+import { handleTxError, handleDevTxError } from '@/sdk/error';
 import { useRouter } from 'next/navigation';
 import type { CoinMetadata } from '@mysten/sui/client';
 
@@ -75,7 +75,15 @@ const AirdropItem = (props: Props) => {
         data.round,
         SUI_CLOCK_OBJECT_ID,
       );
-      await simulationTransaction(tx, account.address);
+
+      try {
+        await devTransaction(tx, account.address);
+      } catch (e: any) {
+        messageApi.error(`${t(handleDevTxError(e.message.trim()))}`);
+        setLoading(false);
+        return;
+      }
+
       signAndExecuteTransaction(
         { transaction: tx },
         {
@@ -88,14 +96,14 @@ const AirdropItem = (props: Props) => {
           },
           onError: ({ message }) => {
             console.log(`Claim: ${message}`);
-            messageApi.error(`Error: ${t(handleTxError(message))}`);
+            messageApi.error(`${t(handleTxError(message.trim()))}`);
             setLoading(false);
           },
         },
       );
     } catch (e: any) {
       console.log(`Claim: ${e.message}`);
-      messageApi.error(`Error: ${t(handleTxError(e.message))}`);
+      messageApi.error(`${t(handleTxError(e.message.trim()))}`);
       setLoading(false);
     }
   };
