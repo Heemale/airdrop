@@ -89,7 +89,7 @@ const AirdropItem = (props: Props) => {
         {
           onSuccess: async (result) => {
             console.log({ digest: result.digest });
-            messageApi.info(`Success: ${result.digest}`);
+            messageApi.success(`Success: ${result.digest}`);
             setLoading(false);
             await sleep(2);
             router.refresh();

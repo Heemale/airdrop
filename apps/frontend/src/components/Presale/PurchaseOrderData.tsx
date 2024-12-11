@@ -48,7 +48,7 @@ const PurchaseOrderData = (props: Props) => {
         setBalance(res.totalBalance);
       } catch (e: any) {
         console.log(`getBalance: ${e.message}`);
-        messageApi.error(`Error: ${t(handleTxError(e.message))}`);
+        messageApi.error(`${t(handleTxError(e.message))}`);
       }
     }
   };

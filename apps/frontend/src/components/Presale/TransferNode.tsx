@@ -57,7 +57,7 @@ const TransferNode = (props: Props) => {
           {
             onSuccess: (result) => {
               console.log({ digest: result.digest });
-              messageApi.info(`Success: ${result.digest}`);
+              messageApi.success(`Success: ${result.digest}`);
               setLoading(false);
               setReceiver(''); // 清空接收人输入框
             },

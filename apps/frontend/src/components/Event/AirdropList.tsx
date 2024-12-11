@@ -50,7 +50,7 @@ const AirdropList = (props: Props) => {
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
-        messageApi.error(`Error:  ${t(handleTxError(e.message))}`);
+        messageApi.error(`${t(handleTxError(e.message))}`);
       }
     }
   };
@@ -61,7 +61,7 @@ const AirdropList = (props: Props) => {
       setAirdropList(airdropData);
     } catch (e: any) {
       console.log(`getAirdropList error: ${e.messag}`);
-      messageApi.error(`Error: ${t(handleTxError(e.message))}`);
+      messageApi.error(`${t(handleTxError(e.message))}`);
     }
   };
 

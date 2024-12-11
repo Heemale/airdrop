@@ -68,7 +68,7 @@ const Purchase = (props: Props) => {
           {
             onSuccess: async (result) => {
               console.log({ digest: result.digest });
-              messageApi.info(`Success: ${result.digest}`);
+              messageApi.success(`Success: ${result.digest}`);
               setLoading(false);
               await getIsAlreadyBuyNode();
             },
@@ -99,7 +99,7 @@ const Purchase = (props: Props) => {
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
-        messageApi.error(`Error: ${t(handleTxError(e.message.trim()))}`);
+        messageApi.error(`${t(handleTxError(e.message.trim()))}`);
       }
     }
   };
@@ -112,7 +112,7 @@ const Purchase = (props: Props) => {
         setInviter(inviter);
       } catch (e: any) {
         console.log(`updateInvite: ${e.message}`);
-        messageApi.error(`Error: ${t(handleTxError(e.message.trim()))}`);
+        messageApi.error(`${t(handleTxError(e.message.trim()))}`);
       }
     }
   };
