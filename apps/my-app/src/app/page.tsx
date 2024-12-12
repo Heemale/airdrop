@@ -10,6 +10,9 @@ import { ADMIN_CAP } from '@local/airdrop-sdk/utils';
 import ConnectButton from './components/ConnectButton';
 import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit';
 import dayjs from 'dayjs'; // 使用 dayjs 处理日期
+import { formatTimestamp } from '../utils/time';
+import { convertSmallToLarge } from '../utils/math';
+
 
 const AdminPage = () => {
   const [airdropList, setAirdropList] = useState<AirdropInfo[]>([]);
@@ -32,6 +35,7 @@ const AdminPage = () => {
       setLoading(true);
       const list = await airdropClient.airdrops(AIRDROPS);
       console.log('Airdrop list:', list);
+      
       setAirdropList(list);
     } catch (error) {
       messageApi.error('获取空投列表失败');
@@ -142,11 +146,11 @@ const AdminPage = () => {
   // 表格列配置
   const columns = [
     { title: '轮次', dataIndex: 'round', key: 'round' },
-    { title: '开始时间', dataIndex: 'startTime', key: 'startTime' },
-    { title: '结束时间', dataIndex: 'endTime', key: 'endTime' },
+    { title: '开始时间', dataIndex: 'startTime', key: 'startTime' , render: (startTime: bigint) => formatTimestamp(startTime), },
+    { title: '结束时间', dataIndex: 'endTime', key: 'endTime',render: (endTime: bigint) => formatTimestamp(endTime), },
     { title: '总份数', dataIndex: 'totalShares', key: 'totalShares' },
     { title: '已领取份数', dataIndex: 'claimedShares', key: 'claimedShares' },
-    { title: '总余额', dataIndex: 'totalBalance', key: 'totalBalance' },
+    { title: '总余额', dataIndex: 'totalBalance', key: 'totalBalance',render:(totalBalance: bigint) => convertSmallToLarge(totalBalance,9) },
     {
       title: '是否开启',
       dataIndex: 'isOpen',
@@ -155,8 +159,7 @@ const AdminPage = () => {
     },
     { title: '描述', dataIndex: 'description', key: 'description' },
     { title: '币种', dataIndex: 'coinType', key: 'coinType' },
-    { title: '图片链接', dataIndex: 'image_url', key: 'image_url' },
-    { title: '剩余金额', dataIndex: 'remaining_balance', key: 'remaining_balance' },
+    { title: '剩余金额', dataIndex: 'remaining_balance', key: 'remaining_balance',render:(remaining_balance: bigint) => convertSmallToLarge(remaining_balance,9) },
     {
       title: '操作',
       key: 'actions',
