@@ -1,11 +1,11 @@
-import BigNumber from 'bignumber.js';
+import BigNumber from "bignumber.js";
 
 // Convert large units to small units
 export const convertLargeToSmall = (
   from: bigint | string,
   decimal: number | string,
 ): string => {
-    const s=Number(from);
+  const s = Number(from);
   const x = new BigNumber(s);
   const y = new BigNumber(10).pow(decimal);
   return x.times(y).toFixed();
@@ -16,8 +16,8 @@ export const convertSmallToLarge = (
   from: bigint | string,
   decimal: number | string,
 ): string => {
-    const s=Number(from);
-    const x = new BigNumber(s);
+  const s = Number(from);
+  const x = new BigNumber(s);
   const y = new BigNumber(10).pow(decimal);
   return x.dividedBy(y).toFixed();
 };

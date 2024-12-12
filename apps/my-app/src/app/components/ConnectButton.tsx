@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { ConnectButton as Connect } from '@mysten/dapp-kit';
+import { ConnectButton as Connect } from "@mysten/dapp-kit";
 
 interface Props {
   connectText: string;
