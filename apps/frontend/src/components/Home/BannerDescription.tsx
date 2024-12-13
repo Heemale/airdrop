@@ -12,7 +12,7 @@ const BannerDescription = async (props: Props) => {
 
   return (
     <div className="w-3/4">
-      <div className="sm:w-2/3 flex flex-col sm:gap-1 text-white text-sm sm:text-lg -mt-2">
+      <div className="text-pretty sm:w-2/3 flex flex-col sm:gap-1 text-white text-sm sm:text-lg -mt-2">
         <div>
           {t('Data scale summary and forecast of decentralized sharing track')}
         </div>

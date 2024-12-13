@@ -27,11 +27,11 @@ const NodeInfo = async (props: Props) => {
         nextText={t('NEXT')}
         connectText={t('CONNECT WALLET')}
         bindText={t('BIND INVITER')}
-        purchasedNodeText={t('PURCHASED NODE')}
-        transferText={t('TRANSFER NODE')}
+        purchasedNodeText={t('PURCHASED EQUITY')}
+        transferText={t('TRANSFER EQUITY')}
       />
       {/*<TransferNode*/}
-      {/*  transferText={t('TRANSFER NODE')}*/}
+      {/*  transferText={t('TRANSFER EQUITY')}*/}
       {/*  connectText={t('CONNECT WALLET')}*/}
       {/*  placeholderText={t('Enter receiver is address')}*/}
       {/*/>*/}

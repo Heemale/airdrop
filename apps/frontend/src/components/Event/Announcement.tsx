@@ -13,7 +13,7 @@ const Announcement = async (props: Props) => {
 
   return (
     <div
-      className="bg-gradient-to-b from-[#010101] to-[#222] flex flex-col gap-2 border border-gray-600 rounded-2xl sm:rounded-1xl px-4 pt-2 pb-4 text-white"
+      className="text-pretty bg-gradient-to-b from-[#010101] to-[#222] flex flex-col gap-2 border border-gray-600 rounded-2xl sm:rounded-1xl px-4 pt-2 pb-4 text-white"
       style={{
         // maxWidth: '400px',
         width: '100%',
