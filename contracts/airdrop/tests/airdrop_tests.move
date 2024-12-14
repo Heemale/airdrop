@@ -76,7 +76,7 @@ module airdrop::airdrop_tests {
         // 读取邀请关系
         let inviter = invite::inviters(&invite, User);
         assert!(inviter == Admin, 1004);
-airdrop::new_invite(
+        airdrop::new_invite(
             &adminCap,
             User,
             200, // 邀请费用
@@ -127,7 +127,7 @@ airdrop::new_invite(
         );
         assert!(coin::value(&inviter_coin) == 20, 1004);
         transfer::public_transfer(inviter_coin, inviter);
-       
+
         test_scenario::next_tx(&mut scenario, Admin);
         let wallet11 = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
 
@@ -164,15 +164,15 @@ airdrop::new_invite(
         clock::destroy_for_testing(clock);
         test_scenario::next_tx(&mut scenario, User);
 
- test_scenario::next_tx(&mut scenario, User);
+        test_scenario::next_tx(&mut scenario, User);
 
         //检查节点转让
-        node::transfer(&mut nodes,  User2, ctx(&mut scenario));
+        node::transfer(&mut nodes, User2, ctx(&mut scenario));
         //检查节点等级
         assert!(node::nodes_rank(&nodes, User2) == 1, 1002);
-        assert!(node::is_already_buy_node(&nodes,User) == false, 1003);
-        assert!(node::remaining_quantity_of_claim(&nodes,User,1) == 0, 1000);
-        assert!(node::remaining_quantity_of_claim(&nodes,User2,1) == 2, 1000);
+        assert!(node::is_already_buy_node(&nodes, User) == false, 1003);
+        assert!(node::remaining_quantity_of_claim(&nodes, User, 1) == 0, 1000);
+        assert!(node::remaining_quantity_of_claim(&nodes, User2, 1) == 2, 1000);
 
 
         // === 模拟管理员结束空投 ===
