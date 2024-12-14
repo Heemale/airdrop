@@ -91,10 +91,7 @@ module airdrop::node {
     }
 
     /*
-     * @notice 节点列表对象
-     *
-     * @param root: root用户
-     * @param inviter_fee: 邀请人费用
+     * @notice 创建nodes对象
      */
     public(package) fun new<T>(
         receiver: address,
@@ -117,7 +114,6 @@ module airdrop::node {
      * @notice 增加节点
      *
      * @param nodes: 节点列表对象
-     * @param rank: 等级
      * @param name: 名称
      * @param description: 描述
      * @param limit: 每轮空投购买次数
@@ -166,9 +162,7 @@ module airdrop::node {
      * @param rank: 等级
      * @param name: 名称
      * @param description: 描述
-     * @param limit: 每轮空投购买次数
      * @param price: 价格
-     * @param total_quantity: 总数量
      */
     public(package) fun modify(
         nodes: &mut Nodes,
@@ -216,7 +210,7 @@ module airdrop::node {
      * @notice 购买节点
      *
      * @param T: 代币类型
-     * @param config: 配置对象
+     * @param nodes: nodes对象
      * @param rank: 等级
      * @param wallet: 支付的代币对象
      *
@@ -270,6 +264,9 @@ module airdrop::node {
         transfer::public_transfer(wallet, nodes.receiver);
     }
 
+    /*
+     * @notice 转移节点
+     */
     entry fun transfer(
         nodes: &mut Nodes,
         receiver: address,

@@ -129,7 +129,9 @@ module airdrop::airdrop {
      * @param end_time: 结束时间
      * @param total_shares: 总份数
      * @param total_balance: 总资金
+     * @param description: 描述
      * @param wallet: 支付的代币对象
+     * @param image_url: 图片链接
      *
      * aborts-if:
      * - 支付的资金和total_balance不匹配
@@ -183,13 +185,13 @@ module airdrop::airdrop {
     /*
      * @notice 修改空投
      *
-     * @param T: 代币类型
      * @param _admin_cap: AdminCap对象
      * @param airdrops: airdrops对象
      * @param round: 轮次
      * @param start_time: 开始时间
      * @param end_time: 结束时间
      * @param is_open: 是否开启
+     * @param description: 描述
      *
      * aborts-if:
      * - 空投回合不存在
