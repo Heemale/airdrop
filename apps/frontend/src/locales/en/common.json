@@ -95,5 +95,6 @@
   "Please enter a valid receiver address.": "Please enter a valid receiver address.",
   "Rejected from user": "Rejected from user",
   "Number of copies available": "Number of copies available",
-  "Error": "Error"
+  "Error": "Error",
+  "Number of copies remaining": "Number of copies remaining"
 }
