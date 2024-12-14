@@ -39,7 +39,7 @@ const Next = (props: Props) => {
   const [receiver, setReceiver] = useState('');
   const [loading, setLoading] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
+  const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<number | null>(null);
 
   const bind = () => {
     setOpen(true);
@@ -50,7 +50,7 @@ const Next = (props: Props) => {
       try {
         const user = account.address;
         const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
-        setIsAlreadyBuyNode(isAlreadyBuyNode);
+        setIsAlreadyBuyNode(isAlreadyBuyNode ? 1 : 0);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
         messageApi.error(`${t(handleTxError(e.message))}`);
@@ -117,6 +117,72 @@ const Next = (props: Props) => {
     }
   };
 
+  const nextButton = () => {
+    // 没有连接钱包，显示【连接钱包按钮】
+    if (account) {
+      // 未获取到数据，默认是置灰的【下一步按钮】
+      if (inviter) {
+        // 没有绑定邀请人，显示【绑定邀请人按钮】
+        if (inviter === normalizeSuiAddress('0x0')) {
+          return (
+            <Button
+              className="text-white w-full"
+              text={bindText}
+              onClick={bind}
+            />
+          );
+        } else {
+          if (node) {
+            // 未购买节点，显示【下一步按钮】
+            if (isAlreadyBuyNode === 0) {
+              return (
+                <Link href={'/presale-confirm'}>
+                  <Button className="text-white w-full" text={nextText} />
+                </Link>
+              );
+            }
+            // 已购买节点，显示置灰的【已购买按钮】和转让的ui
+            if (isAlreadyBuyNode === 1) {
+              return (
+                <>
+                  <button
+                    className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
+                    disabled
+                  >
+                    {purchasedNodeText}
+                  </button>
+                  <input
+                    type="text"
+                    value={receiver}
+                    onChange={handleInputChange}
+                    placeholder={t('Please enter the node recipient')}
+                    className="text-black w-full my-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <Button
+                    className="text-white w-full"
+                    text={transferText}
+                    onClick={transferNode}
+                  />
+                </>
+              );
+            }
+          }
+        }
+      }
+
+      return (
+        <button
+          className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
+          disabled
+        >
+          {nextText}
+        </button>
+      );
+    } else {
+      return <ConnectWallet text={connectText} />;
+    }
+  };
+
   useEffect(() => {
     updateInvite();
     getIsAlreadyBuyNode();
@@ -124,49 +190,7 @@ const Next = (props: Props) => {
 
   return (
     <div>
-      {account ? (
-        inviter === normalizeSuiAddress('0x0') ? (
-          <Button
-            className="text-white w-full"
-            text={bindText}
-            onClick={bind}
-          />
-        ) : isAlreadyBuyNode ? (
-          <>
-            <button
-              className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
-              disabled
-            >
-              {purchasedNodeText}
-            </button>
-            <input
-              type="text"
-              value={receiver}
-              onChange={handleInputChange}
-              placeholder={t('Please enter the equity recipient')}
-              className="text-black w-full my-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Button
-              className="text-white w-full"
-              text={transferText}
-              onClick={transferNode}
-            />
-          </>
-        ) : node ? (
-          <Link href={'/presale-confirm'}>
-            <Button className="text-white w-full" text={nextText} />
-          </Link>
-        ) : (
-          <button
-            className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
-            disabled
-          >
-            {nextText}
-          </button>
-        )
-      ) : (
-        <ConnectWallet text={connectText} />
-      )}
+      {nextButton()}
       {contextHolder}
     </div>
   );
