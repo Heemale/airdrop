@@ -188,6 +188,7 @@ module airdrop::node {
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
         assert_not_buy_node(&nodes.users, sender);
         let user: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
+        let mut quantity: u64 = 1;
 
         // 此节点是否领取过空投
         let is_exists = vec_map::contains(&nodes.limits, &user.node_num);
@@ -197,14 +198,16 @@ module airdrop::node {
             // 此节点是否领取过当前轮空投
             let is_exists = vec_map::contains(round_map_times, &round);
             if (is_exists) {
-                let user_purchased_quantity = vec_map::get_mut(round_map_times, &round);
-                *user_purchased_quantity + 1;
+                let user_purchased_quantity: &u64 = vec_map::get(round_map_times, &round);
+                quantity = *user_purchased_quantity + 1;
+                round_map_times.remove(&round);
+                round_map_times.insert(round, quantity);
             } else {
-                round_map_times.insert(round, 1 as u64);
+                round_map_times.insert(round, quantity);
             }
         } else {
             let mut round_map_times = vec_map::empty<u64, u64>();
-            round_map_times.insert(round, 1 as u64);
+            round_map_times.insert(round, quantity);
             nodes.limits.insert(user.node_num, round_map_times);
         }
     }
