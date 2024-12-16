@@ -280,10 +280,9 @@ module airdrop::airdrop {
     public fun modify_invite(
         _admin_cap: &AdminCap,
         invite: &mut Invite,
-        root: address,
         inviter_fee: u64,
     ) {
-        invite::modify(invite, root, inviter_fee);
+        invite::modify(invite, inviter_fee);
     }
 
     public fun new_node<T>(
@@ -313,10 +312,19 @@ module airdrop::airdrop {
         name: vector<u8>,
         description: vector<u8>,
         price: u64,
+        limit: u64,
+        total_quantity: u64,
     ) {
-        node::modify(nodes, rank, name, description, price);
+        node::modify(nodes, rank, name, description, price,limit, total_quantity);
     }
 
+public fun modify_nodes(
+            _admin_cap: &AdminCap,
+        nodes: &mut Nodes,
+        receiver: address,
+){
+    node::modify_nodes(nodes, receiver);
+}
     public fun airdrops(airdrops: &Airdrops) {
         let length = vec_map::size(&airdrops.airdrops);
         let mut i = 1;
