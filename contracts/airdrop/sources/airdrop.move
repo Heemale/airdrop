@@ -315,16 +315,17 @@ module airdrop::airdrop {
         limit: u64,
         total_quantity: u64,
     ) {
-        node::modify(nodes, rank, name, description, price,limit, total_quantity);
+        node::modify(nodes, rank, name, description, price, limit, total_quantity);
     }
 
-public fun modify_nodes(
-            _admin_cap: &AdminCap,
+    public fun modify_nodes(
+        _admin_cap: &AdminCap,
         nodes: &mut Nodes,
         receiver: address,
-){
-    node::modify_nodes(nodes, receiver);
-}
+    ) {
+        node::modify_nodes(nodes, receiver);
+    }
+
     public fun airdrops(airdrops: &Airdrops) {
         let length = vec_map::size(&airdrops.airdrops);
         let mut i = 1;

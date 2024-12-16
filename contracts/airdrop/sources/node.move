@@ -183,7 +183,6 @@ module airdrop::node {
     }
 
 
-
     // 更新某个节点在某个回合购买次数
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
         assert_not_buy_node(&nodes.users, sender);
@@ -213,12 +212,11 @@ module airdrop::node {
     }
 
 
-public(package) fun modify_nodes(nodes:&mut Nodes, receiver: address){
-    if ( nodes.receiver != receiver) {
-        nodes.receiver = receiver;
-
+    public(package) fun modify_nodes(nodes: &mut Nodes, receiver: address) {
+        if (nodes.receiver != receiver) {
+            nodes.receiver = receiver;
+        }
     }
-}
     /*
      * @notice 购买节点
      *

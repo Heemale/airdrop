@@ -2,7 +2,7 @@ import {
   extractErrorCodeAndModule,
   extractErrorCodeAndModuleByDev,
   ERROR_CODE,
-} from '@local/airdrop-sdk/utils';
+} from "@local/airdrop-sdk/utils";
 
 export const handleTxError = (message: string) => {
   const { module, errorCode } = extractErrorCodeAndModule(message);
