@@ -57,8 +57,10 @@ module airdrop::invite {
      */
     public(package) fun modify(
         invite: &mut Invite,
+        root: address,
         inviter_fee: u64,
     ) {
+        invite.root = root;
         invite.inviter_fee = inviter_fee;
     }
 
@@ -97,12 +99,12 @@ module airdrop::invite {
         }
     }
 
-    public fun root(config: &Invite): address {
-        config.root
+    public fun root(invite: &Invite): address {
+        invite.root
     }
 
-    public fun inviter_fee(config: &Invite): u64 {
-        config.inviter_fee
+    public fun inviter_fee(invite: &Invite): u64 {
+        invite.inviter_fee
     }
 
     // === Assertions ===

@@ -280,9 +280,10 @@ module airdrop::airdrop {
     public fun modify_invite(
         _admin_cap: &AdminCap,
         invite: &mut Invite,
+        root: address,
         inviter_fee: u64,
     ) {
-        invite::modify(invite, inviter_fee);
+        invite::modify(invite, root, inviter_fee);
     }
 
     public fun new_node<T>(
@@ -318,12 +319,12 @@ module airdrop::airdrop {
         node::modify(nodes, rank, name, description, price, limit, total_quantity);
     }
 
-    public fun modify_nodes(
+    public fun modify_nodes<T>(
         _admin_cap: &AdminCap,
         nodes: &mut Nodes,
         receiver: address,
     ) {
-        node::modify_nodes(nodes, receiver);
+        node::modify_nodes<T>(nodes, receiver);
     }
 
     public fun airdrops(airdrops: &Airdrops) {

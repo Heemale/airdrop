@@ -182,6 +182,16 @@ module airdrop::node {
         nodeMut.total_quantity = total_quantity;
     }
 
+    /*
+     * @notice 修改节点列表
+     *
+     * @param T: 购买节点货币类型
+     * @param receiver: 购买节点费用接收人
+     */
+    public(package) fun modify_nodes<T>(nodes: &mut Nodes, receiver: address) {
+        nodes.receiver = receiver;
+        nodes.coin_type = type_name::get<T>();
+    }
 
     // 更新某个节点在某个回合购买次数
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
@@ -211,12 +221,6 @@ module airdrop::node {
         }
     }
 
-
-    public(package) fun modify_nodes(nodes: &mut Nodes, receiver: address) {
-        if (nodes.receiver != receiver) {
-            nodes.receiver = receiver;
-        }
-    }
     /*
      * @notice 购买节点
      *
