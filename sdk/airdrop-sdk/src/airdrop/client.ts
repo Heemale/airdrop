@@ -278,6 +278,25 @@ export class AirdropClient {
     return tx;
   }
 
+  modifyNodes(
+    T: string,
+    adminCap: string,
+    nodes: string,
+    receiver: string,
+  ): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [T],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify_nodes`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(nodes),
+        tx.pure.address(receiver),
+      ],
+    });
+    return tx;
+  }
+
   async airdrops(airdrops: string): Promise<Array<AirdropInfo>> {
     const tx = new Transaction();
     tx.moveCall({
