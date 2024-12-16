@@ -168,8 +168,10 @@ const AirdropItem = (props: Props) => {
                 {getCoinTypeName(data.coinType)} - ROUND {data.round}
               </div>
               {isOngoing && (
-                <div className="bg-gradient-to-b from-[#3f6b47] to-[#093f13] rounded px-1 py-0.5">
-                  {ongoingText}
+                <div>
+                  <div className="bg-gradient-to-b from-[#3f6b47] to-[#093f13] rounded px-1 py-0.5">
+                    {ongoingText}
+                  </div>
                 </div>
               )}
             </div>
@@ -214,7 +216,7 @@ const AirdropItem = (props: Props) => {
         <div>{data.totalShares}</div>
       </div>
       <div className="flex justify-between">
-        <div>剩余份数</div>
+        <div>{t('Number of copies remaining')}</div>
         <div>{data.totalShares - data.claimedShares}</div>
       </div>
       <div className="flex justify-between">

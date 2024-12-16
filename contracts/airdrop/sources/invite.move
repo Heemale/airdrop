@@ -65,12 +65,12 @@ module airdrop::invite {
     /*
      * @notice 绑定邀请关系
      *
-     * @param config: 配置对象
+     * @param invite: invite对象
      * @param inviter: 邀请人地址
      *
      * aborts-if:
      * - 调用人是根用户
-     * - 邀请人是调用人
+     * - 邀请人是调用人或者邀请人自身没有进行绑定
      * - 重复绑定
      */
     entry fun bind(invite: &mut Invite, inviter: address, ctx: &TxContext) {
@@ -84,7 +84,7 @@ module airdrop::invite {
     /*
      * @notice 绑定邀请关系
      *
-     * @param invite: 配置对象
+     * @param invite: invite对象
      * @param user: 用户地址
      * @return 邀请人地址
      */

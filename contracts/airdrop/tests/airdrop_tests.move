@@ -14,91 +14,75 @@ module airdrop::airdrop_tests {
     const User: address = @0x3;
     const User2: address = @0x4;
 
+    const E: u64 = 1;
 
     #[test]
     fun test_invite() {
+        // === 开始测试 ===
         let mut scenario = test_scenario::begin(Admin);
-
-        // 初始化空投合约
+        // === 初始化空投合约 ===
+        // === 获取adminCap对象 ===
         airdrop::init_for_test(ctx(&mut scenario));
         test_scenario::next_tx(&mut scenario, Admin);
-
-        // 获取adminCap对象
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        test_scenario::next_tx(&mut scenario, Admin);
 
-        //实例化airdrop对象
+        // === 实例化airdrops对象 ===
+        // === 获取airdrops对象 ===
+        test_scenario::next_tx(&mut scenario, Admin);
         airdrop::new(
             &adminCap,
             ctx(&mut scenario)
         );
         test_scenario::next_tx(&mut scenario, Admin);
-
-        // 获取airdrop对象
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
 
-        // 实例化nodes对象
+        // === 实例化nodes对象 ===
+        // === 获取nodes对象 ===
+        test_scenario::next_tx(&mut scenario, Admin);
         airdrop::new_node<SUI>(
             &adminCap,
             Receiver,
             ctx(&mut scenario)
         );
         test_scenario::next_tx(&mut scenario, Admin);
-
-        // 获取nodes对象
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
-        assert!(node::receiver(&nodes) == Receiver, 1001);
+        assert!(node::receiver(&nodes) == Receiver, E);
 
-        // 添加节点信息
+        // === 实例化invite对象 ===
+        // === 获取invite对象 ===
+        test_scenario::next_tx(&mut scenario, Admin);
+        airdrop::new_invite(
+            &adminCap,
+            Admin,
+            200,
+            ctx(&mut scenario)
+        );
+        test_scenario::next_tx(&mut scenario, Admin);
+        let mut invite = test_scenario::take_shared<Invite>(&scenario);
+
+        // === 绑定邀请关系 ===
+        // === 读取邀请关系 ===
+        test_scenario::next_tx(&mut scenario, User);
+        invite::bind(&mut invite, Admin, ctx(&mut scenario));
+        let inviter = invite::inviters(&invite, User);
+        assert!(inviter == Admin, E);
+
+        // === 添加节点 ===
+        test_scenario::next_tx(&mut scenario, Admin);
         node::insert(
             &mut nodes,
             b"Node 1", // 节点名称
             b"Description of Node 1", // 节点描述
-            3, // 每轮空投购买次数
+            5, // 每轮空投购买次数
             1000, // 价格
             10, // 总数量
         );
-        test_scenario::next_tx(&mut scenario, Admin);
 
-        airdrop::new_invite(
-            &adminCap,
-            Admin,
-            200, // 邀请费用
-            ctx(&mut scenario)
-        );
+        // === 购买节点 ===
+        // === 购买节点 ===
         test_scenario::next_tx(&mut scenario, User);
-
-        let mut invite = test_scenario::take_shared<Invite>(&scenario); // 获取 Invite 对象
-
-        // 绑定邀请关系
-        invite::bind(&mut invite, Admin, ctx(&mut scenario));
-
-        // 读取邀请关系
-        let inviter = invite::inviters(&invite, User);
-        assert!(inviter == Admin, 1004);
-airdrop::new_invite(
-            &adminCap,
-            User,
-            200, // 邀请费用
-            ctx(&mut scenario)
-        );
-
-        test_scenario::next_tx(&mut scenario, User2);
-
-        let mut invite2 = test_scenario::take_shared<Invite>(&scenario); // 获取 Invite 对象
-
-        // 绑定邀请关系
-        invite::bind(&mut invite2, User, ctx(&mut scenario));
-
-
-        // 读取邀请关系
-        let inviter = invite::inviters(&invite2, User2);
-        assert!(inviter == User, 1009);
-
-        // 模拟用户购买节点
         let wallet = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
         test_scenario::next_tx(&mut scenario, User);
-
         node::buy<SUI>(
             &mut nodes,
             &invite,
@@ -107,51 +91,49 @@ airdrop::new_invite(
             ctx(&mut scenario)
         );
         test_scenario::next_tx(&mut scenario, User);
-        // 验证购买的节点等级
-        assert!(node::nodes_rank(&nodes, User) == 1, 1002);
 
-        // 检查接收人接收到的资金
+        // === 验证购买的节点等级 ===
+        assert!(node::nodes_rank(&nodes, User) == 1, E);
+        // === 检查接收人接收到的资金 ===
         let receiver_coin: Coin<SUI> = test_scenario::take_from_address<Coin<SUI>>(
             &scenario,
             node::receiver(&nodes)
         );
-        assert!(coin::value(&receiver_coin) == 980, 1004);
+        assert!(coin::value(&receiver_coin) == 980, E);
         transfer::public_transfer(receiver_coin, node::receiver(&nodes));
-        test_scenario::next_tx(&mut scenario, Admin);
 
-        // 检查邀请人接收到的资金
+        // === 检查邀请人接收到的资金 ===
+        test_scenario::next_tx(&mut scenario, Admin);
         let inviter = invite::inviters(&invite, User);
         let inviter_coin: Coin<SUI> = test_scenario::take_from_address<Coin<SUI>>(
             &scenario,
             inviter
         );
-        assert!(coin::value(&inviter_coin) == 20, 1004);
+        assert!(coin::value(&inviter_coin) == 20, E);
         transfer::public_transfer(inviter_coin, inviter);
-       
+
+        // === 添加空投信息 ===
         test_scenario::next_tx(&mut scenario, Admin);
         let wallet11 = coin::mint_for_testing<SUI>(1_000_000_000, ctx(&mut scenario));
-
-
-        //添加空投信息
         airdrop::insert<SUI>(
             &adminCap,
             &mut airdrops,
             1000,
             2000,
-            1,
+            10,
             100000,
             b"Test Airdrop",
             wallet11,
             b"http://localhost:3000/01.png",
             ctx(&mut scenario),
         );
-        test_scenario::next_tx(&mut scenario, Admin);
 
-        // === 模拟用户领取空投 ===
+        // === 领取空投 ===
+        test_scenario::next_tx(&mut scenario, Admin);
         let mut clock = clock::create_for_testing(ctx(&mut scenario)); // 模拟当前时间在空投范围内
         clock::set_for_testing(&mut clock, 1500);
-        test_scenario::next_tx(&mut scenario, User);
 
+        test_scenario::next_tx(&mut scenario, User);
         airdrop::claim<SUI>(
             &mut airdrops,
             &mut nodes,
@@ -160,27 +142,35 @@ airdrop::new_invite(
             ctx(&mut scenario),
         );
         test_scenario::next_tx(&mut scenario, User);
+        let times = node::remaining_quantity_of_claim(&nodes, User, 1);
+        assert!(times == 4, E);
 
-        clock::destroy_for_testing(clock);
         test_scenario::next_tx(&mut scenario, User);
+        airdrop::claim<SUI>(
+            &mut airdrops,
+            &mut nodes,
+            1,
+            &clock,
+            ctx(&mut scenario),
+        );
+        test_scenario::next_tx(&mut scenario, User);
+        let times = node::remaining_quantity_of_claim(&nodes, User, 1);
+        assert!(times == 3, E);
 
- test_scenario::next_tx(&mut scenario, User);
+        // === 检查节点转让 ===
+        test_scenario::next_tx(&mut scenario, User);
+        node::transfer(&mut nodes, User2, ctx(&mut scenario));
+        // === 检查节点等级 ===
+        assert!(node::nodes_rank(&nodes, User2) == 1, E);
+        assert!(node::is_already_buy_node(&nodes, User) == false, E);
+        assert!(node::remaining_quantity_of_claim(&nodes, User, 1) == 0, E);
+        assert!(node::remaining_quantity_of_claim(&nodes, User2, 1) == 3, E);
 
-        //检查节点转让
-        node::transfer(&mut nodes,  User2, ctx(&mut scenario));
-        //检查节点等级
-        assert!(node::nodes_rank(&nodes, User2) == 1, 1002);
-        assert!(node::is_already_buy_node(&nodes,User) == false, 1003);
-        assert!(node::remaining_quantity_of_claim(&nodes,User,1) == 0, 1000);
-        assert!(node::remaining_quantity_of_claim(&nodes,User2,1) == 2, 1000);
-
-
-        // === 模拟管理员结束空投 ===
-        test_scenario::next_tx(&mut scenario, Admin);
+        // === 结束测试 ===
         transfer::public_transfer(adminCap, Admin);
+        clock::destroy_for_testing(clock);
         test_scenario::return_shared(nodes);
         test_scenario::return_shared(invite);
-        test_scenario::return_shared(invite2);
         test_scenario::return_shared(airdrops);
         test_scenario::end(scenario);
     }

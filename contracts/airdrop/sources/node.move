@@ -91,10 +91,7 @@ module airdrop::node {
     }
 
     /*
-     * @notice 节点列表对象
-     *
-     * @param root: root用户
-     * @param inviter_fee: 邀请人费用
+     * @notice 创建nodes对象
      */
     public(package) fun new<T>(
         receiver: address,
@@ -117,7 +114,6 @@ module airdrop::node {
      * @notice 增加节点
      *
      * @param nodes: 节点列表对象
-     * @param rank: 等级
      * @param name: 名称
      * @param description: 描述
      * @param limit: 每轮空投购买次数
@@ -166,9 +162,7 @@ module airdrop::node {
      * @param rank: 等级
      * @param name: 名称
      * @param description: 描述
-     * @param limit: 每轮空投购买次数
      * @param price: 价格
-     * @param total_quantity: 总数量
      */
     public(package) fun modify(
         nodes: &mut Nodes,
@@ -194,6 +188,7 @@ module airdrop::node {
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
         assert_not_buy_node(&nodes.users, sender);
         let user: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
+        let mut quantity: u64 = 1;
 
         // 此节点是否领取过空投
         let is_exists = vec_map::contains(&nodes.limits, &user.node_num);
@@ -203,14 +198,16 @@ module airdrop::node {
             // 此节点是否领取过当前轮空投
             let is_exists = vec_map::contains(round_map_times, &round);
             if (is_exists) {
-                let user_purchased_quantity = vec_map::get_mut(round_map_times, &round);
-                *user_purchased_quantity + 1;
+                let user_purchased_quantity: &u64 = vec_map::get(round_map_times, &round);
+                quantity = *user_purchased_quantity + 1;
+                round_map_times.remove(&round);
+                round_map_times.insert(round, quantity);
             } else {
-                round_map_times.insert(round, 1 as u64);
+                round_map_times.insert(round, quantity);
             }
         } else {
             let mut round_map_times = vec_map::empty<u64, u64>();
-            round_map_times.insert(round, 1 as u64);
+            round_map_times.insert(round, quantity);
             nodes.limits.insert(user.node_num, round_map_times);
         }
     }
@@ -226,7 +223,7 @@ public(package) fun modify_nodes(nodes:&mut Nodes, receiver: address){
      * @notice 购买节点
      *
      * @param T: 代币类型
-     * @param config: 配置对象
+     * @param nodes: nodes对象
      * @param rank: 等级
      * @param wallet: 支付的代币对象
      *
@@ -280,6 +277,9 @@ public(package) fun modify_nodes(nodes:&mut Nodes, receiver: address){
         transfer::public_transfer(wallet, nodes.receiver);
     }
 
+    /*
+     * @notice 转移节点
+     */
     entry fun transfer(
         nodes: &mut Nodes,
         receiver: address,
