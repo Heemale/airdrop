@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
+import { AIRDROPS, NODES ,INVITE} from '@local/airdrop-sdk/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
 import { NodeInfo } from '@local/airdrop-sdk/node';
-import { Button, Table, message, Modal, Input, Form, DatePicker } from 'antd';
+import { Button, Table, message, Modal, Input, Form, DatePicker,Switch } from 'antd';
 import { airdropClient, nodeClient } from '@/sdk';
 import { ADMIN_CAP } from '@local/airdrop-sdk/utils';
 import ConnectButton from './components/ConnectButton';
@@ -12,6 +12,7 @@ import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-ki
 import dayjs from 'dayjs'; // 使用 dayjs 处理日期
 import { formatTimestamp } from '../utils/time';
 import { convertSmallToLarge } from '../utils/math';
+import { handleTxError, handleDevTxError } from '../sdk/error';
 
 
 const AdminPage = () => {
@@ -22,6 +23,9 @@ const AdminPage = () => {
   const [showNodeModal, setShowNodeModal] = useState(false); // 控制节点弹窗显示
   const [showNewNodeModal, setShowNewNodeModal] = useState(false); // 控制新增节点弹窗显示
   const [editingNode, setEditingNode] = useState<NodeInfo | null>(null); // 当前编辑的节点信息
+  const [editingAirdrop, setEditingAirdrop] = useState<AirdropInfo | null>(null); // 当前编辑的空投信息
+  const [showInviteModal, setShowInviteModal] = useState(false); // 控制邀请弹窗显示
+  const [editreceiver, setEditreceiver] = useState(false);
   const [form] = Form.useForm(); // 表单控制
   const account = useCurrentAccount();
   const [nodeForm] = Form.useForm(); // 节点表单控制
@@ -66,7 +70,7 @@ const AdminPage = () => {
             await fetchAirdropList();
           },
           onError: ({ message }) => {
-            console.log(`新建空投失败: ${message}`);
+            console.log(`提现失败: ${message}`);
             messageApi.error(`Error: ${message}`);
             setLoading(false);
           },
@@ -79,6 +83,48 @@ const AdminPage = () => {
       setLoading(false);
     }
   };
+  const handleUpdateAirdrop = async (values: AirdropInfo) => {
+    try {
+      if (!editingAirdrop) return;
+      const result = await airdropClient.modify(
+        ADMIN_CAP,
+        AIRDROPS,
+        values.round,
+        values.startTime,
+        values.endTime,
+        values.isOpen,
+        values.description,
+        
+      );
+      signAndExecuteTransaction(
+        { transaction: result },
+        {
+          onSuccess: async (tx) => {
+            console.log('空投更新成功:', tx.digest);
+            messageApi.success('空投更新成功');
+            setShowModal(false);
+            fetchAirdropList(); // 更新节点列表
+          },
+          onError: ({ message }) => {
+            console.error('空投更新失败:', message);
+            messageApi.error('空投更新失败');
+          },
+        }
+      );
+    } catch (error) {
+      messageApi.error('空投更新失败');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAirdropList(); // 页面加载时获取空投列表
+  }, []);
+
+
+
   // 新建空投功能
   const handleCreateAirdrop = async (values: any) => {
     try {
@@ -173,6 +219,29 @@ const AdminPage = () => {
         </Button>
       ),
     },
+    {
+      title: '修改',
+      key: 'actions',
+      render: (_: any, record: AirdropInfo) => (
+        <Button
+          type="link"
+            onClick={() => {
+              setEditingAirdrop(record);
+              setShowModal(true);
+              form.setFieldsValue({
+                round: record.round,
+                startTime: record.startTime,
+                endTime: record.endTime,
+                isOpen: record.isOpen,
+                description: record.description,
+               
+              });
+            }} // 禁用条件：正在加载、未开启或未连接钱包
+        >
+          修改
+        </Button>
+      ),
+    },
   ];
 
   // 获取节点列表
@@ -256,7 +325,9 @@ const AdminPage = () => {
         values.rank,
         values.name,
         values.description,
-        priceBigInt
+        priceBigInt,
+        values.limit,
+        values.total_quantity
       );
       signAndExecuteTransaction(
         { transaction: result },
@@ -292,6 +363,8 @@ const AdminPage = () => {
     { title: '称号', dataIndex: 'name', key: 'name' },
     { title: '描述', dataIndex: 'description', key: 'description' },
     { title: '价格', dataIndex: 'price', key: 'price' },
+    { title: '数量限制', dataIndex: 'limit', key: 'limit' },
+    { title: '总量', dataIndex: 'total_quantity', key: 'total_quantity' },
     {
       title: '操作',
       key: 'actions',
@@ -306,6 +379,8 @@ const AdminPage = () => {
               name: record.name,
               description: record.description,
               price: record.price.toString(),
+              limit: record.limit,
+              total_quantity: record.total_quantity,
             });
           }}
         >
@@ -314,6 +389,71 @@ const AdminPage = () => {
       ),
     },
   ];
+
+  //修改分红比例
+  const handleinvite = async (value :any)=>{
+    try {
+    const {fee  } = value;
+
+    const result = await airdropClient.modifyInvite(
+      ADMIN_CAP,
+      INVITE,
+      fee
+    );
+    signAndExecuteTransaction(
+      { transaction: result },
+      {
+        onSuccess: async (tx) => {
+          console.log('更新成功:', tx.digest);
+          messageApi.success('更新成功');
+          setShowInviteModal(false);
+        },
+        onError: ({ message }) => {
+          console.error('更新失败:', message);
+          messageApi.error('更新失败');
+        },
+      }
+    );
+  } catch (error) {
+    messageApi.error('更新失败');
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
+  
+
+//修改资金接收人
+const handlenode = async (value :any)=>{
+  try {
+  const {receiver  } = value;
+
+  const result = await airdropClient.modify_nodes(
+    ADMIN_CAP,
+    NODES,
+    receiver
+  );
+  signAndExecuteTransaction(
+    { transaction: result },
+    {
+      onSuccess: async (tx) => {
+        console.log('修改接收人成功:', tx.digest);
+        messageApi.success('修改接收人成功');
+        setShowInviteModal(false);
+      },
+      onError: ({ message }) => {
+        console.error('修改接收人失败:', message);
+        messageApi.error('修改接收人失败');
+      },
+    }
+  );
+} catch (error) {
+  messageApi.error('修改接收人失败');
+  console.error(error);
+} finally {
+  setLoading(false);
+}
+};
   return (
     <div style={{ padding: '20px' }}>
       {contextHolder}
@@ -449,6 +589,91 @@ const AdminPage = () => {
     </Form.Item>
   </Form>
 </Modal>
+<Modal
+        title="修改空投信息"
+        visible={showModal}
+        onCancel={() => setShowModal(false)}
+        footer={null}
+      >
+        <Form
+          form={form}
+          onFinish={handleUpdateAirdrop}
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+        >
+          <Form.Item
+            name="round"
+            label="轮次"
+            rules={[{ required: true, message: '请输入轮次' }]}
+          >
+            <Input type="number" disabled />
+          </Form.Item>
+
+          {/* 开始时间 */}
+    <Form.Item
+      name="startTime"
+      label="开始时间"
+      rules={[{ required: true, message: '请选择开始时间' }]}
+    >
+      <DatePicker 
+        showTime 
+        format="YYYY-MM-DD HH:mm:ss" 
+        popupStyle={{
+          maxWidth: '20vw',
+          maxHeight: '50vh',
+          overflow: 'auto',
+        }}
+        getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+      />
+    </Form.Item>
+
+    {/* 结束时间 */}
+    <Form.Item
+      name="endTime"
+      label="结束时间"
+      rules={[{ required: true, message: '请选择结束时间' }]}
+    >
+      <DatePicker 
+        showTime 
+        format="YYYY-MM-DD HH:mm:ss" 
+        popupStyle={{
+          maxWidth: '20vw',
+          maxHeight: '50vh',
+          overflow: 'auto',
+        }}
+        getPopupContainer={(triggerNode) => triggerNode.parentNode as HTMLElement}
+      />
+    </Form.Item>
+
+
+    <Form.Item
+      name="isOpen"
+      label="是否开启"
+      valuePropName="checked"
+    >
+      <Switch />
+    </Form.Item>
+             {/* 描述 */}
+             <Form.Item
+      name="description"
+      label="描述"
+      rules={[{ required: true, message: '请输入描述' }]}
+    >
+      <Input placeholder="请输入描述" />
+    </Form.Item>
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit" loading={loading} >
+              提交
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+
+
+
+
+
+
 
       <Button
         type="primary"
@@ -568,12 +793,106 @@ const AdminPage = () => {
           >
             <Input type="number" />
           </Form.Item>
-
+          <Form.Item
+            name="limit"
+            label="数量"
+            rules={[{ required: true, message: '请输入数量' }]}
+          >
+            <Input type="number" />
+          </Form.Item><Form.Item
+            name="total_quantity"
+            label="总量"
+            rules={[{ required: true, message: '请输入总量' }]}
+          >
+            <Input type="number" />
+          </Form.Item>
           <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
             <Button type="primary" htmlType="submit" loading={loading} >
               提交
             </Button>
           </Form.Item>
+        </Form>
+      </Modal>
+      <Button
+        type="primary"
+        onClick={() => setShowInviteModal(true)} // 点击按钮显示弹窗
+        style={{ marginBottom: '20px' }}
+      >
+        修改分红
+      </Button>
+      <Modal
+        title="修改分红"
+        visible={showInviteModal}
+        onCancel={() => setShowInviteModal(false)} // 关闭弹窗
+        footer={null} // 关闭默认按钮
+      >
+        <Form
+          form={form}
+          onFinish={handleinvite} // 提交表单
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+        >
+          <Form.Item
+            name="root"
+            label="根节点"
+            rules={[{ required: true, message: '请输入根节点' }]}
+          >
+
+            <Input placeholder="请输入根节点" />
+          </Form.Item>
+          <Form.Item
+            name="inviter_fee"
+            label="比例"
+            rules={[{ required: true, message: '请输入比例' }]}
+          >
+            <Input type="number" placeholder="请输入比例" />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit" loading={loading} onClick={handleinvite}
+            >
+              修改分红 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            </Form.Item>
+            </Button>
+          </Form.Item>          
+        </Form>
+      </Modal>
+
+      <Button
+        type="primary"
+        onClick={() => setEditreceiver(true)} // 点击按钮显示弹窗
+        style={{ marginBottom: '20px' }}
+      >
+        修改接收人
+      </Button>
+      <Modal
+        title="修改接收人"
+        visible={editreceiver}
+        onCancel={() => setEditreceiver(false)} // 关闭弹窗
+        footer={null} // 关闭默认按钮
+      >
+        <Form
+          form={form}
+          onFinish={handlenode} // 提交表单
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 16 }}
+        >
+          <Form.Item
+            name="receiver"
+            label="接收人"
+            rules={[{ required: true, message: '请输入接收人' }]}
+          >
+
+            <Input placeholder="请输入接收人" />
+          </Form.Item>
+        
+          <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Button type="primary" htmlType="submit" loading={loading} onClick={handleinvite}
+            >
+              修改接收人 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            </Form.Item>
+            </Button>
+          </Form.Item>          
         </Form>
       </Modal>
     </div>

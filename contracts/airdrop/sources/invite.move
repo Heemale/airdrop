@@ -57,10 +57,8 @@ module airdrop::invite {
      */
     public(package) fun modify(
         invite: &mut Invite,
-        root: address,
         inviter_fee: u64,
     ) {
-        invite.root = root;
         invite.inviter_fee = inviter_fee;
     }
 

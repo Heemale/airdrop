@@ -176,13 +176,19 @@ module airdrop::node {
         name: vector<u8>,
         description: vector<u8>,
         price: u64,
+        limit: u64,
+        total_quantity: u64,
     ) {
         let nodeMut: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
         nodeMut.rank = rank;
         nodeMut.name = name;
         nodeMut.description = description;
         nodeMut.price = price;
+        nodeMut.limit = limit;
+        nodeMut.total_quantity = total_quantity;
     }
+
+
 
     // 更新某个节点在某个回合购买次数
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
@@ -209,6 +215,13 @@ module airdrop::node {
         }
     }
 
+
+public(package) fun modify_nodes(nodes:&mut Nodes, receiver: address){
+    if ( nodes.receiver != receiver) {
+        nodes.receiver = receiver;
+
+    }
+}
     /*
      * @notice 购买节点
      *
