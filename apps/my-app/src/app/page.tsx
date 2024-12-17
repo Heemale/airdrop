@@ -108,8 +108,8 @@ const AdminPage = () => {
             setShowAirdropModal(true);
             form.setFieldsValue({
               round: record.round,
-              startTime: record.startTime,
-              endTime: record.endTime,
+              startTime: dayjs(Number(record.startTime)),
+              endTime: dayjs(Number(record.endTime)),
               isOpen: record.isOpen,
               description: record.description,
             });
@@ -243,15 +243,17 @@ const AdminPage = () => {
     }
   };
 
-  const handleUpdateAirdrop = async (values: AirdropInfo) => {
+  const handleUpdateAirdrop = async (values: any) => {
     try {
       if (!editingAirdrop) return;
+      const startTime = dayjs(values.startTime).valueOf();
+      const endTime = dayjs(values.endTime).valueOf();
       const result = await airdropClient.modify(
         ADMIN_CAP,
         AIRDROPS,
         values.round,
-        values.startTime,
-        values.endTime,
+        BigInt(startTime),
+        BigInt(endTime),
         values.isOpen,
         values.description,
       );
