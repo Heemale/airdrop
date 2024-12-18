@@ -1,22 +1,21 @@
 export const PACKAGE_ID =
-  '0x81c4414f27bb029cc67a92aae489fe4365df99c28386b501bc5dcd502f107a26';
+  '0xa9bd6708372d779dac9d72e65ab2a559a9cfe0bc0104cf6acee64b630d8bd192';
 
 export const ADMIN_CAP =
-  '0xe6c1378e1f0db2ff56e1837302734eb93c261f44e35ab97337a5034ec4cfe7a6';
+  '0xe490157c7509313e3b8735ce68157d60671137a9957e90522a85f989deb45520';
 
 export const UPGRADE_CAP =
-  '0x49a2fee14f963717a8589ce282513ba9821f54f7a94fe2dcf3982c50fd7b4d9c';
+  '0x4e9d097ca5de9dad93521888676dd61cdc183be5cd209e4be09c52c0463359cb';
 
 export const INVITE =
-  '0x7a75370cc3d97644ca1451d1db135c4ac0b27bf1d0b9a23ac16373c9469b54ea';
+  '0xbc25acce164792ccf9032c1a0247879896e6e95260bf068204398a93941d1bc7';
 
 export const NODES =
-  '0x8cc5cac37560e64e46073470be5abc9c70f4291c518b62cb3207ae3fce07d503';
+  '0x3e8cd5b94dec5f29b08942c87f56ab8cdb9fe52b4261330e7f9110979b200e23';
 
 export const AIRDROPS =
-  '0x9df6e6ebd725ad2ea98f37e84e95d7c4bfd482649bcf2cb12182e56d6f9ffafe';
+  '0x3e8cd5b94dec5f29b08942c87f56ab8cdb9fe52b4261330e7f9110979b200e23';
 
-export const PAY_COIN_TYPE =
-  '0x317a8a0bbbb9f044e3c35d36858b3b5c9c30297dec88200c8a2ef5e75611e5e5::fusdt::FUSDT';
+export const PAY_COIN_TYPE = '0x2::sui::SUI';
 
 export * from './constants';

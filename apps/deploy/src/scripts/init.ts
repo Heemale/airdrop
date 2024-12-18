@@ -1,12 +1,10 @@
 import { signAndExecuteTransaction } from '@/sdk/utils';
-import { ADMIN_CAP, PACKAGE_ID } from '@local/airdrop-sdk/utils';
+import { ADMIN_CAP, PACKAGE_ID, PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
 import { adminKeypair } from '@/sdk';
 import { MODULE_CLOB } from '@local/airdrop-sdk/airdrop';
 import { Transaction } from '@mysten/sui/transactions';
 
 const main = async () => {
-  const T =
-    '0x317a8a0bbbb9f044e3c35d36858b3b5c9c30297dec88200c8a2ef5e75611e5e5::fusdt::FUSDT';
   const admin = adminKeypair.getPublicKey().toSuiAddress();
 
   const tx = new Transaction();
@@ -22,7 +20,7 @@ const main = async () => {
   });
 
   tx.moveCall({
-    typeArguments: [T],
+    typeArguments: [PAY_COIN_TYPE],
     target: `${PACKAGE_ID}::${MODULE_CLOB}::new_node`,
     arguments: [tx.object(ADMIN_CAP), tx.pure.address(admin)],
   });
