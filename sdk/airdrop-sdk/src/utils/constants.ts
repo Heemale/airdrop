@@ -14,7 +14,7 @@ export const NODES =
   '0x3e8cd5b94dec5f29b08942c87f56ab8cdb9fe52b4261330e7f9110979b200e23';
 
 export const AIRDROPS =
-  '0x3e8cd5b94dec5f29b08942c87f56ab8cdb9fe52b4261330e7f9110979b200e23';
+  '0xa3e99bbd9974ef3bfcf5dd8f5584e43b18b799237e569e06d19f6318d7395254';
 
 export const PAY_COIN_TYPE = '0x2::sui::SUI';
 

@@ -322,9 +322,7 @@ module airdrop::node {
     }
 
   
-    public fun coin_type(nodes: &Nodes):TypeName {
-        nodes.coin_type
-    }
+
     public fun receiver(nodes: &Nodes): address {
         nodes.receiver
     }
