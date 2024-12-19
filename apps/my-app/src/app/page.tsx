@@ -14,7 +14,9 @@ import {
   DatePicker,
   Switch,
 } from "antd";
-import { airdropClient, nodeClient } from "@/sdk";
+import { PAY_COIN_TYPE } from "@local/airdrop-sdk/utils";
+
+import { airdropClient, nodeClient, inviteClient } from "@/sdk";
 import { ADMIN_CAP } from "@local/airdrop-sdk/utils";
 import ConnectButton from "./components/ConnectButton";
 import {
@@ -43,6 +45,10 @@ const AdminPage = () => {
   const [editingAirdrop, setEditingAirdrop] = useState<AirdropInfo | null>(
     null,
   );
+  const [root, setRoot] = useState<string | null>(null);
+  const [fee, setFee] = useState<number[]>([]);
+  const [coin_type, setcoin_type] = useState<string | null>(null);
+  const [receiver, setreceiver] = useState<string | null>(null);
   const [showInviteModal, setShowInviteModal] = useState(false); // 控制邀请弹窗显示
   const [editreceiver, setEditreceiver] = useState(false);
 
@@ -311,7 +317,7 @@ const AdminPage = () => {
               rank: record.rank,
               name: record.name,
               description: record.description,
-              price: record.price.toString(),
+              price: convertSmallToLarge(record.price, 9),
               limit: record.limit,
               total_quantity: record.total_quantity,
             });
@@ -432,15 +438,32 @@ const AdminPage = () => {
     fetchNodeList();
   }, []);
 
+  // 获取根用户和费率
+  const fetchInviteInfo = async () => {
+    try {
+      const root = await inviteClient.root(INVITE);
+      const fee = await inviteClient.inviterFee(INVITE);
+      setFee(fee);
+      setRoot(root);
+    } catch (error) {
+      messageApi.error("获取分红信息失败");
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInviteInfo();
+  }, []);
+
   const handleinvite = async (value: any) => {
     try {
-      const { fee, root } = value;
+      const { root, inviter_fee } = value;
 
       const result = await airdropClient.modifyInvite(
         ADMIN_CAP,
         INVITE,
         root,
-        fee,
+        inviter_fee,
       );
       signAndExecuteTransaction(
         { transaction: result },
@@ -463,481 +486,519 @@ const AdminPage = () => {
       setLoading(false);
     }
   };
-  const handlenode = async (value: any) => {
+
+  const fetcointypeandreveiver = async () => {
     try {
-      const { receiver } = value;
-
-      const result = await airdropClient.modify_nodes(
-        ADMIN_CAP,
-        NODES,
-        receiver,
-      );
-      signAndExecuteTransaction(
-        { transaction: result },
-        {
-          onSuccess: async (tx) => {
-            console.log("修改接收人成功:", tx.digest);
-            messageApi.success("修改接收人成功");
-            setShowInviteModal(false);
-          },
-          onError: ({ message }) => {
-            console.error("修改接收人失败:", message);
-            messageApi.error("修改接收人失败");
-          },
-        },
-      );
+      const coin_type = await nodeClient.coin_type(NODES);
+      const receiver = await nodeClient.receiver(NODES);
+      setcoin_type(coin_type);
+      setreceiver(receiver);
     } catch (error) {
-      messageApi.error("修改接收人失败");
+      messageApi.error("获取分红信息失败");
       console.error(error);
-    } finally {
-      setLoading(false);
     }
+    useEffect(() => {
+      fetcointypeandreveiver();
+    }, []);
+
+    const handlenode = async (value: any) => {
+      try {
+        const { receiver, coin_type } = value;
+
+        const result = await airdropClient.modify_nodes(
+          coin_type,
+          ADMIN_CAP,
+          NODES,
+          receiver,
+        );
+        signAndExecuteTransaction(
+          { transaction: result },
+          {
+            onSuccess: async (tx) => {
+              console.log("修改接收人成功:", tx.digest);
+              messageApi.success("修改接收人成功");
+              setShowInviteModal(false);
+            },
+            onError: ({ message }) => {
+              console.error("修改接收人失败:", message);
+              messageApi.error("修改接收人失败");
+            },
+          },
+        );
+      } catch (error) {
+        messageApi.error("修改接收人失败");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+      <div className="flex flex-col gap-4 p-4">
+        {contextHolder}
+        <div>
+          <ConnectButton connectText={"CONNECT"} />
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center gap-4">
+            <h1>空投管理</h1>
+            <Button
+              type="primary"
+              onClick={() => setShowModal(true)} // 点击按钮显示弹窗
+            >
+              新建空投
+            </Button>
+          </div>
+          <div className="overflow-x-auto">
+            <Table
+              dataSource={airdropList}
+              columns={columns}
+              rowKey="round"
+              loading={loading}
+              className="text-nowrap"
+            />
+            {/* 新建空投的弹窗 */}
+            <Modal
+              title="新建空投"
+              visible={showModal}
+              onCancel={() => setShowModal(false)} // 关闭弹窗
+              footer={null} // 关闭默认按钮
+            >
+              <Form
+                form={form}
+                onFinish={handleCreateAirdrop} // 提交表单
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Form.Item
+                  name="coinType"
+                  label="代币类型"
+                  rules={[{ required: true, message: "请输入类型" }]}
+                >
+                  <Input placeholder="请输入类型" />
+                </Form.Item>
+                <Form.Item
+                  name="startTime"
+                  label="开始时间"
+                  rules={[{ required: true, message: "请选择开始时间" }]}
+                >
+                  <DatePicker
+                    showTime
+                    format="YYYY-MM-DD HH:mm:ss"
+                    popupStyle={{
+                      maxWidth: "20vw",
+                      maxHeight: "50vh",
+                      overflow: "auto",
+                    }}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="endTime"
+                  label="结束时间"
+                  rules={[{ required: true, message: "请选择结束时间" }]}
+                >
+                  <DatePicker
+                    showTime
+                    format="YYYY-MM-DD HH:mm:ss"
+                    popupStyle={{
+                      maxWidth: "20vw",
+                      maxHeight: "50vh",
+                      overflow: "auto",
+                    }}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="totalShares"
+                  label="总份数"
+                  rules={[{ required: true, message: "请输入总份数" }]}
+                >
+                  <Input type="number" placeholder="请输入总份数" />
+                </Form.Item>
+
+                <Form.Item
+                  name="totalBalance"
+                  label="总余额"
+                  rules={[{ required: true, message: "请输入总余额" }]}
+                >
+                  <Input type="number" placeholder="请输入总余额" />
+                </Form.Item>
+
+                <Form.Item
+                  name="description"
+                  label="描述"
+                  rules={[{ required: true, message: "请输入描述" }]}
+                >
+                  <Input placeholder="请输入描述" />
+                </Form.Item>
+                <Form.Item
+                  name="image_url"
+                  label="图片"
+                  rules={[{ required: true, message: "请输入图片" }]}
+                >
+                  <Input placeholder="请输入图片" />
+                </Form.Item>
+                <Form.Item
+                  name="amount"
+                  label="金额"
+                  rules={[{ required: true, message: "请输入金额" }]}
+                >
+                  <Input type="number" placeholder="请输入金额" />
+                </Form.Item>
+
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                    onClick={handleCreateAirdrop}
+                  >
+                    创建空投
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Modal>
+            <Modal
+              title="修改空投信息"
+              visible={showAirdropModal}
+              onCancel={() => setShowAirdropModal(false)}
+              footer={null}
+            >
+              <Form
+                form={form}
+                onFinish={handleUpdateAirdrop}
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Form.Item
+                  name="round"
+                  label="轮次"
+                  rules={[{ required: true, message: "请输入轮次" }]}
+                >
+                  <Input type="number" disabled />
+                </Form.Item>
+
+                {/* 开始时间 */}
+                <Form.Item
+                  name="startTime"
+                  label="开始时间"
+                  rules={[{ required: true, message: "请选择开始时间" }]}
+                >
+                  <DatePicker
+                    showTime
+                    format="YYYY-MM-DD HH:mm:ss"
+                    popupStyle={{
+                      maxWidth: "20vw",
+                      maxHeight: "50vh",
+                      overflow: "auto",
+                    }}
+                    getPopupContainer={(triggerNode) =>
+                      triggerNode.parentNode as HTMLElement
+                    }
+                  />
+                </Form.Item>
+
+                {/* 结束时间 */}
+                <Form.Item
+                  name="endTime"
+                  label="结束时间"
+                  rules={[{ required: true, message: "请选择结束时间" }]}
+                >
+                  <DatePicker
+                    showTime
+                    format="YYYY-MM-DD HH:mm:ss"
+                    popupStyle={{
+                      maxWidth: "20vw",
+                      maxHeight: "50vh",
+                      overflow: "auto",
+                    }}
+                    getPopupContainer={(triggerNode) =>
+                      triggerNode.parentNode as HTMLElement
+                    }
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="isOpen"
+                  label="是否开启"
+                  valuePropName="checked"
+                >
+                  <Switch />
+                </Form.Item>
+                {/* 描述 */}
+                <Form.Item
+                  name="description"
+                  label="描述"
+                  rules={[{ required: true, message: "请输入描述" }]}
+                >
+                  <Input placeholder="请输入描述" />
+                </Form.Item>
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                  <Button type="primary" htmlType="submit" loading={loading}>
+                    提交
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Modal>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 overflow-x-auto">
+          <div className="flex items-center gap-4">
+            <h1>节点管理</h1>
+            <Button
+              type="primary"
+              onClick={() => setShowNewNodeModal(true)} // 点击按钮显示弹窗
+            >
+              新建节点
+            </Button>
+          </div>
+          <div className="overflow-x-auto">
+            <Table
+              dataSource={nodeList}
+              columns={nodeColumns}
+              rowKey="rank"
+              loading={loading}
+              className="text-nowrap"
+            />
+            {/* 新建节点的弹窗 */}
+            <Modal
+              title="新建节点"
+              visible={showNewNodeModal}
+              onCancel={() => setShowNewNodeModal(false)} // 关闭弹窗
+              footer={null} // 关闭默认按钮
+            >
+              <Form
+                form={form}
+                onFinish={handleCreateNode} // 提交表单
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Form.Item
+                  name="name"
+                  label="节点名称"
+                  rules={[{ required: true, message: "请输入名称" }]}
+                >
+                  <Input placeholder="请输入名称" />
+                </Form.Item>
+                <Form.Item
+                  name="description"
+                  label="描述"
+                  rules={[{ required: true, message: "请输入描述" }]}
+                >
+                  <Input placeholder="请输入描述" />
+                </Form.Item>
+                <Form.Item
+                  name="limit"
+                  label="空投次数"
+                  rules={[{ required: true, message: "请输入空投次数" }]}
+                >
+                  <Input type="number" placeholder="请输入空投次数" />
+                </Form.Item>
+                <Form.Item
+                  name="price"
+                  label="金额"
+                  rules={[{ required: true, message: "请输入金额" }]}
+                >
+                  <Input
+                    type="number"
+                    placeholder="请输入金额"
+                    value={convertSmallToLarge(form.getFieldValue("price"), 9)}
+                  />
+                </Form.Item>
+                <Form.Item
+                  name="total_quantity"
+                  label="数量"
+                  rules={[{ required: true, message: "请输入总数量" }]}
+                >
+                  <Input type="number" placeholder="请输入总数量" />
+                </Form.Item>
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                    onClick={handleCreateNode}
+                  >
+                    创建节点{" "}
+                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Modal>
+            {/* 修改节点信息弹窗 */}
+            <Modal
+              title="修改节点信息"
+              visible={showNodeModal}
+              onCancel={() => setShowNodeModal(false)}
+              footer={null}
+            >
+              <Form
+                form={nodeForm}
+                onFinish={handleUpdateNode}
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Form.Item
+                  name="rank"
+                  label="等级"
+                  rules={[{ required: true, message: "请输入等级" }]}
+                >
+                  <Input type="number" disabled />
+                </Form.Item>
+
+                <Form.Item
+                  name="name"
+                  label="称号"
+                  rules={[{ required: true, message: "请输入称号" }]}
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  name="description"
+                  label="描述"
+                  rules={[{ required: true, message: "请输入描述" }]}
+                >
+                  <Input />
+                </Form.Item>
+
+                <Form.Item
+                  name="price"
+                  label="价格"
+                  rules={[{ required: true, message: "请输入价格" }]}
+                >
+                  <Input type="number" />
+                </Form.Item>
+                <Form.Item
+                  name="limit"
+                  label="数量"
+                  rules={[{ required: true, message: "请输入数量" }]}
+                >
+                  <Input type="number" />
+                </Form.Item>
+                <Form.Item
+                  name="total_quantity"
+                  label="总量"
+                  rules={[{ required: true, message: "请输入总量" }]}
+                >
+                  <Input type="number" />
+                </Form.Item>
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                  <Button type="primary" htmlType="submit" loading={loading}>
+                    提交
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Modal>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 overflow-x-auto">
+          <Button
+            type="primary"
+            onClick={() => setShowInviteModal(true)} // 点击按钮显示弹窗
+            style={{ marginBottom: "20px" }}
+          >
+            修改分红
+          </Button>
+          <div className="overflow-x-auto">
+            <h3>Root: {root !== null ? root : "Loading..."}</h3>
+            <h3>Fee: {fee !== null ? fee : "Loading..."}</h3>
+            <Modal
+              title="修改分红"
+              visible={showInviteModal}
+              onCancel={() => setShowInviteModal(false)}
+              footer={null}
+            >
+              <Form
+                form={form}
+                onFinish={handleinvite} // 提交表单
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Form.Item
+                  name="root"
+                  label="根节点"
+                  rules={[{ required: true, message: "请输入根节点" }]}
+                >
+                  <Input placeholder="请输入根节点" />
+                </Form.Item>
+                <Form.Item
+                  name="inviter_fee"
+                  label="比例"
+                  rules={[{ required: true, message: "请输入比例" }]}
+                >
+                  <Input type="number" placeholder="请输入比例" />
+                </Form.Item>
+
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                    onClick={handleinvite}
+                  >
+                    修改分红
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Modal>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 overflow-x-auto">
+          <Button
+            type="primary"
+            onClick={() => setEditreceiver(true)} // 点击按钮显示弹窗
+            style={{ marginBottom: "20px" }}
+          >
+            修改接收人代币类型
+          </Button>
+          <div className="overflow-x-auto">
+            <h3>coin_type:{coin_type !== null ? coin_type : "null"}</h3>
+            <h3>receiver:{receiver !== null ? receiver : "null"}</h3>
+            <Modal
+              title="修改接收人代币类型"
+              visible={editreceiver}
+              onCancel={() => setEditreceiver(false)} // 关闭弹窗
+              footer={null} // 关闭默认按钮
+            >
+              <Form
+                form={form}
+                onFinish={handlenode} // 提交表单
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+              >
+                <Form.Item
+                  name="receiver"
+                  label="接收人"
+                  rules={[{ required: true, message: "请输入接收人" }]}
+                >
+                  <Input placeholder="请输入接收人" />
+                </Form.Item>
+                <Form.Item
+                  name="coin_type"
+                  label="节点代币类型"
+                  rules={[{ required: true, message: "请输入节点代币类型" }]}
+                >
+                  <Input placeholder="请输入节点代币类型" />
+                </Form.Item>
+                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading}
+                    onClick={handleinvite}
+                  >
+                    修改接收人
+                    <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
+                  </Button>
+                </Form.Item>
+              </Form>
+            </Modal>
+          </div>
+        </div>
+      </div>
+    );
   };
-
-  return (
-    <div className="flex flex-col gap-4 p-4">
-      {contextHolder}
-      <div>
-        <ConnectButton connectText={"CONNECT"} />
-      </div>
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center gap-4">
-          <h1>空投管理</h1>
-          <Button
-            type="primary"
-            onClick={() => setShowModal(true)} // 点击按钮显示弹窗
-          >
-            新建空投
-          </Button>
-        </div>
-        <div className="overflow-x-auto">
-          <Table
-            dataSource={airdropList}
-            columns={columns}
-            rowKey="round"
-            loading={loading}
-            className="text-nowrap"
-          />
-          {/* 新建空投的弹窗 */}
-          <Modal
-            title="新建空投"
-            visible={showModal}
-            onCancel={() => setShowModal(false)} // 关闭弹窗
-            footer={null} // 关闭默认按钮
-          >
-            <Form
-              form={form}
-              onFinish={handleCreateAirdrop} // 提交表单
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-            >
-              <Form.Item
-                name="coinType"
-                label="代币类型"
-                rules={[{ required: true, message: "请输入类型" }]}
-              >
-                <Input placeholder="请输入类型" />
-              </Form.Item>
-              <Form.Item
-                name="startTime"
-                label="开始时间"
-                rules={[{ required: true, message: "请选择开始时间" }]}
-              >
-                <DatePicker
-                  showTime
-                  format="YYYY-MM-DD HH:mm:ss"
-                  popupStyle={{
-                    maxWidth: "20vw",
-                    maxHeight: "50vh",
-                    overflow: "auto",
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="endTime"
-                label="结束时间"
-                rules={[{ required: true, message: "请选择结束时间" }]}
-              >
-                <DatePicker
-                  showTime
-                  format="YYYY-MM-DD HH:mm:ss"
-                  popupStyle={{
-                    maxWidth: "20vw",
-                    maxHeight: "50vh",
-                    overflow: "auto",
-                  }}
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="totalShares"
-                label="总份数"
-                rules={[{ required: true, message: "请输入总份数" }]}
-              >
-                <Input type="number" placeholder="请输入总份数" />
-              </Form.Item>
-
-              <Form.Item
-                name="totalBalance"
-                label="总余额"
-                rules={[{ required: true, message: "请输入总余额" }]}
-              >
-                <Input type="number" placeholder="请输入总余额" />
-              </Form.Item>
-
-              <Form.Item
-                name="description"
-                label="描述"
-                rules={[{ required: true, message: "请输入描述" }]}
-              >
-                <Input placeholder="请输入描述" />
-              </Form.Item>
-              <Form.Item
-                name="image_url"
-                label="图片"
-                rules={[{ required: true, message: "请输入图片" }]}
-              >
-                <Input placeholder="请输入图片" />
-              </Form.Item>
-              <Form.Item
-                name="amount"
-                label="金额"
-                rules={[{ required: true, message: "请输入金额" }]}
-              >
-                <Input type="number" placeholder="请输入金额" />
-              </Form.Item>
-
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  onClick={handleCreateAirdrop}
-                >
-                  创建空投
-                </Button>
-              </Form.Item>
-            </Form>
-          </Modal>
-          <Modal
-            title="修改空投信息"
-            visible={showAirdropModal}
-            onCancel={() => setShowAirdropModal(false)}
-            footer={null}
-          >
-            <Form
-              form={form}
-              onFinish={handleUpdateAirdrop}
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-            >
-              <Form.Item
-                name="round"
-                label="轮次"
-                rules={[{ required: true, message: "请输入轮次" }]}
-              >
-                <Input type="number" disabled />
-              </Form.Item>
-
-              {/* 开始时间 */}
-              <Form.Item
-                name="startTime"
-                label="开始时间"
-                rules={[{ required: true, message: "请选择开始时间" }]}
-              >
-                <DatePicker
-                  showTime
-                  format="YYYY-MM-DD HH:mm:ss"
-                  popupStyle={{
-                    maxWidth: "20vw",
-                    maxHeight: "50vh",
-                    overflow: "auto",
-                  }}
-                  getPopupContainer={(triggerNode) =>
-                    triggerNode.parentNode as HTMLElement
-                  }
-                />
-              </Form.Item>
-
-              {/* 结束时间 */}
-              <Form.Item
-                name="endTime"
-                label="结束时间"
-                rules={[{ required: true, message: "请选择结束时间" }]}
-              >
-                <DatePicker
-                  showTime
-                  format="YYYY-MM-DD HH:mm:ss"
-                  popupStyle={{
-                    maxWidth: "20vw",
-                    maxHeight: "50vh",
-                    overflow: "auto",
-                  }}
-                  getPopupContainer={(triggerNode) =>
-                    triggerNode.parentNode as HTMLElement
-                  }
-                />
-              </Form.Item>
-
-              <Form.Item name="isOpen" label="是否开启" valuePropName="checked">
-                <Switch />
-              </Form.Item>
-              {/* 描述 */}
-              <Form.Item
-                name="description"
-                label="描述"
-                rules={[{ required: true, message: "请输入描述" }]}
-              >
-                <Input placeholder="请输入描述" />
-              </Form.Item>
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit" loading={loading}>
-                  提交
-                </Button>
-              </Form.Item>
-            </Form>
-          </Modal>
-        </div>
-      </div>
-      <div className="flex flex-col gap-4 overflow-x-auto">
-        <div className="flex items-center gap-4">
-          <h1>节点管理</h1>
-          <Button
-            type="primary"
-            onClick={() => setShowNewNodeModal(true)} // 点击按钮显示弹窗
-          >
-            新建节点
-          </Button>
-        </div>
-        <div className="overflow-x-auto">
-          <Table
-            dataSource={nodeList}
-            columns={nodeColumns}
-            rowKey="rank"
-            loading={loading}
-            className="text-nowrap"
-          />
-          {/* 新建节点的弹窗 */}
-          <Modal
-            title="新建节点"
-            visible={showNewNodeModal}
-            onCancel={() => setShowNewNodeModal(false)} // 关闭弹窗
-            footer={null} // 关闭默认按钮
-          >
-            <Form
-              form={form}
-              onFinish={handleCreateNode} // 提交表单
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-            >
-              <Form.Item
-                name="name"
-                label="节点名称"
-                rules={[{ required: true, message: "请输入名称" }]}
-              >
-                <Input placeholder="请输入名称" />
-              </Form.Item>
-              <Form.Item
-                name="description"
-                label="描述"
-                rules={[{ required: true, message: "请输入描述" }]}
-              >
-                <Input placeholder="请输入描述" />
-              </Form.Item>
-              <Form.Item
-                name="limit"
-                label="空投次数"
-                rules={[{ required: true, message: "请输入空投次数" }]}
-              >
-                <Input type="number" placeholder="请输入空投次数" />
-              </Form.Item>
-              <Form.Item
-                name="price"
-                label="金额"
-                rules={[{ required: true, message: "请输入金额" }]}
-              >
-                <Input type="number" placeholder="请输入金额" />
-              </Form.Item>
-              <Form.Item
-                name="total_quantity"
-                label="数量"
-                rules={[{ required: true, message: "请输入总数量" }]}
-              >
-                <Input type="number" placeholder="请输入总数量" />
-              </Form.Item>
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  onClick={handleCreateNode}
-                >
-                  创建节点{" "}
-                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
-                </Button>
-              </Form.Item>
-            </Form>
-          </Modal>
-          {/* 修改节点信息弹窗 */}
-          <Modal
-            title="修改节点信息"
-            visible={showNodeModal}
-            onCancel={() => setShowNodeModal(false)}
-            footer={null}
-          >
-            <Form
-              form={nodeForm}
-              onFinish={handleUpdateNode}
-              labelCol={{ span: 8 }}
-              wrapperCol={{ span: 16 }}
-            >
-              <Form.Item
-                name="rank"
-                label="等级"
-                rules={[{ required: true, message: "请输入等级" }]}
-              >
-                <Input type="number" disabled />
-              </Form.Item>
-
-              <Form.Item
-                name="name"
-                label="称号"
-                rules={[{ required: true, message: "请输入称号" }]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                name="description"
-                label="描述"
-                rules={[{ required: true, message: "请输入描述" }]}
-              >
-                <Input />
-              </Form.Item>
-
-              <Form.Item
-                name="price"
-                label="价格"
-                rules={[{ required: true, message: "请输入价格" }]}
-              >
-                <Input type="number" />
-              </Form.Item>
-              <Form.Item
-                name="limit"
-                label="数量"
-                rules={[{ required: true, message: "请输入数量" }]}
-              >
-                <Input type="number" />
-              </Form.Item>
-              <Form.Item
-                name="total_quantity"
-                label="总量"
-                rules={[{ required: true, message: "请输入总量" }]}
-              >
-                <Input type="number" />
-              </Form.Item>
-              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button type="primary" htmlType="submit" loading={loading}>
-                  提交
-                </Button>
-              </Form.Item>
-            </Form>
-          </Modal>
-        </div>
-      </div>
-      <div className="flex flex-col gap-4 overflow-x-auto">
-        <Button
-          type="primary"
-          onClick={() => setShowInviteModal(true)} // 点击按钮显示弹窗
-          style={{ marginBottom: "20px" }}
-        >
-          修改分红
-        </Button>
-        <Modal
-          title="修改分红"
-          visible={showInviteModal}
-          onCancel={() => setShowInviteModal(false)} // 关闭弹窗
-          footer={null} // 关闭默认按钮
-        >
-          <Form
-            form={form}
-            onFinish={handleinvite} // 提交表单
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-          >
-            <Form.Item
-              name="root"
-              label="根节点"
-              rules={[{ required: true, message: "请输入根节点" }]}
-            >
-              <Input placeholder="请输入根节点" />
-            </Form.Item>
-            <Form.Item
-              name="inviter_fee"
-              label="比例"
-              rules={[{ required: true, message: "请输入比例" }]}
-            >
-              <Input type="number" placeholder="请输入比例" />
-            </Form.Item>
-
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                onClick={handleinvite}
-              >
-                修改分红{" "}
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
-      <div className="flex flex-col gap-4 overflow-x-auto">
-        <Button
-          type="primary"
-          onClick={() => setEditreceiver(true)} // 点击按钮显示弹窗
-          style={{ marginBottom: "20px" }}
-        >
-          修改接收人
-        </Button>
-        <Modal
-          title="修改接收人"
-          visible={editreceiver}
-          onCancel={() => setEditreceiver(false)} // 关闭弹窗
-          footer={null} // 关闭默认按钮
-        >
-          <Form
-            form={form}
-            onFinish={handlenode} // 提交表单
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-          >
-            <Form.Item
-              name="receiver"
-              label="接收人"
-              rules={[{ required: true, message: "请输入接收人" }]}
-            >
-              <Input placeholder="请输入接收人" />
-            </Form.Item>
-
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                onClick={handleinvite}
-              >
-                修改接收人{" "}
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
-    </div>
-  );
 };
 export default AdminPage;
