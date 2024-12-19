@@ -160,6 +160,25 @@ export class NodeClient {
     return bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0]));
   }
 
+  async receiver(nodes: string): Promise<string> {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${PACKAGE_ID}::${MODULE_CLOB}::receiver`,
+      arguments: [tx.object(nodes)],
+    });
+    // @ts-ignore
+    const res: DevInspectResults =
+      await this.suiClient.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: normalizeSuiAddress('0x0'),
+      });
+    // @ts-ignore
+    return bcs.Address.parse(
+      new Uint8Array(res?.results[0]?.returnValues[0][0]),
+    );
+  }
+
   async queryEvents(
     eventName: string,
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
