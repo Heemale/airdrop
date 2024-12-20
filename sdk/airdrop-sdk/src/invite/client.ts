@@ -76,7 +76,10 @@ export class InviteClient {
         sender: normalizeSuiAddress('0x0'),
       });
     // @ts-ignore
-    return bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0]));
+  const result = bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0]));
+  
+  // 将返回的 BigInt 转换为 number
+  return Number(result);
   }
 
   async queryEvents(
