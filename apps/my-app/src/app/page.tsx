@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AIRDROPS, NODES, INVITE } from "@local/airdrop-sdk/utils";
+import { AIRDROPS, NODES, INVITE, PAY_COIN_TYPE } from "@local/airdrop-sdk/utils";
 import { AirdropInfo } from "@local/airdrop-sdk/airdrop";
 import { NodeInfo } from "@local/airdrop-sdk/node";
 import {
@@ -14,7 +14,7 @@ import {
   DatePicker,
   Switch,
 } from "antd";
-import { airdropClient, nodeClient } from "@/sdk";
+import { airdropClient, nodeClient,inviteClient } from "@/sdk";
 import { ADMIN_CAP } from "@local/airdrop-sdk/utils";
 import ConnectButton from "./components/ConnectButton";
 import {
@@ -43,6 +43,10 @@ const AdminPage = () => {
   const [editingAirdrop, setEditingAirdrop] = useState<AirdropInfo | null>(
     null,
   );
+  const [root, setRoot] = useState<string | null>(null);
+  const [fee, setFee] = useState<number>(0);
+   const [receiver_, set_receiver] = useState<string | null>(null);
+
   const [showInviteModal, setShowInviteModal] = useState(false); // 控制邀请弹窗显示
   const [editreceiver, setEditreceiver] = useState(false);
 
@@ -311,7 +315,7 @@ const AdminPage = () => {
               rank: record.rank,
               name: record.name,
               description: record.description,
-              price: record.price.toString(),
+              price: convertSmallToLarge(record.price, 9),
               limit: record.limit,
               total_quantity: record.total_quantity,
             });
@@ -431,16 +435,35 @@ const AdminPage = () => {
     fetchAirdropList();
     fetchNodeList();
   }, []);
+   //获取根用户和费率
+  const fetchInviteInfo = async () => {
+    try {
+      const root = await inviteClient.root(INVITE);
+      const fee = await inviteClient.inviterFee(INVITE);
+      console.log("fee",fee)
+      setFee(fee/100);
+      setRoot(root);
+    } catch (error) {
+      messageApi.error("获取分红信息失败");
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInviteInfo();
+  }, []);
+
+
+
 
   const handleinvite = async (value: any) => {
-    try {
-      const { fee, root } = value;
-
+   
+      const { root, inviter_fee } = value;
       const result = await airdropClient.modifyInvite(
         ADMIN_CAP,
         INVITE,
         root,
-        fee,
+        BigInt(inviter_fee) ,
       );
       signAndExecuteTransaction(
         { transaction: result },
@@ -456,18 +479,34 @@ const AdminPage = () => {
           },
         },
       );
-    } catch (error) {
-      messageApi.error("更新失败");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+   
+   
   };
-  const handlenode = async (value: any) => {
+  useEffect(() => {
+    fetchInviteInfo();
+  }, []);
+
+  const fetreveiver = async () => {
     try {
+      const receivers = await nodeClient.receiver(NODES);
+      console.log(receivers);
+      set_receiver(receivers);
+
+    } catch (error) {
+      messageApi.error("获取分红信息失败");
+      console.error(error);
+    }
+    
+  };
+  useEffect(() => {
+      fetreveiver();
+    }, []);
+  const handlenode = async (value: any) => {
+   
       const { receiver } = value;
 
       const result = await airdropClient.modify_nodes(
+        PAY_COIN_TYPE,
         ADMIN_CAP,
         NODES,
         receiver,
@@ -486,14 +525,11 @@ const AdminPage = () => {
           },
         },
       );
-    } catch (error) {
-      messageApi.error("修改接收人失败");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+   
   };
-
+  useEffect(() => {
+    fetreveiver();
+  }, []);
   return (
     <div className="flex flex-col gap-4 p-4">
       {contextHolder}
@@ -757,7 +793,8 @@ const AdminPage = () => {
                 label="金额"
                 rules={[{ required: true, message: "请输入金额" }]}
               >
-                <Input type="number" placeholder="请输入金额" />
+                <Input type="number" placeholder="请输入金额" value={convertSmallToLarge(form.getFieldValue("price"), 9)}
+ />
               </Form.Item>
               <Form.Item
                 name="total_quantity"
@@ -821,7 +858,8 @@ const AdminPage = () => {
                 label="价格"
                 rules={[{ required: true, message: "请输入价格" }]}
               >
-                <Input type="number" />
+                <Input type="number" value={convertSmallToLarge(form.getFieldValue("price"), 9)}
+ />
               </Form.Item>
               <Form.Item
                 name="limit"
@@ -847,6 +885,10 @@ const AdminPage = () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 overflow-x-auto">
+      <div className="overflow-x-auto">
+            <h3>Root: {root !== null ? root : "Loading..."}</h3>
+            <h3>Fee: {fee !== null ? fee : "Loading..."} %</h3>
+
         <Button
           type="primary"
           onClick={() => setShowInviteModal(true)} // 点击按钮显示弹窗
@@ -854,6 +896,7 @@ const AdminPage = () => {
         >
           修改分红
         </Button>
+       
         <Modal
           title="修改分红"
           visible={showInviteModal}
@@ -878,7 +921,7 @@ const AdminPage = () => {
               label="比例"
               rules={[{ required: true, message: "请输入比例" }]}
             >
-              <Input type="number" placeholder="请输入比例" />
+              <Input type="number" placeholder="请输入比例" defaultValue={fee !== null ? (fee / 100).toFixed(2) : ''}  />
             </Form.Item>
 
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
@@ -894,8 +937,13 @@ const AdminPage = () => {
             </Form.Item>
           </Form>
         </Modal>
+        </div>
       </div>
       <div className="flex flex-col gap-4 overflow-x-auto">
+      <div className="overflow-x-auto">
+
+      <h3>receiver: {receiver_ !== null ? receiver_ : "null..."}</h3>
+
         <Button
           type="primary"
           onClick={() => setEditreceiver(true)} // 点击按钮显示弹窗
@@ -937,6 +985,7 @@ const AdminPage = () => {
           </Form>
         </Modal>
       </div>
+    </div>
     </div>
   );
 };

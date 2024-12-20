@@ -173,7 +173,7 @@ export class NodeClient {
         transactionBlock: tx,
         sender: normalizeSuiAddress('0x0'),
       });
-    // @ts-ignore
+      // @ts-ignore
     return bcs.Address.parse(
       new Uint8Array(res?.results[0]?.returnValues[0][0]),
     );

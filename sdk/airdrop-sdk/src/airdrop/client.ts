@@ -278,7 +278,7 @@ export class AirdropClient {
     return tx;
   }
 
-  modifyNodes(
+  modify_nodes(
     T: string,
     adminCap: string,
     nodes: string,

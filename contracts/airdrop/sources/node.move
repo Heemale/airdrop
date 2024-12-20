@@ -321,10 +321,11 @@ module airdrop::node {
         };
     }
 
+  
+
     public fun receiver(nodes: &Nodes): address {
         nodes.receiver
     }
-
     public fun nodes_rank(nodes: &Nodes, sender: address): u8 {
         let user_info = vec_map::get(&nodes.users, &sender);
         user_info.rank
@@ -393,6 +394,7 @@ module airdrop::node {
             i = i + 1;
         };
     }
+    
 
     // === Assertions ===
 

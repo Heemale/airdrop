@@ -3,6 +3,8 @@ import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
+import { bcs } from '@mysten/sui/bcs';
+
 import type {
   DevInspectResults,
   PaginationArguments,
@@ -74,7 +76,7 @@ export class InviteClient {
         sender: normalizeSuiAddress('0x0'),
       });
     // @ts-ignore
-    return res?.results[0]?.returnValues[0][0];
+    return bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0]));
   }
 
   async queryEvents(
