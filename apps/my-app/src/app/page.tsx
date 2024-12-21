@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AIRDROPS, NODES, INVITE, PAY_COIN_TYPE } from "@local/airdrop-sdk/utils";
+import {
+  AIRDROPS,
+  NODES,
+  INVITE,
+  PAY_COIN_TYPE,
+} from "@local/airdrop-sdk/utils";
 import { AirdropInfo } from "@local/airdrop-sdk/airdrop";
 import { NodeInfo } from "@local/airdrop-sdk/node";
 import {
@@ -14,7 +19,7 @@ import {
   DatePicker,
   Switch,
 } from "antd";
-import { airdropClient, nodeClient,inviteClient } from "@/sdk";
+import { airdropClient, nodeClient, inviteClient } from "@/sdk";
 import { ADMIN_CAP } from "@local/airdrop-sdk/utils";
 import ConnectButton from "./components/ConnectButton";
 import {
@@ -45,7 +50,7 @@ const AdminPage = () => {
   );
   const [root, setRoot] = useState<string | null>(null);
   const [fee, setFee] = useState<number>(0);
-   const [receiver_, set_receiver] = useState<string | null>(null);
+  const [receiver_, set_receiver] = useState<string | null>(null);
 
   const [showInviteModal, setShowInviteModal] = useState(false); // 控制邀请弹窗显示
   const [editreceiver, setEditreceiver] = useState(false);
@@ -68,7 +73,7 @@ const AdminPage = () => {
     { title: "总份数", dataIndex: "totalShares", key: "totalShares" },
     { title: "已领取份数", dataIndex: "claimedShares", key: "claimedShares" },
     {
-      title: "总余额",
+      title: "总金额",
       dataIndex: "totalBalance",
       key: "totalBalance",
       render: (totalBalance: bigint) => convertSmallToLarge(totalBalance, 9),
@@ -194,14 +199,8 @@ const AdminPage = () => {
       const startTime = dayjs(values.startTime).valueOf(); // 转换为毫秒级时间戳
       const endTime = dayjs(values.endTime).valueOf(); // 转换为毫秒级时间戳
 
-      const {
-        totalShares,
-        totalBalance,
-        description,
-        image_url,
-        amount,
-        coinType,
-      } = values;
+      const { totalShares, totalBalance, description, image_url, coinType } =
+        values;
 
       // 调用 airdropClient.insert 方法
       const result = await airdropClient.insert(
@@ -215,7 +214,7 @@ const AdminPage = () => {
         description,
         null, // 连接的钱包地址
         image_url,
-        BigInt(convertLargeToSmall(amount, 9)),
+        BigInt(convertLargeToSmall(totalBalance, 9)),
         account1,
       );
       signAndExecuteTransaction(
@@ -290,17 +289,17 @@ const AdminPage = () => {
 
   // 节点表格列配置
   const nodeColumns = [
-    { title: "等级", dataIndex: "rank", key: "rank" },
-    { title: "称号", dataIndex: "name", key: "name" },
-    { title: "描述", dataIndex: "description", key: "description" },
+    { title: "节点等级", dataIndex: "rank", key: "rank" },
+    { title: "节点称号", dataIndex: "name", key: "name" },
+    { title: "节点描述", dataIndex: "description", key: "description" },
+    { title: "每轮空投可领取次数", dataIndex: "limit", key: "limit" },
     {
-      title: "价格",
+      title: "节点售价",
       dataIndex: "price",
       key: "price",
       render: (price: bigint) => convertSmallToLarge(price, 9),
     },
-    { title: "数量限制", dataIndex: "limit", key: "limit" },
-    { title: "总量", dataIndex: "total_quantity", key: "total_quantity" },
+    { title: "节点总数量", dataIndex: "total_quantity", key: "total_quantity" },
 
     {
       title: "操作",
@@ -435,13 +434,13 @@ const AdminPage = () => {
     fetchAirdropList();
     fetchNodeList();
   }, []);
-   //获取根用户和费率
+  //获取根用户和费率
   const fetchInviteInfo = async () => {
     try {
       const root = await inviteClient.root(INVITE);
       const fee = await inviteClient.inviterFee(INVITE);
-      console.log("fee",fee)
-      setFee(fee/100);
+      console.log("fee", fee);
+      setFee(fee / 100);
       setRoot(root);
     } catch (error) {
       messageApi.error("获取分红信息失败");
@@ -453,34 +452,28 @@ const AdminPage = () => {
     fetchInviteInfo();
   }, []);
 
-
-
-
   const handleinvite = async (value: any) => {
-   
-      const { root, inviter_fee } = value;
-      const result = await airdropClient.modifyInvite(
-        ADMIN_CAP,
-        INVITE,
-        root,
-        BigInt(inviter_fee) ,
-      );
-      signAndExecuteTransaction(
-        { transaction: result },
-        {
-          onSuccess: async (tx) => {
-            console.log("更新成功:", tx.digest);
-            messageApi.success("更新成功");
-            setShowInviteModal(false);
-          },
-          onError: ({ message }) => {
-            console.error("更新失败:", message);
-            messageApi.error("更新失败");
-          },
+    const { root, inviter_fee } = value;
+    const result = await airdropClient.modifyInvite(
+      ADMIN_CAP,
+      INVITE,
+      root,
+      BigInt(inviter_fee),
+    );
+    signAndExecuteTransaction(
+      { transaction: result },
+      {
+        onSuccess: async (tx) => {
+          console.log("更新成功:", tx.digest);
+          messageApi.success("更新成功");
+          setShowInviteModal(false);
         },
-      );
-   
-   
+        onError: ({ message }) => {
+          console.error("更新失败:", message);
+          messageApi.error("更新失败");
+        },
+      },
+    );
   };
   useEffect(() => {
     fetchInviteInfo();
@@ -491,41 +484,37 @@ const AdminPage = () => {
       const receivers = await nodeClient.receiver(NODES);
       console.log(receivers);
       set_receiver(receivers);
-
     } catch (error) {
       messageApi.error("获取分红信息失败");
       console.error(error);
     }
-    
   };
   useEffect(() => {
-      fetreveiver();
-    }, []);
+    fetreveiver();
+  }, []);
   const handlenode = async (value: any) => {
-   
-      const { receiver } = value;
+    const { receiver } = value;
 
-      const result = await airdropClient.modify_nodes(
-        PAY_COIN_TYPE,
-        ADMIN_CAP,
-        NODES,
-        receiver,
-      );
-      signAndExecuteTransaction(
-        { transaction: result },
-        {
-          onSuccess: async (tx) => {
-            console.log("修改接收人成功:", tx.digest);
-            messageApi.success("修改接收人成功");
-            setShowInviteModal(false);
-          },
-          onError: ({ message }) => {
-            console.error("修改接收人失败:", message);
-            messageApi.error("修改接收人失败");
-          },
+    const result = await airdropClient.modify_nodes(
+      PAY_COIN_TYPE,
+      ADMIN_CAP,
+      NODES,
+      receiver,
+    );
+    signAndExecuteTransaction(
+      { transaction: result },
+      {
+        onSuccess: async (tx) => {
+          console.log("修改接收人成功:", tx.digest);
+          messageApi.success("修改接收人成功");
+          setShowInviteModal(false);
         },
-      );
-   
+        onError: ({ message }) => {
+          console.error("修改接收人失败:", message);
+          messageApi.error("修改接收人失败");
+        },
+      },
+    );
   };
   useEffect(() => {
     fetreveiver();
@@ -570,9 +559,9 @@ const AdminPage = () => {
               <Form.Item
                 name="coinType"
                 label="代币类型"
-                rules={[{ required: true, message: "请输入类型" }]}
+                rules={[{ required: true, message: "请输入代币类型" }]}
               >
-                <Input placeholder="请输入类型" />
+                <Input placeholder="请输入代币类型" />
               </Form.Item>
               <Form.Item
                 name="startTime"
@@ -616,10 +605,10 @@ const AdminPage = () => {
 
               <Form.Item
                 name="totalBalance"
-                label="总余额"
-                rules={[{ required: true, message: "请输入总余额" }]}
+                label="总金额"
+                rules={[{ required: true, message: "请输入总金额" }]}
               >
-                <Input type="number" placeholder="请输入总余额" />
+                <Input type="number" placeholder="请输入总金额" />
               </Form.Item>
 
               <Form.Item
@@ -636,14 +625,6 @@ const AdminPage = () => {
               >
                 <Input placeholder="请输入图片" />
               </Form.Item>
-              <Form.Item
-                name="amount"
-                label="金额"
-                rules={[{ required: true, message: "请输入金额" }]}
-              >
-                <Input type="number" placeholder="请输入金额" />
-              </Form.Item>
-
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button
                   type="primary"
@@ -770,38 +751,43 @@ const AdminPage = () => {
               <Form.Item
                 name="name"
                 label="节点名称"
-                rules={[{ required: true, message: "请输入名称" }]}
+                rules={[{ required: true, message: "请输入节点名称" }]}
               >
-                <Input placeholder="请输入名称" />
+                <Input placeholder="请输入节点名称" />
               </Form.Item>
               <Form.Item
                 name="description"
-                label="描述"
-                rules={[{ required: true, message: "请输入描述" }]}
+                label="节点描述"
+                rules={[{ required: true, message: "请输入节点描述" }]}
               >
-                <Input placeholder="请输入描述" />
+                <Input placeholder="请输入节点描述" />
               </Form.Item>
               <Form.Item
                 name="limit"
-                label="空投次数"
-                rules={[{ required: true, message: "请输入空投次数" }]}
+                label="每轮空投可领取次数"
+                rules={[
+                  { required: true, message: "请输入每轮空投可领取次数" },
+                ]}
               >
-                <Input type="number" placeholder="请输入空投次数" />
+                <Input type="number" placeholder="请输入每轮空投可领取次数" />
               </Form.Item>
               <Form.Item
                 name="price"
-                label="金额"
-                rules={[{ required: true, message: "请输入金额" }]}
+                label="节点售价"
+                rules={[{ required: true, message: "请输入节点售价" }]}
               >
-                <Input type="number" placeholder="请输入金额" value={convertSmallToLarge(form.getFieldValue("price"), 9)}
- />
+                <Input
+                  type="number"
+                  placeholder="请输入节点售价"
+                  value={convertSmallToLarge(form.getFieldValue("price"), 9)}
+                />
               </Form.Item>
               <Form.Item
                 name="total_quantity"
-                label="数量"
-                rules={[{ required: true, message: "请输入总数量" }]}
+                label="节点总数量"
+                rules={[{ required: true, message: "请输入节点总数量" }]}
               >
-                <Input type="number" placeholder="请输入总数量" />
+                <Input type="number" placeholder="请输入节点总数量" />
               </Form.Item>
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button
@@ -810,7 +796,7 @@ const AdminPage = () => {
                   loading={loading}
                   onClick={handleCreateNode}
                 >
-                  创建节点{" "}
+                  创建节点
                   <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
                 </Button>
               </Form.Item>
@@ -831,47 +817,50 @@ const AdminPage = () => {
             >
               <Form.Item
                 name="rank"
-                label="等级"
-                rules={[{ required: true, message: "请输入等级" }]}
+                label="节点等级"
+                rules={[{ required: true, message: "请输入节点等级" }]}
               >
                 <Input type="number" disabled />
               </Form.Item>
 
               <Form.Item
                 name="name"
-                label="称号"
-                rules={[{ required: true, message: "请输入称号" }]}
+                label="节点名称"
+                rules={[{ required: true, message: "请输入节点名称" }]}
               >
                 <Input />
               </Form.Item>
 
               <Form.Item
                 name="description"
-                label="描述"
-                rules={[{ required: true, message: "请输入描述" }]}
+                label="节点描述"
+                rules={[{ required: true, message: "节点描述" }]}
               >
                 <Input />
               </Form.Item>
-
-              <Form.Item
-                name="price"
-                label="价格"
-                rules={[{ required: true, message: "请输入价格" }]}
-              >
-                <Input type="number" value={convertSmallToLarge(form.getFieldValue("price"), 9)}
- />
-              </Form.Item>
               <Form.Item
                 name="limit"
-                label="数量"
-                rules={[{ required: true, message: "请输入数量" }]}
+                label="每轮空投可领取次数"
+                rules={[
+                  { required: true, message: "请输入每轮空投可领取次数" },
+                ]}
               >
                 <Input type="number" />
               </Form.Item>
               <Form.Item
+                name="price"
+                label="节点售价"
+                rules={[{ required: true, message: "请输入节点售价" }]}
+              >
+                <Input
+                  type="number"
+                  value={convertSmallToLarge(form.getFieldValue("price"), 9)}
+                />
+              </Form.Item>
+              <Form.Item
                 name="total_quantity"
-                label="总量"
-                rules={[{ required: true, message: "请输入总量" }]}
+                label="节点总数量"
+                rules={[{ required: true, message: "节点总数量" }]}
               >
                 <Input type="number" />
               </Form.Item>
@@ -885,107 +874,112 @@ const AdminPage = () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 overflow-x-auto">
-      <div className="overflow-x-auto">
-            <h3>Root: {root !== null ? root : "Loading..."}</h3>
-            <h3>Fee: {fee !== null ? fee : "Loading..."} %</h3>
+        <div className="overflow-x-auto">
+          <h3>根用户: {root !== null ? root : "Loading..."}</h3>
+          <h3>邀请人分红费率: {fee !== null ? fee : "Loading..."}%</h3>
 
-        <Button
-          type="primary"
-          onClick={() => setShowInviteModal(true)} // 点击按钮显示弹窗
-          style={{ marginBottom: "20px" }}
-        >
-          修改分红
-        </Button>
-       
-        <Modal
-          title="修改分红"
-          visible={showInviteModal}
-          onCancel={() => setShowInviteModal(false)} // 关闭弹窗
-          footer={null} // 关闭默认按钮
-        >
-          <Form
-            form={form}
-            onFinish={handleinvite} // 提交表单
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+          <Button
+            type="primary"
+            onClick={() => setShowInviteModal(true)} // 点击按钮显示弹窗
+            style={{ marginBottom: "20px" }}
           >
-            <Form.Item
-              name="root"
-              label="根节点"
-              rules={[{ required: true, message: "请输入根节点" }]}
-            >
-              <Input placeholder="请输入根节点" />
-            </Form.Item>
-            <Form.Item
-              name="inviter_fee"
-              label="比例"
-              rules={[{ required: true, message: "请输入比例" }]}
-            >
-              <Input type="number" placeholder="请输入比例" defaultValue={fee !== null ? (fee / 100).toFixed(2) : ''}  />
-            </Form.Item>
+            修改分红
+          </Button>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                onClick={handleinvite}
+          <Modal
+            title="修改分红"
+            visible={showInviteModal}
+            onCancel={() => setShowInviteModal(false)} // 关闭弹窗
+            footer={null} // 关闭默认按钮
+          >
+            <Form
+              form={form}
+              onFinish={handleinvite} // 提交表单
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+            >
+              <Form.Item
+                name="root"
+                label="根用户"
+                rules={[{ required: true, message: "请输入根用户" }]}
               >
-                修改分红{" "}
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
+                <Input placeholder="请输入根用户" />
+              </Form.Item>
+              <Form.Item
+                name="inviter_fee"
+                label="邀请人分红费率"
+                rules={[{ required: true, message: "请输入邀请人分红费率" }]}
+              >
+                <Input
+                  type="number"
+                  placeholder="请输入邀请人分红费率"
+                  defaultValue={fee !== null ? (fee / 100).toFixed(2) : ""}
+                />
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  onClick={handleinvite}
+                >
+                  提交
+                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
         </div>
       </div>
       <div className="flex flex-col gap-4 overflow-x-auto">
-      <div className="overflow-x-auto">
+        <div className="overflow-x-auto">
+          <h3>
+            出售节点资金接收人: {receiver_ !== null ? receiver_ : "null..."}
+          </h3>
 
-      <h3>receiver: {receiver_ !== null ? receiver_ : "null..."}</h3>
-
-        <Button
-          type="primary"
-          onClick={() => setEditreceiver(true)} // 点击按钮显示弹窗
-          style={{ marginBottom: "20px" }}
-        >
-          修改接收人
-        </Button>
-        <Modal
-          title="修改接收人"
-          visible={editreceiver}
-          onCancel={() => setEditreceiver(false)} // 关闭弹窗
-          footer={null} // 关闭默认按钮
-        >
-          <Form
-            form={form}
-            onFinish={handlenode} // 提交表单
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
+          <Button
+            type="primary"
+            onClick={() => setEditreceiver(true)} // 点击按钮显示弹窗
+            style={{ marginBottom: "20px" }}
           >
-            <Form.Item
-              name="receiver"
-              label="接收人"
-              rules={[{ required: true, message: "请输入接收人" }]}
+            修改接收人
+          </Button>
+          <Modal
+            title="修改接收人"
+            visible={editreceiver}
+            onCancel={() => setEditreceiver(false)} // 关闭弹窗
+            footer={null} // 关闭默认按钮
+          >
+            <Form
+              form={form}
+              onFinish={handlenode} // 提交表单
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
             >
-              <Input placeholder="请输入接收人" />
-            </Form.Item>
-
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={loading}
-                onClick={handleinvite}
+              <Form.Item
+                name="receiver"
+                label="接收人"
+                rules={[{ required: true, message: "请输入接收人" }]}
               >
-                修改接收人{" "}
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
-              </Button>
-            </Form.Item>
-          </Form>
-        </Modal>
+                <Input placeholder="请输入接收人" />
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                  onClick={handleinvite}
+                >
+                  提交
+                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+        </div>
       </div>
-    </div>
     </div>
   );
 };
