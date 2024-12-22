@@ -135,8 +135,6 @@ const AdminPage = () => {
     try {
       setLoading(true);
       const list = await airdropClient.airdrops(AIRDROPS);
-      console.log("Airdrop list:", list);
-
       setAirdropList(list);
     } catch (error: any) {
       messageApi.error(`获取空投列表失败: ${error.message}`);
@@ -152,140 +150,113 @@ const AdminPage = () => {
       messageApi.error("请先连接钱包");
       return;
     }
-    try {
-      setLoading(true);
-      const result = await airdropClient.withdraw(
-        coinType,
-        ADMIN_CAP,
-        AIRDROPS,
-        round,
-      );
-      signAndExecuteTransaction(
-        {
-          transaction: result,
+    setLoading(true);
+    const result = await airdropClient.withdraw(
+      coinType,
+      ADMIN_CAP,
+      AIRDROPS,
+      round,
+    );
+    signAndExecuteTransaction(
+      {
+        transaction: result,
+      },
+      {
+        onSuccess: async (tx) => {
+          console.log({ digest: tx.digest });
+          messageApi.info(`提取成功: ${tx.digest}`);
+          setLoading(false);
+          await fetchAirdropList();
         },
-        {
-          onSuccess: async (tx) => {
-            console.log({ digest: tx.digest });
-            messageApi.info(`提取成功: ${tx.digest}`);
-            setLoading(false);
-            await fetchAirdropList();
-          },
-          onError: ({ message }) => {
-            console.log(`新建空投失败: ${message}`);
-            messageApi.error(`提取失败: ${message}`);
-            setLoading(false);
-          },
+        onError: ({ message }) => {
+          console.log(`新建空投失败: ${message}`);
+          messageApi.error(`提取失败: ${message}`);
+          setLoading(false);
         },
-      );
-    } catch (error: any) {
-      messageApi.error(`提取失败: ${error.message}`);
-      console.error(" error:", error);
-    } finally {
-      setLoading(false);
-    }
+      },
+    );
   };
 
   // 新建空投功能
   const handleCreateAirdrop = async (values: any) => {
-    try {
-      if (!account1) {
-        messageApi.error("请先连接钱包");
-        return;
-      }
-      setLoading(true);
-
-      // 将日期选择转换为毫秒级时间戳
-      const startTime = dayjs(values.startTime).valueOf(); // 转换为毫秒级时间戳
-      const endTime = dayjs(values.endTime).valueOf(); // 转换为毫秒级时间戳
-
-      const { totalShares, totalBalance, description, image_url, coinType } =
-        values;
-
-      // 调用 airdropClient.insert 方法
-      const result = await airdropClient.insert(
-        coinType,
-        ADMIN_CAP,
-        AIRDROPS,
-        BigInt(startTime), // 转换后的毫秒时间戳
-        BigInt(endTime), // 转换后的毫秒时间戳
-        BigInt(totalShares),
-        BigInt(convertLargeToSmall(totalBalance, 9)),
-        description,
-        null, // 连接的钱包地址
-        image_url,
-        BigInt(convertLargeToSmall(totalBalance, 9)),
-        account1,
-      );
-      signAndExecuteTransaction(
-        {
-          transaction: result,
-        },
-        {
-          onSuccess: async (tx) => {
-            console.log({ digest: tx.digest });
-            messageApi.info(`创建空投成功: ${tx.digest}`);
-            setLoading(false);
-            await fetchAirdropList();
-          },
-          onError: ({ message }) => {
-            console.log(`新建空投失败: ${message}`);
-            messageApi.error(`新建空投失败: ${message}`);
-            setLoading(false);
-          },
-        },
-      );
-      // console.log("Create Airdrop transaction result:", result); // 打印结果
-      // messageApi.success('新建空投成功');
-      setShowModal(false); // 关闭弹窗
-    } catch (error: any) {
-      messageApi.error(`新建空投失败: ${error.message}`);
-      console.error("Create Airdrop error:", error);
-    } finally {
-      setLoading(false);
+    if (!account1) {
+      messageApi.error("请先连接钱包");
+      return;
     }
+    setLoading(true);
+
+    // 将日期选择转换为毫秒级时间戳
+    const startTime = dayjs(values.startTime).valueOf(); // 转换为毫秒级时间戳
+    const endTime = dayjs(values.endTime).valueOf(); // 转换为毫秒级时间戳
+
+    const { totalShares, totalBalance, description, image_url, coinType } =
+      values;
+
+    // 调用 airdropClient.insert 方法
+    const result = await airdropClient.insert(
+      coinType,
+      ADMIN_CAP,
+      AIRDROPS,
+      BigInt(startTime), // 转换后的毫秒时间戳
+      BigInt(endTime), // 转换后的毫秒时间戳
+      BigInt(totalShares),
+      BigInt(convertLargeToSmall(totalBalance, 9)),
+      description,
+      null, // 连接的钱包地址
+      image_url,
+      BigInt(convertLargeToSmall(totalBalance, 9)),
+      account1,
+    );
+    signAndExecuteTransaction(
+      {
+        transaction: result,
+      },
+      {
+        onSuccess: async (tx) => {
+          console.log({ digest: tx.digest });
+          messageApi.info(`创建空投成功: ${tx.digest}`);
+          setLoading(false);
+          setShowModal(false); // 关闭弹窗
+          await fetchAirdropList();
+        },
+        onError: ({ message }) => {
+          console.log(`新建空投失败: ${message}`);
+          messageApi.error(`新建空投失败: ${message}`);
+          setLoading(false);
+        },
+      },
+    );
   };
 
   const handleUpdateAirdrop = async (values: any) => {
-    try {
-      if (!editingAirdrop) return;
-      const startTime = dayjs(values.startTime).valueOf();
-      const endTime = dayjs(values.endTime).valueOf();
-      const result = await airdropClient.modify(
-        ADMIN_CAP,
-        AIRDROPS,
-        values.round,
-        BigInt(startTime),
-        BigInt(endTime),
-        values.isOpen,
-        values.description,
-      );
-      signAndExecuteTransaction(
-        { transaction: result },
-        {
-          onSuccess: async (tx) => {
-            console.log("空投更新成功:", tx.digest);
-            messageApi.success(`空投更新成功: ${tx.digest}`);
-            setShowAirdropModal(false);
-            fetchAirdropList(); // 更新节点列表
-          },
-          onError: ({ message }) => {
-            console.error("空投更新失败:", message);
-            messageApi.error(`空投更新失败: ${message}`);
-          },
+    if (!editingAirdrop) return;
+    const startTime = dayjs(values.startTime).valueOf();
+    const endTime = dayjs(values.endTime).valueOf();
+    const result = await airdropClient.modify(
+      ADMIN_CAP,
+      AIRDROPS,
+      values.round,
+      BigInt(startTime),
+      BigInt(endTime),
+      values.isOpen,
+      values.description,
+    );
+    signAndExecuteTransaction(
+      { transaction: result },
+      {
+        onSuccess: async (tx) => {
+          console.log("空投更新成功:", tx.digest);
+          messageApi.success(`空投更新成功: ${tx.digest}`);
+          setShowAirdropModal(false);
+          fetchAirdropList(); // 更新节点列表
         },
-      );
-    } catch (error: any) {
-      messageApi.error(`空投更新失败: ${error.message}`);
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
+        onError: ({ message }) => {
+          console.error("空投更新失败:", message);
+          messageApi.error(`空投更新失败: ${message}`);
+        },
+      },
+    );
   };
-
-  useEffect(() => {
-    fetchAirdropList(); // 页面加载时获取空投列表
-  }, []);
 
   // 节点表格列配置
   const nodeColumns = [
@@ -349,8 +320,6 @@ const AdminPage = () => {
       }
       setLoading(true);
       const { name, description, limit, price, total_quantity } = values;
-      console.log("节点信息:", values);
-      console.log("节点信息:", limit, price, total_quantity);
       const result = await airdropClient.insertNode(
         ADMIN_CAP,
         NODES,
@@ -391,12 +360,7 @@ const AdminPage = () => {
   const handleUpdateNode = async (values: NodeInfo) => {
     try {
       if (!editingNode) return;
-
-      console.log("节点更新数据:", values.price);
-
       const priceBigInt = BigInt(convertLargeToSmall(values.price, 9) || 0); // 提供默认值
-      console.log("节点更新数据:", values.price);
-
       const result = await airdropClient.modifyNode(
         ADMIN_CAP,
         NODES,
@@ -430,11 +394,6 @@ const AdminPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchAirdropList();
-    fetchNodeList();
-  }, []);
-  //获取根用户和费率
   const fetchInviteInfo = async () => {
     try {
       const root = await inviteClient.root(INVITE);
@@ -447,10 +406,6 @@ const AdminPage = () => {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    fetchInviteInfo();
-  }, []);
 
   const handleinvite = async (value: any) => {
     const { root, inviter_fee } = value;
@@ -475,9 +430,6 @@ const AdminPage = () => {
       },
     );
   };
-  useEffect(() => {
-    fetchInviteInfo();
-  }, []);
 
   const fetreveiver = async () => {
     try {
@@ -489,12 +441,9 @@ const AdminPage = () => {
       console.error(error);
     }
   };
-  useEffect(() => {
-    fetreveiver();
-  }, []);
+
   const handlenode = async (value: any) => {
     const { receiver } = value;
-
     const result = await airdropClient.modify_nodes(
       PAY_COIN_TYPE,
       ADMIN_CAP,
@@ -516,9 +465,14 @@ const AdminPage = () => {
       },
     );
   };
+
   useEffect(() => {
+    fetchAirdropList();
+    fetchNodeList();
+    fetchInviteInfo();
     fetreveiver();
   }, []);
+
   return (
     <div className="flex flex-col gap-4 p-4">
       {contextHolder}
