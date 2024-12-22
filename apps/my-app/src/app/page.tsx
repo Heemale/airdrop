@@ -138,8 +138,8 @@ const AdminPage = () => {
       console.log("Airdrop list:", list);
 
       setAirdropList(list);
-    } catch (error) {
-      messageApi.error("获取空投列表失败");
+    } catch (error: any) {
+      messageApi.error(`获取空投列表失败: ${error.message}`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -167,19 +167,19 @@ const AdminPage = () => {
         {
           onSuccess: async (tx) => {
             console.log({ digest: tx.digest });
-            messageApi.info(`Success: ${tx.digest}`);
+            messageApi.info(`提取成功: ${tx.digest}`);
             setLoading(false);
             await fetchAirdropList();
           },
           onError: ({ message }) => {
             console.log(`新建空投失败: ${message}`);
-            messageApi.error(`Error: ${message}`);
+            messageApi.error(`提取失败: ${message}`);
             setLoading(false);
           },
         },
       );
-    } catch (error) {
-      messageApi.error("提取失败");
+    } catch (error: any) {
+      messageApi.error(`提取失败: ${error.message}`);
       console.error(" error:", error);
     } finally {
       setLoading(false);
@@ -224,13 +224,13 @@ const AdminPage = () => {
         {
           onSuccess: async (tx) => {
             console.log({ digest: tx.digest });
-            messageApi.info(`Success: ${tx.digest}`);
+            messageApi.info(`创建空投成功: ${tx.digest}`);
             setLoading(false);
             await fetchAirdropList();
           },
           onError: ({ message }) => {
             console.log(`新建空投失败: ${message}`);
-            messageApi.error(`Error: ${message}`);
+            messageApi.error(`新建空投失败: ${message}`);
             setLoading(false);
           },
         },
@@ -238,8 +238,8 @@ const AdminPage = () => {
       // console.log("Create Airdrop transaction result:", result); // 打印结果
       // messageApi.success('新建空投成功');
       setShowModal(false); // 关闭弹窗
-    } catch (error) {
-      messageApi.error("新建空投失败");
+    } catch (error: any) {
+      messageApi.error(`新建空投失败: ${error.message}`);
       console.error("Create Airdrop error:", error);
     } finally {
       setLoading(false);
@@ -265,18 +265,18 @@ const AdminPage = () => {
         {
           onSuccess: async (tx) => {
             console.log("空投更新成功:", tx.digest);
-            messageApi.success("空投更新成功");
+            messageApi.success(`空投更新成功: ${tx.digest}`);
             setShowAirdropModal(false);
             fetchAirdropList(); // 更新节点列表
           },
           onError: ({ message }) => {
             console.error("空投更新失败:", message);
-            messageApi.error("空投更新失败");
+            messageApi.error(`空投更新失败: ${message}`);
           },
         },
       );
-    } catch (error) {
-      messageApi.error("空投更新失败");
+    } catch (error: any) {
+      messageApi.error(`空投更新失败: ${error.message}`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -332,8 +332,8 @@ const AdminPage = () => {
       setLoading(true);
       const list = await nodeClient.nodeList(NODES);
       setNodeList(list);
-    } catch (error) {
-      messageApi.error("获取节点列表失败");
+    } catch (error: any) {
+      messageApi.error(`获取节点列表失败: ${error.message}`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -367,20 +367,20 @@ const AdminPage = () => {
         {
           onSuccess: async (tx) => {
             console.log({ digest: tx.digest });
-            messageApi.info(`Success: ${tx.digest}`);
+            messageApi.info(`新建节点成功: ${tx.digest}`);
             setLoading(false);
             await fetchNodeList();
           },
           onError: ({ message }) => {
             console.log(`新建节点失败: ${message}`);
-            messageApi.error(`Error: ${message}`);
+            messageApi.error(`新建节点失败: ${message}`);
             setLoading(false);
           },
         },
       );
       setShowNewNodeModal(false);
-    } catch (error) {
-      messageApi.error("新建节点失败");
+    } catch (error: any) {
+      messageApi.error(`新建节点失败: ${error.message}`);
       console.error("Create Node error:", error);
     } finally {
       setLoading(false);
@@ -412,18 +412,18 @@ const AdminPage = () => {
         {
           onSuccess: async (tx) => {
             console.log("节点更新成功:", tx.digest);
-            messageApi.success("节点更新成功");
+            messageApi.success(`节点更新成功: ${tx.digest}`);
             setShowNodeModal(false);
             fetchNodeList(); // 更新节点列表
           },
           onError: ({ message }) => {
             console.error("节点更新失败:", message);
-            messageApi.error("节点更新失败");
+            messageApi.error(`节点更新失败: ${message}`);
           },
         },
       );
-    } catch (error) {
-      messageApi.error("节点更新失败");
+    } catch (error: any) {
+      messageApi.error(`节点更新失败: ${error.message}`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -442,8 +442,8 @@ const AdminPage = () => {
       console.log("fee", fee);
       setFee(fee / 100);
       setRoot(root);
-    } catch (error) {
-      messageApi.error("获取分红信息失败");
+    } catch (error: any) {
+      messageApi.error(`获取分红信息失败: ${error.message}`);
       console.error(error);
     }
   };
@@ -465,12 +465,12 @@ const AdminPage = () => {
       {
         onSuccess: async (tx) => {
           console.log("更新成功:", tx.digest);
-          messageApi.success("更新成功");
+          messageApi.success(`更新成功: ${tx.digest}`);
           setShowInviteModal(false);
         },
         onError: ({ message }) => {
           console.error("更新失败:", message);
-          messageApi.error("更新失败");
+          messageApi.error(`更新失败: ${message}`);
         },
       },
     );
@@ -484,8 +484,8 @@ const AdminPage = () => {
       const receivers = await nodeClient.receiver(NODES);
       console.log(receivers);
       set_receiver(receivers);
-    } catch (error) {
-      messageApi.error("获取分红信息失败");
+    } catch (error: any) {
+      messageApi.error(`获取分红信息失败: ${error.message}`);
       console.error(error);
     }
   };
@@ -506,12 +506,12 @@ const AdminPage = () => {
       {
         onSuccess: async (tx) => {
           console.log("修改接收人成功:", tx.digest);
-          messageApi.success("修改接收人成功");
+          messageApi.success(`修改接收人成功: ${tx.digest}`);
           setShowInviteModal(false);
         },
         onError: ({ message }) => {
           console.error("修改接收人失败:", message);
-          messageApi.error("修改接收人失败");
+          messageApi.error(`修改接收人失败: ${message}`);
         },
       },
     );
