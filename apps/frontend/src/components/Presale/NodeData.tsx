@@ -152,9 +152,9 @@ const NodeData = (props: Props) => {
           {/*<div>*/}
           {/*  {node ? convertSmallToLarge(node.price.toString(), 9) : '-'}*/}
           {/*</div>*/}
-          {/*<div className="flex flex-col justify-end text-xs">USDT</div>*/}
+          {/*<div className="flex flex-col justify-end text-xs">SUI</div>*/}
           <div className="flex flex-col justify-end">
-            {node ? convertSmallToLarge(node.price.toString(), 9) : '-'} USDT
+            {node ? convertSmallToLarge(node.price.toString(), 9) : '-'} SUI
           </div>
         </div>
       </div>
