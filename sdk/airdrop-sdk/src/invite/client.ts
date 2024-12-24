@@ -77,6 +77,7 @@ export class InviteClient {
       });
     // @ts-ignore
     const result = bcs.U64.parse(
+      // @ts-ignore
       new Uint8Array(res?.results[0]?.returnValues[0][0]),
     );
 
