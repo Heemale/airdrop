@@ -113,6 +113,7 @@ export class NodeClient {
       price: rawEvent.price as bigint,
       total_quantity: rawEvent.total_quantity as bigint,
       purchased_quantity: rawEvent.purchased_quantity as bigint,
+      isOpen: rawEvent.is_open as boolean,
     });
 
     return events.map((event) => {
@@ -173,7 +174,7 @@ export class NodeClient {
         transactionBlock: tx,
         sender: normalizeSuiAddress('0x0'),
       });
-      // @ts-ignore
+    // @ts-ignore
     return bcs.Address.parse(
       new Uint8Array(res?.results[0]?.returnValues[0][0]),
     );

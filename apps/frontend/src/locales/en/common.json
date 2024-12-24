@@ -90,6 +90,7 @@
   "node_ENodeSoldOut": "Equity is sold out",
   "node_EExceedsPurchaseLimit": "Purchase limit exceeded",
   "node_EInvalidCoinType": "Illegal token type",
+  "node_ENodeNotOpen": "Node not open",
   "TRANSFER EQUITY": "TRANSFER EQUITY",
   "Please enter the equity recipient": "Please enter the equity recipient",
   "Please enter a valid receiver address.": "Please enter a valid receiver address.",

@@ -5,8 +5,8 @@ import {
 } from '.';
 import { bcs } from '@mysten/sui/bcs';
 import { SuiClient } from '@mysten/sui/client';
-import { NodeClient } from "../node";
-import {  NODES} from "../utils";
+import { NodeClient } from '../node';
+import { NODES } from '../utils';
 
 describe('Test Utils', () => {
   it('getType', async () => {
@@ -38,14 +38,16 @@ describe('Test Utils', () => {
     expect(data.module).toStrictEqual(expectModule);
   });
 
-  it('receiver',async()=>{
-    const suiclient = new SuiClient({url: 'https://fullnode.testnet.sui.io'});
+  it('receiver', async () => {
+    const suiclient = new SuiClient({ url: 'https://fullnode.testnet.sui.io' });
     const nodeclient = new NodeClient(suiclient);
-    const res =await nodeclient.receiver(NODES);
-    console.log({ res });   
-  // @ts-ignore
+    const res = await nodeclient.receiver(NODES);
+    console.log({ res });
+    // @ts-ignore
     console.log({ returnValues: res.results[0].returnValues });
-  // @ts-ignore
-    console.log(bcs.Address.parse(new Uint8Array(res?.results[0]?.returnValues[0][0])));}
-)
+    // @ts-ignore
+    console.log(
+      bcs.Address.parse(new Uint8Array(res?.results[0]?.returnValues[0][0])),
+    );
+  });
 });

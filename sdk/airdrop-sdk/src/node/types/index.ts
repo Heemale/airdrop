@@ -13,4 +13,6 @@ export interface NodeInfo {
   total_quantity: bigint;
   // 已购买的数量
   purchased_quantity: bigint;
+  // 是否开启
+  isOpen: boolean;
 }

@@ -3,7 +3,7 @@ module airdrop::invite {
 
     use sui::vec_map::{Self, VecMap};
     use sui::address::{Self};
-
+    use sui::event::{Self};
     // === Errors ===
 
     // 异常: 非法调用人
@@ -26,6 +26,15 @@ module airdrop::invite {
         root: address,
         // 邀请人费用, eg: 500 => 5%
         inviter_fee: u64,
+    }
+
+    // === Event ===
+
+    public struct Bind has copy, drop {
+        // 用户
+        sender: address,
+        // 邀请人
+        inviter: address,
     }
 
     /*
@@ -81,6 +90,10 @@ module airdrop::invite {
         assert_invalid_inviter(invite, inviter);
         assert_already_bind_inviter(invite, sender);
         vec_map::insert(&mut invite.inviters, sender, inviter);
+        event::emit(Bind {
+            sender,
+            inviter,
+        })
     }
 
     /*

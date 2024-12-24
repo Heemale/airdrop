@@ -3,7 +3,7 @@ module airdrop::node {
 
     use sui::vec_map::{Self, VecMap};
     use sui::coin::{Self, Coin};
-    use sui::event;
+    use sui::event::{Self};
     use airdrop::invite::{Self, Invite};
     use std::type_name::{Self, TypeName};
     // === Constants ===
@@ -24,6 +24,8 @@ module airdrop::node {
     const EExceedsPurchaseLimit: u64 = 5;
     // 异常: 非法代币类型
     const EInvalidCoinType: u64 = 6;
+    // 异常：节点未开启
+    const ENodeNotOpen: u64 = 7;
 
     // === Struct ===
 
@@ -62,6 +64,8 @@ module airdrop::node {
         total_quantity: u64,
         // 已购买的数量
         purchased_quantity: u64,
+        // 是否开启
+        is_open: bool,
     }
 
     public struct User has store {
@@ -88,6 +92,30 @@ module airdrop::node {
         total_quantity: u64,
         // 已购买的数量
         purchased_quantity: u64,
+        // 是否开启
+        is_open: bool,
+    }
+
+    // === Event ===
+
+    public struct Buy has copy, drop {
+        // 用户
+        sender: address,
+        // 节点等级
+        rank: u8,
+        // 节点序号
+        node_num: u64,
+    }
+
+    public struct Transfer has copy, drop {
+        // 用户
+        sender: address,
+        // 接收人
+        receiver: address,
+        // 节点等级
+        rank: u8,
+        // 节点序号
+        node_num: u64,
     }
 
     /*
@@ -137,7 +165,8 @@ module airdrop::node {
             limit,
             price,
             total_quantity,
-            purchased_quantity: 0
+            purchased_quantity: 0,
+            is_open: true,
         };
         vec_map::insert(&mut nodes.nodes, rank, node);
     }
@@ -163,6 +192,7 @@ module airdrop::node {
      * @param name: 名称
      * @param description: 描述
      * @param price: 价格
+     * @param is_open: 是否开启
      */
     public(package) fun modify(
         nodes: &mut Nodes,
@@ -172,6 +202,7 @@ module airdrop::node {
         price: u64,
         limit: u64,
         total_quantity: u64,
+        is_open: bool,
     ) {
         let nodeMut: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
         nodeMut.rank = rank;
@@ -180,6 +211,7 @@ module airdrop::node {
         nodeMut.price = price;
         nodeMut.limit = limit;
         nodeMut.total_quantity = total_quantity;
+        nodeMut.is_open = is_open;
     }
 
     /*
@@ -252,6 +284,7 @@ module airdrop::node {
         assert!(coin::value(&wallet) >= node.price, ECoinBalanceNotEnough);
         assert_already_buy_node(&nodes.users, sender);
         assert_node_sold_out(node);
+        assert_node_not_open(node);
 
         // 更新用户信息
         let user = User {
@@ -277,6 +310,12 @@ module airdrop::node {
         let inviter = invite::inviters(invite, sender);
         transfer::public_transfer(inviter_rebate, inviter);
         transfer::public_transfer(wallet, nodes.receiver);
+
+        event::emit(Buy {
+            sender,
+            rank,
+            node_num: nodes.node_num_index,
+        })
     }
 
     /*
@@ -319,6 +358,13 @@ module airdrop::node {
             };
             vec_map::insert(&mut nodes.users, receiver, node_receiver);
         };
+
+        event::emit(Transfer {
+            sender,
+            receiver,
+            rank,
+            node_num,
+        })
     }
 
   
@@ -390,6 +436,7 @@ module airdrop::node {
                 price: node.price,
                 total_quantity: node.total_quantity,
                 purchased_quantity: node.purchased_quantity,
+                is_open: node.is_open,
             });
             i = i + 1;
         };
@@ -430,5 +477,9 @@ module airdrop::node {
 
     public fun assert_invalid_coin_type<T>(coin_type: TypeName) {
         assert!(type_name::get<T>() == coin_type, EInvalidCoinType);
+    }
+
+    public fun assert_node_not_open(node: &Node) {
+        assert!(node.is_open, ENodeNotOpen);
     }
 }

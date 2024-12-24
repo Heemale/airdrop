@@ -151,15 +151,10 @@ const AdminPage = () => {
       return;
     }
     setLoading(true);
-    const result = await airdropClient.withdraw(
-      coinType,
-      ADMIN_CAP,
-      AIRDROPS,
-      round,
-    );
+    const tx = airdropClient.withdraw(coinType, ADMIN_CAP, AIRDROPS, round);
     signAndExecuteTransaction(
       {
-        transaction: result,
+        transaction: tx,
       },
       {
         onSuccess: async (tx) => {
@@ -193,7 +188,7 @@ const AdminPage = () => {
       values;
 
     // 调用 airdropClient.insert 方法
-    const result = await airdropClient.insert(
+    const tx = await airdropClient.insert(
       coinType,
       ADMIN_CAP,
       AIRDROPS,
@@ -209,7 +204,7 @@ const AdminPage = () => {
     );
     signAndExecuteTransaction(
       {
-        transaction: result,
+        transaction: tx,
       },
       {
         onSuccess: async (tx) => {
@@ -232,7 +227,7 @@ const AdminPage = () => {
     if (!editingAirdrop) return;
     const startTime = dayjs(values.startTime).valueOf();
     const endTime = dayjs(values.endTime).valueOf();
-    const result = await airdropClient.modify(
+    const tx = airdropClient.modify(
       ADMIN_CAP,
       AIRDROPS,
       values.round,
@@ -242,7 +237,7 @@ const AdminPage = () => {
       values.description,
     );
     signAndExecuteTransaction(
-      { transaction: result },
+      { transaction: tx },
       {
         onSuccess: async (tx) => {
           console.log("空投更新成功:", tx.digest);
@@ -271,7 +266,12 @@ const AdminPage = () => {
       render: (price: bigint) => convertSmallToLarge(price, 9),
     },
     { title: "节点总数量", dataIndex: "total_quantity", key: "total_quantity" },
-
+    {
+      title: "节点是否开启",
+      dataIndex: "isOpen",
+      key: "isOpen",
+      render: (isOpen: boolean) => (isOpen ? "开启" : "关闭"),
+    },
     {
       title: "操作",
       key: "actions",
@@ -288,6 +288,7 @@ const AdminPage = () => {
               price: convertSmallToLarge(record.price, 9),
               limit: record.limit,
               total_quantity: record.total_quantity,
+              isOpen: record.isOpen,
             });
           }}
         >
@@ -320,7 +321,7 @@ const AdminPage = () => {
       }
       setLoading(true);
       const { name, description, limit, price, total_quantity } = values;
-      const result = await airdropClient.insertNode(
+      const tx = airdropClient.insertNode(
         ADMIN_CAP,
         NODES,
         name,
@@ -331,7 +332,7 @@ const AdminPage = () => {
       );
       signAndExecuteTransaction(
         {
-          transaction: result,
+          transaction: tx,
         },
         {
           onSuccess: async (tx) => {
@@ -361,7 +362,7 @@ const AdminPage = () => {
     try {
       if (!editingNode) return;
       const priceBigInt = BigInt(convertLargeToSmall(values.price, 9) || 0); // 提供默认值
-      const result = await airdropClient.modifyNode(
+      const tx = airdropClient.modifyNode(
         ADMIN_CAP,
         NODES,
         values.rank,
@@ -370,9 +371,10 @@ const AdminPage = () => {
         priceBigInt,
         values.limit,
         values.total_quantity,
+        values.isOpen,
       );
       signAndExecuteTransaction(
-        { transaction: result },
+        { transaction: tx },
         {
           onSuccess: async (tx) => {
             console.log("节点更新成功:", tx.digest);
@@ -409,14 +411,14 @@ const AdminPage = () => {
 
   const handleinvite = async (value: any) => {
     const { root, inviter_fee } = value;
-    const result = await airdropClient.modifyInvite(
+    const tx = airdropClient.modifyInvite(
       ADMIN_CAP,
       INVITE,
       root,
       BigInt(inviter_fee),
     );
     signAndExecuteTransaction(
-      { transaction: result },
+      { transaction: tx },
       {
         onSuccess: async (tx) => {
           console.log("更新成功:", tx.digest);
@@ -444,14 +446,14 @@ const AdminPage = () => {
 
   const handlenode = async (value: any) => {
     const { receiver } = value;
-    const result = await airdropClient.modify_nodes(
+    const tx = airdropClient.modify_nodes(
       PAY_COIN_TYPE,
       ADMIN_CAP,
       NODES,
       receiver,
     );
     signAndExecuteTransaction(
-      { transaction: result },
+      { transaction: tx },
       {
         onSuccess: async (tx) => {
           console.log("修改接收人成功:", tx.digest);
@@ -817,6 +819,9 @@ const AdminPage = () => {
                 rules={[{ required: true, message: "节点总数量" }]}
               >
                 <Input type="number" />
+              </Form.Item>
+              <Form.Item name="isOpen" label="是否开启" valuePropName="checked">
+                <Switch />
               </Form.Item>
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button type="primary" htmlType="submit" loading={loading}>

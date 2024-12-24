@@ -90,6 +90,7 @@
   "node_ENodeSoldOut": "权益已售罄",
   "node_EExceedsPurchaseLimit": "超出购买限额",
   "node_EInvalidCoinType": "非法代币类型",
+  "node_ENodeNotOpen": "节点未开放",
   "TRANSFER EQUITY": "转让权益",
   "Please enter the equity recipient": "请输入权益接收人",
   "Please enter a valid receiver address.": "请输入合法的接收人地址",

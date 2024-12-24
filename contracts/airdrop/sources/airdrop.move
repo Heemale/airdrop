@@ -92,6 +92,19 @@ module airdrop::airdrop {
         remaining_balance: u64,
     }
 
+    // === Event ===
+
+    public struct Claim has copy, drop {
+        // 用户
+        sender: address,
+        // 回合
+        round: u64,
+        // 币种
+        coin_type: TypeName,
+        // 数量
+        amount: u64,
+    }
+
     fun init(ctx: &mut TxContext) {
         let sender = tx_context::sender(ctx);
         let admin_cap = AdminCap {
@@ -266,6 +279,14 @@ module airdrop::airdrop {
         let treasury_balance_part = balance::split<T>(treasury_balance, per_share_amount);
         let treasury_coina_part: Coin<T> = coin::from_balance<T>(treasury_balance_part, ctx);
         transfer::public_transfer(treasury_coina_part, sender);
+
+        let coin_type = type_name::get<T>();
+        event::emit(Claim {
+            sender,
+            round,
+            coin_type,
+            amount: per_share_amount,
+        })
     }
 
     public fun new_invite(
@@ -315,8 +336,9 @@ module airdrop::airdrop {
         price: u64,
         limit: u64,
         total_quantity: u64,
+        is_open: bool,
     ) {
-        node::modify(nodes, rank, name, description, price, limit, total_quantity);
+        node::modify(nodes, rank, name, description, price, limit, total_quantity, is_open);
     }
 
     public fun modify_nodes<T>(

@@ -13,6 +13,7 @@ export const ERROR_CODE: Record<string, Record<string, string>> = {
     '4': 'ENodeSoldOut',
     '5': 'EExceedsPurchaseLimit',
     '6': 'EInvalidCoinType',
+    '7': 'ENodeNotOpen',
   },
   invite: {
     '1': 'EInvalidSender',

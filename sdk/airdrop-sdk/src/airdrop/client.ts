@@ -258,7 +258,8 @@ export class AirdropClient {
     description: string,
     price: bigint,
     limit: bigint,
-    total_quantity: bigint,
+    totalQuantity: bigint,
+    isOpen: boolean,
   ): Transaction {
     const tx = new Transaction();
     tx.moveCall({
@@ -272,7 +273,8 @@ export class AirdropClient {
         tx.pure.string(description),
         tx.pure.u64(price),
         tx.pure.u64(limit),
-        tx.pure.u64(total_quantity),
+        tx.pure.u64(totalQuantity),
+        tx.pure.bool(isOpen),
       ],
     });
     return tx;
