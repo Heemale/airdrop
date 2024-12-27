@@ -398,10 +398,11 @@ const AdminPage = () => {
 
   const fetchInviteInfo = async () => {
     try {
-      const root = await inviteClient.root(INVITE);
-      const fee = await inviteClient.inviterFee(INVITE);
-      console.log("fee", fee);
-      setFee(fee / 100);
+      const [root, fee] = await Promise.all([
+        await inviteClient.root(INVITE),
+        await inviteClient.inviterFee(INVITE),
+      ]);
+      setFee(fee);
       setRoot(root);
     } catch (error: any) {
       messageApi.error(`获取分红信息失败: ${error.message}`);
@@ -411,11 +412,16 @@ const AdminPage = () => {
 
   const handleinvite = async (value: any) => {
     const { root, inviter_fee } = value;
+    if (inviter_fee < 0.01) {
+      console.error("分红比例不能低于0.01%");
+      return;
+    }
+
     const tx = airdropClient.modifyInvite(
       ADMIN_CAP,
       INVITE,
       root,
-      BigInt(inviter_fee),
+      BigInt(inviter_fee * 100),
     );
     signAndExecuteTransaction(
       { transaction: tx },
@@ -502,7 +508,7 @@ const AdminPage = () => {
           {/* 新建空投的弹窗 */}
           <Modal
             title="新建空投"
-            visible={showModal}
+            open={showModal}
             onCancel={() => setShowModal(false)} // 关闭弹窗
             footer={null} // 关闭默认按钮
           >
@@ -595,7 +601,7 @@ const AdminPage = () => {
           </Modal>
           <Modal
             title="修改空投信息"
-            visible={showAirdropModal}
+            open={showAirdropModal}
             onCancel={() => setShowAirdropModal(false)}
             footer={null}
           >
@@ -694,7 +700,7 @@ const AdminPage = () => {
           {/* 新建节点的弹窗 */}
           <Modal
             title="新建节点"
-            visible={showNewNodeModal}
+            open={showNewNodeModal}
             onCancel={() => setShowNewNodeModal(false)} // 关闭弹窗
             footer={null} // 关闭默认按钮
           >
@@ -753,7 +759,6 @@ const AdminPage = () => {
                   onClick={handleCreateNode}
                 >
                   创建节点
-                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
                 </Button>
               </Form.Item>
             </Form>
@@ -761,7 +766,7 @@ const AdminPage = () => {
           {/* 修改节点信息弹窗 */}
           <Modal
             title="修改节点信息"
-            visible={showNodeModal}
+            open={showNodeModal}
             onCancel={() => setShowNodeModal(false)}
             footer={null}
           >
@@ -835,8 +840,7 @@ const AdminPage = () => {
       <div className="flex flex-col gap-4 overflow-x-auto">
         <div className="overflow-x-auto">
           <h3>根用户: {root !== null ? root : "Loading..."}</h3>
-          <h3>邀请人分红费率: {fee !== null ? fee : "Loading..."}%</h3>
-
+          <h3>邀请人分红费率: {fee !== null ? fee / 100 : "Loading..."}%</h3>
           <Button
             type="primary"
             onClick={() => setShowInviteModal(true)} // 点击按钮显示弹窗
@@ -847,7 +851,7 @@ const AdminPage = () => {
 
           <Modal
             title="修改分红"
-            visible={showInviteModal}
+            open={showInviteModal}
             onCancel={() => setShowInviteModal(false)} // 关闭弹窗
             footer={null} // 关闭默认按钮
           >
@@ -856,6 +860,10 @@ const AdminPage = () => {
               onFinish={handleinvite} // 提交表单
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
+              initialValues={{
+                root: root,
+                inviter_fee: fee / 100,
+              }}
             >
               <Form.Item
                 name="root"
@@ -869,22 +877,11 @@ const AdminPage = () => {
                 label="邀请人分红费率"
                 rules={[{ required: true, message: "请输入邀请人分红费率" }]}
               >
-                <Input
-                  type="number"
-                  placeholder="请输入邀请人分红费率"
-                  defaultValue={fee !== null ? (fee / 100).toFixed(2) : ""}
-                />
+                <Input type="number" placeholder="请输入邀请人分红费率" />
               </Form.Item>
-
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  onClick={handleinvite}
-                >
+                <Button type="primary" htmlType="submit" loading={loading}>
                   提交
-                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
                 </Button>
               </Form.Item>
             </Form>
@@ -906,7 +903,7 @@ const AdminPage = () => {
           </Button>
           <Modal
             title="修改接收人"
-            visible={editreceiver}
+            open={editreceiver}
             onCancel={() => setEditreceiver(false)} // 关闭弹窗
             footer={null} // 关闭默认按钮
           >
@@ -925,12 +922,7 @@ const AdminPage = () => {
               </Form.Item>
 
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  onClick={handleinvite}
-                >
+                <Button type="primary" htmlType="submit" loading={loading}>
                   提交
                   <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
                 </Button>
