@@ -61,7 +61,7 @@ const NodeData = (props: Props) => {
 
   const getNodeList = async () => {
     const nodes = await nodeClient.nodeList(NODES);
-    setNodeList(nodes.filter((node)=> node.isOpen));
+    setNodeList(nodes.filter((node) => node.isOpen));
   };
 
   useEffect(() => {

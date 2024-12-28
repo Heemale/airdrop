@@ -89,8 +89,7 @@ const PurchaseOrderData = (props: Props) => {
       </div>
       <div className="flex justify-between text-sm">
         <div>
-          {walletBalance}: {balance ? convertSmallToLarge(balance, 9) : '-'}{' '}
-          SUI
+          {walletBalance}: {balance ? convertSmallToLarge(balance, 9) : '-'} SUI
         </div>
       </div>
       {contextHolder}
