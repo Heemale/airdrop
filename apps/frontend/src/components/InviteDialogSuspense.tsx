@@ -19,6 +19,7 @@ import { Suspense } from 'react';
 import { handleTxError, handleDevTxError } from '@/sdk/error';
 import { useClientTranslation } from '@/hook';
 import i18nConfig from '@/i18nConfig';
+import { formatAddress } from '@mysten/sui/utils';
 
 interface Props {
   bindInviter: string;
@@ -151,6 +152,9 @@ const InviteDialog = (props: Props) => {
           onChange={handleInputChange}
           // disabled={isBound} // 禁用输入框
         />
+        <div className="flex text-white font-bold gap-1">
+          {t('Inviter Preview')}: {formatAddress(inputValue)}
+        </div>
         <div className="w-full">
           <button
             className="w-full relative inline-block bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-white font-bold text-center text-lg py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
