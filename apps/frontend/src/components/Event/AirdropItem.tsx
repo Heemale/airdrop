@@ -117,9 +117,9 @@ const AirdropItem = (props: Props) => {
         data.round,
       );
       setRemainingClaimTimes(BigInt(times));
-    } catch (e) {
-      // @ts-ignore
+    } catch (e: any) {
       console.log(`fetch remainingQuantityOfClaim error: ${e.message}`);
+      messageApi.error(`${t(handleTxError(e.message))}`);
     }
   };
 
