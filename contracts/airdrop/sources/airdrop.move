@@ -10,6 +10,7 @@ module airdrop::airdrop {
     use sui::clock::{Self, Clock};
     use airdrop::invite::{Self, Invite};
     use airdrop::node::{Self, Nodes};
+    use airdrop::user::{Self, SpecialLimits};
 
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 1;
@@ -21,7 +22,8 @@ module airdrop::airdrop {
     const EInvalidClaimTime: u64 = 4;
     // 异常: 无可领取的空投
     const ENoRemainingShares: u64 = 5;
-
+    // 异常：方法已弃用
+    const EMethodDeprecated: u64 = 6;
     // === Struct ===
 
     // 空投列表对象
@@ -67,6 +69,8 @@ module airdrop::airdrop {
         id: UID,
     }
 
+    // === Event ===
+
     public struct AirdropInfo has copy, drop {
         // 轮次
         round: u64,
@@ -91,8 +95,6 @@ module airdrop::airdrop {
         // 空投剩余资金
         remaining_balance: u64,
     }
-
-    // === Event ===
 
     public struct Claim has copy, drop {
         // 用户
@@ -257,21 +259,42 @@ module airdrop::airdrop {
     /*
      * @notice 领取空投
      */
+    #[allow(unused_type_parameter)]
     entry fun claim<T>(
+        _airdrops: &mut Airdrops,
+        _nodes: &mut Nodes,
+        _round: u64,
+        _clock: &Clock,
+        _special_limits: &SpecialLimits,
+        _ctx: &mut TxContext,
+    ) {
+        assert!(false, EMethodDeprecated);
+    }
+
+    /*
+     * @notice 领取空投v2
+     */
+    entry fun claim_v2<T>(
         airdrops: &mut Airdrops,
         nodes: &mut Nodes,
         round: u64,
         clock: &Clock,
+        special_limits: &SpecialLimits,
         ctx: &mut TxContext,
     ) {
         let sender = tx_context::sender(ctx);
+        // 断言：回合是否存在
         assert_round_not_found(airdrops, round);
         let airdrop: &mut Airdrop = vec_map::get_mut(&mut airdrops.airdrops, &round);
 
+        // 断言：时间是否合法
         assert_invalid_claim_time(clock, airdrop);
+        // 断言：份额是否足够
         assert_no_remaining_shares(airdrop);
-
+        // 断言：剩余领取次数是否足够
+        node::assert_insufficient_remaining_quantity(nodes, sender, round, special_limits);
         node::update_purchased_quantity(nodes, sender, round);
+
         let per_share_amount = airdrop.total_balance / airdrop.total_shares;
         airdrop.claimed_shares = airdrop.claimed_shares + 1;
         airdrop.remaining_balance = airdrop.remaining_balance - per_share_amount;
@@ -347,6 +370,23 @@ module airdrop::airdrop {
         receiver: address,
     ) {
         node::modify_nodes<T>(nodes, receiver);
+    }
+
+    public fun new_special_limits(
+        _admin_cap: &AdminCap,
+        ctx: &mut TxContext
+    ){
+        user::new(ctx);
+    }
+
+    public fun modify_special_limits(
+        _admin_cap: &AdminCap,
+        special_limits: &mut SpecialLimits,
+        address: address,
+        times: u64,
+        is_limit: bool,
+    ) {
+        user::modify(special_limits, address, times, is_limit);
     }
 
     public fun airdrops(airdrops: &Airdrops) {

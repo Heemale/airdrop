@@ -3,11 +3,11 @@ module airdrop::airdrop_tests {
     use sui::test_scenario::{Self, ctx};
     use sui::sui::{SUI};
     use sui::coin::{Self, Coin};
+    use sui::clock::{Self};
     use airdrop::airdrop::{Self, AdminCap, Airdrops};
     use airdrop::node::{Self, Nodes};
     use airdrop::invite::{Self, Invite};
-    use sui::clock::{Self};
-
+    use airdrop::user::{SpecialLimits};
 
     const Admin: address = @0x1;
     const Receiver: address = @0x2;
@@ -25,6 +25,16 @@ module airdrop::airdrop_tests {
         airdrop::init_for_test(ctx(&mut scenario));
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
+
+        // === 实例化SpecialLimits对象 ===
+        // === 获取SpecialLimits对象 ===
+        test_scenario::next_tx(&mut scenario, Admin);
+        airdrop::new_special_limits(
+            &adminCap,
+            ctx(&mut scenario)
+        );
+        test_scenario::next_tx(&mut scenario, Admin);
+        let special_limits = test_scenario::take_shared<SpecialLimits>(&scenario);
 
         // === 实例化airdrops对象 ===
         // === 获取airdrops对象 ===
@@ -134,11 +144,12 @@ module airdrop::airdrop_tests {
         clock::set_for_testing(&mut clock, 1500);
 
         test_scenario::next_tx(&mut scenario, User);
-        airdrop::claim<SUI>(
+        airdrop::claim_v2<SUI>(
             &mut airdrops,
             &mut nodes,
             1, // round
             &clock,
+            &special_limits,
             ctx(&mut scenario),
         );
         test_scenario::next_tx(&mut scenario, User);
@@ -146,11 +157,12 @@ module airdrop::airdrop_tests {
         assert!(times == 4, E);
 
         test_scenario::next_tx(&mut scenario, User);
-        airdrop::claim<SUI>(
+        airdrop::claim_v2<SUI>(
             &mut airdrops,
             &mut nodes,
             1,
             &clock,
+            &special_limits,
             ctx(&mut scenario),
         );
         test_scenario::next_tx(&mut scenario, User);
@@ -167,8 +179,9 @@ module airdrop::airdrop_tests {
         assert!(node::remaining_quantity_of_claim(&nodes, User2, 1) == 3, E);
 
         // === 结束测试 ===
-        transfer::public_transfer(adminCap, Admin);
         clock::destroy_for_testing(clock);
+        transfer::public_transfer(adminCap, Admin);
+        test_scenario::return_shared(special_limits);
         test_scenario::return_shared(nodes);
         test_scenario::return_shared(invite);
         test_scenario::return_shared(airdrops);

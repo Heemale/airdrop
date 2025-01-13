@@ -4,8 +4,9 @@ module airdrop::node {
     use sui::vec_map::{Self, VecMap};
     use sui::coin::{Self, Coin};
     use sui::event::{Self};
-    use airdrop::invite::{Self, Invite};
     use std::type_name::{Self, TypeName};
+    use airdrop::invite::{Self, Invite};
+    use airdrop::user::{Self, SpecialLimits};
     // === Constants ===
 
     const MathBase: u64 = 10000;
@@ -26,6 +27,10 @@ module airdrop::node {
     const EInvalidCoinType: u64 = 6;
     // 异常：节点未开启
     const ENodeNotOpen: u64 = 7;
+    // 异常: 剩余次数不足
+    const EInsufficientRemainingQuantity: u64 = 8;
+    // 异常：方法已弃用
+    // const EMethodDeprecated: u64 = 9;
 
     // === Struct ===
 
@@ -367,7 +372,7 @@ module airdrop::node {
         })
     }
 
-  
+
 
     public fun receiver(nodes: &Nodes): address {
         nodes.receiver
@@ -381,18 +386,18 @@ module airdrop::node {
         // 是否绑定邀请关系
         let is_exists = vec_map::contains(&nodes.users, &sender);
         if (is_exists) {
-            let user: &User = vec_map::get(&nodes.users, &sender);
+            let sedner_user: &User = vec_map::get(&nodes.users, &sender);
 
             // 是否购买节点
-            let is_exists = vec_map::contains(&nodes.nodes, &user.rank);
+            let is_exists = vec_map::contains(&nodes.nodes, &sedner_user.rank);
             if (is_exists) {
-                let node: &Node = vec_map::get(&nodes.nodes, &user.rank);
+                let node: &Node = vec_map::get(&nodes.nodes, &sedner_user.rank);
                 let node_purchased_quantity = node.limit;
 
                 // 此节点是否领取过空投
-                let is_exists = vec_map::contains(&nodes.limits, &user.node_num);
+                let is_exists = vec_map::contains(&nodes.limits, &sedner_user.node_num);
                 if (is_exists) {
-                    let round_map_times = vec_map::get(&nodes.limits, &user.node_num);
+                    let round_map_times = vec_map::get(&nodes.limits, &sedner_user.node_num);
 
                     // 此节点是否领取过当前轮空投
                     let is_exists = vec_map::contains(round_map_times, &round);
@@ -404,6 +409,61 @@ module airdrop::node {
                     }
                 } else {
                     node_purchased_quantity
+                }
+            } else {
+                0
+            }
+        } else {
+            0
+        }
+    }
+
+    public fun remaining_quantity_of_claim_v2(nodes: &Nodes, sender: address, round: u64, special_limits: &SpecialLimits): u64 {
+        // 是否绑定邀请关系
+        let is_exists = nodes.users.contains(&sender);
+        if (is_exists) {
+            let sender_user: &User = nodes.users.get(&sender);
+
+            // 是否购买节点
+            let is_exists = nodes.nodes.contains(&sender_user.rank);
+            if (is_exists) {
+                let node: &Node = nodes.nodes.get(&sender_user.rank);
+                let node_purchased_quantity = node.limit;
+
+                // 此节点是否领取过空投
+                let is_exists = nodes.limits.contains(&sender_user.node_num);
+                if (is_exists) {
+                    let round_map_times = nodes.limits.get(&sender_user.node_num);
+
+                    // 此节点是否领取过当前轮空投
+                    let is_exists = round_map_times.contains(&round);
+                    if (is_exists) {
+                        let user_purchased_quantity: &u64 = round_map_times.get(&round);
+
+                        // 计算特殊限制
+                        user::special_limit_remaining_quantity(
+                            special_limits,
+                            &sender,
+                            node_purchased_quantity,
+                            *user_purchased_quantity
+                        )
+                    } else {
+                        // 计算特殊限制
+                        user::special_limit_remaining_quantity(
+                            special_limits,
+                            &sender,
+                            node_purchased_quantity,
+                            0
+                        )
+                    }
+                } else {
+                    // 计算特殊限制
+                    user::special_limit_remaining_quantity(
+                        special_limits,
+                        &sender,
+                        node_purchased_quantity,
+                        0
+                    )
                 }
             } else {
                 0
@@ -441,7 +501,7 @@ module airdrop::node {
             i = i + 1;
         };
     }
-    
+
 
     // === Assertions ===
 
@@ -481,5 +541,20 @@ module airdrop::node {
 
     public fun assert_node_not_open(node: &Node) {
         assert!(node.is_open, ENodeNotOpen);
+    }
+
+    public fun assert_insufficient_remaining_quantity(
+        nodes: &Nodes,
+        sender: address,
+        round: u64,
+        special_limits: &SpecialLimits,
+    ) {
+        let times = remaining_quantity_of_claim_v2(
+            nodes,
+            sender,
+            round,
+            special_limits
+        );
+        assert!(times > 0, EInsufficientRemainingQuantity);
     }
 }
