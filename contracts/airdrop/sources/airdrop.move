@@ -61,7 +61,6 @@ module airdrop::airdrop {
         image_url: vector<u8>,
         // 空投剩余资金
         remaining_balance: u64,
-
     }
 
     // 管理员权限对象

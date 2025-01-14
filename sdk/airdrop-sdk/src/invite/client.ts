@@ -12,6 +12,8 @@ import type {
   OrderArguments,
 } from '@mysten/sui/client';
 import { toHexString } from '../utils';
+import { Summary } from '../types';
+import { BindSummary } from './types';
 
 export class InviteClient {
   constructor(public suiClient: SuiClient) {}
@@ -83,6 +85,18 @@ export class InviteClient {
 
     // 将返回的 BigInt 转换为 number
     return Number(result);
+  }
+
+  async getAllBind(
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ): Promise<Summary<BindSummary>> {
+    const resp = await this.queryEvents('Bind', input);
+    const customMapping = (rawEvent: any) => ({
+      id: rawEvent.id as string,
+      sender: rawEvent.sender as string,
+      inviter: rawEvent.inviter as string,
+    });
+    return this.handleEventReturns(resp, customMapping);
   }
 
   async queryEvents(

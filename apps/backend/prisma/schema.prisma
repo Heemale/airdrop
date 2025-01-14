@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// 文案表
+model Copywriting {
+  id       Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
+  page     String?  @db.VarChar(255) /// 页面
+  code     String?  @db.VarChar(255) /// 文案编码
+  zh       String?  @db.Text /// 中文
+  en       String?  @db.Text /// 英文
+  vi       String?  @db.Text /// 越南语
+  imageUrl String?  @map("image_url") @db.Text /// 图片
+  isImage  Boolean? @map("is_image") /// 是否为图片
+  createAt BigInt?  @map("create_at") /// 创建时间
+  updateAt BigInt?  @map("update_at") /// 更新时间
+
+  @@map("swld_copywriting")
+}
+
+/// 用户表
+model User {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
+  inviterId Int?     @map("inviter_id") @db.UnsignedInt /// 邀请人Id
+  txDigest  String?  @map("tx_digest") @db.VarChar(255) /// txDigest
+  eventSeq  String?  @map("event_seq") @db.VarChar(255) /// eventSeq
+  address   String?  @unique @db.VarChar(72) /// 用户地址
+  inviter   String?  @db.VarChar(72) /// 邀请人地址
+  isBind    Boolean? @default(false) @map("is_bind") /// 是否绑定
+  sharerIds String?  @map("sharer_ids") @db.Text /// 分享人id列表
+  isRoot    Boolean? @default(false) @map("is_root") /// 是否为根用户
+  createAt  BigInt?  @map("create_at") /// 创建时间
+  updateAt  BigInt?  @map("update_at") /// 更新时间
+
+  @@unique([txDigest, eventSeq])
+  @@index(inviterId)
+  @@map("swld_user")
+}
+
+/// 权益表
+model Node {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
+  rank        BigInt? /// 等级
+  name        String?  @db.VarChar(255) /// 名称
+  description String?  @db.Text /// 描述
+  isOpen      Boolean? @default(false) @map("is_open") // 是否开启
+  createAt    BigInt?  @map("create_at") /// 创建时间
+  updateAt    BigInt?  @map("update_at") /// 更新时间
+
+  @@map("swld_node")
+}
+
+/// 空投表
+model Airdrop {
+  id               Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
+  round            BigInt? /// 轮次
+  startTime        BigInt?  @map("start_time") /// 开始时间
+  endTime          BigInt?  @map("end_time") /// 结束时间
+  totalShares      BigInt?  @map("total_shares") /// 总份数
+  claimedShares    BigInt?  @map("claimed_shares") /// 已领取份数
+  totalBalance     BigInt?  @map("total_balance") /// 总资金
+  isOpen           Boolean? @map("is_open") /// 是否开放
+  description      String?  @db.Text /// 描述
+  coinType         String?  @map("coin_type") @db.VarChar(255) /// 货币类型
+  imageUrl         String?  @map("image_url") @db.Text /// 空投图片
+  remainingBalance BigInt?  @map("remaining_balance") /// 空投剩余资金
+  createAt         BigInt?  @map("create_at") /// 创建时间
+  updateAt         BigInt?  @map("update_at") /// 更新时间
+
+  @@map("swld_airdrop")
+}
+
+/// 特殊限制表
+model SpecialLimit {
+  id      Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
+  address String?  @unique @db.VarChar(72) /// 用户
+  times   BigInt? /// 次数
+  isLimit Boolean? @default(false) @map("is_limit") /// 币种
+
+  @@map("swld_special_limit")
+}
+
+/// 购买权益记录表
+model BuyRecord {
+  id       Int     @id @default(autoincrement()) @db.UnsignedInt /// ID
+  txDigest String? @map("tx_digest") @db.VarChar(255) /// txDigest
+  eventSeq String? @map("event_seq") @db.VarChar(255) /// eventSeq
+  sender   String? @db.VarChar(72) /// 用户
+  rank     BigInt? /// 节点等级
+  nodeNum  BigInt? @map("node_num") /// 节点序号
+  createAt BigInt? @map("create_at") /// 创建时间
+  updateAt BigInt? @map("update_at") /// 更新时间
+
+  @@unique([txDigest, eventSeq])
+  @@map("swld_buy_record")
+}
+
+/// 领取空投记录表
+model ClaimRecord {
+  id       Int     @id @default(autoincrement()) @db.UnsignedInt /// ID
+  txDigest String? @map("tx_digest") @db.VarChar(255) /// txDigest
+  eventSeq String? @map("event_seq") @db.VarChar(255) /// eventSeq
+  sender   String? @db.VarChar(72) /// 用户
+  round    BigInt? /// 回合
+  coinType String? @map("coin_type") @db.VarChar(255) /// 币种
+  nodeNum  BigInt? @map("node_num") /// 数量
+  createAt BigInt? @map("create_at") /// 创建时间
+  updateAt BigInt? @map("update_at") /// 更新时间
+
+  @@unique([txDigest, eventSeq])
+  @@map("swld_claim_record")
+}
