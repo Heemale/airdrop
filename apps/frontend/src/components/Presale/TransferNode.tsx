@@ -14,15 +14,10 @@ import { useContext, useState } from 'react';
 import { message } from 'antd';
 import { PresaleContext } from '@/context/PresaleContext';
 
-interface Props {
-  transferText: string;
-  connectText: string;
-  placeholderText: string;
-}
 
-const TransferNode = (props: Props) => {
-  const { transferText, connectText, placeholderText } = props;
-  const { t } = useClientTranslation();
+
+const TransferNode = () => {
+  const { t } = useClientTranslation(); 
 
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
@@ -86,14 +81,15 @@ const TransferNode = (props: Props) => {
             type="text"
             value={receiver}
             onChange={handleInputChange}
-            placeholder={placeholderText}
+            placeholder={t('Enter receiver is address')}
             className="w-full mb-4 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
             onClick={transferNode}
+            disabled={loading}
           >
-            {transferText}
+            {t('RANSFER EQUITY')}
           </button>
         </>
       )}

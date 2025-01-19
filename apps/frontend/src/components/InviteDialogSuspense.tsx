@@ -20,16 +20,10 @@ import { handleTxError, handleDevTxError } from '@/sdk/error';
 import { useClientTranslation } from '@/hook';
 import i18nConfig from '@/i18nConfig';
 import { formatAddress } from '@mysten/sui/utils';
+import initTranslations from '@/app/i18n';
 
-interface Props {
-  bindInviter: string;
-  inviterText: string;
-  noInviter: string;
-  bindText: string;
-}
-const InviteDialog = (props: Props) => {
-  const { bindInviter, bindText, inviterText } = props;
 
+const InviteDialog = () => {
   const { t } = useClientTranslation();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -93,7 +87,7 @@ const InviteDialog = (props: Props) => {
   };
 
   useEffect(() => {
-    // 访问首页才更新inviter
+    // 访问首页才更新 inviter
     const pathnameHandled = pathname.startsWith('/')
       ? pathname.slice(1)
       : pathname;
@@ -107,7 +101,7 @@ const InviteDialog = (props: Props) => {
   }, [searchParams]);
 
   useEffect(() => {
-    // 切换账号要清除inviter
+    // 切换账号要清除 inviter
     if (account) {
       const addressBefore = localStorage.getItem('address');
       if (addressBefore && addressBefore !== '') {
@@ -138,11 +132,11 @@ const InviteDialog = (props: Props) => {
       }}
     >
       <div className="flex flex-col gap-4 mx-4">
-        <div className="text-white font-bold">{bindInviter}</div>
+        <div className="text-white font-bold">{t('BIND INVITER')}</div>
         <OutlinedInput
           id="outlined-adornment-weight"
           aria-describedby="outlined-weight-helper-text"
-          placeholder={inviterText}
+          placeholder={t('Inviter')}
           sx={{
             background: '#2b2b2b',
             color: '#ffffff',
@@ -150,7 +144,6 @@ const InviteDialog = (props: Props) => {
           color="primary"
           value={inputValue}
           onChange={handleInputChange}
-          // disabled={isBound} // 禁用输入框
         />
         <div className="flex text-white font-bold gap-1">
           {t('Inviter Preview')}: {formatAddress(inputValue)}
@@ -160,7 +153,7 @@ const InviteDialog = (props: Props) => {
             className="w-full relative inline-block bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-white font-bold text-center text-lg py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
             onClick={handleBind}
           >
-            {bindText}
+            {t('BIND')}
           </button>
         </div>
       </div>
@@ -175,18 +168,11 @@ const InviteDialog = (props: Props) => {
   );
 };
 
-const InviteDialogSuspense = (props: Props) => {
-  const { bindInviter, bindText, inviterText, noInviter } = props;
-  return (
-    <Suspense>
-      <InviteDialog
-        bindInviter={bindInviter}
-        inviterText={inviterText}
-        noInviter={noInviter}
-        bindText={bindText}
-      />
-    </Suspense>
-  );
-};
+const InviteDialogSuspense = () => (
+  <Suspense>
+    <InviteDialog />
+  </Suspense>
+);
+
 
 export default InviteDialogSuspense;

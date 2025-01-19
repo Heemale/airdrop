@@ -4,6 +4,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import LanguageChanger from '@/components/LanguageChanger';
+import { useClientTranslation } from '@/hook';
 import {
   Drawer,
   IconButton,
@@ -19,20 +20,18 @@ import InviteFriend from '@/components/InviteFriend';
 interface Props {
   pages: Array<Page>;
   children: React.ReactNode;
-  inviteFriendText: string;
-  copyText: string;
 }
 
 const NavBar = (props: Props) => {
-  const { pages, children, inviteFriendText, copyText } = props;
+  const { pages, children } = props;
+  const { t } = useClientTranslation();
+
   // 状态：抽屉是否打开
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   // 切换抽屉的状态
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
-      // 避免按 Tab 或 Shift 键时关闭抽屉
       if (event instanceof KeyboardEvent) {
-        // 仅在是 KeyboardEvent 时检查 `key`
         if (event.key === 'Tab' || event.key === 'Shift') {
           return;
         }
@@ -56,10 +55,7 @@ const NavBar = (props: Props) => {
               <div className="text-white">{page.name}</div>
             </Link>
           ))}
-          <InviteFriend
-            inviteFriendText={inviteFriendText}
-            copyText={copyText}
-          />
+          <InviteFriend />
           <LanguageChanger />
           {children}
         </div>
@@ -90,10 +86,7 @@ const NavBar = (props: Props) => {
                 </ListItem>
               ))}
               <ListItem>
-                <InviteFriend
-                  inviteFriendText={inviteFriendText}
-                  copyText={copyText}
-                />
+                <InviteFriend />
               </ListItem>
               <ListItem>
                 <LanguageChanger />

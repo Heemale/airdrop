@@ -18,17 +18,9 @@ import { PresaleContext } from '@/context/PresaleContext';
 import { useClientTranslation } from '@/hook';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 
-interface Props {
-  nextText: string;
-  connectText: string;
-  bindText: string;
-  purchasedNodeText: string;
-  transferText: string;
-}
 
-const Next = (props: Props) => {
-  const { nextText, connectText, bindText, purchasedNodeText, transferText } =
-    props;
+const Next = () => {
+ 
 
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
@@ -127,7 +119,7 @@ const Next = (props: Props) => {
           return (
             <Button
               className="text-white w-full"
-              text={bindText}
+              text={'BIND INVITER'}
               onClick={bind}
             />
           );
@@ -137,7 +129,7 @@ const Next = (props: Props) => {
             if (isAlreadyBuyNode === 0) {
               return (
                 <Link href={'/presale-confirm'}>
-                  <Button className="text-white w-full" text={nextText} />
+                  <Button className="text-white w-full" text={t('NEXT')} />
                 </Link>
               );
             }
@@ -149,7 +141,7 @@ const Next = (props: Props) => {
                     className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
                     disabled
                   >
-                    {purchasedNodeText}
+                    {t('PURCHASED EQUITY')}
                   </button>
                   <input
                     type="text"
@@ -160,7 +152,7 @@ const Next = (props: Props) => {
                   />
                   <Button
                     className="text-white w-full"
-                    text={transferText}
+                    text={t('TRANSFER EQUITY')}
                     onClick={transferNode}
                   />
                 </>
@@ -175,11 +167,11 @@ const Next = (props: Props) => {
           className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
           disabled
         >
-          {nextText}
+          {t('NEXT')}
         </button>
       );
     } else {
-      return <ConnectWallet text={connectText} />;
+      return <ConnectWallet />;
     }
   };
 

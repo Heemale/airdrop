@@ -41,10 +41,7 @@ const RootLayout = async ({
           <Context>
             {children}
             <InviteDialogSuspense
-              bindInviter={t('Bind Inviter')}
-              inviterText={t('Inviter')}
-              noInviter={t('No Inviter')}
-              bindText={t('BIND')}
+             
             />
           </Context>
         </TranslationsProvider>

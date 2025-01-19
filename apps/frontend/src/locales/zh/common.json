@@ -98,5 +98,14 @@
   "Number of copies available": "可领取份数",
   "Error": "异常",
   "Number of copies remaining": "剩余份数",
-  "Inviter Preview": "邀请人预览"
+  "Inviter Preview": "邀请人预览",
+  "Share with friends":"分享好友",
+  "Recommender address": "推荐人地址",
+  "Please bind the inviter": "请绑定邀请人",
+  "Please connect your wallet": "请连接钱包",
+  "Personal center": "个人中心",
+  "My share": "我的分享",
+"Address": "地址",
+"Sharers / Teams / Team total investment": "分享人数 ／ 团队人数 ／ 团队总收益",
+"loading...": "加载中..."
 }
