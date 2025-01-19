@@ -98,5 +98,14 @@
   "Number of copies available": "Number of copies available",
   "Error": "Error",
   "Number of copies remaining": "Number of copies remaining",
-  "Inviter Preview": "Inviter Preview"
+  "Inviter Preview": "Inviter Preview",
+  "Share with friends":"Share with friends",
+  "Recommender address":"Recommender address",
+  "Please bind the inviter":"Please bind the inviter",
+  "Please connect your wallet":"Please connect your wallet",
+  "Personal center":"Personal center",
+  "My share":"My share",
+  "Address":"Address",
+  "Sharers / Teams / Team total investment":"Sharers / Teams / Team total investment",
+  "loading...":"loading..."
 }

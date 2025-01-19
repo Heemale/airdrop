@@ -9,46 +9,10 @@ import { NODES } from '@local/airdrop-sdk/utils';
 import { convertSmallToLarge } from '@/utils/math';
 import { PresaleContext } from '@/context/PresaleContext';
 import { message } from 'antd';
+import { useClientTranslation } from '@/hook';
 
-interface Props {
-  nodeInfo: string;
-  nodeName: string;
-  currentTier: string;
-  remaining: string;
-  allowedPurchaseAmount: string;
-  nodePrice: string;
-}
-
-const nodes = [
-  {
-    rank: 1,
-    name: 'node 1',
-    description: 'node 1 description',
-    limit: BigInt(1),
-    price: BigInt(1000000000),
-    total_quantity: BigInt(100),
-    purchased_quantity: BigInt(1),
-  },
-  {
-    rank: 2,
-    name: 'node 2',
-    description: 'node 2 description',
-    limit: BigInt(2),
-    price: BigInt(20000000),
-    total_quantity: BigInt(200),
-    purchased_quantity: BigInt(2),
-  },
-];
-
-const NodeData = (props: Props) => {
-  const {
-    nodeInfo,
-    nodeName,
-    currentTier,
-    remaining,
-    allowedPurchaseAmount,
-    nodePrice,
-  } = props;
+const NodeData = () => {
+  const { t } = useClientTranslation();
 
   const { node, setNode } = useContext(PresaleContext);
   const [messageApi, contextHolder] = message.useMessage();
@@ -71,10 +35,10 @@ const NodeData = (props: Props) => {
   return (
     <>
       <div className="font-bold text-gradient font-orbitron text-2xl">
-        <div className="text-center sm:text-start">{nodeInfo}</div>
+        <div className="text-center sm:text-start">{t('Equity Info')}</div>
       </div>
       <div className="flex justify-between items-center gap-12">
-        <div>{nodeName}</div>
+        <div>{t('Equity Name')}</div>
         <div>
           <Autocomplete
             {...defaultProps}
@@ -132,27 +96,20 @@ const NodeData = (props: Props) => {
         </div>
       </div>
       <div className="flex justify-between">
-        <div>{currentTier}</div>
+        <div>{t('Current Tier')}</div>
         <div>LV {node ? node.rank : '-'}</div>
       </div>
       <div className="flex justify-between">
-        <div>{remaining}</div>
+        <div>{t('Remaining Nodes')}</div>
         <div>{node ? node.total_quantity - node.purchased_quantity : '-'}</div>
       </div>
       <div className="flex justify-between">
-        <div>{allowedPurchaseAmount}</div>
+        <div>{t('Allowed Purchase Amount')}</div>
         <div>1</div>
       </div>
       <div className="flex justify-between">
-        <div>{nodePrice}</div>
+        <div>{t('Equity Price')}</div>
         <div className="flex gap-0.5">
-          {/*<div>1</div>*/}
-          {/*<div className="flex flex-col justify-end text-xs">Node</div>*/}
-          {/*<div>=</div>*/}
-          {/*<div>*/}
-          {/*  {node ? convertSmallToLarge(node.price.toString(), 9) : '-'}*/}
-          {/*</div>*/}
-          {/*<div className="flex flex-col justify-end text-xs">SUI</div>*/}
           <div className="flex flex-col justify-end">
             {node ? convertSmallToLarge(node.price.toString(), 9) : '-'} SUI
           </div>

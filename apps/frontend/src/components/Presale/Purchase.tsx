@@ -19,15 +19,8 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 
-interface Props {
-  buyText: string;
-  connectText: string;
-  bindText: string;
-  purchasedNodeText: string;
-}
 
-const Purchase = (props: Props) => {
-  const { buyText, connectText, bindText, purchasedNodeText } = props;
+const Purchase = () => {
 
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
@@ -128,7 +121,7 @@ const Purchase = (props: Props) => {
         inviter === normalizeSuiAddress('0x0') ? (
           <Button
             className="text-white w-full"
-            text={bindText}
+            text={t('BIND INVITER')}
             onClick={bind}
           />
         ) : isAlreadyBuyNode ? (
@@ -136,17 +129,17 @@ const Purchase = (props: Props) => {
             className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
             disabled
           >
-            {purchasedNodeText}
+            {t('PURCHASED EQUITY')}
           </button>
         ) : (
           <Button
             className="text-white w-full"
-            text={buyText}
+            text={t('BUY')}
             onClick={buyNode}
           />
         )
       ) : (
-        <ConnectWallet text={connectText} />
+        <ConnectWallet/>
       )}
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}

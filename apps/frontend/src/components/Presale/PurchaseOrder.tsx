@@ -16,12 +16,7 @@ const PurchaseOrder = async (props: Props) => {
   return (
     <>
       <PurchaseOrderData
-        purchaseOrder={t('Purchase Order')}
-        allowedPurchaseAmount={t('Allowed Purchase Amount')}
-        quantity={t('Quantity')}
-        estimatedCost={t('Estimated Cost')}
-        priceDetail={t('Price Detail')}
-        walletBalance={t('Wallet Balance')}
+       
       />
       <div className="grid grid-cols-3 gap-2">
         <div className="col-span-1">
@@ -33,10 +28,7 @@ const PurchaseOrder = async (props: Props) => {
         </div>
         <div className="col-span-2">
           <Purchase
-            buyText={t('BUY')}
-            connectText={t('CONNECT WALLET')}
-            bindText={t('BIND INVITER')}
-            purchasedNodeText={t('PURCHASED EQUITY')}
+          
           />
         </div>
       </div>

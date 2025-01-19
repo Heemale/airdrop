@@ -12,24 +12,9 @@ import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
 import { PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
 
-interface Props {
-  purchaseOrder: string;
-  allowedPurchaseAmount: string;
-  quantity: string;
-  estimatedCost: string;
-  priceDetail: string;
-  walletBalance: string;
-}
 
-const PurchaseOrderData = (props: Props) => {
-  const {
-    purchaseOrder,
-    allowedPurchaseAmount,
-    quantity,
-    estimatedCost,
-    priceDetail,
-    walletBalance,
-  } = props;
+const PurchaseOrderData = () => {
+
   const { t } = useClientTranslation();
 
   const router = useRouter();
@@ -65,31 +50,31 @@ const PurchaseOrderData = (props: Props) => {
 
   return (
     <>
-      <div className="font-orbitron text-2xl">{purchaseOrder}</div>
+      <div className="font-orbitron text-2xl">{t('Purchase Order')}</div>
       <div className="flex justify-between">
-        <div>{allowedPurchaseAmount}</div>
+        <div>{t('Allowed Purchase Amount')}</div>
         <div>1</div>
       </div>
       <div className="flex justify-between">
-        <div>{quantity}</div>
+        <div>{t('Quantity')}</div>
         <div>1</div>
       </div>
       <div className="flex justify-between">
-        <div>{estimatedCost}</div>
+        <div>{t('Estimated Cost')}</div>
         <div>
           {node ? convertSmallToLarge(node.price.toString(), 9) : '-'} SUI
         </div>
       </div>
       <div className="flex justify-between text-sm">
         <div>
-          {priceDetail}:
+          {t('Price Detail')}:
           {node ? '1 x ' + convertSmallToLarge(node.price.toString(), 9) : '-'}{' '}
           SUI
         </div>
       </div>
       <div className="flex justify-between text-sm">
         <div>
-          {walletBalance}: {balance ? convertSmallToLarge(balance, 9) : '-'} SUI
+          {t('Wallet Balance')}: {balance ? convertSmallToLarge(balance, 9) : '-'} SUI
         </div>
       </div>
       {contextHolder}

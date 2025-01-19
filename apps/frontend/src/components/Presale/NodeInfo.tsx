@@ -15,20 +15,8 @@ const NodeInfo = async (props: Props) => {
 
   return (
     <>
-      <NodeData
-        nodeInfo={t('Equity Info')}
-        nodeName={t('Equity Name')}
-        currentTier={t('Current Tier')}
-        remaining={t('Remaining Nodes')}
-        allowedPurchaseAmount={t('Allowed Purchase Amount')}
-        nodePrice={t('Equity Price')}
-      />
+      <NodeData />
       <Next
-        nextText={t('NEXT')}
-        connectText={t('CONNECT WALLET')}
-        bindText={t('BIND INVITER')}
-        purchasedNodeText={t('PURCHASED EQUITY')}
-        transferText={t('TRANSFER EQUITY')}
       />
       {/*<TransferNode*/}
       {/*  transferText={t('TRANSFER EQUITY')}*/}

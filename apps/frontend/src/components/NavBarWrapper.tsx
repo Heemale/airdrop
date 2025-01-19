@@ -28,7 +28,12 @@ const pages: Array<Page> = [
   {
     id: '2',
     name: 'Event',
-    link: 'event',
+    link: '/event',
+  },
+  {
+    id:'3',
+    name:'Personal center',
+    link:'/personalcenter',
   },
 ];
 
@@ -45,10 +50,8 @@ const NavBarWrapper = async (props: Props) => {
           ...rest,
         };
       })}
-      inviteFriendText={t('Invite friends')}
-      copyText={t('Copy Success')}
     >
-      <ConnectButton connectText={t('CONNECT')} />
+      <ConnectButton connectText='CONNECT' />
     </NavBar>
   );
 };

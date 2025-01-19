@@ -4,18 +4,14 @@ import React from 'react';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { message } from 'antd';
 import { useCurrentAccount } from '@mysten/dapp-kit';
+import { useClientTranslation } from '@/hook';
 
-interface Props {
-  inviteFriendText: string;
-  copyText: string;
-}
 
-const InviteFriend = (props: Props) => {
-  const { inviteFriendText, copyText } = props;
+const InviteFriend = () => {
 
   const account = useCurrentAccount();
   const [messageApi, contextHolder] = message.useMessage();
-
+  const { t } = useClientTranslation();
   const generateInviteLink = () => {
     if (account?.address) {
       return `${window.location.origin}?inviter=${account.address}`;
@@ -25,7 +21,7 @@ const InviteFriend = (props: Props) => {
   };
 
   const handleCopy = () => {
-    messageApi.success(copyText);
+    messageApi.success(t('Copy Success'));
   };
 
   return (
@@ -33,11 +29,11 @@ const InviteFriend = (props: Props) => {
       {contextHolder}
       {account?.address ? (
         <CopyToClipboard text={generateInviteLink()} onCopy={handleCopy}>
-          <div className="text-white cursor-pointer">{inviteFriendText}</div>
+          <div className="text-white cursor-pointer">{t('Invite friends')}</div>
         </CopyToClipboard>
       ) : (
         <div className="text-gray-500 cursor-not-allowed">
-          {inviteFriendText}
+          {t('Invite friends')}
         </div>
       )}
     </>
