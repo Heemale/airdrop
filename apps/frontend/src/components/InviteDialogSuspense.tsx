@@ -118,28 +118,40 @@ const InviteDialog = () => {
       PaperProps={{
         style: {
           width: '90vw',
-          height: '64vh',
-          maxWidth: '500px',
-          maxHeight: '400px',
+          height: '70vh',
+          maxWidth: '600px',
+          maxHeight: '600px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
-          background: '#262626',
+          background: 'rgba(13, 24, 41, 1)',
           borderRadius: '20px',
           marginLeft: '2px',
           marginRight: '2px',
+          position: 'relative', 
         },
       }}
     >
-      <div className="flex flex-col gap-4 mx-4">
-        <div className="text-white font-bold">{t('BIND INVITER')}</div>
+      <div className="relative">
+      <div className="flex justify-center mb-4 "
+      >
+          <img src="/bind.png" alt="" className="w-30 h-30" />
+        </div>
+      <div className="flex flex-col gap-4 mx-4 mt-8">
+      
+        <div className="text-white text-2xl font-bold text-center mb-4">
+          {t('Please enter your invitation code')}
+        </div>        
         <OutlinedInput
           id="outlined-adornment-weight"
           aria-describedby="outlined-weight-helper-text"
-          placeholder={t('Inviter')}
+          placeholder='Please enter your invitation code'
           sx={{
-            background: '#2b2b2b',
+            background: '#2C3E50',
             color: '#ffffff',
+            '& .MuiInputBase-input::placeholder': {
+      textAlign: 'center', // 使placeholder文字居中
+    },
           }}
           color="primary"
           value={inputValue}
@@ -153,10 +165,19 @@ const InviteDialog = () => {
             className="w-full relative inline-block bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-white font-bold text-center text-lg py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
             onClick={handleBind}
           >
-            {t('BIND')}
+            {t('BIND INVITER')}
           </button>
+
         </div>
+
       </div>
+     <div
+  className="text-sm font-bold text-center mb-4"
+  style={{ color: '#ffffff' }}
+>
+  {t('You need to bind the inviter before you can purchase benefits.')}
+</div>
+</div>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}

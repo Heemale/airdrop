@@ -107,5 +107,14 @@
   "My share": "我的分享",
 "Address": "地址",
 "Sharers / Teams / Team total investment": "分享人数 ／ 团队人数 ／ 团队总收益",
-"loading...": "加载中..."
+"loading...": "加载中...",
+"Please enter your invitation code":"请输入您的邀请码",
+"You need to bind the inviter before you can purchase benefits.":"您需要先绑定邀请人才能购买权益。",
+"Equity purchase record":"权益购买记录",
+"User Address":"用户地址",
+"Amount":"金额",
+"Time":"时间",
+"No records available":"无可用记录"
+
+
 }
