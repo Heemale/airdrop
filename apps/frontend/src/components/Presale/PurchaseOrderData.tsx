@@ -12,9 +12,7 @@ import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
 import { PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
 
-
 const PurchaseOrderData = () => {
-
   const { t } = useClientTranslation();
 
   const router = useRouter();
@@ -74,7 +72,8 @@ const PurchaseOrderData = () => {
       </div>
       <div className="flex justify-between text-sm">
         <div>
-          {t('Wallet Balance')}: {balance ? convertSmallToLarge(balance, 9) : '-'} SUI
+          {t('Wallet Balance')}:{' '}
+          {balance ? convertSmallToLarge(balance, 9) : '-'} SUI
         </div>
       </div>
       {contextHolder}

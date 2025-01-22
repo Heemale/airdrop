@@ -18,10 +18,7 @@ import { PresaleContext } from '@/context/PresaleContext';
 import { useClientTranslation } from '@/hook';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 
-
 const Next = () => {
- 
-
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const { node } = useContext(PresaleContext);

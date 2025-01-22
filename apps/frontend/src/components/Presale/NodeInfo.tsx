@@ -16,8 +16,7 @@ const NodeInfo = async (props: Props) => {
   return (
     <>
       <NodeData />
-      <Next
-      />
+      <Next />
       {/*<TransferNode*/}
       {/*  transferText={t('TRANSFER EQUITY')}*/}
       {/*  connectText={t('CONNECT WALLET')}*/}

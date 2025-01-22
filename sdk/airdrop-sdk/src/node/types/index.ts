@@ -1,3 +1,5 @@
+import { TransactionSummary } from '../../types';
+
 export interface NodeInfo {
   // 等级
   rank: number;
@@ -16,3 +18,11 @@ export interface NodeInfo {
   // 是否开启
   isOpen: boolean;
 }
+
+export interface BuySummary extends TransactionSummary {
+  sender: string;
+  rank: bigint;
+  nodeNum: bigint;
+}
+
+export * from './index';

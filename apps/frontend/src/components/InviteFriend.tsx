@@ -6,9 +6,7 @@ import { message } from 'antd';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useClientTranslation } from '@/hook';
 
-
 const InviteFriend = () => {
-
   const account = useCurrentAccount();
   const [messageApi, contextHolder] = message.useMessage();
   const { t } = useClientTranslation();

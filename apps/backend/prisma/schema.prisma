@@ -114,7 +114,7 @@ model ClaimRecord {
   sender   String? @db.VarChar(72) /// 用户
   round    BigInt? /// 回合
   coinType String? @map("coin_type") @db.VarChar(255) /// 币种
-  nodeNum  BigInt? @map("node_num") /// 数量
+  amount  BigInt? @map("amount") /// 数量
   createAt BigInt? @map("create_at") /// 创建时间
   updateAt BigInt? @map("update_at") /// 更新时间
 

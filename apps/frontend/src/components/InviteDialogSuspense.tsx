@@ -22,7 +22,6 @@ import i18nConfig from '@/i18nConfig';
 import { formatAddress } from '@mysten/sui/utils';
 import initTranslations from '@/app/i18n';
 
-
 const InviteDialog = () => {
   const { t } = useClientTranslation();
   const router = useRouter();
@@ -128,56 +127,52 @@ const InviteDialog = () => {
           borderRadius: '20px',
           marginLeft: '2px',
           marginRight: '2px',
-          position: 'relative', 
+          position: 'relative',
         },
       }}
     >
       <div className="relative">
-      <div className="flex justify-center mb-4 "
-      >
+        <div className="flex justify-center mb-4 ">
           <img src="/bind.png" alt="" className="w-30 h-30" />
         </div>
-      <div className="flex flex-col gap-4 mx-4 mt-8">
-      
-        <div className="text-white text-2xl font-bold text-center mb-4">
-          {t('Please enter your invitation code')}
-        </div>        
-        <OutlinedInput
-          id="outlined-adornment-weight"
-          aria-describedby="outlined-weight-helper-text"
-          placeholder='Please enter your invitation code'
-          sx={{
-            background: '#2C3E50',
-            color: '#ffffff',
-            '& .MuiInputBase-input::placeholder': {
-      textAlign: 'center', // 使placeholder文字居中
-    },
-          }}
-          color="primary"
-          value={inputValue}
-          onChange={handleInputChange}
-        />
-        <div className="flex text-white font-bold gap-1">
-          {t('Inviter Preview')}: {formatAddress(inputValue)}
+        <div className="flex flex-col gap-4 mx-4 mt-8">
+          <div className="text-white text-2xl font-bold text-center mb-4">
+            {t('Please enter your invitation code')}
+          </div>
+          <OutlinedInput
+            id="outlined-adornment-weight"
+            aria-describedby="outlined-weight-helper-text"
+            placeholder="Please enter your invitation code"
+            sx={{
+              background: '#2C3E50',
+              color: '#ffffff',
+              '& .MuiInputBase-input::placeholder': {
+                textAlign: 'center', // 使placeholder文字居中
+              },
+            }}
+            color="primary"
+            value={inputValue}
+            onChange={handleInputChange}
+          />
+          <div className="flex text-white font-bold gap-1">
+            {t('Inviter Preview')}: {formatAddress(inputValue)}
+          </div>
+          <div className="w-full">
+            <button
+              className="w-full relative inline-block bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-white font-bold text-center text-lg py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
+              onClick={handleBind}
+            >
+              {t('BIND INVITER')}
+            </button>
+          </div>
         </div>
-        <div className="w-full">
-          <button
-            className="w-full relative inline-block bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-white font-bold text-center text-lg py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer"
-            onClick={handleBind}
-          >
-            {t('BIND INVITER')}
-          </button>
-
+        <div
+          className="text-sm font-bold text-center mb-4"
+          style={{ color: '#ffffff' }}
+        >
+          {t('You need to bind the inviter before you can purchase benefits.')}
         </div>
-
       </div>
-     <div
-  className="text-sm font-bold text-center mb-4"
-  style={{ color: '#ffffff' }}
->
-  {t('You need to bind the inviter before you can purchase benefits.')}
-</div>
-</div>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
@@ -194,6 +189,5 @@ const InviteDialogSuspense = () => (
     <InviteDialog />
   </Suspense>
 );
-
 
 export default InviteDialogSuspense;

@@ -19,9 +19,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 
-
 const Purchase = () => {
-
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);
   const { inviter, setOpen, setInviter } = useContext(InviteDialogContext);
@@ -139,7 +137,7 @@ const Purchase = () => {
           />
         )
       ) : (
-        <ConnectWallet/>
+        <ConnectWallet />
       )}
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}

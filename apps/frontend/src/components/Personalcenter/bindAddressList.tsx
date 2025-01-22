@@ -72,11 +72,10 @@ const BindAddressList = () => {
         setTotalCount(50); // 模拟总数
         setCursor('nextCursor'); // 模拟下一个分页游标
       }, 1000);
-   
-  } catch (e: any) {
-    console.log(`Failed to load binding address: ${e.message}`);
-    messageApi.error(`${t(handleTxError(e.message))}`);
-  }
+    } catch (e: any) {
+      console.log(`Failed to load binding address: ${e.message}`);
+      messageApi.error(`${t(handleTxError(e.message))}`);
+    }
   };
 
   // 在组件加载时获取绑定数据
@@ -87,7 +86,8 @@ const BindAddressList = () => {
   // 滚动加载更多
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const bottom =
-      e.currentTarget.scrollHeight === e.currentTarget.scrollTop + e.currentTarget.clientHeight;
+      e.currentTarget.scrollHeight ===
+      e.currentTarget.scrollTop + e.currentTarget.clientHeight;
     if (bottom && !loading && cursor) {
       fetchBinds(cursor); // 滚动到底部时加载更多数据
     }
@@ -103,30 +103,42 @@ const BindAddressList = () => {
         </div>
       </div>
       <div className="p-4 rounded-lg mb-4 sticky top-0 z-10">
-  <div className="grid grid-cols-4 gap-4">
-    <div className="text-white text-sm font-bold justify-self-start">{t('Address')}</div>
-    <div className="text-white text-sm font-bold justify-self-end col-span-3">{t('Sharers / Teams / Team total investment')}</div>
-  </div>
-</div>
+        <div className="grid grid-cols-4 gap-4">
+          <div className="text-white text-sm font-bold justify-self-start">
+            {t('Address')}
+          </div>
+          <div className="text-white text-sm font-bold justify-self-end col-span-3">
+            {t('Sharers / Teams / Team total investment')}
+          </div>
+        </div>
+      </div>
 
       {/* 表格容器 */}
-      <div className="bg-[rgba(13,24,41,0.8)] rounded-lg p-4 max-h-[400px] overflow-y-auto" onScroll={handleScroll}>
+      <div
+        className="bg-[rgba(13,24,41,0.8)] rounded-lg p-4 max-h-[400px] overflow-y-auto"
+        onScroll={handleScroll}
+      >
         {/* 加载中状态 */}
         {loading && <div className="text-white">{t('loading...')}</div>}
-    
 
         {!loading && binds && (
           <div className="space-y-4">
             {binds.map((bind) => (
-  <div key={bind.id} className="bg-[rgba(13,24,41,0.7)] p-4 rounded-lg">
-    <div className="grid grid-cols-4 gap-4">
-    <div className="text-white text-sm truncate">{formatAddress(bind.address)}</div>
-    <div className="text-white text-sm truncate justify-self-end align-self-start col-span-4">
-        {bind.sharers.toString()} / {bind.teams.toString()} / {bind.teamTotalInvest.toString()}
-      </div>
-    </div>
-  </div>
-))}
+              <div
+                key={bind.id}
+                className="bg-[rgba(13,24,41,0.7)] p-4 rounded-lg"
+              >
+                <div className="grid grid-cols-4 gap-4">
+                  <div className="text-white text-sm truncate">
+                    {formatAddress(bind.address)}
+                  </div>
+                  <div className="text-white text-sm truncate justify-self-end align-self-start col-span-4">
+                    {bind.sharers.toString()} / {bind.teams.toString()} /{' '}
+                    {bind.teamTotalInvest.toString()}
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

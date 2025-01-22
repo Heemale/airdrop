@@ -1,3 +1,5 @@
+import { TransactionSummary } from '../../types';
+
 export interface AirdropInfo {
   // 轮次
   round: bigint;
@@ -21,4 +23,10 @@ export interface AirdropInfo {
   coinType: string;
   //剩余金额
   remaining_balance: bigint;
+}
+export interface ClaimSummary extends TransactionSummary {
+  sender: string;
+  round: bigint;
+  coinType: string;
+  amount: bigint;
 }
