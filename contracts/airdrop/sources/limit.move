@@ -1,5 +1,6 @@
 module airdrop::limit {
 
+    use sui::event;
     use sui::vec_map::{Self, VecMap};
 
     // 特殊列表对象
@@ -15,6 +16,15 @@ module airdrop::limit {
         times: u64,
         // 是否限制
         isLimit: bool,
+    }
+
+    public struct ModifyLimit has copy, drop {
+        // 地址
+        address: address,
+        // 限制次数
+        times: u64,
+        // 是否限制
+        is_limit: bool,
     }
 
     /*
@@ -53,7 +63,13 @@ module airdrop::limit {
                 isLimit: is_limit,
             };
             limits.special_user_limit.insert(address, special_user_limit);
-        }
+        };
+
+        event::emit(ModifyLimit {
+            address,
+            times,
+            is_limit
+        });
     }
 
     public fun special_limit_remaining_quantity(

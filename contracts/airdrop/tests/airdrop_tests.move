@@ -7,7 +7,7 @@ module airdrop::airdrop_tests {
     use airdrop::airdrop::{Self, AdminCap, Airdrops};
     use airdrop::node::{Self, Nodes};
     use airdrop::invite::{Self, Invite};
-    use airdrop::user::{SpecialLimits};
+    use airdrop::limit::{Limits};
 
     const Admin: address = @0x1;
     const Receiver: address = @0x2;
@@ -34,7 +34,7 @@ module airdrop::airdrop_tests {
             ctx(&mut scenario)
         );
         test_scenario::next_tx(&mut scenario, Admin);
-        let special_limits = test_scenario::take_shared<SpecialLimits>(&scenario);
+        let special_limits = test_scenario::take_shared<Limits>(&scenario);
 
         // === 实例化airdrops对象 ===
         // === 获取airdrops对象 ===

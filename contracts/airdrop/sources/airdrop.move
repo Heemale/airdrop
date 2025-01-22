@@ -378,10 +378,10 @@ module airdrop::airdrop {
         node::modify_nodes<T>(nodes, receiver);
     }
 
-    public fun new_special_limits(
+    public fun new_limits(
         _admin_cap: &AdminCap,
         ctx: &mut TxContext
-    ){
+    ) {
         limit::new(ctx);
     }
 
@@ -393,6 +393,23 @@ module airdrop::airdrop {
         is_limit: bool,
     ) {
         limit::modify(limits, address, times, is_limit);
+    }
+
+    public fun new_invest(
+        _admin_cap: &AdminCap,
+        ctx: &mut TxContext,
+    ) {
+        invest::new(ctx);
+    }
+
+    public fun modify_investment(
+        _admin_cap: &AdminCap,
+        invest: &mut Invest,
+        address: address,
+        fix_total_investment: u64,
+        fix_last_investment: u64,
+    ) {
+        invest::modify_investment(invest, address, fix_total_investment, fix_last_investment);
     }
 
     public fun airdrops(airdrops: &Airdrops) {

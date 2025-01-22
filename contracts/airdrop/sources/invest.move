@@ -1,5 +1,6 @@
 module airdrop::invest {
 
+    use sui::event;
     use sui::vec_map::{Self, VecMap};
 
     // 投资对象
@@ -12,6 +13,38 @@ module airdrop::invest {
         // 最近一次收益累计金额
         accumulated_gains: VecMap<address, u64>,
     }
+
+    public struct UpdateInvest has copy, drop {
+        // 用户
+        address: address,
+        // 数量
+        amount: u64,
+    }
+
+    public struct UpdateGains has copy, drop {
+        // 用户
+        address: address,
+        // 数量
+        amount: u64,
+    }
+
+    public struct ModifyInvest has copy, drop {
+        // 用户
+        address: address,
+        // 数量
+        amount: u64,
+        // 是否增加
+        is_increse: bool,
+    }
+
+    // public struct ModifyGains has copy, drop {
+    //     // 用户
+    //     address: address,
+    //     // 数量
+    //     amount: u64,
+    //     // 是否增加
+    //     is_increse: bool,
+    // }
 
     /*
      * @notice 创建投资对象
@@ -27,10 +60,52 @@ module airdrop::invest {
     }
 
     /*
-     * @notice 修改投资对象
+     * @notice 修改投资对象investment数据
      */
-    public(package) fun modify(_ctx: &mut TxContext) {
-        // TODO 每次更改要发事件。
+    public(package) fun modify_investment(
+        invest: &mut Invest,
+        address: address,
+        fix_total_investment: u64,
+        fix_last_investment: u64,
+    ) {
+        // 总投资金额
+        let is_exists = invest.total_investment.contains(&address);
+        if (is_exists) {
+            let total_investment = invest.total_investment.get(&address);
+
+            let is_increse = fix_total_investment > *total_investment;
+            let amount = if (is_increse) {
+                fix_total_investment - *total_investment
+            } else {
+                *total_investment - fix_total_investment
+            };
+
+            invest.total_investment.remove(&address);
+            invest.total_investment.insert(address, fix_total_investment);
+
+            event::emit(ModifyInvest {
+                address,
+                amount,
+                is_increse
+            });
+        } else {
+            invest.total_investment.insert(address, fix_total_investment);
+
+            event::emit(ModifyInvest {
+                address,
+                amount: fix_total_investment,
+                is_increse: true
+            });
+        };
+
+        // 最新一次投资金额
+        let is_exists = invest.last_investment.contains(&address);
+        if (is_exists) {
+            invest.last_investment.remove(&address);
+            invest.last_investment.insert(address, fix_last_investment);
+        } else {
+            invest.last_investment.insert(address, fix_last_investment);
+        };
     }
 
     /*
@@ -71,6 +146,11 @@ module airdrop::invest {
         } else {
             invest.accumulated_gains.insert(address, 0);
         };
+
+        event::emit(UpdateInvest {
+            address,
+            amount,
+        });
     }
 
     /*
@@ -81,6 +161,11 @@ module airdrop::invest {
         address: address,
         amount: u64,
     ): bool {
+        event::emit(UpdateGains {
+            address,
+            amount,
+        });
+
         // 最近一次收益累计金额
         let is_exists = invest.accumulated_gains.contains(&address);
         if (is_exists) {

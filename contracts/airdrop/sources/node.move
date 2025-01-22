@@ -112,6 +112,7 @@ module airdrop::node {
 
     // === Event ===
 
+    #[allow(unused_field)]
     public struct Buy has copy, drop {
         // 用户
         sender: address,
@@ -119,6 +120,21 @@ module airdrop::node {
         rank: u8,
         // 权益序号
         node_num: u64,
+    }
+
+    public struct BuyV2 has copy, drop {
+        // 用户
+        sender: address,
+        // 权益等级
+        rank: u8,
+        // 权益序号
+        node_num: u64,
+        // 支付金额
+        payment_amount: u64,
+        // 邀请人返利金额
+        inviter_gains: u64,
+        // 平台返利金额
+        node_receiver_gains: u64,
     }
 
     public struct Transfer has copy, drop {
@@ -344,24 +360,28 @@ module airdrop::node {
 
         // 处理剩余入金
         let inviter_rebate_value: u64 = node.price * invite::inviter_fee(invite) / MathBase;
+        let receiver_rebate_value: u64 = wallet.value() - inviter_rebate_value;
         let inviter_rebate = wallet.split(inviter_rebate_value, ctx);
         let inviter = invite::inviters(invite, sender);
         transfer::public_transfer(inviter_rebate, inviter);
         transfer::public_transfer(wallet, nodes.receiver);
 
-        // 更新投资
-        invest::update_invest(invest, sender, node.price);
-        // 更新收益
-        let is_need_forbiden = invest::update_gains(invest, inviter, node.price);
-        if (is_need_forbiden) {
-            forbiden(nodes, sender);
-        };
-
-        event::emit(Buy {
+        event::emit(BuyV2 {
             sender,
             rank,
             node_num: nodes.node_num_index,
-        })
+            payment_amount: node.price,
+            inviter_gains: inviter_rebate_value,
+            node_receiver_gains: receiver_rebate_value,
+        });
+
+        // 更新投资
+        invest::update_invest(invest, sender, node.price);
+        // 更新收益
+        let is_need_forbiden = invest::update_gains(invest, inviter, inviter_rebate_value);
+        if (is_need_forbiden) {
+            forbiden(nodes, sender);
+        };
     }
 
     /*
@@ -509,7 +529,6 @@ module airdrop::node {
         false
     }
 
-    // TODO 看要不要和 is_already_buy_node 整合
     public fun is_need_buy_node(nodes: &Nodes, sender: address): bool {
         // 未拥有，需要购买
         // 被禁用，需要购买
@@ -561,7 +580,6 @@ module airdrop::node {
             i = i + 1;
         };
     }
-
 
     // === Assertions ===
 
