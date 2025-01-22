@@ -78,18 +78,13 @@ module airdrop::invite {
      *
      * @param invite: invite对象
      * @param inviter: 邀请人地址
-     *
-     * aborts-if:
-     * - 调用人是根用户
-     * - 邀请人是调用人或者邀请人自身没有进行绑定
-     * - 重复绑定
      */
     entry fun bind(invite: &mut Invite, inviter: address, ctx: &TxContext) {
         let sender = tx_context::sender(ctx);
         assert_invalid_sender(invite, sender);
         assert_invalid_inviter(invite, inviter);
         assert_already_bind_inviter(invite, sender);
-        vec_map::insert(&mut invite.inviters, sender, inviter);
+        invite.inviters.insert(sender, inviter);
         event::emit(Bind {
             sender,
             inviter,
@@ -97,15 +92,15 @@ module airdrop::invite {
     }
 
     /*
-     * @notice 绑定邀请关系
+     * @notice 邀请人
      *
      * @param invite: invite对象
      * @param user: 用户地址
      * @return 邀请人地址
      */
     public fun inviters(invite: &Invite, user: address): address {
-        if (vec_map::contains(&invite.inviters, &user)) {
-            let iniviter: &address = vec_map::get(&invite.inviters, &user);
+        if (invite.inviters.contains(&user)) {
+            let iniviter: &address = invite.inviters.get(&user);
             *iniviter
         } else {
             address::from_u256(0)
@@ -123,19 +118,22 @@ module airdrop::invite {
     // === Assertions ===
 
     public fun assert_invalid_sender(invite: &Invite, sender: address) {
+        // 调用人不能是root用户
         assert!(!(&sender == &invite.root), EInvalidSender);
     }
 
     public fun assert_invalid_inviter(invite: &Invite, inviter: address) {
-        // 邀请人必须是根用户或者已绑定的用户
-        assert!(&inviter == &invite.root || vec_map::contains(&invite.inviters, &inviter), EInvalidInviter);
+        // 邀请人必须是root用户或者已绑定的用户
+        assert!(&inviter == &invite.root || invite.inviters.contains(&inviter), EInvalidInviter);
     }
 
     public fun assert_already_bind_inviter(invite: &Invite, sender: address) {
-        assert!(!vec_map::contains(&invite.inviters, &sender), EAlreadyBindInviter);
+        // 调用人必须未绑定邀请人
+        assert!(!invite.inviters.contains(&sender), EAlreadyBindInviter);
     }
 
     public fun assert_not_bind_inviter(invite: &Invite, sender: address) {
-        assert!(vec_map::contains(&invite.inviters, &sender), ENotBindInviter);
+        // 调用人必须未绑定邀请人
+        assert!(invite.inviters.contains(&sender), ENotBindInviter);
     }
 }

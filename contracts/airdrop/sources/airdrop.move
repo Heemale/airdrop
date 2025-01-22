@@ -1,8 +1,9 @@
 module airdrop::airdrop {
     // === Imports ===
 
+    use sui::sui::{SUI};
     use sui::coin::{Self, Coin};
-    use sui::balance::{Self, Balance};
+    use sui::balance::{Balance};
     use sui::vec_map::{Self, VecMap};
     use sui::bag::{Self, Bag};
     use std::type_name::{Self, TypeName};
@@ -10,7 +11,8 @@ module airdrop::airdrop {
     use sui::clock::{Self, Clock};
     use airdrop::invite::{Self, Invite};
     use airdrop::node::{Self, Nodes};
-    use airdrop::user::{Self, SpecialLimits};
+    use airdrop::limit::{Self, Limits};
+    use airdrop::invest::{Self, Invest};
 
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 1;
@@ -146,10 +148,6 @@ module airdrop::airdrop {
      * @param description: 描述
      * @param wallet: 支付的代币对象
      * @param image_url: 图片链接
-     *
-     * aborts-if:
-     * - 支付的资金和total_balance不匹配
-     * - 空投回合已存在
      */
     entry fun insert<T>(
         _admin_cap: &AdminCap,
@@ -163,16 +161,16 @@ module airdrop::airdrop {
         image_url: vector<u8>,
         ctx: &mut TxContext,
     ) {
-        assert!(coin::value(&wallet) >= total_balance, ECoinBalanceNotEnough);
+        assert!(wallet.value() >= total_balance, ECoinBalanceNotEnough);
 
         airdrops.round_index = airdrops.round_index + 1;
         let round = airdrops.round_index;
 
         // 处理多余的入金
         let sender = tx_context::sender(ctx);
-        let excess_amount = coin::value(&wallet) - total_balance;
+        let excess_amount = wallet.value() - total_balance;
         if (excess_amount > 0) {
-            let excess_coin = coin::split(&mut wallet, excess_amount, ctx);
+            let excess_coin = wallet.split(excess_amount, ctx);
             transfer::public_transfer(excess_coin, sender);
         };
 
@@ -192,7 +190,7 @@ module airdrop::airdrop {
             image_url,
             remaining_balance: total_balance,
         };
-        vec_map::insert(&mut airdrops.airdrops, round, aidrop);
+        airdrops.airdrops.insert(round, aidrop);
         bag::add(&mut airdrops.treasury_balances, round, coin::into_balance(wallet));
     }
 
@@ -206,9 +204,6 @@ module airdrop::airdrop {
      * @param end_time: 结束时间
      * @param is_open: 是否开启
      * @param description: 描述
-     *
-     * aborts-if:
-     * - 空投回合不存在
      */
     entry fun modify(
         _admin_cap: &AdminCap,
@@ -220,7 +215,7 @@ module airdrop::airdrop {
         description: vector<u8>,
     ) {
         assert_round_not_found(airdrops, round);
-        let aidrop: &mut Airdrop = vec_map::get_mut(&mut airdrops.airdrops, &round);
+        let aidrop: &mut Airdrop = airdrops.airdrops.get_mut(&round);
         aidrop.start_time = start_time;
         aidrop.end_time = end_time;
         aidrop.is_open = is_open;
@@ -234,9 +229,6 @@ module airdrop::airdrop {
      * @param _admin_cap: AdminCap对象
      * @param airdrops: airdrops对象
      * @param round: 轮次
-     *
-     * aborts-if:
-     * - 空投回合不存在
      */
     entry fun withdraw<T>(
         _admin_cap: &AdminCap,
@@ -247,9 +239,9 @@ module airdrop::airdrop {
         let sender = tx_context::sender(ctx);
         assert_round_not_found(airdrops, round);
         let aidrop_balance: &mut Balance<T> = bag::borrow_mut(&mut airdrops.treasury_balances, round);
-        let treasury_balance = balance::withdraw_all(aidrop_balance);
+        let treasury_balance = aidrop_balance.withdraw_all();
         let treasury_coin = coin::from_balance(treasury_balance, ctx);
-        let airdrop: &mut Airdrop = vec_map::get_mut(&mut airdrops.airdrops, &round);
+        let airdrop: &mut Airdrop = airdrops.airdrops.get_mut(&round);
         airdrop.is_open = false;
         airdrop.remaining_balance = 0;
         transfer::public_transfer(treasury_coin, sender);
@@ -264,7 +256,7 @@ module airdrop::airdrop {
         _nodes: &mut Nodes,
         _round: u64,
         _clock: &Clock,
-        _special_limits: &SpecialLimits,
+        _special_limits: &Limits,
         _ctx: &mut TxContext,
     ) {
         assert!(false, EMethodDeprecated);
@@ -278,31 +270,46 @@ module airdrop::airdrop {
         nodes: &mut Nodes,
         round: u64,
         clock: &Clock,
-        special_limits: &SpecialLimits,
+        limits: &Limits,
+        invest: &mut Invest,
         ctx: &mut TxContext,
     ) {
         let sender = tx_context::sender(ctx);
-        // 断言：回合是否存在
+        // 断言：回合需要存在
         assert_round_not_found(airdrops, round);
-        let airdrop: &mut Airdrop = vec_map::get_mut(&mut airdrops.airdrops, &round);
+        let airdrop: &mut Airdrop = airdrops.airdrops.get_mut(&round);
 
-        // 断言：时间是否合法
+        // 断言：时间需要合法
         assert_invalid_claim_time(clock, airdrop);
-        // 断言：份额是否足够
+        // 断言：份额需要足够
         assert_no_remaining_shares(airdrop);
-        // 断言：剩余领取次数是否足够
-        node::assert_insufficient_remaining_quantity(nodes, sender, round, special_limits);
+        // 断言：剩余领取次数需要足够
+        node::assert_insufficient_remaining_quantity(nodes, sender, round, limits);
         node::update_purchased_quantity(nodes, sender, round);
 
         let per_share_amount = airdrop.total_balance / airdrop.total_shares;
         airdrop.claimed_shares = airdrop.claimed_shares + 1;
         airdrop.remaining_balance = airdrop.remaining_balance - per_share_amount;
         let treasury_balance = bag::borrow_mut<u64, Balance<T>>(&mut airdrops.treasury_balances, round);
-        let treasury_balance_part = balance::split<T>(treasury_balance, per_share_amount);
+        let treasury_balance_part = treasury_balance.split<T>(per_share_amount);
         let treasury_coina_part: Coin<T> = coin::from_balance<T>(treasury_balance_part, ctx);
         transfer::public_transfer(treasury_coina_part, sender);
 
         let coin_type = type_name::get<T>();
+        // 如果空投收益代币类型是SUI
+        if (coin_type == type_name::get<SUI>()) {
+            // 更新收益
+            let is_need_forbiden = invest::update_gains(
+                invest,
+                sender,
+                per_share_amount
+            );
+            // 如果达到条件，禁用权益
+            if (is_need_forbiden) {
+                node::forbiden(nodes, sender);
+            };
+        };
+
         event::emit(Claim {
             sender,
             round,
@@ -375,24 +382,24 @@ module airdrop::airdrop {
         _admin_cap: &AdminCap,
         ctx: &mut TxContext
     ){
-        user::new(ctx);
+        limit::new(ctx);
     }
 
     public fun modify_special_limits(
         _admin_cap: &AdminCap,
-        special_limits: &mut SpecialLimits,
+        limits: &mut Limits,
         address: address,
         times: u64,
         is_limit: bool,
     ) {
-        user::modify(special_limits, address, times, is_limit);
+        limit::modify(limits, address, times, is_limit);
     }
 
     public fun airdrops(airdrops: &Airdrops) {
-        let length = vec_map::size(&airdrops.airdrops);
+        let length = airdrops.airdrops.size();
         let mut i = 1;
         while (i < length + 1) {
-            let airdrop = vec_map::get(&airdrops.airdrops, &i);
+            let airdrop = airdrops.airdrops.get(&i);
             event::emit(AirdropInfo {
                 round: airdrop.round,
                 start_time: airdrop.start_time,
@@ -413,11 +420,11 @@ module airdrop::airdrop {
     // === Assertions ===
 
     public fun assert_round_exited(airdrops: &Airdrops, round: u64) {
-        assert!(!vec_map::contains(&airdrops.airdrops, &round), ERoundExited);
+        assert!(!airdrops.airdrops.contains(&round), ERoundExited);
     }
 
     public fun assert_round_not_found(airdrops: &Airdrops, round: u64) {
-        assert!(vec_map::contains(&airdrops.airdrops, &round), ERoundNotFound);
+        assert!(airdrops.airdrops.contains(&round), ERoundNotFound);
     }
 
     public fun assert_invalid_claim_time(clock: &Clock, airdrop: &Airdrop) {

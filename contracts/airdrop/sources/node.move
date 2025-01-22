@@ -2,11 +2,12 @@ module airdrop::node {
     // === Imports ===
 
     use sui::vec_map::{Self, VecMap};
-    use sui::coin::{Self, Coin};
+    use sui::coin::{Coin};
     use sui::event::{Self};
     use std::type_name::{Self, TypeName};
     use airdrop::invite::{Self, Invite};
-    use airdrop::user::{Self, SpecialLimits};
+    use airdrop::invest::{Self, Invest};
+    use airdrop::limit::{Self, Limits};
     // === Constants ===
 
     const MathBase: u64 = 10000;
@@ -15,29 +16,37 @@ module airdrop::node {
 
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 1;
-    // 异常: 已购买节点
+    // 异常: 已购买权益
     const EAlreadyBuyNode: u64 = 2;
-    // 异常: 未购买节点
+    // 异常: 未购买权益
     const ENotBuyNode: u64 = 3;
-    // 异常: 节点已售罄
+    // 异常: 权益已售罄
     const ENodeSoldOut: u64 = 4;
     // 异常: 超出购买限额
     const EExceedsPurchaseLimit: u64 = 5;
     // 异常: 非法代币类型
     const EInvalidCoinType: u64 = 6;
-    // 异常：节点未开启
+    // 异常：权益未开启
     const ENodeNotOpen: u64 = 7;
     // 异常: 剩余次数不足
     const EInsufficientRemainingQuantity: u64 = 8;
     // 异常：方法已弃用
-    // const EMethodDeprecated: u64 = 9;
+    const EMethodDeprecated: u64 = 9;
+
+    // 几种状态
+    // 是否拥有权益
+    // 是否禁用权益
+
+    // 几种断言
+    // 未拥有权益
+    // 需要购买权益
 
     // === Struct ===
 
-    // 节点列表对象
+    // 权益列表对象
     public struct Nodes has key, store {
         id: UID,
-        // 节点信息: 等级 => Node对象
+        // 权益信息: 等级 => Node对象
         nodes: VecMap<u8, Node>,
         // 用户信息: 用户地址 => 等级
         users: VecMap<address, User>,
@@ -45,15 +54,15 @@ module airdrop::node {
         receiver: address,
         // 代币类型
         coin_type: TypeName,
-        // 节点编号
+        // 权益编号
         node_index: u8,
-        // 节点序号
+        // 权益序号
         node_num_index: u64,
-        // 已领取空投数量：节点序号 => 轮次 => 次数
+        // 已领取空投数量：权益序号 => 轮次 => 次数
         limits: VecMap<u64, VecMap<u64, u64>>
     }
 
-    // 节点对象
+    // 权益对象
     public struct Node has store, drop {
         // 等级
         rank: u8,
@@ -76,7 +85,7 @@ module airdrop::node {
     public struct User has store {
         // 等级
         rank: u8,
-        // 节点序列号
+        // 权益序列号
         node_num: u64,
         // 是否合法
         is_invalid: bool
@@ -106,9 +115,9 @@ module airdrop::node {
     public struct Buy has copy, drop {
         // 用户
         sender: address,
-        // 节点等级
+        // 权益等级
         rank: u8,
-        // 节点序号
+        // 权益序号
         node_num: u64,
     }
 
@@ -117,9 +126,9 @@ module airdrop::node {
         sender: address,
         // 接收人
         receiver: address,
-        // 节点等级
+        // 权益等级
         rank: u8,
-        // 节点序号
+        // 权益序号
         node_num: u64,
     }
 
@@ -144,9 +153,9 @@ module airdrop::node {
     }
 
     /*
-     * @notice 增加节点
+     * @notice 增加权益
      *
-     * @param nodes: 节点列表对象
+     * @param nodes: 权益列表对象
      * @param name: 名称
      * @param description: 描述
      * @param limit: 每轮空投购买次数
@@ -173,26 +182,26 @@ module airdrop::node {
             purchased_quantity: 0,
             is_open: true,
         };
-        vec_map::insert(&mut nodes.nodes, rank, node);
+        nodes.nodes.insert(rank, node);
     }
 
     /*
-     * @notice 移除节点
+     * @notice 移除权益
      *
-     * @param nodes: 节点列表对象
+     * @param nodes: 权益列表对象
      * @param rank: 等级
      */
     public(package) fun remove(
         nodes: &mut Nodes,
         rank: u8
     ) {
-        vec_map::remove(&mut nodes.nodes, &rank);
+        nodes.nodes.remove(&rank);
     }
 
     /*
-     * @notice 修改节点
+     * @notice 修改权益
      *
-     * @param nodes: 节点列表对象
+     * @param nodes: 权益列表对象
      * @param rank: 等级
      * @param name: 名称
      * @param description: 描述
@@ -209,7 +218,7 @@ module airdrop::node {
         total_quantity: u64,
         is_open: bool,
     ) {
-        let nodeMut: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
+        let nodeMut: &mut Node = nodes.nodes.get_mut(&rank);
         nodeMut.rank = rank;
         nodeMut.name = name;
         nodeMut.description = description;
@@ -220,31 +229,31 @@ module airdrop::node {
     }
 
     /*
-     * @notice 修改节点列表
+     * @notice 修改权益列表
      *
-     * @param T: 购买节点货币类型
-     * @param receiver: 购买节点费用接收人
+     * @param T: 购买权益货币类型
+     * @param receiver: 购买权益费用接收人
      */
     public(package) fun modify_nodes<T>(nodes: &mut Nodes, receiver: address) {
         nodes.receiver = receiver;
         nodes.coin_type = type_name::get<T>();
     }
 
-    // 更新某个节点在某个回合购买次数
+    // 更新某个权益在某个回合购买次数
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
-        assert_not_buy_node(&nodes.users, sender);
-        let user: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
+        assert_not_buy_node_v2(nodes, sender);
+        let user: &mut User = nodes.users.get_mut(&sender);
         let mut quantity: u64 = 1;
 
-        // 此节点是否领取过空投
-        let is_exists = vec_map::contains(&nodes.limits, &user.node_num);
+        // 此权益是否领取过空投
+        let is_exists = nodes.limits.contains(&user.node_num);
         if (is_exists) {
-            let round_map_times = vec_map::get_mut(&mut nodes.limits, &user.node_num);
+            let round_map_times = nodes.limits.get_mut(&user.node_num);
 
-            // 此节点是否领取过当前轮空投
-            let is_exists = vec_map::contains(round_map_times, &round);
+            // 此权益是否领取过当前轮空投
+            let is_exists = round_map_times.contains(&round);
             if (is_exists) {
-                let user_purchased_quantity: &u64 = vec_map::get(round_map_times, &round);
+                let user_purchased_quantity: &u64 = round_map_times.get(&round);
                 quantity = *user_purchased_quantity + 1;
                 round_map_times.remove(&round);
                 round_map_times.insert(round, quantity);
@@ -259,62 +268,94 @@ module airdrop::node {
     }
 
     /*
-     * @notice 购买节点
+     * @notice 购买权益
      *
      * @param T: 代币类型
      * @param nodes: nodes对象
      * @param rank: 等级
      * @param wallet: 支付的代币对象
-     *
-     * aborts-if:
-     * - 调用人没有绑定邀请人
-     * - 调用人支付资金不足
-     * - 调用人重复购买节点
-     * - 节点已售罄
      */
+    #[allow(unused_type_parameter)]
     entry fun buy<T>(
+        _nodes: &mut Nodes,
+        _invite: &Invite,
+        _rank: u8,
+        wallet: Coin<T>,
+        ctx: &TxContext,
+    ) {
+        let sender = tx_context::sender(ctx);
+        transfer::public_transfer(wallet, sender);
+        assert!(false, EMethodDeprecated);
+    }
+
+    entry fun buy_v2<T>(
         nodes: &mut Nodes,
         invite: &Invite,
         rank: u8,
         mut wallet: Coin<T>,
+        invest: &mut Invest,
         ctx: &mut TxContext,
     ) {
-        assert_invalid_coin_type<T>(nodes.coin_type);
-
         let sender = tx_context::sender(ctx);
+
+        // 断言：需要合法的代币类型
+        assert_invalid_coin_type<T>(nodes.coin_type);
+        // 断言：需要未购买
+        assert_already_buy_node_v2(nodes, sender);
+        // 断言：需要绑定邀请关系
         invite::assert_not_bind_inviter(invite, sender);
+
         nodes.node_num_index = nodes.node_num_index + 1;
 
-        let node: &mut Node = vec_map::get_mut(&mut nodes.nodes, &rank);
-        assert!(coin::value(&wallet) >= node.price, ECoinBalanceNotEnough);
-        assert_already_buy_node(&nodes.users, sender);
+        let node: &mut Node = nodes.nodes.get_mut(&rank);
+
+        // 断言：需要足够的代币余额
+        assert!(wallet.value() >= node.price, ECoinBalanceNotEnough);
+        // 断言：需要权益未售罄
         assert_node_sold_out(node);
+        // 断言：需要权益开放购买
         assert_node_not_open(node);
 
-        // 更新用户信息
-        let user = User {
-            rank: node.rank,
-            node_num: nodes.node_num_index,
-            is_invalid: true,
+        let is_exists = nodes.users.contains(&sender);
+        if (is_exists) {
+            // 如果用户已存在，用新编号的权益更新
+            let user = nodes.users.get_mut(&sender);
+            user.rank = rank;
+            user.node_num = nodes.node_num_index;
+            user.is_invalid = true;
+        } else {
+            let user = User {
+                rank: node.rank,
+                node_num: nodes.node_num_index,
+                is_invalid: true,
+            };
+            nodes.users.insert(sender, user);
         };
-        vec_map::insert(&mut nodes.users, sender, user);
 
-        // 更新节点信息
+        // 更新权益信息
         node.purchased_quantity = node.purchased_quantity + 1;
 
         // 处理多余的入金
-        let excess_amount = coin::value(&wallet) - node.price;
+        let excess_amount = wallet.value() - node.price;
         if (excess_amount > 0) {
-            let excess_coin = coin::split(&mut wallet, excess_amount, ctx);
+            let excess_coin = wallet.split(excess_amount, ctx);
             transfer::public_transfer(excess_coin, sender);
         };
 
         // 处理剩余入金
         let inviter_rebate_value: u64 = node.price * invite::inviter_fee(invite) / MathBase;
-        let inviter_rebate = coin::split(&mut wallet, inviter_rebate_value, ctx);
+        let inviter_rebate = wallet.split(inviter_rebate_value, ctx);
         let inviter = invite::inviters(invite, sender);
         transfer::public_transfer(inviter_rebate, inviter);
         transfer::public_transfer(wallet, nodes.receiver);
+
+        // 更新投资
+        invest::update_invest(invest, sender, node.price);
+        // 更新收益
+        let is_need_forbiden = invest::update_gains(invest, inviter, node.price);
+        if (is_need_forbiden) {
+            forbiden(nodes, sender);
+        };
 
         event::emit(Buy {
             sender,
@@ -324,7 +365,7 @@ module airdrop::node {
     }
 
     /*
-     * @notice 转移节点
+     * @notice 转移权益
      */
     entry fun transfer(
         nodes: &mut Nodes,
@@ -333,24 +374,25 @@ module airdrop::node {
     ) {
         let sender = tx_context::sender(ctx);
         let rank = nodes_rank(nodes, sender);
-        let node = vec_map::get(&nodes.nodes, &rank);
+        let node = nodes.nodes.get(&rank);
 
-        // 节点发送人必须已购买节点
-        assert_not_buy_node(&nodes.users, sender);
-        // 节点接收人必须未拥有节点
-        assert_already_buy_node(&nodes.users, receiver);
+        // 权益发送人必须已购买权益
+        assert_not_buy_node_v2(nodes, sender);
+        // 权益接收人必须未拥有权益
+        assert_already_buy_node_v2(nodes, receiver);
 
-        let node_sender: &mut User = vec_map::get_mut(&mut nodes.users, &sender);
+        let node_sender: &mut User = nodes.users.get_mut(&sender);
         let node_num: u64 = node_sender.node_num;
-        // 更新节点发送人信息
+
+        // 更新权益发送人信息
         node_sender.rank = 0;
         node_sender.node_num = 0;
         node_sender.is_invalid = false;
 
-        let is_exists = vec_map::contains(&nodes.users, &receiver);
-        // 更新节点接收人信息
+        let is_exists = nodes.users.contains(&receiver);
+        // 更新权益接收人信息
         if (is_exists) {
-            let node_receiver: &mut User = vec_map::get_mut(&mut nodes.users, &receiver);
+            let node_receiver: &mut User = nodes.users.get_mut(&receiver);
             node_receiver.rank = rank;
             node_receiver.node_num = node_num;
             node_receiver.is_invalid = true;
@@ -361,7 +403,7 @@ module airdrop::node {
                 node_num,
                 is_invalid: true,
             };
-            vec_map::insert(&mut nodes.users, receiver, node_receiver);
+            nodes.users.insert(receiver, node_receiver);
         };
 
         event::emit(Transfer {
@@ -372,96 +414,85 @@ module airdrop::node {
         })
     }
 
-
+    public(package) fun forbiden(nodes: &mut Nodes, address: address) {
+        let is_exists = nodes.users.contains(&address);
+        if (is_exists) {
+            let user: &mut User = nodes.users.get_mut(&address);
+            user.is_invalid = true;
+        } else {
+            let user = User {
+                rank: 0,
+                node_num: 0,
+                is_invalid: true,
+            };
+            nodes.users.insert(address, user);
+        }
+    }
 
     public fun receiver(nodes: &Nodes): address {
         nodes.receiver
     }
+
     public fun nodes_rank(nodes: &Nodes, sender: address): u8 {
-        let user_info = vec_map::get(&nodes.users, &sender);
+        let user_info = nodes.users.get(&sender);
         user_info.rank
     }
 
-    public fun remaining_quantity_of_claim(nodes: &Nodes, sender: address, round: u64): u64 {
-        // 是否绑定邀请关系
-        let is_exists = vec_map::contains(&nodes.users, &sender);
-        if (is_exists) {
-            let sedner_user: &User = vec_map::get(&nodes.users, &sender);
-
-            // 是否购买节点
-            let is_exists = vec_map::contains(&nodes.nodes, &sedner_user.rank);
-            if (is_exists) {
-                let node: &Node = vec_map::get(&nodes.nodes, &sedner_user.rank);
-                let node_purchased_quantity = node.limit;
-
-                // 此节点是否领取过空投
-                let is_exists = vec_map::contains(&nodes.limits, &sedner_user.node_num);
-                if (is_exists) {
-                    let round_map_times = vec_map::get(&nodes.limits, &sedner_user.node_num);
-
-                    // 此节点是否领取过当前轮空投
-                    let is_exists = vec_map::contains(round_map_times, &round);
-                    if (is_exists) {
-                        let user_purchased_quantity: &u64 = vec_map::get(round_map_times, &round);
-                        node_purchased_quantity - *user_purchased_quantity
-                    } else {
-                        node_purchased_quantity
-                    }
-                } else {
-                    node_purchased_quantity
-                }
-            } else {
-                0
-            }
-        } else {
-            0
-        }
+    public fun remaining_quantity_of_claim(_nodes: &Nodes, _sender: address, _round: u64): u64 {
+        assert!(false, EMethodDeprecated);
+        0
     }
 
-    public fun remaining_quantity_of_claim_v2(nodes: &Nodes, sender: address, round: u64, special_limits: &SpecialLimits): u64 {
+    public fun remaining_quantity_of_claim_v2(
+        nodes: &Nodes,
+        sender: address,
+        round: u64,
+        limits: &Limits
+    ): u64 {
         // 是否绑定邀请关系
         let is_exists = nodes.users.contains(&sender);
         if (is_exists) {
-            let sender_user: &User = nodes.users.get(&sender);
+            let user: &User = nodes.users.get(&sender);
 
-            // 是否购买节点
-            let is_exists = nodes.nodes.contains(&sender_user.rank);
+            // 是否购买权益
+            let is_exists = nodes.nodes.contains(&user.rank);
             if (is_exists) {
-                let node: &Node = nodes.nodes.get(&sender_user.rank);
-                let node_purchased_quantity = node.limit;
+                let node: &Node = nodes.nodes.get(&user.rank);
+                // 可领取次数，从权益模板获取，不从权益实体获取。
+                let node_limit_quantity = node.limit;
 
-                // 此节点是否领取过空投
-                let is_exists = nodes.limits.contains(&sender_user.node_num);
+                // 此权益是否领取过空投
+                let is_exists = nodes.limits.contains(&user.node_num);
                 if (is_exists) {
-                    let round_map_times = nodes.limits.get(&sender_user.node_num);
+                    let round_map_times = nodes.limits.get(&user.node_num);
 
-                    // 此节点是否领取过当前轮空投
+                    // 此权益是否领取过当前轮空投
                     let is_exists = round_map_times.contains(&round);
                     if (is_exists) {
                         let user_purchased_quantity: &u64 = round_map_times.get(&round);
 
                         // 计算特殊限制
-                        user::special_limit_remaining_quantity(
-                            special_limits,
+                        limit::special_limit_remaining_quantity(
+                            limits,
                             &sender,
-                            node_purchased_quantity,
+                            node_limit_quantity,
                             *user_purchased_quantity
                         )
                     } else {
                         // 计算特殊限制
-                        user::special_limit_remaining_quantity(
-                            special_limits,
+                        limit::special_limit_remaining_quantity(
+                            limits,
                             &sender,
-                            node_purchased_quantity,
+                            node_limit_quantity,
                             0
                         )
                     }
                 } else {
                     // 计算特殊限制
-                    user::special_limit_remaining_quantity(
-                        special_limits,
+                    limit::special_limit_remaining_quantity(
+                        limits,
                         &sender,
-                        node_purchased_quantity,
+                        node_limit_quantity,
                         0
                     )
                 }
@@ -473,21 +504,50 @@ module airdrop::node {
         }
     }
 
-    public fun is_already_buy_node(nodes: &Nodes, sender: address): bool {
-        let is_exists = vec_map::contains(&nodes.users, &sender);
+    public fun is_already_buy_node(_nodes: &Nodes, _sender: address): bool {
+        assert!(false, EMethodDeprecated);
+        false
+    }
+
+    // TODO 看要不要和 is_already_buy_node 整合
+    public fun is_need_buy_node(nodes: &Nodes, sender: address): bool {
+        // 未拥有，需要购买
+        // 被禁用，需要购买
+        let owns = is_owns(nodes, sender);
+        if (owns) {
+            is_forbidden(nodes, sender)
+        } else {
+            true
+        }
+    }
+
+    public fun is_owns(nodes: &Nodes, sender: address): bool {
+        // 在列表中、权益等级不为0且用户不非法，则为拥有权益
+        let is_exists = nodes.users.contains(&sender);
         if (is_exists) {
-            let user: &User = vec_map::get(&nodes.users, &sender);
-            user.is_invalid
+            let user: &User = nodes.users.get(&sender);
+            user.rank != 0 && !user.is_invalid
+        } else {
+            false
+        }
+    }
+
+    public fun is_forbidden(nodes: &Nodes, sender: address): bool {
+        // 在列表中，权益等级不为0且非法权益，则为禁用
+        let is_exists = nodes.users.contains(&sender);
+        if (is_exists) {
+            let user: &User = nodes.users.get(&sender);
+            user.rank != 0 && user.is_invalid
         } else {
             false
         }
     }
 
     public fun node_list(nodes: &Nodes) {
-        let length = vec_map::size(&nodes.nodes) as u8;
+        let length = nodes.nodes.size() as u8;
         let mut i: u8 = 1;
         while (i < length + 1) {
-            let node = vec_map::get(&nodes.nodes, &i);
+            let node = nodes.nodes.get(&i);
             event::emit(NodeInfo {
                 rank: node.rank,
                 name: node.name,
@@ -505,26 +565,22 @@ module airdrop::node {
 
     // === Assertions ===
 
-    public fun assert_already_buy_node(users: &VecMap<address, User>, sender: address) {
-        // 必须满足以下条件任意一个，否则abort
-        // 1.不存在数组中
-        // 2.存在数组中，但is_invalid为false
-        let is_exists = vec_map::contains(users, &sender);
-        assert!(!is_exists, EAlreadyBuyNode);
-        if (is_exists) {
-            let user: &User = vec_map::get(users, &sender);
-            assert!(!user.is_invalid, EAlreadyBuyNode);
-        }
+    public fun assert_already_buy_node(_users: &VecMap<address, User>, _sender: address) {
+        assert!(false, EMethodDeprecated);
     }
 
-    public fun assert_not_buy_node(users: &VecMap<address, User>, sender: address) {
-        // 必须满足以下条件任意一个，否则abort
-        // 1.存在数组中，且is_invalid为true
-        let is_exists = vec_map::contains(users, &sender);
-        if (is_exists) {
-            let user: &User = vec_map::get(users, &sender);
-            assert!(user.is_invalid, ENotBuyNode);
-        }
+    public fun assert_already_buy_node_v2(nodes: &Nodes, sender: address) {
+        let is_exists = is_need_buy_node(nodes, sender);
+        assert!(!is_exists, EAlreadyBuyNode);
+    }
+
+    public fun assert_not_buy_node(_users: &VecMap<address, User>, _sender: address) {
+        assert!(false, EMethodDeprecated);
+    }
+
+    public fun assert_not_buy_node_v2(nodes: &Nodes, sender: address) {
+        let is_exists = is_need_buy_node(nodes, sender);
+        assert!(is_exists, ENotBuyNode);
     }
 
     public fun assert_node_sold_out(node: &Node) {
@@ -536,6 +592,7 @@ module airdrop::node {
     }
 
     public fun assert_invalid_coin_type<T>(coin_type: TypeName) {
+        // 代币类型是否正确
         assert!(type_name::get<T>() == coin_type, EInvalidCoinType);
     }
 
@@ -547,13 +604,13 @@ module airdrop::node {
         nodes: &Nodes,
         sender: address,
         round: u64,
-        special_limits: &SpecialLimits,
+        limits: &Limits,
     ) {
         let times = remaining_quantity_of_claim_v2(
             nodes,
             sender,
             round,
-            special_limits
+            limits
         );
         assert!(times > 0, EInsufficientRemainingQuantity);
     }
