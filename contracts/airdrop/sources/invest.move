@@ -19,6 +19,10 @@ module airdrop::invest {
         address: address,
         // 数量
         amount: u64,
+        // 是否增加
+        is_increse: bool,
+        // 总投资金额
+        total_investment: u64,
     }
 
     public struct UpdateGains has copy, drop {
@@ -26,25 +30,9 @@ module airdrop::invest {
         address: address,
         // 数量
         amount: u64,
-    }
-
-    public struct ModifyInvest has copy, drop {
-        // 用户
-        address: address,
-        // 数量
-        amount: u64,
         // 是否增加
         is_increse: bool,
     }
-
-    // public struct ModifyGains has copy, drop {
-    //     // 用户
-    //     address: address,
-    //     // 数量
-    //     amount: u64,
-    //     // 是否增加
-    //     is_increse: bool,
-    // }
 
     /*
      * @notice 创建投资对象
@@ -71,30 +59,32 @@ module airdrop::invest {
         // 总投资金额
         let is_exists = invest.total_investment.contains(&address);
         if (is_exists) {
-            let total_investment = invest.total_investment.get(&address);
+            let total_investment = *invest.total_investment.get(&address);
 
-            let is_increse = fix_total_investment > *total_investment;
+            let is_increse = fix_total_investment > total_investment;
             let amount = if (is_increse) {
-                fix_total_investment - *total_investment
+                fix_total_investment - total_investment
             } else {
-                *total_investment - fix_total_investment
+                total_investment - fix_total_investment
             };
 
             invest.total_investment.remove(&address);
             invest.total_investment.insert(address, fix_total_investment);
 
-            event::emit(ModifyInvest {
+            event::emit(UpdateInvest {
                 address,
                 amount,
-                is_increse
+                is_increse,
+                total_investment,
             });
         } else {
             invest.total_investment.insert(address, fix_total_investment);
 
-            event::emit(ModifyInvest {
+            event::emit(UpdateInvest {
                 address,
                 amount: fix_total_investment,
-                is_increse: true
+                is_increse: true,
+                total_investment: fix_total_investment
             });
         };
 
@@ -119,12 +109,26 @@ module airdrop::invest {
         // 总投资金额
         let is_exists = invest.total_investment.contains(&address);
         if (is_exists) {
-            let total_investment = invest.total_investment.get(&address);
-            let total_investment = *total_investment + amount;
+            let total_investment = *invest.total_investment.get(&address);
+            let total_investment = total_investment + amount;
             invest.total_investment.remove(&address);
             invest.total_investment.insert(address, total_investment);
+
+            event::emit(UpdateInvest {
+                address,
+                amount,
+                is_increse: true,
+                total_investment
+            });
         } else {
             invest.total_investment.insert(address, amount);
+
+            event::emit(UpdateInvest {
+                address,
+                amount,
+                is_increse: true,
+                total_investment: amount
+            });
         };
 
         // 最新一次投资金额
@@ -146,11 +150,6 @@ module airdrop::invest {
         } else {
             invest.accumulated_gains.insert(address, 0);
         };
-
-        event::emit(UpdateInvest {
-            address,
-            amount,
-        });
     }
 
     /*
@@ -164,21 +163,34 @@ module airdrop::invest {
         event::emit(UpdateGains {
             address,
             amount,
+            is_increse: true,
         });
 
-        // 最近一次收益累计金额
-        let is_exists = invest.accumulated_gains.contains(&address);
-        if (is_exists) {
-            let accumulated_gains = invest.accumulated_gains.get(&address);
-            let accumulated_gains = *accumulated_gains + amount;
-            invest.accumulated_gains.remove(&address);
-            invest.accumulated_gains.insert(address, accumulated_gains);
-
-            is_need_forbid_node(invest, address, accumulated_gains)
+        // 购买节点，累计收益重新计算
+        if(amount == 0) {
+            let is_exists = invest.accumulated_gains.contains(&address);
+            if (is_exists) {
+                invest.accumulated_gains.remove(&address);
+                invest.accumulated_gains.insert(address, amount);
+            } else {
+                invest.accumulated_gains.insert(address, amount);
+            };
+            false
         } else {
-            invest.accumulated_gains.insert(address, amount);
+            // 最近一次收益累计金额
+            let is_exists = invest.accumulated_gains.contains(&address);
+            if (is_exists) {
+                let accumulated_gains = invest.accumulated_gains.get(&address);
+                let accumulated_gains = *accumulated_gains + amount;
+                invest.accumulated_gains.remove(&address);
+                invest.accumulated_gains.insert(address, accumulated_gains);
 
-            is_need_forbid_node(invest, address, amount)
+                is_need_forbid_node(invest, address, accumulated_gains)
+            } else {
+                invest.accumulated_gains.insert(address, amount);
+
+                is_need_forbid_node(invest, address, amount)
+            }
         }
     }
 

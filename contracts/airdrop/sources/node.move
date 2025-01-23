@@ -375,12 +375,15 @@ module airdrop::node {
             node_receiver_gains: receiver_rebate_value,
         });
 
-        // 更新投资
+        // 更新用户投资
         invest::update_invest(invest, sender, node.price);
-        // 更新收益
+        // 更新用户收益
+        invest::update_gains(invest, sender, 0);
+
+        // 更新邀请人收益
         let is_need_forbiden = invest::update_gains(invest, inviter, inviter_rebate_value);
         if (is_need_forbiden) {
-            forbiden(nodes, sender);
+            forbiden(nodes, inviter);
         };
     }
 
