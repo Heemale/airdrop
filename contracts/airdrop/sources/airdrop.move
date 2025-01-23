@@ -409,6 +409,7 @@ module airdrop::airdrop {
         nodes: &mut Nodes,
         address: address,
         fix_total_investment: u64,
+        fix_total_gains: u64,
         fix_last_investment: u64,
         fix_accumulated_gains: u64,
     ) {
@@ -416,6 +417,7 @@ module airdrop::airdrop {
             invest,
             address,
             fix_total_investment,
+            fix_total_gains,
             fix_last_investment,
             fix_accumulated_gains
         );
