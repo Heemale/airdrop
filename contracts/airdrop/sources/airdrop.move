@@ -13,6 +13,7 @@ module airdrop::airdrop {
     use airdrop::node::{Self, Nodes};
     use airdrop::limit::{Self, Limits};
     use airdrop::invest::{Self, Invest};
+    use airdrop::global::{Global};
 
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 1;
@@ -402,14 +403,49 @@ module airdrop::airdrop {
         invest::new(ctx);
     }
 
-    public fun modify_investment(
+    public fun modify_invest(
         _admin_cap: &AdminCap,
         invest: &mut Invest,
+        nodes: &mut Nodes,
         address: address,
         fix_total_investment: u64,
         fix_last_investment: u64,
+        fix_accumulated_gains: u64,
     ) {
-        invest::modify_investment(invest, address, fix_total_investment, fix_last_investment);
+        let is_need_forbiden = invest::modify(
+            invest,
+            address,
+            fix_total_investment,
+            fix_last_investment,
+            fix_accumulated_gains
+        );
+        // 如果达到条件，禁用权益
+        if (is_need_forbiden) {
+            node::forbiden(nodes, address);
+        };
+    }
+
+    public fun pause(
+        _admin_cap: &AdminCap,
+        global: &mut Global
+    ) {
+        global.pause();
+    }
+
+    public fun un_pause(
+        _admin_cap: &AdminCap,
+        global: &mut Global
+    ) {
+        global.un_pause();
+    }
+
+    public fun update_initialization_list(
+        _admin_cap: &AdminCap,
+        global: &mut Global,
+        object_type: TypeName,
+        status: bool
+    ) {
+        global.update_initialization_list(object_type, status);
     }
 
     public fun airdrops(airdrops: &Airdrops) {

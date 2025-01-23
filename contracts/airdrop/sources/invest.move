@@ -50,12 +50,13 @@ module airdrop::invest {
     /*
      * @notice 修改投资对象investment数据
      */
-    public(package) fun modify_investment(
+    public(package) fun modify(
         invest: &mut Invest,
         address: address,
         fix_total_investment: u64,
         fix_last_investment: u64,
-    ) {
+        fix_accumulated_gains: u64,
+    ): bool {
         // 总投资金额
         let is_exists = invest.total_investment.contains(&address);
         if (is_exists) {
@@ -96,6 +97,16 @@ module airdrop::invest {
         } else {
             invest.last_investment.insert(address, fix_last_investment);
         };
+
+        // 最近一次收益累计金额
+        let is_exists = invest.accumulated_gains.contains(&address);
+        if (is_exists) {
+            invest.accumulated_gains.remove(&address);
+            invest.accumulated_gains.insert(address, fix_accumulated_gains);
+        } else {
+            invest.accumulated_gains.insert(address, fix_accumulated_gains);
+        };
+        is_need_forbid_node(invest, address, fix_accumulated_gains)
     }
 
     /*
@@ -194,7 +205,7 @@ module airdrop::invest {
         }
     }
 
-    public(package) fun is_need_forbid_node(
+    public fun is_need_forbid_node(
         invest: &Invest,
         address: address,
         accumulated_gains: u64,
