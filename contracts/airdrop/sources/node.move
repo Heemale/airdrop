@@ -291,12 +291,12 @@ module airdrop::node {
      * @param rank: 等级
      * @param wallet: 支付的代币对象
      */
-    #[allow(unused_type_parameter)]
+    #[allow(unused_let_mut, unused_type_parameter)]
     entry fun buy<T>(
         _nodes: &mut Nodes,
         _invite: &Invite,
         _rank: u8,
-        wallet: Coin<T>,
+        mut wallet: Coin<T>,
         ctx: &TxContext,
     ) {
         let sender = tx_context::sender(ctx);
