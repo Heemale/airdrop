@@ -10,6 +10,8 @@ import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
 import { NodeInfo } from './types';
 import { bcs } from '@mysten/sui/bcs';
+import { Summary } from '../types';
+import { BuySummary } from './types';
 
 export class NodeClient {
   constructor(public suiClient: SuiClient) {}
@@ -178,6 +180,18 @@ export class NodeClient {
     return bcs.Address.parse(
       new Uint8Array(res?.results[0]?.returnValues[0][0]),
     );
+  }
+
+  async getAllBuy(
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ): Promise<Summary<BuySummary>> {
+    const resp = await this.queryEvents('Buy', input);
+    const customMapping = (rawEvent: any) => ({
+      sender: rawEvent.sender as string,
+      rank: rawEvent.rank as bigint,
+      nodeNum: rawEvent.node_num as bigint,
+    });
+    return this.handleEventReturns(resp, customMapping);
   }
 
   async queryEvents(

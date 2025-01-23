@@ -4,8 +4,6 @@ import { ConnectModal } from '@mysten/dapp-kit';
 import * as React from 'react';
 import { useClientTranslation } from '@/hook';
 
-
-
 const ConnectWallet = () => {
   const { t } = useClientTranslation();
 

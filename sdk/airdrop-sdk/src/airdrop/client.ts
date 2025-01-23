@@ -11,6 +11,8 @@ import type {
   OrderArguments,
 } from '@mysten/sui/client';
 import { AirdropInfo } from './types';
+import { Summary } from '../types';
+import { ClaimSummary } from './types';
 
 export class AirdropClient {
   constructor(public suiClient: SuiClient) {}
@@ -335,6 +337,25 @@ export class AirdropClient {
       // @ts-ignore
       return customMapping(event?.parsedJson);
     });
+  }
+
+  async getAllClaim(
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ): Promise<Summary<ClaimSummary>> {
+    const resp = await this.queryEvents('Claim', input);
+
+    const customMapping = (rawEvent: any) => {
+      console.log(rawEvent, '======================');
+
+      return {
+        sender: rawEvent.sender as string,
+        round: rawEvent.round as bigint,
+        coinType: rawEvent.coin_type.name as string,
+        amount: rawEvent.amount as bigint,
+      };
+      console.log(rawEvent);
+    };
+    return this.handleEventReturns(resp, customMapping);
   }
 
   async queryEvents(

@@ -31,9 +31,9 @@ const pages: Array<Page> = [
     link: '/event',
   },
   {
-    id:'3',
-    name:'Personal center',
-    link:'/personalcenter',
+    id: '3',
+    name: 'Personal center',
+    link: '/personalcenter',
   },
 ];
 
@@ -51,7 +51,7 @@ const NavBarWrapper = async (props: Props) => {
         };
       })}
     >
-      <ConnectButton connectText='CONNECT' />
+      <ConnectButton connectText="CONNECT" />
     </NavBar>
   );
 };

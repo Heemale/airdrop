@@ -13,16 +13,17 @@ const Home = async (props: Props) => {
 
   return (
     <>
-    <div className="bg-[url('/presale_bg.jpg')] bg-cover bg-right sm:bg-center bg-no-repeat sm:h-[1080px]">
-      <NavBarWrapper locale={locale} />
-      <PreSale>
-        <NodeInfo locale={locale} />
-      </PreSale>
-    </div>
-    <div className="max-w-4xl mx-auto mt-8 p-4">
-        <Purchasehistory />
-      </div>  
-        </>
+      <div className="bg-[url('/presale_bg.jpg')] bg-cover bg-right sm:bg-center bg-no-repeat sm:h-[1080px]">
+        <NavBarWrapper locale={locale} />
+        <PreSale>
+          <NodeInfo locale={locale} />
+        </PreSale>
+
+        <div className="max-w-4xl mx-auto mt-8 p-4">
+          <Purchasehistory />
+        </div>
+      </div>
+    </>
   );
 };
 

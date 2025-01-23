@@ -40,9 +40,7 @@ const RootLayout = async ({
         >
           <Context>
             {children}
-            <InviteDialogSuspense
-             
-            />
+            <InviteDialogSuspense />
           </Context>
         </TranslationsProvider>
       </body>

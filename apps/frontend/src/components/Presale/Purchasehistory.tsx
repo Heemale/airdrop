@@ -8,92 +8,95 @@ import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { formatTimestamp, sleep } from '@/utils/time';
 
 interface History {
-    address: string;
-    amount: bigint;
-    time: bigint;
-  }
-  const simulatedData: History[] = [
-    {
-      address: '0x1234567890abcdef',
-      amount: BigInt(100),
-      time: BigInt(5000),
-    },
-    {
-      address: '0xabcdef1234567890',
-      amount: BigInt(100),
-      time: BigInt(5000),
-    },
-    {
-      address: '0xabcdefabcdef1234',
-      amount: BigInt(100),
-      time: BigInt(5000),
-    },
-  ];
-
+  address: string;
+  amount: bigint;
+  time: bigint;
+}
+const simulatedData: History[] = [
+  {
+    address: '0x1234567890abcdef',
+    amount: BigInt(100),
+    time: BigInt(5000),
+  },
+  {
+    address: '0xabcdef1234567890',
+    amount: BigInt(100),
+    time: BigInt(5000),
+  },
+  {
+    address: '0xabcdefabcdef1234',
+    amount: BigInt(100),
+    time: BigInt(5000),
+  },
+];
 
 const Purchasehistory = () => {
   const { t } = useClientTranslation();
   const [purchaseHistory, setPurchaseHistory] = useState<History[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
 
- const fetchPurchaseHistory = async () => {
-      try {
-        // 假设 getnode 方法是异步的，并返回一个包含购买记录的数组
-        // const data = await inviteClient.getnode();
-         setPurchaseHistory(simulatedData);
-      
+  const fetchPurchaseHistory = async () => {
+    try {
+      // 假设 getnode 方法是异步的，并返回一个包含购买记录的数组
+      // const data = await inviteClient.getnode();
+      setPurchaseHistory(simulatedData);
     } catch (e: any) {
-        console.log(`Failed to fetch purchase history: ${e.message}`);
-        messageApi.error(`${t(handleTxError(e.message))}`);
-      }
-    };
+      console.log(`Failed to fetch purchase history: ${e.message}`);
+      messageApi.error(`${t(handleTxError(e.message))}`);
+    }
+  };
 
   useEffect(() => {
-   
     fetchPurchaseHistory();
   }, []);
 
   return (
     <div className="p-4">
-    {/* 标题部分 */}
-    <div className="flex items-center gap-2 mb-3">
-      <img src="/personal04.png" alt="" className="w-6 h-6" /> {/* 地球图标 */}
-      <span className="text-white text-xl">{t('Equity purchase record')}</span>
-    </div>
-  
-    {/* 表格部分 */}
-    <div className="overflow-x-auto">
-      <div className="relative">
-        <table className="min-w-full table-auto bg-transparent">
-          <thead className="sticky text-white top-0 bg-[url('/personal01.png')] bg-cover bg-center ">
-            <tr>
-              <th className="px-4 py-2 text-left">{t('User Address')}</th>
-              <th className="px-4 py-2 text-left">{t('Amount')}</th>
-              <th className="px-4 py-2 text-left">{t('Time')}</th>
-            </tr>
-          </thead>
-          <tbody className="bg-[rgba(13,24,41,0.7)] text-white ">
-            {purchaseHistory.length > 0 ? (
-              purchaseHistory.map((record, index) => (
-                <tr key={index}>
-                  <td className="px-4 py-2">{formatAddress(record.address)}</td>
-                  <td className="px-4 py-2">{record.amount}</td>
-                  <td className="px-4 py-2">{formatTimestamp(Number(record.time))}</td>
-                </tr>
-              ))
-            ) : (
+      {/* 标题部分 */}
+      <div className="flex items-center gap-2 mb-3">
+        <img src="/personal04.png" alt="" className="w-6 h-6" />{' '}
+        {/* 地球图标 */}
+        <span className="text-white text-xl">
+          {t('Equity purchase record')}
+        </span>
+      </div>
+
+      {/* 表格部分 */}
+      <div className="overflow-x-auto">
+        <div className="relative">
+          <table className="min-w-full table-auto bg-transparent">
+            <thead className="sticky text-white top-0 bg-[url('/personal01.png')] bg-cover bg-center ">
               <tr>
-                <td className="px-4 py-2 text-center" colSpan={3}>
-                  {t('No records available')}
-                </td>
+                <th className="px-4 py-2 text-left">{t('User Address')}</th>
+                <th className="px-4 py-2 text-left">{t('Amount')}</th>
+                <th className="px-4 py-2 text-left">{t('Time')}</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-[rgba(13,24,41,0.7)] text-white ">
+              {purchaseHistory.length > 0 ? (
+                purchaseHistory.map((record, index) => (
+                  <tr key={index}>
+                    <td className="px-4 py-2">
+                      {formatAddress(record.address)}
+                    </td>
+                    <td className="px-4 py-2">{record.amount}</td>
+                    <td className="px-4 py-2">
+                      {formatTimestamp(Number(record.time))}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td className="px-4 py-2 text-center" colSpan={3}>
+                    {t('No records available')}
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-  </div>
-  
   );
 };
 

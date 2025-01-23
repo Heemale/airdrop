@@ -14,10 +14,8 @@ import { useContext, useState } from 'react';
 import { message } from 'antd';
 import { PresaleContext } from '@/context/PresaleContext';
 
-
-
 const TransferNode = () => {
-  const { t } = useClientTranslation(); 
+  const { t } = useClientTranslation();
 
   const account = useCurrentAccount();
   const { node } = useContext(PresaleContext);

@@ -92,7 +92,6 @@ export class InviteClient {
   ): Promise<Summary<BindSummary>> {
     const resp = await this.queryEvents('Bind', input);
     const customMapping = (rawEvent: any) => ({
-      id: rawEvent.id as string,
       sender: rawEvent.sender as string,
       inviter: rawEvent.inviter as string,
     });

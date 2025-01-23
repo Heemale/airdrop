@@ -9,7 +9,7 @@ interface Props {
 
 const BuyNodeTitle = async (props: Props) => {
   const { locale } = props;
-  const { t } = useClientTranslation(); 
+  const { t } = useClientTranslation();
   return (
     <div className="flex flex-col gap-8 sm:mt-10 mx-10">
       <div className="font-orbitron text-white text-2xl sm:text-5xl font-semibold">
