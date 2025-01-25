@@ -12,6 +12,7 @@ import { NodeInfo } from './types';
 import { bcs } from '@mysten/sui/bcs';
 import { Summary } from '../types';
 import { BuySummary } from './types';
+import { BuyV2Summary } from './types';
 
 export class NodeClient {
   constructor(public suiClient: SuiClient) {}
@@ -190,6 +191,21 @@ export class NodeClient {
       sender: rawEvent.sender as string,
       rank: rawEvent.rank as bigint,
       nodeNum: rawEvent.node_num as bigint,
+    });
+    return this.handleEventReturns(resp, customMapping);
+  }
+
+  async getV2AllBuy(
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ): Promise<Summary<BuyV2Summary>> {
+    const resp = await this.queryEvents('BuyV2', input);
+    const customMapping = (rawEvent: any) => ({
+      sender: rawEvent.sender as string,
+      rank: rawEvent.rank as bigint,
+      nodeNum: rawEvent.node_num as bigint,
+      paymentAmount:rawEvent.payment_amount as bigint,
+      inviterGains:rawEvent.inviter_gains as bigint,
+      nodeReceiverGains:rawEvent.node_receiver_gains as bigint,
     });
     return this.handleEventReturns(resp, customMapping);
   }

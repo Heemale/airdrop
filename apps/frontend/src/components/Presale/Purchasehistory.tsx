@@ -8,24 +8,27 @@ import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { formatTimestamp, sleep } from '@/utils/time';
 
 interface History {
-  address: string;
+  rank: bigint;
+  nodeNum:bigint;
   amount: bigint;
   time: bigint;
 }
 const simulatedData: History[] = [
   {
-    address: '0x1234567890abcdef',
+    rank:BigInt(1),
+    nodeNum:BigInt(2),  
+     amount: BigInt(100),
+    time: BigInt(5000),
+  },
+  {
+    rank:BigInt(1),
+    nodeNum:BigInt(2),  
     amount: BigInt(100),
     time: BigInt(5000),
   },
   {
-    address: '0xabcdef1234567890',
-    amount: BigInt(100),
-    time: BigInt(5000),
-  },
-  {
-    address: '0xabcdefabcdef1234',
-    amount: BigInt(100),
+    rank:BigInt(1),
+    nodeNum:BigInt(2),      amount: BigInt(100),
     time: BigInt(5000),
   },
 ];
@@ -67,7 +70,9 @@ const Purchasehistory = () => {
           <table className="min-w-full table-auto bg-transparent">
             <thead className="sticky text-white top-0 bg-[url('/personal01.png')] bg-cover bg-center ">
               <tr>
-                <th className="px-4 py-2 text-left">{t('User Address')}</th>
+                <th className="px-4 py-2 text-left">{t('Equity number')}</th>
+                <th className="px-4 py-2 text-left">{t('Equity level')}</th>
+
                 <th className="px-4 py-2 text-left">{t('Amount')}</th>
                 <th className="px-4 py-2 text-left">{t('Time')}</th>
               </tr>
@@ -77,7 +82,10 @@ const Purchasehistory = () => {
                 purchaseHistory.map((record, index) => (
                   <tr key={index}>
                     <td className="px-4 py-2">
-                      {formatAddress(record.address)}
+                      {record.rank}
+                    </td>
+                    <td className="px-4 py-2">
+                      {record.nodeNum}
                     </td>
                     <td className="px-4 py-2">{record.amount}</td>
                     <td className="px-4 py-2">
