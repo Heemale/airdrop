@@ -53,8 +53,7 @@ const Recommender = () => {
             inviter ? (
               inviter
             ) : (
-              // <div>{t('Please bind the inviter')}</div>
-              0x12937298937
+              <div>{t('Please bind the inviter')}</div>
             )
           ) : (
             <>{t('Please connect your wallet')}</>

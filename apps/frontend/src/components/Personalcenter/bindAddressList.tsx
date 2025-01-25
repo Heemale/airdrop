@@ -5,6 +5,7 @@ import { useClientTranslation } from '@/hook';
 import { formatAddress } from '@mysten/sui/utils';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { message } from 'antd';
+import { getUserInfo } from '@/api';
 
 interface BindSummary {
   id: string;

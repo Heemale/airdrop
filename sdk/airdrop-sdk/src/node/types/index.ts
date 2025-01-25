@@ -25,4 +25,13 @@ export interface BuySummary extends TransactionSummary {
   nodeNum: bigint;
 }
 
+export interface BuyV2Summary extends TransactionSummary {
+  sender: string;
+  rank: bigint;
+  nodeNum: bigint;
+  paymentAmount:bigint;
+  inviterGains:bigint;
+  nodeReceiverGains:bigint;
+}
+
 export * from './index';

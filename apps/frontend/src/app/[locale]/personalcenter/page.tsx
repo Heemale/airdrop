@@ -62,7 +62,7 @@ const Home = async (props: Props) => {
               <div className="text-2xl font-bold text-gray-300 ml-2">sui</div>
             </div>
             <br />
-            <div className="text-xl text-gray-300">已领取权益</div>
+            <div className="text-xl text-gray-300">已领取收益</div>
           </div>
           <div className="flex-1 bg-[url('/personal03.png')] bg-cover bg-center h-40 rounded-lg flex flex-col justify-center items-center text-white">
             <div className="flex items-baseline">
