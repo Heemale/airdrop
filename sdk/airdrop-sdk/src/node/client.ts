@@ -203,9 +203,9 @@ export class NodeClient {
       sender: rawEvent.sender as string,
       rank: rawEvent.rank as bigint,
       nodeNum: rawEvent.node_num as bigint,
-      paymentAmount:rawEvent.payment_amount as bigint,
-      inviterGains:rawEvent.inviter_gains as bigint,
-      nodeReceiverGains:rawEvent.node_receiver_gains as bigint,
+      paymentAmount: rawEvent.payment_amount as bigint,
+      inviterGains: rawEvent.inviter_gains as bigint,
+      nodeReceiverGains: rawEvent.node_receiver_gains as bigint,
     });
     return this.handleEventReturns(resp, customMapping);
   }

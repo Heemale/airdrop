@@ -13,13 +13,13 @@ export const getAndUpdateAirdropAmountWithCursor = async (
     if (cursor) {
       claimRecords = await prisma.claimRecord.findMany({
         where: {
-            sender: sender,
+          sender: sender,
         },
-        select:{
-            round:true,
-            coinType:true,
-            amount:true,
-            timestamp:true,
+        select: {
+          round: true,
+          coinType: true,
+          amount: true,
+          timestamp: true,
         },
         take: pageSize, // 每页的记录数
         skip: 1, // 跳过游标对应的记录
@@ -28,18 +28,17 @@ export const getAndUpdateAirdropAmountWithCursor = async (
           createAt: 'desc', // 根据创建时间排序
         },
       });
-      
     } else {
       // 如果 cursor 不存在，查询第一页数据
       claimRecords = await prisma.claimRecord.findMany({
         where: {
-            sender: sender,
+          sender: sender,
         },
-        select:{
-            round:true,
-            coinType:true,
-            amount:true,
-            timestamp:true,
+        select: {
+          round: true,
+          coinType: true,
+          amount: true,
+          timestamp: true,
         },
         take: pageSize, // 每页的记录数
         orderBy: {
@@ -48,7 +47,6 @@ export const getAndUpdateAirdropAmountWithCursor = async (
       });
     }
     console.log('Query Result======================:', claimRecords);
-
 
     // 获取下一页游标
     const nextCursor =

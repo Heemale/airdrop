@@ -4,9 +4,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { ClaimSummary } from '@local/airdrop-sdk/airdrop';
 import { useCurrentAccount } from '@mysten/dapp-kit';
-import {
-  getCoinMetaData,
-} from '@/sdk';
+import { getCoinMetaData } from '@/sdk';
 import { message } from 'antd';
 import { getClaimInfo } from '@/api';
 import { formatTimestamp } from '@/utils/time';
@@ -21,12 +19,17 @@ const MyAirdrops = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [cursor, setCursor] = useState<number | null>(null);
   const [airdropList, setAirdropList] = useState<Array<ClaimSummary>>([]);
-  const [coinMetaDataMap, setCoinMetaDataMap] = useState<Record<string, any>>({});
+  const [coinMetaDataMap, setCoinMetaDataMap] = useState<Record<string, any>>(
+    {},
+  );
   const [messageApi, contextHolder] = message.useMessage();
   const { t } = useClientTranslation();
 
   // 获取空投信息
-  const myAirdrops = async (sender: string | null = null, cursor: number | null = null) => {
+  const myAirdrops = async (
+    sender: string | null = null,
+    cursor: number | null = null,
+  ) => {
     setLoading(true);
     try {
       const response = await getClaimInfo(sender!, cursor!);
@@ -111,10 +114,13 @@ const MyAirdrops = () => {
                       <div className="flex flex-col justify-between">
                         <div className="flex gap-2">
                           <div className="text-lg font-semibold">
-                            {getCoinTypeName(airdrop.coinType)} - ROUND {airdrop.round}
+                            {getCoinTypeName(airdrop.coinType)} - ROUND{' '}
+                            {airdrop.round}
                           </div>
                           <div className="flex flex-col sm:flex-row gap-2">
-                            <div>{formatTimestamp(Number(airdrop.timestamp))}</div>
+                            <div>
+                              {formatTimestamp(Number(airdrop.timestamp))}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -128,7 +134,9 @@ const MyAirdrops = () => {
               </div>
             ))
           ) : (
-            <div className="text-center text-gray-400">{t('No records available')}</div>
+            <div className="text-center text-gray-400">
+              {t('No records available')}
+            </div>
           )}
         </div>
       </div>

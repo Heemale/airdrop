@@ -6,7 +6,6 @@ import NavBar from './NavBar';
 import ConnectButton from '@/components/ConnectButton';
 import { useClientTranslation } from '@/hook';
 
-
 export interface Page {
   id: string;
   name: string;

@@ -9,26 +9,27 @@ import { formatTimestamp, sleep } from '@/utils/time';
 
 interface History {
   rank: bigint;
-  nodeNum:bigint;
+  nodeNum: bigint;
   amount: bigint;
   time: bigint;
 }
 const simulatedData: History[] = [
   {
-    rank:BigInt(1),
-    nodeNum:BigInt(2),  
-     amount: BigInt(100),
-    time: BigInt(5000),
-  },
-  {
-    rank:BigInt(1),
-    nodeNum:BigInt(2),  
+    rank: BigInt(1),
+    nodeNum: BigInt(2),
     amount: BigInt(100),
     time: BigInt(5000),
   },
   {
-    rank:BigInt(1),
-    nodeNum:BigInt(2),      amount: BigInt(100),
+    rank: BigInt(1),
+    nodeNum: BigInt(2),
+    amount: BigInt(100),
+    time: BigInt(5000),
+  },
+  {
+    rank: BigInt(1),
+    nodeNum: BigInt(2),
+    amount: BigInt(100),
     time: BigInt(5000),
   },
 ];
@@ -81,12 +82,8 @@ const Purchasehistory = () => {
               {purchaseHistory.length > 0 ? (
                 purchaseHistory.map((record, index) => (
                   <tr key={index}>
-                    <td className="px-4 py-2">
-                      {record.rank}
-                    </td>
-                    <td className="px-4 py-2">
-                      {record.nodeNum}
-                    </td>
+                    <td className="px-4 py-2">{record.rank}</td>
+                    <td className="px-4 py-2">{record.nodeNum}</td>
                     <td className="px-4 py-2">{record.amount}</td>
                     <td className="px-4 py-2">
                       {formatTimestamp(Number(record.time))}

@@ -30,7 +30,6 @@ export interface ClaimSummary extends TransactionSummary {
   round: bigint;
   coinType: string;
   amount: bigint;
-  timestamp:bigint;
+  timestamp: bigint;
   nextCursor?: EventId | null;
-
 }

@@ -41,7 +41,7 @@ const Home = async (props: Props) => {
                 </div>
               </Link>
             </div>
-            <MyAirdrops/>
+            <MyAirdrops />
           </div>
         </div>
       </div>

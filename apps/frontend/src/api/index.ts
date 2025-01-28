@@ -9,7 +9,7 @@ export const getBuyInfo = (sender: string) =>
   request.get('/buy-node-record', {
     params: { sender }, // 传递 sender 参数
   });
-export const getClaimInfo = (address: string,currentCursor:number) =>
+export const getClaimInfo = (address: string, currentCursor: number) =>
   request.get('api/claim-airdrop-record/info', {
-    params: { address ,currentCursor},
+    params: { address, currentCursor },
   });

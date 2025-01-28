@@ -19,7 +19,7 @@ export class ClaimController {
   // 查询用户的空投总收益
   @Get('info')
   async getClaimInfo(@Body() params: GetClaimInfoDto) {
-    const { sender, page = 1, pageSize = 25 ,currentCursor} = params;
+    const { sender, page = 1, pageSize = 25, currentCursor } = params;
 
     if (!sender) {
       throw new HttpException('Invalid parameters: address is required', 400);
@@ -36,14 +36,14 @@ export class ClaimController {
     }
 
     try {
-      console.log(222222,currentCursor)
+      console.log(222222, currentCursor);
       // 调用服务来获取空投信息并更新
       const result = await getAndUpdateAirdropAmountWithCursor(
         sender.toLowerCase(),
         currentCursor,
         Number(pageSize),
       );
-console.log(1111111,result.claimRecords)
+      console.log(1111111, result.claimRecords);
       if (!result.success) {
         throw new HttpException(result.message, 500);
       }
@@ -78,7 +78,7 @@ console.log(1111111,result.claimRecords)
     try {
       // 更新空投记录
       const updatedRecord = await updateClaimRecord(
-        params.address.toLowerCase() ,
+        params.address.toLowerCase(),
         params.amount,
         params.txDigest, // 事务摘要
         params.eventSeq, // 事件序列号

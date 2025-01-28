@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import NavBarWrapper from '@/components/NavBarWrapper';
@@ -6,7 +5,7 @@ import { useCurrentAccount } from '@mysten/dapp-kit';
 import Share from '@/components/Personalcenter/share';
 import Recommender from '@/components/Personalcenter/recommender';
 import BindAddressList from '@/components/Personalcenter/bindAddressList';
-import { getUserInfo } from '@/api'; 
+import { getUserInfo } from '@/api';
 import { useClientTranslation } from '@/hook';
 
 interface Props {
@@ -22,7 +21,6 @@ const Home = async (props: Props) => {
   const account = useCurrentAccount();
   const { t } = useClientTranslation();
 
-  
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,7 +31,7 @@ const Home = async (props: Props) => {
       if (account) {
         try {
           setLoading(true);
-          const response = await getUserInfo();  // 调用API获取用户信息
+          const response = await getUserInfo(); // 调用API获取用户信息
           setUserInfo(response.data);
         } catch (err) {
           setError('Failed to fetch user info');
@@ -58,7 +56,9 @@ const Home = async (props: Props) => {
             <div className="h-full flex justify-around items-center text-white">
               <div className="flex flex-col items-center">
                 <div className="flex items-baseline">
-                  <div className="text-4xl font-bold">{userInfo?.shares || 0}</div>
+                  <div className="text-4xl font-bold">
+                    {userInfo?.shares || 0}
+                  </div>
                   <div className="text-2xl font-bold text-gray-300 ml-2">
                     sui
                   </div>
@@ -68,7 +68,9 @@ const Home = async (props: Props) => {
               </div>
               <div className="flex flex-col items-center">
                 <div className="flex items-baseline">
-                  <div className="text-4xl font-bold">{userInfo?.teams || 0}</div>
+                  <div className="text-4xl font-bold">
+                    {userInfo?.teams || 0}
+                  </div>
                   <div className="text-2xl font-bold text-gray-300 ml-2">
                     个
                   </div>
