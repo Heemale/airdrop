@@ -12,6 +12,7 @@ export const handleClaim = async (event: Prisma.ClaimRecordCreateInput) => {
           round: event.round,
           coinType: event.coinType,
           amount: event.amount,
+          timestamp: event.timestamp,
         },
       });
 

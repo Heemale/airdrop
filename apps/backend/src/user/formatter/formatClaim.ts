@@ -13,6 +13,6 @@ export const formatClaim = (
     round: Number(round),
     coinType: coinType.toLowerCase(),
     amount: Number(amount),
-    createAt: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
+    timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
   };
 };

@@ -339,23 +339,24 @@ export class AirdropClient {
     });
   }
 
-  async getAllClaim(
-    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  async getAllClaim(input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
   ): Promise<Summary<ClaimSummary>> {
     const resp = await this.queryEvents('Claim', input);
-
+    
     const customMapping = (rawEvent: any) => {
-      console.log(rawEvent, '======================');
+    console.log(rawEvent,"======================");
 
       return {
-        sender: rawEvent.sender as string,
-        round: rawEvent.round as bigint,
-        coinType: rawEvent.coin_type.name as string,
-        amount: rawEvent.amount as bigint,
-      };
-      console.log(rawEvent);
-    };
-    return this.handleEventReturns(resp, customMapping);
+      sender: rawEvent.sender as string,
+      round: rawEvent.round  as bigint,
+      coinType:rawEvent.coin_type.name as string,
+      amount:rawEvent.amount  as bigint,
+      timestamp:rawEvent.timestamp as bigint,
+    }
+    console.log(rawEvent);
+
+  };
+    return this.handleEventReturns(resp,customMapping);
   }
 
   async queryEvents(

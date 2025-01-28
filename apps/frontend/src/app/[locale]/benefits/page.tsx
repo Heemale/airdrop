@@ -3,7 +3,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
-
+import MyAirdrops from '@/components/Event/MyAirdrops';
 interface Props {
   params: Promise<{ locale: string }>;
 }
@@ -41,7 +41,7 @@ const Home = async (props: Props) => {
                 </div>
               </Link>
             </div>
-            <div className="text-sm">{t('Coming soon...')}</div>
+            <MyAirdrops/>
           </div>
         </div>
       </div>

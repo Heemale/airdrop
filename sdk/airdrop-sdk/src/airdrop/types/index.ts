@@ -1,4 +1,5 @@
 import { TransactionSummary } from '../../types';
+import { EventId } from '@mysten/sui/client';
 
 export interface AirdropInfo {
   // 轮次
@@ -29,4 +30,7 @@ export interface ClaimSummary extends TransactionSummary {
   round: bigint;
   coinType: string;
   amount: bigint;
+  timestamp:bigint;
+  nextCursor?: EventId | null;
+
 }
