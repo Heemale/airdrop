@@ -1,72 +1,39 @@
 import { prisma } from '@/config/prisma';
 
-export const getAndUpdateAirdropAmountWithCursor = async (
+export const findClaimRecords = async (
   sender: string,
   cursor: number | null, // 游标，null 表示第一页
   pageSize: number,
 ) => {
-  try {
-    let claimRecords;
-    console.log('Cursor===============:', cursor);
+  const records = await prisma.claimRecord.findMany({
+    where: {
+      sender: sender,
+    },
+    select: {
+      id: true,
+      round: true,
+      coinType: true,
+      amount: true,
+      timestamp: true,
+    },
+    take: pageSize, // 每页的记录数
+    skip: cursor ? 1 : 0, // 跳过游标对应的记录
+    cursor: cursor && { id: Number(cursor) }, // 使用游标
+    orderBy: {
+      createAt: 'desc', // 根据创建时间排序
+    },
+  });
 
-    // 如果 cursor 存在，进行分页查询
-    if (cursor) {
-      claimRecords = await prisma.claimRecord.findMany({
-        where: {
-          sender: sender,
-        },
-        select: {
-          round: true,
-          coinType: true,
-          amount: true,
-          timestamp: true,
-        },
-        take: pageSize, // 每页的记录数
-        skip: 1, // 跳过游标对应的记录
-        cursor: { id: cursor }, // 使用游标
-        orderBy: {
-          createAt: 'desc', // 根据创建时间排序
-        },
-      });
-    } else {
-      // 如果 cursor 不存在，查询第一页数据
-      claimRecords = await prisma.claimRecord.findMany({
-        where: {
-          sender: sender,
-        },
-        select: {
-          round: true,
-          coinType: true,
-          amount: true,
-          timestamp: true,
-        },
-        take: pageSize, // 每页的记录数
-        orderBy: {
-          createAt: 'desc', // 根据创建时间排序
-        },
-      });
-    }
-    console.log('Query Result======================:', claimRecords);
+  // 获取下一页游标
+  // 如果记录达到分页大小，返回最后一条记录的 id
+  // 否则返回 null，表示没有更多数据
+  const nextCursor =
+    records.length === pageSize ? records[records.length - 1].id : null;
 
-    // 获取下一页游标
-    const nextCursor =
-      claimRecords.length === pageSize
-        ? claimRecords[claimRecords.length - 1].id // 如果记录达到分页大小，返回最后一条记录的 id
-        : null; // 否则返回 null，表示没有更多数据
-
-    return {
-      success: true,
-      message: 'Total airdrop amount calculated successfully',
-      claimRecords, // 当前页数据
-      nextCursor, // 下一页的游标
-    };
-  } catch (error) {
-    return {
-      success: false,
-      message: 'Error calculating total airdrop amount',
-      error: error.message,
-    };
-  }
+  return {
+    data: records,
+    nextCursor,
+  };
 };
 
 // 用于更新空投记录
