@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
-import { nodeClient } from '@/sdk';
+import { nodeClientV1 } from '@/sdk';
 import { formatBuyV2 } from '@/user/formatter/formatBuyV2';
 import { handleBuyV2 } from '@/user/handler/handleBuyV2';
 import { sleep } from '@/utils/time';
@@ -18,7 +18,7 @@ export class BuyV2Scheduler {
   async subscribe() {
     while (true) {
       try {
-        const logs = await nodeClient.getV2AllBuy({
+        const logs = await nodeClientV1.getV2AllBuy({
           cursor: this.cursor,
           order: 'ascending',
         });

@@ -1,7 +1,5 @@
 'use client';
 import * as React from 'react';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
 import NavBar from './NavBar';
 import ConnectButton from '@/components/ConnectButton';
 import { useClientTranslation } from '@/hook';
@@ -35,7 +33,7 @@ const pages: Array<Page> = [
   },
 ];
 
-const NavBarWrapper = async () => {
+const NavBarWrapper = () => {
   const { t } = useClientTranslation();
 
   return (

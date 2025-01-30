@@ -1,5 +1,5 @@
 import { signAndExecuteTransaction } from '@/sdk/utils';
-import { adminKeypair, airdropClient } from '@/sdk';
+import { adminKeypair, airdropClientV1 } from '@/sdk';
 import { ADMIN_CAP, NODES } from '@local/airdrop-sdk/utils';
 
 const insertNode = async () => {
@@ -9,7 +9,7 @@ const insertNode = async () => {
   const limit = BigInt(1); // 每轮空投购买次数限制
   const price = BigInt(1000000); // 节点价格
   const total_quantity = BigInt(100); // 总数量
-  const tx = airdropClient.insertNode(
+  const tx = airdropClientV1.insertNode(
     ADMIN_CAP,
     nodes,
     name,

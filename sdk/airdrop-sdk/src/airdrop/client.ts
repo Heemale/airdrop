@@ -1,7 +1,6 @@
 import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
-import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
 import type {
   DevInspectResults,
@@ -15,13 +14,16 @@ import { Summary } from '../types';
 import { ClaimSummary } from './types';
 
 export class AirdropClient {
-  constructor(public suiClient: SuiClient) {}
+  constructor(
+    public suiClient: SuiClient,
+    public packageId: string,
+  ) {}
 
   new(adminCap: string): Transaction {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::new`,
+      target: `${this.packageId}::${MODULE_CLOB}::new`,
       arguments: [tx.object(adminCap)],
     });
     return tx;
@@ -45,7 +47,7 @@ export class AirdropClient {
     if (wallet) {
       tx.moveCall({
         typeArguments: [T],
-        target: `${PACKAGE_ID}::${MODULE_CLOB}::insert`,
+        target: `${this.packageId}::${MODULE_CLOB}::insert`,
         arguments: [
           tx.object(adminCap),
           tx.object(airdrops),
@@ -63,7 +65,7 @@ export class AirdropClient {
         const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(amount)]);
         tx.moveCall({
           typeArguments: [T],
-          target: `${PACKAGE_ID}::${MODULE_CLOB}::insert`,
+          target: `${this.packageId}::${MODULE_CLOB}::insert`,
           arguments: [
             tx.object(adminCap),
             tx.object(airdrops),
@@ -92,7 +94,7 @@ export class AirdropClient {
         const coin = tx.object(coins.data[0]['coinObjectId']); //合并后使用
         tx.moveCall({
           typeArguments: [T],
-          target: `${PACKAGE_ID}::${MODULE_CLOB}::insert`,
+          target: `${this.packageId}::${MODULE_CLOB}::insert`,
           arguments: [
             tx.object(adminCap),
             tx.object(airdrops),
@@ -122,7 +124,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify`,
+      target: `${this.packageId}::${MODULE_CLOB}::modify`,
       arguments: [
         tx.object(adminCap),
         tx.object(airdrops),
@@ -145,7 +147,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [T],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::withdraw`,
+      target: `${this.packageId}::${MODULE_CLOB}::withdraw`,
       arguments: [tx.object(adminCap), tx.object(airdrops), tx.pure.u64(round)],
     });
     return tx;
@@ -161,7 +163,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [T],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::claim`,
+      target: `${this.packageId}::${MODULE_CLOB}::claim`,
       arguments: [
         tx.object(adminCap),
         tx.object(nodes),
@@ -176,7 +178,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::new_invite`,
+      target: `${this.packageId}::${MODULE_CLOB}::new_invite`,
       arguments: [
         tx.object(adminCap),
         tx.pure.address(root),
@@ -195,7 +197,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify_invite`,
+      target: `${this.packageId}::${MODULE_CLOB}::modify_invite`,
       arguments: [
         tx.object(adminCap),
         tx.object(invite),
@@ -210,7 +212,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [T],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::new_node`,
+      target: `${this.packageId}::${MODULE_CLOB}::new_node`,
       arguments: [tx.object(adminCap), tx.pure.address(receiver)],
     });
     return tx;
@@ -228,7 +230,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::insert_node`,
+      target: `${this.packageId}::${MODULE_CLOB}::insert_node`,
       arguments: [
         tx.object(adminCap),
         tx.object(nodes),
@@ -246,7 +248,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::remove_node`,
+      target: `${this.packageId}::${MODULE_CLOB}::remove_node`,
       arguments: [tx.object(adminCap), tx.object(nodes), tx.pure.u8(rank)],
     });
     return tx;
@@ -266,7 +268,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify_node`,
+      target: `${this.packageId}::${MODULE_CLOB}::modify_node`,
       arguments: [
         tx.object(adminCap),
         tx.object(nodes),
@@ -291,7 +293,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [T],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify_nodes`,
+      target: `${this.packageId}::${MODULE_CLOB}::modify_nodes`,
       arguments: [
         tx.object(adminCap),
         tx.object(nodes),
@@ -305,7 +307,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::airdrops`,
+      target: `${this.packageId}::${MODULE_CLOB}::airdrops`,
       arguments: [tx.object(airdrops)],
     });
     // @ts-ignore
@@ -345,16 +347,13 @@ export class AirdropClient {
     const resp = await this.queryEvents('Claim', input);
 
     const customMapping = (rawEvent: any) => {
-      console.log(rawEvent, '======================');
-
       return {
         sender: rawEvent.sender as string,
         round: rawEvent.round as bigint,
-        coinType: rawEvent.coin_type.name as string,
+        coinType: ('0x' + rawEvent.coin_type.name) as string,
         amount: rawEvent.amount as bigint,
         timestamp: rawEvent.timestamp as bigint,
       };
-      console.log(rawEvent);
     };
     return this.handleEventReturns(resp, customMapping);
   }
@@ -366,7 +365,7 @@ export class AirdropClient {
     // @ts-ignore
     return this.suiClient.queryEvents({
       query: {
-        MoveEventType: `${PACKAGE_ID}::${MODULE_CLOB}::${eventName}`,
+        MoveEventType: `${this.packageId}::${MODULE_CLOB}::${eventName}`,
       },
       ...input,
     });

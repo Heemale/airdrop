@@ -11,7 +11,7 @@ export const formatClaim = (
     eventSeq: eventId.eventSeq,
     sender: sender.toLowerCase(),
     round: Number(round),
-    coinType: coinType.toLowerCase(),
+    coinType,
     amount: Number(amount),
     timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
   };

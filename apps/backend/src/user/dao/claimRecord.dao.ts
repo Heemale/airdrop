@@ -1,4 +1,5 @@
 import { prisma } from '@/config/prisma';
+import { Prisma } from '@prisma/client';
 
 export const findClaimRecords = async (
   sender: string,
@@ -36,33 +37,22 @@ export const findClaimRecords = async (
   };
 };
 
-// 用于更新空投记录
-export const updateClaimRecord = async (
-  address: string,
-  amount: bigint,
-  txDigest: string,
-  eventSeq: string,
-) => {
-  // 更新用户的空投领取记录
+export const upsert = async (data: Prisma.ClaimRecordCreateInput) => {
   return prisma.claimRecord.upsert({
     where: {
       txDigest_eventSeq: {
-        // 使用 txDigest 和 eventSeq 组合作为唯一标识
-        txDigest, // 事务的txDigest
-        eventSeq, // 事件序列号
+        txDigest: data.txDigest,
+        eventSeq: data.eventSeq,
       },
     },
     update: {
-      amount, // 更新金额
-      updateAt: Date.now(),
+      ...data,
+      updateAt: Math.floor(Date.now() / 1000),
     },
     create: {
-      sender: address, // 创建新的记录
-      amount,
-      txDigest,
-      eventSeq,
-      createAt: Date.now(),
-      updateAt: Date.now(),
+      ...data,
+      createAt: Math.floor(Date.now() / 1000),
+      updateAt: Math.floor(Date.now() / 1000),
     },
   });
 };

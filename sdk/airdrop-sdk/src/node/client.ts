@@ -6,16 +6,18 @@ import type {
 import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
-import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
-import { NodeInfo } from './types';
+import { NodeInfo, TransferSummary } from './types';
 import { bcs } from '@mysten/sui/bcs';
 import { Summary } from '../types';
 import { BuySummary } from './types';
 import { BuyV2Summary } from './types';
 
 export class NodeClient {
-  constructor(public suiClient: SuiClient) {}
+  constructor(
+    public suiClient: SuiClient,
+    public packageId: string,
+  ) {}
 
   async buy(
     T: string,
@@ -30,7 +32,7 @@ export class NodeClient {
     if (wallet) {
       tx.moveCall({
         typeArguments: [T],
-        target: `${PACKAGE_ID}::${MODULE_CLOB}::buy`,
+        target: `${this.packageId}::${MODULE_CLOB}::buy`,
         arguments: [
           tx.object(nodes),
           tx.object(invite),
@@ -43,7 +45,7 @@ export class NodeClient {
         const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(amount)]);
         tx.moveCall({
           typeArguments: [T],
-          target: `${PACKAGE_ID}::${MODULE_CLOB}::buy`,
+          target: `${this.packageId}::${MODULE_CLOB}::buy`,
           arguments: [
             tx.object(nodes),
             tx.object(invite),
@@ -67,7 +69,7 @@ export class NodeClient {
         const coin = tx.object(coins.data[0]['coinObjectId']); //合并后使用
         tx.moveCall({
           typeArguments: [T],
-          target: `${PACKAGE_ID}::${MODULE_CLOB}::buy`,
+          target: `${this.packageId}::${MODULE_CLOB}::buy`,
           arguments: [
             tx.object(nodes),
             tx.object(invite),
@@ -84,7 +86,7 @@ export class NodeClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::transfer`,
+      target: `${this.packageId}::${MODULE_CLOB}::transfer`,
       arguments: [tx.object(nodes), tx.pure.address(receiver)],
     });
     return tx;
@@ -94,7 +96,7 @@ export class NodeClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::node_list`,
+      target: `${this.packageId}::${MODULE_CLOB}::node_list`,
       arguments: [tx.object(nodes)],
     });
     // @ts-ignore
@@ -129,7 +131,7 @@ export class NodeClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::is_already_buy_node`,
+      target: `${this.packageId}::${MODULE_CLOB}::is_already_buy_node`,
       arguments: [tx.object(nodes), tx.pure.address(sender)],
     });
     // @ts-ignore
@@ -147,7 +149,7 @@ export class NodeClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::remaining_quantity_of_claim`,
+      target: `${this.packageId}::${MODULE_CLOB}::remaining_quantity_of_claim`,
       arguments: [
         tx.object(nodes),
         tx.pure.address(sender),
@@ -168,7 +170,7 @@ export class NodeClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::receiver`,
+      target: `${this.packageId}::${MODULE_CLOB}::receiver`,
       arguments: [tx.object(nodes)],
     });
     // @ts-ignore
@@ -210,6 +212,19 @@ export class NodeClient {
     return this.handleEventReturns(resp, customMapping);
   }
 
+  async getAllTransfer(
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ): Promise<Summary<TransferSummary>> {
+    const resp = await this.queryEvents('Transfer', input);
+    const customMapping = (rawEvent: any) => ({
+      sender: rawEvent.sender as string,
+      receiver: rawEvent.receiver as string,
+      rank: rawEvent.rank as bigint,
+      nodeNum: rawEvent.node_num as bigint,
+    });
+    return this.handleEventReturns(resp, customMapping);
+  }
+
   async queryEvents(
     eventName: string,
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
@@ -217,7 +232,7 @@ export class NodeClient {
     // @ts-ignore
     return this.suiClient.queryEvents({
       query: {
-        MoveEventType: `${PACKAGE_ID}::${MODULE_CLOB}::${eventName}`,
+        MoveEventType: `${this.packageId}::${MODULE_CLOB}::${eventName}`,
       },
       ...input,
     });

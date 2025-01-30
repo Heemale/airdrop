@@ -5,7 +5,7 @@ import AirdropItem from '@/components/Event/AirdropItem';
 import { useEffect, useState } from 'react';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
 import { getCurrentTimestampMs } from '@/utils/time';
-import { airdropClient, nodeClient } from '@/sdk';
+import { airdropClientV1, nodeClientV1 } from '@/sdk';
 import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
 import { message } from 'antd';
 import { useCurrentAccount } from '@mysten/dapp-kit';
@@ -46,7 +46,10 @@ const AirdropList = (props: Props) => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
+        const isAlreadyBuyNode = await nodeClientV1.isAlreadyBuyNode(
+          NODES,
+          user,
+        );
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
@@ -57,7 +60,7 @@ const AirdropList = (props: Props) => {
 
   const getAirdropList = async () => {
     try {
-      const airdropData = await airdropClient.airdrops(AIRDROPS);
+      const airdropData = await airdropClientV1.airdrops(AIRDROPS);
       setAirdropList(airdropData);
     } catch (e: any) {
       console.log(`getAirdropList error: ${e.messag}`);

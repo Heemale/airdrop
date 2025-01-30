@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { NodeInfo } from '@local/airdrop-sdk/node';
 import { Autocomplete, TextField } from '@mui/material';
-import { nodeClient } from '@/sdk';
+import { nodeClientV1 } from '@/sdk';
 import { NODES } from '@local/airdrop-sdk/utils';
 import { convertSmallToLarge } from '@/utils/math';
 import { PresaleContext } from '@/context/PresaleContext';
@@ -24,7 +24,7 @@ const NodeData = () => {
   };
 
   const getNodeList = async () => {
-    const nodes = await nodeClient.nodeList(NODES);
+    const nodes = await nodeClientV1.nodeList(NODES);
     setNodeList(nodes.filter((node) => node.isOpen));
   };
 

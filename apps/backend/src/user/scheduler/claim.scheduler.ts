@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
-import { airdropClient } from '@/sdk';
+import { airdropClientV1 } from '@/sdk';
 import { formatClaim } from '@/user/formatter/formatClaim';
 import { handleClaim } from '@/user/handler/handleClaim';
 import { sleep } from '@/utils/time';
@@ -18,17 +18,16 @@ export class ClaimScheduler {
   async subscribe() {
     while (true) {
       try {
-        const logs = await airdropClient.getAllClaim({
+        const logs = await airdropClientV1.getAllClaim({
           cursor: this.cursor,
           order: 'ascending',
         });
-        console.log(logs, '================');
         for (const log of logs.data) {
           await handleClaim(formatClaim(log));
         }
         if (logs.hasNextPage) this.cursor = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`BetBearScheduler getAllBetBearTask error => ${message}`);
+        console.error(`ClaimScheduler subscribe error => ${message}`);
       }
       await sleep(1);
     }

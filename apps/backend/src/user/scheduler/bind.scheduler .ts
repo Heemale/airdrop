@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
-import { inviteClient } from '@/sdk';
+import { inviteClientV1 } from '@/sdk';
 import { formatBind } from '@/user/formatter/formatBind';
 import { handleBind } from '@/user/handler/handleBind';
 import { sleep } from '@/utils/time';
@@ -18,7 +18,7 @@ export class BindScheduler {
   async subscribe() {
     while (true) {
       try {
-        const logs = await inviteClient.getAllBind({
+        const logs = await inviteClientV1.getAllBind({
           cursor: this.cursor,
           order: 'ascending',
         });

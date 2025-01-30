@@ -4,9 +4,9 @@ import Image from 'next/image';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import {
-  airdropClient,
+  airdropClientV1,
   getCoinMetaData,
-  nodeClient,
+  nodeClientV1,
   devTransaction,
 } from '@/sdk';
 import { AIRDROPS, NODES } from '@local/airdrop-sdk/utils';
@@ -68,7 +68,7 @@ const AirdropItem = (props: Props) => {
     if (!account) return;
     setLoading(true);
     try {
-      const tx = airdropClient.claim(
+      const tx = airdropClientV1.claim(
         data.coinType,
         AIRDROPS,
         NODES,
@@ -111,7 +111,7 @@ const AirdropItem = (props: Props) => {
   const remainingQuantityOfClaim = async () => {
     if (!account) return;
     try {
-      const times = await nodeClient.remainingQuantityOfClaim(
+      const times = await nodeClientV1.remainingQuantityOfClaim(
         NODES,
         account.address,
         data.round,

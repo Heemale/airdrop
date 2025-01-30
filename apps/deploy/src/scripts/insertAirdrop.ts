@@ -1,5 +1,5 @@
 import { signAndExecuteTransaction } from '@/sdk/utils';
-import { adminKeypair, airdropClient } from '@/sdk';
+import { adminKeypair, airdropClientV1 } from '@/sdk';
 import { ADMIN_CAP, AIRDROPS } from '@local/airdrop-sdk/utils';
 
 const insertAirdrop = async () => {
@@ -27,7 +27,7 @@ const insertAirdrop = async () => {
   const imageUrl = ''; // 空投图片 URL
   const owner = adminKeypair.toSuiAddress(); // 使用管理员地址作为所有者
 
-  const tx = await airdropClient.insert(
+  const tx = await airdropClientV1.insert(
     T,
     ADMIN_CAP,
     AIRDROPS,

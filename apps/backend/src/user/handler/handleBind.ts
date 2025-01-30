@@ -18,10 +18,13 @@ export const handleBind = async (event: Prisma.UserCreateInput) => {
           update: {
             address: event.inviter,
             isBind: true,
+            updateAt: Math.floor(Date.now() / 1000),
           },
           create: {
             address: event.inviter,
             isBind: true,
+            createAt: Math.floor(Date.now() / 1000),
+            updateAt: Math.floor(Date.now() / 1000),
           },
         });
       }
@@ -34,10 +37,13 @@ export const handleBind = async (event: Prisma.UserCreateInput) => {
         update: {
           inviterId: inviter.id,
           ...event,
+          updateAt: Math.floor(Date.now() / 1000),
         },
         create: {
           inviterId: inviter.id,
           ...event,
+          createAt: Math.floor(Date.now() / 1000),
+          updateAt: Math.floor(Date.now() / 1000),
         },
       });
 
@@ -61,9 +67,12 @@ export const handleBind = async (event: Prisma.UserCreateInput) => {
         },
         update: {
           ...inviterNewData,
+          updateAt: Math.floor(Date.now() / 1000),
         },
         create: {
           ...inviterNewData,
+          createAt: Math.floor(Date.now() / 1000),
+          updateAt: Math.floor(Date.now() / 1000),
         },
       });
     });

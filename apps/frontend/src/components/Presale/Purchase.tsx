@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Button from '@/components/Button';
-import { inviteClient, nodeClient, devTransaction } from '@/sdk';
+import { inviteClientV1, nodeClientV1, devTransaction } from '@/sdk';
 import { NODES, INVITE, PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
 import {
   useCurrentAccount,
@@ -34,7 +34,7 @@ const Purchase = () => {
     try {
       if (node && account && account.address) {
         setLoading(true);
-        const tx = await nodeClient.buy(
+        const tx = await nodeClientV1.buy(
           PAY_COIN_TYPE,
           NODES,
           INVITE,
@@ -86,7 +86,10 @@ const Purchase = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
+        const isAlreadyBuyNode = await nodeClientV1.isAlreadyBuyNode(
+          NODES,
+          user,
+        );
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
@@ -99,7 +102,7 @@ const Purchase = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const inviter = await inviteClient.inviters(INVITE, user);
+        const inviter = await inviteClientV1.inviters(INVITE, user);
         setInviter(inviter);
       } catch (e: any) {
         console.log(`updateInvite: ${e.message}`);

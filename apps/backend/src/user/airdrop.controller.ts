@@ -1,12 +1,5 @@
-import {
-  Controller,
-  Get,
-  HttpException,
-  Query,
-} from '@nestjs/common';
-import {
-  findClaimRecords,
-} from '@/user/dao/claimRecord.dao';
+import { Controller, Get, HttpException, Query } from '@nestjs/common';
+import { findClaimRecords } from '@/user/dao/claimRecord.dao';
 import { GetClaimInfoDto } from '@/user/dto/getClaimInfo.dto';
 import { AirdropService } from './airdrop.service';
 

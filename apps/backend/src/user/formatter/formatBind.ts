@@ -12,6 +12,6 @@ export const formatBind = (
     address: sender.toLowerCase(),
     inviter: inviter.toLowerCase(),
     isBind: true,
-    createAt: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
+    joinAt: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
   };
 };

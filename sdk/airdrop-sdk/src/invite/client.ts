@@ -1,7 +1,6 @@
 import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
-import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
 import { bcs } from '@mysten/sui/bcs';
 
@@ -16,13 +15,16 @@ import { Summary } from '../types';
 import { BindSummary } from './types';
 
 export class InviteClient {
-  constructor(public suiClient: SuiClient) {}
+  constructor(
+    public suiClient: SuiClient,
+    public packageId: string,
+  ) {}
 
   bind(invite: string, inviter: string): Transaction {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::bind`,
+      target: `${this.packageId}::${MODULE_CLOB}::bind`,
       arguments: [tx.object(invite), tx.pure.address(inviter)],
     });
     return tx;
@@ -32,7 +34,7 @@ export class InviteClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::inviters`,
+      target: `${this.packageId}::${MODULE_CLOB}::inviters`,
       arguments: [tx.object(invite), tx.pure.address(user)],
     });
     // @ts-ignore
@@ -50,7 +52,7 @@ export class InviteClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::root`,
+      target: `${this.packageId}::${MODULE_CLOB}::root`,
       arguments: [tx.object(invite)],
     });
     // @ts-ignore
@@ -68,7 +70,7 @@ export class InviteClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::inviter_fee`,
+      target: `${this.packageId}::${MODULE_CLOB}::inviter_fee`,
       arguments: [tx.object(invite)],
     });
     // @ts-ignore
@@ -105,7 +107,7 @@ export class InviteClient {
     // @ts-ignore
     return this.suiClient.queryEvents({
       query: {
-        MoveEventType: `${PACKAGE_ID}::${MODULE_CLOB}::${eventName}`,
+        MoveEventType: `${this.packageId}::${MODULE_CLOB}::${eventName}`,
       },
       ...input,
     });

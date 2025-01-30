@@ -1,9 +1,9 @@
 import { signAndExecuteTransaction } from '@/sdk/utils';
 import { ADMIN_CAP } from '@local/airdrop-sdk/utils';
-import { adminKeypair, airdropClient } from '@/sdk';
+import { adminKeypair, airdropClientV1 } from '@/sdk';
 
 const newAirdrops = async () => {
-  const tx = airdropClient.new(ADMIN_CAP);
+  const tx = airdropClientV1.new(ADMIN_CAP);
   const res = await signAndExecuteTransaction(tx, adminKeypair);
   console.log({ res });
   console.log('newAirdrops success');
