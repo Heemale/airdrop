@@ -3,5 +3,7 @@ export class GetUserInfoDto {
 }
 
 export class GetSharesDto {
-  ids: string;
+  sender: string;
+  nextCursor?: number;
+  pageSize: number;
 }
