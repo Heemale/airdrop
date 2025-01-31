@@ -1,45 +1,38 @@
 import { Controller, Get, HttpException, Query } from '@nestjs/common';
 import { findClaimRecords } from '@/user/dao/claimRecord.dao';
-import { GetClaimInfoDto } from '@/user/dto/getClaimInfo.dto';
-import { AirdropService } from './airdrop.service';
+import { GetClaimRecordsDto } from '@/user/dto/getClaimRecords.dto';
 
 @Controller()
-export class ClaimController {
-  constructor(private readonly claimService: AirdropService) {}
-
+export class AirdropController {
   @Get('claim-airdrop-record')
-  async getClaimRecords(@Query() params: GetClaimInfoDto) {
-    const { sender, page = 1, pageSize = 25, currentCursor } = params;
+  async getClaimRecords(@Query() params: GetClaimRecordsDto) {
+    const { sender, pageSize = 25, nextCursor } = params;
 
     if (!sender) {
-      throw new HttpException('Invalid parameters: address is required', 400);
+      throw new HttpException('Invalid parameters: sender is required.', 400);
     }
-    if (isNaN(Number(page)) || Number(page) <= 0) {
-      throw new HttpException('Invalid page number', 400);
+
+    if (nextCursor && isNaN(Number(nextCursor))) {
+      throw new HttpException('Invalid nextCursor.', 400);
     }
+
     if (
       isNaN(Number(pageSize)) ||
       Number(pageSize) <= 0 ||
       Number(pageSize) > 200
     ) {
-      throw new HttpException('Page size must be between 1 and 200', 400);
+      throw new HttpException('Page size must be between 1 and 200.', 400);
     }
 
     try {
-      const result = await findClaimRecords(
+      return await findClaimRecords(
         sender.toLowerCase(),
-        currentCursor,
+        nextCursor && Number(nextCursor),
         Number(pageSize),
       );
-
-      return {
-        address: sender,
-        nextCursor: result.nextCursor,
-        data: result.data,
-      };
     } catch ({ message }) {
-      console.log({ message: message });
-      throw new HttpException('Error retrieving claim information', 500);
+      console.log(`FindClaimRecords error: ${message}`);
+      throw new HttpException('Error retrieving claim records.', 500);
     }
   }
 }

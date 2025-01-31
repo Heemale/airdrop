@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 export const findClaimRecords = async (
   sender: string,
-  cursor: number | null, // 游标，null 表示第一页
+  cursor: number | null | undefined,
   pageSize: number,
 ) => {
   const records = await prisma.claimRecord.findMany({
@@ -17,23 +17,21 @@ export const findClaimRecords = async (
       amount: true,
       timestamp: true,
     },
-    take: pageSize, // 每页的记录数
-    skip: cursor ? 1 : 0, // 跳过游标对应的记录
-    cursor: cursor && { id: Number(cursor) }, // 使用游标
+    take: pageSize,
+    skip: cursor ? 1 : 0,
+    cursor: cursor && { id: Number(cursor) },
     orderBy: {
-      createAt: 'desc', // 根据创建时间排序
+      timestamp: 'desc',
     },
   });
 
-  // 获取下一页游标
-  // 如果记录达到分页大小，返回最后一条记录的 id
-  // 否则返回 null，表示没有更多数据
-  const nextCursor =
-    records.length === pageSize ? records[records.length - 1].id : null;
+  const hasNextPage = records.length === pageSize;
+  const nextCursor = records.length > 0 ? records[records.length - 1].id : null;
 
   return {
     data: records,
     nextCursor,
+    hasNextPage,
   };
 };
 

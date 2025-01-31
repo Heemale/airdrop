@@ -6,7 +6,6 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { UserService } from './user.service';
 import {
   directSubordinates,
   findUserByAddress,
@@ -16,7 +15,6 @@ import { GetSharesDto, GetUserInfoDto } from '@/user/dto/getUserInfo.dto';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
   @Get()
   async getUserInfo(@Query() params: GetUserInfoDto) {
     if (!params.address) {
