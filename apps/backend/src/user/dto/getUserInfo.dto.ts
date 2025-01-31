@@ -1,9 +1,9 @@
 export class GetUserInfoDto {
-  address: string;
+  sender: string;
 }
 
 export class GetSharesDto {
   sender: string;
   nextCursor?: number;
-  pageSize: number;
+  pageSize?: number;
 }
