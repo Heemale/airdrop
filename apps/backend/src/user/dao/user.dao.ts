@@ -1,21 +1,55 @@
 import { prisma } from '@/config/prisma';
+import { Prisma } from '@prisma/client';
+import {
+  DynamicClientExtensionThis,
+  Record,
+  TypeMapCbDef,
+  TypeMapDef,
+} from '@prisma/client/runtime/library';
 
-export const upsertUser = async (data: any) => {
-  return prisma.user.upsert({
+export const upsertUser = async <
+  TypeMap extends TypeMapDef,
+  TypeMapCb extends TypeMapCbDef,
+  ExtArgs extends Record<string, any>,
+  ClientOptions,
+>(
+  data: Prisma.UserCreateInput,
+  tx?: Omit<
+    DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs, ClientOptions>,
+    '$extends' | '$transaction' | '$disconnect' | '$connect' | '$on' | '$use'
+  >,
+) => {
+  const db = tx ?? prisma;
+  return db.user.upsert({
     where: {
       address: data.address,
     },
     update: {
       ...data,
+      updateAt: Math.floor(Date.now() / 1000),
     },
     create: {
       ...data,
+      createAt: Math.floor(Date.now() / 1000),
+      updateAt: Math.floor(Date.now() / 1000),
     },
   });
 };
 
-export const findUserByAddress = async (address: string) => {
-  return prisma.user.findUnique({
+export const findUserByAddress = async <
+  TypeMap extends TypeMapDef,
+  TypeMapCb extends TypeMapCbDef,
+  ExtArgs extends Record<string, any>,
+  ClientOptions,
+>(
+  address: string,
+  tx?: Omit<
+    DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs, ClientOptions>,
+    '$extends' | '$transaction' | '$disconnect' | '$connect' | '$on' | '$use'
+  >,
+) => {
+  const db = tx ?? prisma;
+  return db.user.findUnique({
     where: {
       address,
     },

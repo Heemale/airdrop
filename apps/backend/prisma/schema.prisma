@@ -32,19 +32,19 @@ model Copywriting {
 /// 用户表
 model User {
   id                      Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
-  inviterId               Int?     @map("inviter_id") @db.UnsignedInt /// 邀请人Id
   txDigest                String?  @map("tx_digest") @db.VarChar(255) /// txDigest
   eventSeq                String?  @map("event_seq") @db.VarChar(255) /// eventSeq
+  joinAt                  BigInt?  @map("join_at") /// 加入时间
   address                 String?  @unique @db.VarChar(72) /// 用户地址
   inviter                 String?  @db.VarChar(72) /// 邀请人地址
-  isBind                  Boolean? @default(false) @map("is_bind") /// 是否绑定
+  inviterId               Int?     @map("inviter_id") @db.UnsignedInt /// 邀请人Id
   sharerIds               String?  @map("sharer_ids") @db.Text /// 分享人id列表
-  isRoot                  Boolean? @default(false) @map("is_root") /// 是否为根用户
-  joinAt                  BigInt?  @map("join_at") /// 加入时间
   totalInvestment         BigInt?  @map("total_investment") /// 总投资金额
   totalInvestmentUpdateAt BigInt?  @map("total_investment_update_at") /// 总投资金额更新时间
   totalGains              BigInt?  @map("total_gains") /// 总收益金额
   totalGainsUpdateAt      BigInt?  @map("total_gains_update_at") /// 总收益金额更新时间
+  isBind                  Boolean? @default(false) @map("is_bind") /// 是否绑定
+  isRoot                  Boolean? @default(false) @map("is_root") /// 是否为根用户
   createAt                BigInt?  @map("create_at") /// 创建时间
   updateAt                BigInt?  @map("update_at") /// 更新时间
 
@@ -103,13 +103,13 @@ model BuyRecord {
   id                Int     @id @default(autoincrement()) @db.UnsignedInt /// ID
   txDigest          String? @map("tx_digest") @db.VarChar(255) /// txDigest
   eventSeq          String? @map("event_seq") @db.VarChar(255) /// eventSeq
+  timestamp         BigInt? /// 时间戳
   sender            String? @db.VarChar(72) /// 用户
   rank              BigInt? /// 节点等级
   nodeNum           BigInt? @map("node_num") /// 节点序号
   paymentAmount     BigInt? @map("payment_amount") /// 支付金额
   inviterGains      BigInt? @map("inviter_gains") /// 邀请人返利金额
   nodeReceiverGains BigInt? @map("node_receiver_gains") /// 平台返利金额
-  timestamp         BigInt? @map("timestamp") /// 时间戳
   createAt          BigInt? @map("create_at") /// 创建时间
   updateAt          BigInt? @map("update_at") /// 更新时间
 
@@ -122,6 +122,7 @@ model TransferRecord {
   id                Int     @id @default(autoincrement()) @db.UnsignedInt /// ID
   txDigest          String? @map("tx_digest") @db.VarChar(255) /// txDigest
   eventSeq          String? @map("event_seq") @db.VarChar(255) /// eventSeq
+  timestamp         BigInt? /// 时间戳
   sender            String? @db.VarChar(72) /// 用户
   receiver          String? @db.VarChar(72) /// 接收人
   rank              BigInt? /// 节点等级
@@ -129,7 +130,6 @@ model TransferRecord {
   paymentAmount     BigInt? @map("payment_amount") /// 支付金额
   inviterGains      BigInt? @map("inviter_gains") /// 邀请人返利金额
   nodeReceiverGains BigInt? @map("node_receiver_gains") /// 平台返利金额
-  timestamp         BigInt? @map("timestamp") /// 时间戳
   createAt          BigInt? @map("create_at") /// 创建时间
   updateAt          BigInt? @map("update_at") /// 更新时间
 
@@ -142,14 +142,48 @@ model ClaimRecord {
   id        Int     @id @default(autoincrement()) @db.UnsignedInt /// ID
   txDigest  String? @map("tx_digest") @db.VarChar(255) /// txDigest
   eventSeq  String? @map("event_seq") @db.VarChar(255) /// eventSeq
+  timestamp BigInt? /// 时间戳
   sender    String? @db.VarChar(72) /// 用户
   round     BigInt? /// 回合
   coinType  String? @map("coin_type") @db.VarChar(255) /// 币种
-  amount    BigInt? @map("amount") /// 数量
-  timestamp BigInt? @map("timestamp") /// 时间戳
+  amount    BigInt? /// 数量
   createAt  BigInt? @map("create_at") /// 创建时间
   updateAt  BigInt? @map("update_at") /// 更新时间
 
   @@unique([txDigest, eventSeq])
   @@map("swld_claim_record")
+}
+
+/// 投资金额变动记录表
+model InvestChangeRecord {
+  id          Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
+  txDigest    String?  @map("tx_digest") @db.VarChar(255) /// txDigest
+  eventSeq    String?  @map("event_seq") @db.VarChar(255) /// eventSeq
+  timestamp   BigInt? /// 时间戳
+  address     String?  @db.VarChar(72) /// 用户
+  amount      BigInt? /// 数量
+  isIncrease  Boolean? @map("is_incresae") /// 是否增加
+  totalInvest BigInt?  @map("total_invest") /// 总投资金额
+  createAt    BigInt?  @map("create_at") /// 创建时间
+  updateAt    BigInt?  @map("update_at") /// 更新时间
+
+  @@unique([txDigest, eventSeq])
+  @@map("swld_invest_change_record")
+}
+
+/// 收益金额变动记录表
+model GainsChangeRecord {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
+  txDigest   String?  @map("tx_digest") @db.VarChar(255) /// txDigest
+  eventSeq   String?  @map("event_seq") @db.VarChar(255) /// eventSeq
+  timestamp  BigInt? /// 时间戳
+  address    String?  @db.VarChar(72) /// 用户
+  amount     BigInt? /// 数量
+  isIncrease Boolean? @map("is_increase") /// 是否增加
+  totalGains BigInt?  @map("total_gains") /// 总收益金额
+  createAt   BigInt?  @map("create_at") /// 创建时间
+  updateAt   BigInt?  @map("update_at") /// 更新时间
+
+  @@unique([txDigest, eventSeq, address])
+  @@map("swld_gains_change_record")
 }
