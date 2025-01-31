@@ -1,6 +1,8 @@
 import { Controller, Get, HttpException, Query } from '@nestjs/common';
 import { findUserByAddress, getAllSubordinates } from '@/user/dao/user.dao';
 import { GetSharesDto, GetUserInfoDto } from '@/user/dto/getUserInfo.dto';
+import { convertSmallToLarge } from '@/utils/math';
+import { TOKEN_DECIMAL } from '@/config';
 
 @Controller('user')
 export class UserController {
@@ -21,9 +23,15 @@ export class UserController {
     return {
       address: user.address,
       inviter: user.inviter,
-      totalInvestment: user.totalInvestment,
-      totalGains: user.totalGains,
-      teamTotalInvestment: Number(data.totalInvestmentSum),
+      totalInvestment: user.totalInvestment
+        ? convertSmallToLarge(user.totalInvestment.toString(), TOKEN_DECIMAL)
+        : null,
+      totalGains: user.totalGains
+        ? convertSmallToLarge(user.totalGains.toString(), TOKEN_DECIMAL)
+        : null,
+      teamTotalInvestment: data.totalInvestmentSum
+        ? convertSmallToLarge(data.totalInvestmentSum.toString(), TOKEN_DECIMAL)
+        : null,
       shares: data.directSubordinates.length,
       teams: data.allSubordinates.length,
     };
@@ -70,7 +78,12 @@ export class UserController {
         return {
           id: data.id,
           address: data.address,
-          teamTotalInvestment: Number(data.totalInvestmentSum),
+          teamTotalInvestment: data.totalInvestmentSum
+            ? convertSmallToLarge(
+                data.totalInvestmentSum.toString(),
+                TOKEN_DECIMAL,
+              )
+            : null,
           shares: data.directSubordinates.length,
           teams: data.allSubordinates.length,
         };
