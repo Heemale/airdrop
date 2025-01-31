@@ -1,9 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/config/prisma';
 
-export const handleBuyV2 = async (
-  event: Prisma.BuyRecordUncheckedCreateInput,
-) => {
+export const handleBuy = async (event: Prisma.BuyRecordCreateInput) => {
   try {
     await prisma.$transaction(async (tx) => {
       // 1. 将购买事件数据保存到购买记录表 (BuyRecord)
@@ -12,9 +10,7 @@ export const handleBuyV2 = async (
           sender: event.sender,
           rank: event.rank,
           nodeNum: event.nodeNum,
-          paymentAmount: event.paymentAmount,
-          inviterGains: event.inviterGains,
-          nodeReceiverGains: event.nodeReceiverGains,
+          timestamp: event.timestamp,
         },
       });
 

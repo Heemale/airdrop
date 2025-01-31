@@ -10,8 +10,9 @@ export const formatBuy = (
     txDigest: eventId.txDigest,
     eventSeq: eventId.eventSeq,
     sender: sender.toLowerCase(),
-    rank: Number(rank),
-    nodeNum: Number(nodeNum),
+    rank: Number(rank), // 确保 rank 是数字
+    nodeNum: Number(nodeNum), // 确保 nodeNum 是数字
+
     timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
   };
 };

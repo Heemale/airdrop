@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
 import { nodeClientV1 } from '@/sdk';
-import { formatBuy } from '@/user/formatter/formatBuy';
-import { handleBuy } from '@/user/handler/handleBuy';
+import { formatBuy } from '@/buy/formatter/formatBuy';
+import { handleBuy } from '@/buy/handler/handleBuy';
 import { sleep } from '@/utils/time';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class BuyScheduler {
         }
         if (logs.hasNextPage) this.cursor = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`BuyScheduler subscribe error => ${message}`);
+        console.error(`BetBearScheduler getAllBetBearTask error => ${message}`);
       }
       await sleep(1);
     }

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
 import { nodeClientV1 } from '@/sdk';
-import { formatBuyV2 } from '@/user/formatter/formatBuyV2';
-import { handleBuyV2 } from '@/user/handler/handleBuyV2';
+import { formatBuyV2 } from '@/buy/formatter/formatBuyV2';
+import { handleBuyV2 } from '@/buy/handler/handleBuyV2';
 import { sleep } from '@/utils/time';
 
 @Injectable()

@@ -5,25 +5,16 @@ import { convertSmallToLarge, toFixed } from '@/utils/math';
 export const formatBuyV2 = (
   eventObject: BuyV2Summary,
 ): Prisma.BuyRecordUncheckedCreateInput => {
-  const {
-    sender,
-    rank,
-    eventId,
-    nodeNum,
-    timestampMs,
-    paymentAmount,
-    inviterGains,
-    nodeReceiverGains,
-  } = eventObject;
+  const { sender, rank, eventId, nodeNum, timestampMs, paymentAmount } =
+    eventObject;
   return {
     txDigest: eventId.txDigest,
     eventSeq: eventId.eventSeq,
     sender: sender.toLowerCase(),
     rank: Number(rank), // 确保 rank 是数字
-    nodeNum: Number(nodeNum), // 确保 nodeNum 是数字
+    nodeNum: Number(nodeNum), // 确保 nodeNum 是数
     paymentAmount: Number(paymentAmount),
-    inviterGains: Number(inviterGains),
-    nodeReceiverGains: Number(nodeReceiverGains),
-    createAt: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
+    
+    timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
   };
 };
