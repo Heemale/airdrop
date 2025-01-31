@@ -14,7 +14,7 @@ export const formatBuyV2 = (
     rank: Number(rank), // 确保 rank 是数字
     nodeNum: Number(nodeNum), // 确保 nodeNum 是数
     paymentAmount: Number(paymentAmount),
-    
+
     timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
   };
 };

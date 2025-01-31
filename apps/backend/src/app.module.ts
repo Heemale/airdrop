@@ -6,7 +6,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { BuyModule } from './buy/buyV2.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), UserModule,BuyModule],
+  imports: [ScheduleModule.forRoot(), UserModule, BuyModule],
   controllers: [AppController],
   providers: [AppService],
 })

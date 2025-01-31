@@ -13,18 +13,19 @@ export const upsert = async <
   ExtArgs extends Record<string, any>,
   ClientOptions,
 >(
-  data: Prisma.BuyRecordCreateInput,
+  data: Prisma.GainsChangeRecordCreateInput,
   tx?: Omit<
     DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs, ClientOptions>,
     '$extends' | '$transaction' | '$disconnect' | '$connect' | '$on' | '$use'
   >,
 ) => {
   const db = tx ?? prisma;
-  return db.buyRecord.upsert({
+  return db.gainsChangeRecord.upsert({
     where: {
-      txDigest_eventSeq: {
+      txDigest_eventSeq_address: {
         txDigest: data.txDigest,
         eventSeq: data.eventSeq,
+        address: data.address,
       },
     },
     update: {

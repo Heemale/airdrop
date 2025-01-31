@@ -34,4 +34,3 @@ export const findBuyRecordsBySender = async (
     hasNextPage,
   };
 };
-

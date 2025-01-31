@@ -23,7 +23,7 @@ export class BuyScheduler {
           order: 'ascending',
         });
         for (const log of logs.data) {
-          await handleBuy(formatBuy(log));
+          await handleBuy(await formatBuy(log));
         }
         if (logs.hasNextPage) this.cursor = logs.nextCursor;
       } catch ({ message }) {

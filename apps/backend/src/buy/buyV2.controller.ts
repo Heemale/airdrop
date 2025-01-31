@@ -7,10 +7,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { BuyService } from './buyV2.service';
-import {
-  findBuyRecordsBySender,
- 
-} from '@/buy/dao/buyV2.dao';
+import { findBuyRecordsBySender } from '@/buy/dao/buyV2.dao';
 import { GetBuyInfoDto } from '@/buy/dto/buyV2.dto';
 
 @Controller('buy-node-record')
@@ -19,7 +16,7 @@ export class BuyV2RecordController {
 
   @Get()
   async getBuyRecords(@Query() params: GetBuyInfoDto) {
-    const { sender, pageSize = 25 ,nextCursor} = params;
+    const { sender, pageSize = 25, nextCursor } = params;
 
     // 参数校验
     if (!sender) {
@@ -38,7 +35,7 @@ export class BuyV2RecordController {
 
     try {
       // 查询购买记录
-      return await  findBuyRecordsBySender(
+      return await findBuyRecordsBySender(
         sender,
         nextCursor && Number(nextCursor),
         Number(pageSize),

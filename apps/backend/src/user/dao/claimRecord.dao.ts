@@ -6,7 +6,7 @@ export const findClaimRecords = async (
   cursor: number | null | undefined,
   pageSize: number,
 ) => {
-  const records = await prisma.claimRecord.findMany({
+  const data = await prisma.claimRecord.findMany({
     where: {
       sender: sender,
     },
@@ -25,11 +25,11 @@ export const findClaimRecords = async (
     },
   });
 
-  const hasNextPage = records.length === pageSize;
-  const nextCursor = records.length > 0 ? records[records.length - 1].id : null;
+  const hasNextPage = data.length === pageSize;
+  const nextCursor = hasNextPage ? data[data.length - 1].id : null;
 
   return {
-    data: records,
+    data,
     nextCursor,
     hasNextPage,
   };

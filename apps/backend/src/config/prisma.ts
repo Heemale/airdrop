@@ -16,7 +16,7 @@ export const prisma = new PrismaClient().$extends({
         compute: (record) => record.timestamp?.toString(),
       },
     },
-    buyRecord:{
+    buyRecord: {
       rank: {
         needs: { rank: true },
         compute: (record) => record.rank?.toString(),
@@ -33,8 +33,6 @@ export const prisma = new PrismaClient().$extends({
         needs: { paymentAmount: true },
         compute: (record) => record.paymentAmount?.toString(),
       },
-    }
-
+    },
   },
-
 });
