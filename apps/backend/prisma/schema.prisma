@@ -173,17 +173,19 @@ model InvestChangeRecord {
 
 /// 收益金额变动记录表
 model GainsChangeRecord {
-  id         Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
-  txDigest   String?  @map("tx_digest") @db.VarChar(255) /// txDigest
-  eventSeq   String?  @map("event_seq") @db.VarChar(255) /// eventSeq
-  timestamp  BigInt? /// 时间戳
-  address    String?  @db.VarChar(72) /// 用户
-  amount     BigInt? /// 数量
-  isIncrease Boolean? @map("is_increase") /// 是否增加
-  totalGains BigInt?  @map("total_gains") /// 总收益金额
-  createAt   BigInt?  @map("create_at") /// 创建时间
-  updateAt   BigInt?  @map("update_at") /// 更新时间
+  id                  Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
+  txDigest            String?  @map("tx_digest") @db.VarChar(255) /// txDigest
+  eventSeq            String?  @map("event_seq") @db.VarChar(255) /// eventSeq
+  timestamp           BigInt? /// 时间戳
+  address             String?  @db.VarChar(72) /// 用户
+  amount              BigInt? /// 数量
+  isIncrease          Boolean? @map("is_increase") /// 是否增加
+  totalGains          BigInt?  @map("total_gains") /// 总收益金额
+  nodeReceiverAddress String?  @map("node_receiver_address") @db.VarChar(72) /// 平台地址
+  nodeReceiverGains   BigInt?  @map("node_receiver_gains") /// 平台收益金额
+  createAt            BigInt?  @map("create_at") /// 创建时间
+  updateAt            BigInt?  @map("update_at") /// 更新时间
 
-  @@unique([txDigest, eventSeq, address])
+  @@unique([txDigest, eventSeq])
   @@map("swld_gains_change_record")
 }

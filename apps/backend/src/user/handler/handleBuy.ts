@@ -24,6 +24,7 @@ export const handleBuy = async (
         nodeReceiverAddress,
         nodeReceiverGains,
       } = event;
+      // 更新购买记录
       await upsertBuyRecord(
         {
           txDigest,
@@ -48,32 +49,19 @@ export const handleBuy = async (
         tx,
       );
       // 更新收益变动表
-      if (inviterAddress) {
-        await upsertGainsChangeRecord(
-          {
-            txDigest,
-            eventSeq,
-            timestamp,
-            address: inviterAddress,
-            amount: inviterGains,
-            isIncrease: true,
-          },
-          tx,
-        );
-      }
-      if (nodeReceiverAddress) {
-        await upsertGainsChangeRecord(
-          {
-            txDigest,
-            eventSeq,
-            timestamp,
-            address: nodeReceiverAddress,
-            amount: nodeReceiverGains,
-            isIncrease: true,
-          },
-          tx,
-        );
-      }
+      await upsertGainsChangeRecord(
+        {
+          txDigest,
+          eventSeq,
+          timestamp,
+          address: inviterAddress,
+          amount: inviterGains,
+          isIncrease: true,
+          nodeReceiverAddress,
+          nodeReceiverGains,
+        },
+        tx,
+      );
     });
   } catch (error) {
     console.error('Error in handleBuy:', error.message);

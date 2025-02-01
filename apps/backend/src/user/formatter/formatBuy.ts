@@ -25,17 +25,10 @@ export const formatBuy = async (
       showBalanceChanges: true,
     },
   });
-  const {
-    storageCost,
-    computationCost,
-    nonRefundableStorageFee,
-    storageRebate,
-  } = response.effects.gasUsed;
-  const gasAmount = subtract(
-    add(add(storageCost, computationCost), nonRefundableStorageFee),
-    storageRebate,
-  );
-  // console.log({ gasAmount });
+  const { storageCost, computationCost, storageRebate } =
+    response.effects.gasUsed;
+  const gasAmount = subtract(add(storageCost, computationCost), storageRebate);
+
   const parsedChanges = response.balanceChanges
     .filter((item) => item.coinType === '0x2::sui::SUI')
     .map((item) => {
@@ -48,15 +41,15 @@ export const formatBuy = async (
         amount: BigInt(item.amount),
       };
     });
-  // console.log({ parsedChanges });
+
   if (parsedChanges.length !== 3) {
     console.log('FormatBind balanceChanges 数组长度必须为 3');
     return {
       txDigest: eventId.txDigest,
       eventSeq: eventId.eventSeq,
       sender: sender.toLowerCase(),
-      rank: Number(rank),
-      nodeNum: Number(nodeNum),
+      rank,
+      nodeNum,
       timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
       paymentAddress: null,
       paymentAmount: null,
@@ -76,16 +69,16 @@ export const formatBuy = async (
       txDigest: eventId.txDigest,
       eventSeq: eventId.eventSeq,
       sender: sender.toLowerCase(),
-      rank: Number(rank),
-      nodeNum: Number(nodeNum),
+      rank,
+      nodeNum,
       timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
-      paymentAddress: senderChange.owner.AddressOwner,
+      paymentAddress: senderChange.owner.AddressOwner.toLowerCase(),
       paymentAmount: BigInt(
         subtract((-senderChange.amount).toString(), gasAmount),
       ),
       inviterAddress: null,
       inviterGains: null,
-      nodeReceiverAddress: platformChange.owner.AddressOwner,
+      nodeReceiverAddress: platformChange.owner.AddressOwner.toLowerCase(),
       nodeReceiverGains: BigInt(platformChange.amount),
     };
   }
@@ -96,8 +89,8 @@ export const formatBuy = async (
       txDigest: eventId.txDigest,
       eventSeq: eventId.eventSeq,
       sender: sender.toLowerCase(),
-      rank: Number(rank),
-      nodeNum: Number(nodeNum),
+      rank,
+      nodeNum,
       timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
       paymentAddress: null,
       paymentAmount: null,
@@ -115,16 +108,16 @@ export const formatBuy = async (
     txDigest: eventId.txDigest,
     eventSeq: eventId.eventSeq,
     sender: sender.toLowerCase(),
-    rank: Number(rank),
-    nodeNum: Number(nodeNum),
+    rank,
+    nodeNum,
     timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
-    paymentAddress: senderChange.owner.AddressOwner,
+    paymentAddress: senderChange.owner.AddressOwner.toLowerCase(),
     paymentAmount: BigInt(
       subtract((-senderChange.amount).toString(), gasAmount),
     ),
-    inviterAddress: inviterChange.owner.AddressOwner,
+    inviterAddress: inviterChange.owner.AddressOwner.toLowerCase(),
     inviterGains: BigInt(inviterChange.amount),
-    nodeReceiverAddress: platformChange.owner.AddressOwner,
+    nodeReceiverAddress: platformChange.owner.AddressOwner.toLowerCase(),
     nodeReceiverGains: BigInt(platformChange.amount),
   };
 };
