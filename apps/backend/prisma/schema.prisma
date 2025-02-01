@@ -39,10 +39,10 @@ model User {
   inviter                 String?  @db.VarChar(72) /// 邀请人地址
   inviterId               Int?     @map("inviter_id") @db.UnsignedInt /// 邀请人Id
   sharerIds               String?  @map("sharer_ids") @db.Text /// 分享人id列表
-  totalInvestment         BigInt?  @map("total_investment") /// 总投资金额
-  totalInvestmentUpdateAt BigInt?  @map("total_investment_update_at") /// 总投资金额更新时间
-  totalGains              BigInt?  @map("total_gains") /// 总收益金额
-  totalGainsUpdateAt      BigInt?  @map("total_gains_update_at") /// 总收益金额更新时间
+  totalInvestment         BigInt?  @default(0) @map("total_investment") /// 总投资金额
+  totalInvestmentUpdateAt BigInt?  @default(0) @map("total_investment_update_at") /// 总投资金额更新时间
+  totalGains              BigInt?  @default(0) @map("total_gains") /// 总收益金额
+  totalGainsUpdateAt      BigInt?  @default(0) @map("total_gains_update_at") /// 总收益金额更新时间
   isBind                  Boolean? @default(false) @map("is_bind") /// 是否绑定
   isRoot                  Boolean? @default(false) @map("is_root") /// 是否为根用户
   createAt                BigInt?  @map("create_at") /// 创建时间

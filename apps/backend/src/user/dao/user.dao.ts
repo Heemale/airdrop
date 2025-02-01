@@ -36,6 +36,58 @@ export const upsertUser = async <
   });
 };
 
+export const increaseTotalInvestment = async <
+  TypeMap extends TypeMapDef,
+  TypeMapCb extends TypeMapCbDef,
+  ExtArgs extends Record<string, any>,
+  ClientOptions,
+>(
+  userId: number,
+  amount: bigint,
+  timestamp: bigint | number,
+  tx?: Omit<
+    DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs, ClientOptions>,
+    '$extends' | '$transaction' | '$disconnect' | '$connect' | '$on' | '$use'
+  >,
+) => {
+  const db = tx ?? prisma;
+  return db.user.update({
+    where: { id: userId },
+    data: {
+      totalInvestment: {
+        increment: amount,
+      },
+      totalInvestmentUpdateAt: timestamp,
+    },
+  });
+};
+
+export const increaseTotalGains = async <
+  TypeMap extends TypeMapDef,
+  TypeMapCb extends TypeMapCbDef,
+  ExtArgs extends Record<string, any>,
+  ClientOptions,
+>(
+  userId: number,
+  amount: bigint,
+  timestamp: bigint | number,
+  tx?: Omit<
+    DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs, ClientOptions>,
+    '$extends' | '$transaction' | '$disconnect' | '$connect' | '$on' | '$use'
+  >,
+) => {
+  const db = tx ?? prisma;
+  return db.user.update({
+    where: { id: userId },
+    data: {
+      totalGains: {
+        increment: amount,
+      },
+      totalGainsUpdateAt: timestamp,
+    },
+  });
+};
+
 export const findUserByAddress = async <
   TypeMap extends TypeMapDef,
   TypeMapCb extends TypeMapCbDef,
