@@ -5,77 +5,52 @@ import { useClientTranslation } from '@/hook';
 import { formatAddress } from '@mysten/sui/utils';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { message } from 'antd';
-import { getUserInfo } from '@/api';
-
+import { getUserShares } from '@/api';
+import { useCurrentAccount } from '@mysten/dapp-kit';
 interface BindSummary {
-  id: string;
+  id: number;
   address: string;
-  sharers: bigint;
-  teams: bigint;
-  teamTotalInvest: bigint;
+  sharers: number;
+  teams: number;
+  teamTotalInvest: number;
 }
 
 const BindAddressList = () => {
+    const account = useCurrentAccount();
+
   const { t } = useClientTranslation();
   const [binds, setBinds] = useState<BindSummary[]>([]);
-  const [totalCount, setTotalCount] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const [cursor, setCursor] = useState<string | null>(null); // 分页游标
+  const [cursor, setCursor] = useState<number | null>(null); // 分页游标
 
-  // 模拟的数据
-  const simulatedData: BindSummary[] = [
-    {
-      id: '1',
-      address: '0x1234567890abcdef',
-      sharers: BigInt(100),
-      teams: BigInt(10),
-      teamTotalInvest: BigInt(5000),
-    },
-    {
-      id: '2',
-      address: '0xabcdef1234567890',
-      sharers: BigInt(200),
-      teams: BigInt(20),
-      teamTotalInvest: BigInt(10000),
-    },
-    {
-      id: '3',
-      address: '0xabcdefabcdef1234',
-      sharers: BigInt(150),
-      teams: BigInt(15),
-      teamTotalInvest: BigInt(7500),
-    },
-    {
-      id: '4',
-      address: '0xabcdefabcdef1234',
-      sharers: BigInt(150),
-      teams: BigInt(15),
-      teamTotalInvest: BigInt(7500),
-    },
-    {
-      id: '5',
-      address: '0xabcdefabcdef1234',
-      sharers: BigInt(150),
-      teams: BigInt(15),
-      teamTotalInvest: BigInt(7500),
-    },
-    // 可以继续添加更多的模拟数据
-  ];
+
 
   // 模拟获取绑定数据
-  const fetchBinds = async (cursor: string | null = null) => {
+  const fetchBinds = async (cursor: number | null = null) => {
     setLoading(true);
     try {
+      const response = await getUserShares({sender: account?.address!,nextCursor: cursor!})
+      console.log(1111111, response.data);
+      const { data } = response; // 后端返回的数据和下一个游标
+      const formattedData: BindSummary[] = data.map((item: any) => ({
+        id: item.id && !isNaN(Number(item.id)) ? Number(item.id) : 0,
+        address: item.address || '',  // 默认值为空字符串
+        sharers: item.sharers && !isNaN(Number(item.sharers)) ? Number(item.sharers) : 0,
+        teams: item.teams && !isNaN(Number(item.teams)) ? Number(item.teams) : 0,
+        teamTotalInvest: item.teamTotalInvest && !isNaN(Number(item.teamTotalInvest)) ? Number(item.teamTotalInvest) : 0,
+      }));
+      
       // 模拟延迟加载数据
       setTimeout(() => {
-        setBinds((prevBinds) => [...prevBinds, ...simulatedData]); // 拼接新数据
-        setTotalCount(50); // 模拟总数
-        setCursor('nextCursor'); // 模拟下一个分页游标
+        setBinds((prevBinds) => [...prevBinds, ...formattedData]); // 拼接新数据
+        setCursor(data.nextCursor); // 保存新的游标，便于下次请求
       }, 1000);
     } catch (e: any) {
       console.log(`Failed to load binding address: ${e.message}`);
       messageApi.error(`${t(handleTxError(e.message))}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -96,7 +71,7 @@ const BindAddressList = () => {
 
   return (
     <div className="p-4">
-      {/* 大标题 */}
+      {/* 标题部分 */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <img src="/personal04.png" alt="" className="w-6 h-6" />
@@ -114,14 +89,12 @@ const BindAddressList = () => {
         </div>
       </div>
 
-      {/* 表格容器 */}
       <div
         className="bg-[rgba(13,24,41,0.8)] rounded-lg p-4 max-h-[400px] overflow-y-auto"
         onScroll={handleScroll}
       >
         {/* 加载中状态 */}
         {loading && <div className="text-white">{t('loading...')}</div>}
-
         {!loading && binds && (
           <div className="space-y-4">
             {binds.map((bind) => (
@@ -129,13 +102,12 @@ const BindAddressList = () => {
                 key={bind.id}
                 className="bg-[rgba(13,24,41,0.7)] p-4 rounded-lg"
               >
-                <div className="grid grid-cols-4 gap-4">
-                  <div className="text-white text-sm truncate">
+                <div className="grid  grid-cols-4 gap-4">
+                  <div className="text-white text-l truncate">
                     {formatAddress(bind.address)}
                   </div>
-                  <div className="text-white text-sm truncate justify-self-end align-self-start col-span-4">
-                    {bind.sharers.toString()} / {bind.teams.toString()} /{' '}
-                    {bind.teamTotalInvest.toString()}
+                  <div className="text-white text-l truncate justify-self-end align-self-start col-span-4 mt-[-40px]">
+                    {bind.sharers.toString()} / {bind.teams.toString()} / {bind.teamTotalInvest.toString()}
                   </div>
                 </div>
               </div>

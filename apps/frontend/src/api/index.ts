@@ -1,14 +1,38 @@
 import request from '@/utils/request';
+import { AxiosResponse } from 'axios';
 
-export const getUserInfo = () => request.get('user/info');
+export interface UserInfoResponse {
+  address: string;
+  /** 分享人数 */
+  shares: number;
+  /** 团队人数 */
+  teams: number;
+  /** 团队总投资金额 */
+  teamTotalInvestment: string | null;
+  /** 总收益金额 */
+  totalGains: string | null;
+  /** 总投资金额 */
+  totalInvestment: string | null;
+}
 
-export const getUserShares = () => request.get('user/shares');
+export const getUserInfo = (sender: string): Promise<AxiosResponse<UserInfoResponse>> =>
+  request.get('/user/info', {
+    params: { sender }, // 传递 sender 参数
+  });
 
-export const getBuyNodeRecord = (params: { sender: string }) =>
-  request.get('buy-node-record', { params });
+export const getUserShares = (params: {
+  sender: string;
+  nextCursor?: number;
+}) => 
+  request.get('/user/shares', { params });
+
+export const getBuyNodeRecord = (params: {
+  sender: string;
+  nextCursor?: number;
+}) => request.get('/buy-node-record', { params });
 
 export const getClaimAirdropRecord = (params: {
   sender: string;
   nextCursor?: number;
   pageSize?: number;
-}) => request.get('claim-airdrop-record', { params });
+}) => request.get('/claim-airdrop-record', { params });

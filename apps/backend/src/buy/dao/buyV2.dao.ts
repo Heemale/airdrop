@@ -28,6 +28,7 @@ export const findBuyRecordsBySender = async (
   });
   const hasNextPage = records.length === pageSize;
   const nextCursor = records.length > 0 ? records[records.length - 1].id : null;
+  console.log(2312322,records)
   return {
     data: records,
     nextCursor,

@@ -11,21 +11,13 @@ import { getUserInfo } from '@/api';
 import { useClientTranslation } from '@/hook';
 import { message } from 'antd';
 import { handleTxError } from '@/sdk/error';
+import type { UserInfoResponse } from '@/api'; // 假设我们导出了这个类型
 
-
-interface UserInfo {
-  shares: bigint;
-  teams: bigint;
-  teamTotalInvestment: string | null;//团队总投资
-  totalGains: string | null;//个人总收益
-  totalInvestment: string | null;//个人总投资
-}
-
-const Home =  () => {
+const Home = () => {
   const account = useCurrentAccount();
   const { t } = useClientTranslation();
 
-  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfoResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -35,17 +27,19 @@ const Home =  () => {
       if (account?.address) {
         try {
           setLoading(true);
-          const response = await getUserInfo(account?.address); // 调用API获取用户信息
-          if (response && response.data) {
-          setUserInfo(response.data);}
-          else {
+          const data  = await getUserInfo(account.address);
+          console.log(123123,data)
+          if (data) {
+            setUserInfo({...data}); // data 已经是 UserInfoResponse 类型
+          } else {
             message.error(t('无法获取用户信息'));
           }
-        } catch (e:any) {
-             console.log(`Failed to fetch UserInfo: ${e.message}`);
-   
-      messageApi.error(`${t(handleTxError(e.message))}`);
-        } 
+        } catch (e: any) {
+          console.log(`Failed to fetch UserInfo: ${e.message}`);
+          messageApi.error(`${t(handleTxError(e.message))}`);
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
@@ -88,7 +82,7 @@ const Home =  () => {
               <div className="flex flex-col items-center">
                 <div className="flex items-baseline">
                   <div className="text-4xl font-bold">
-                    {userInfo?.totalInvestment ||0}
+                    {userInfo?.totalInvestment || 0}
                   </div>
                   <div className="text-2xl font-bold text-gray-300 ml-2">
                     sui
@@ -104,7 +98,9 @@ const Home =  () => {
         <div className="flex justify-between gap-4">
           <div className="flex-1 bg-[url('/personal02.png')] bg-cover bg-center h-40 rounded-lg flex flex-col justify-center items-center text-white">
             <div className="flex items-baseline">
-              <div className="text-4xl font-bold">{userInfo?.totalGains ||0}</div>
+              <div className="text-4xl font-bold">
+                {userInfo?.totalGains || 0}
+              </div>
               <div className="text-2xl font-bold text-gray-300 ml-2">sui</div>
             </div>
             <br />
@@ -112,7 +108,9 @@ const Home =  () => {
           </div>
           <div className="flex-1 bg-[url('/personal03.png')] bg-cover bg-center h-40 rounded-lg flex flex-col justify-center items-center text-white">
             <div className="flex items-baseline">
-              <div className="text-4xl font-bold">{userInfo?.teamTotalInvestment||0}</div>
+              <div className="text-4xl font-bold">
+                {userInfo?.teamTotalInvestment || 0}
+              </div>
               <div className="text-2xl font-bold text-gray-300 ml-2">sui</div>
             </div>
             <br />
