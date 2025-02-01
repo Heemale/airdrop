@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
-import { nodeClientV1 } from '@/sdk';
+import { nodeClientV2 } from '@/sdk';
 import { formatBuyV2 } from '@/buy/formatter/formatBuyV2';
 import { handleBuyV2 } from '@/buy/handler/handleBuyV2';
 import { sleep } from '@/utils/time';
@@ -18,7 +18,7 @@ export class BuyV2Scheduler {
   async subscribe() {
     while (true) {
       try {
-        const logs = await nodeClientV1.getV2AllBuy({
+        const logs = await nodeClientV2.getV2AllBuy({
           cursor: this.cursor,
           order: 'ascending',
         });
@@ -27,7 +27,7 @@ export class BuyV2Scheduler {
         }
         if (logs.hasNextPage) this.cursor = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`BetBearScheduler getAllBetBearTask error => ${message}`);
+        console.error(`BuyV2Scheduler subscribe error => ${message}`);
       }
       await sleep(1);
     }

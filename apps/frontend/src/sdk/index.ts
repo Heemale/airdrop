@@ -14,21 +14,21 @@ export const airdropClientV1 = new AirdropClient(
   // @ts-ignore
   getConfig(SUI_NETWORK).package.outdated.find(
     (item) => item.version === 1,
-  ).packageId,
+  )?.packageId,
 );
 export const inviteClientV1 = new InviteClient(
   suiClient,
   // @ts-ignore
   getConfig(SUI_NETWORK).package.outdated.find(
     (item) => item.version === 1,
-  ).packageId,
+  )?.packageId,
 );
 export const nodeClientV1 = new NodeClient(
   suiClient,
   // @ts-ignore
   getConfig(SUI_NETWORK).package.outdated.find(
     (item) => item.version === 1,
-  ).packageId,
+  )?.packageId,
 );
 
 export const getCoinMetaData = async (
