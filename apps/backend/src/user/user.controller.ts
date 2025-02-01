@@ -16,7 +16,15 @@ export class UserController {
 
     const user = await findUserByAddress(sender);
     if (!user) {
-      throw new HttpException('User not Found.', 400);
+      return {
+        address: sender,
+        inviter: null,
+        totalInvestment: null,
+        totalGains: null,
+        teamTotalInvestment: null,
+        shares: 0,
+        teams: 0,
+      }
     }
 
     const data = await getAllSubordinates(user.id);

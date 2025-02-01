@@ -16,7 +16,7 @@ interface BindSummary {
 }
 
 const BindAddressList = () => {
-    const account = useCurrentAccount();
+  const account = useCurrentAccount();
 
   const { t } = useClientTranslation();
   const [binds, setBinds] = useState<BindSummary[]>([]);
@@ -24,23 +24,31 @@ const BindAddressList = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [cursor, setCursor] = useState<number | null>(null); // 分页游标
 
-
-
   // 模拟获取绑定数据
   const fetchBinds = async (cursor: number | null = null) => {
     setLoading(true);
     try {
-      const response = await getUserShares({sender: account?.address!,nextCursor: cursor!})
+      const response = await getUserShares({
+        sender: account?.address!,
+        nextCursor: cursor!,
+      });
       console.log(1111111, response.data);
       const { data } = response; // 后端返回的数据和下一个游标
       const formattedData: BindSummary[] = data.map((item: any) => ({
         id: item.id && !isNaN(Number(item.id)) ? Number(item.id) : 0,
-        address: item.address || '',  // 默认值为空字符串
-        sharers: item.sharers && !isNaN(Number(item.sharers)) ? Number(item.sharers) : 0,
-        teams: item.teams && !isNaN(Number(item.teams)) ? Number(item.teams) : 0,
-        teamTotalInvest: item.teamTotalInvest && !isNaN(Number(item.teamTotalInvest)) ? Number(item.teamTotalInvest) : 0,
+        address: item.address || '', // 默认值为空字符串
+        sharers:
+          item.sharers && !isNaN(Number(item.sharers))
+            ? Number(item.sharers)
+            : 0,
+        teams:
+          item.teams && !isNaN(Number(item.teams)) ? Number(item.teams) : 0,
+        teamTotalInvest:
+          item.teamTotalInvest && !isNaN(Number(item.teamTotalInvest))
+            ? Number(item.teamTotalInvest)
+            : 0,
       }));
-      
+
       // 模拟延迟加载数据
       setTimeout(() => {
         setBinds((prevBinds) => [...prevBinds, ...formattedData]); // 拼接新数据
@@ -107,7 +115,8 @@ const BindAddressList = () => {
                     {formatAddress(bind.address)}
                   </div>
                   <div className="text-white text-l truncate justify-self-end align-self-start col-span-4 mt-[-40px]">
-                    {bind.sharers.toString()} / {bind.teams.toString()} / {bind.teamTotalInvest.toString()}
+                    {bind.sharers.toString()} / {bind.teams.toString()} /{' '}
+                    {bind.teamTotalInvest.toString()}
                   </div>
                 </div>
               </div>

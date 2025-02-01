@@ -15,16 +15,14 @@ export interface UserInfoResponse {
   totalInvestment: string | null;
 }
 
-export const getUserInfo = (sender: string): Promise<AxiosResponse<UserInfoResponse>> =>
-  request.get('/user/info', {
-    params: { sender }, // 传递 sender 参数
-  });
+export const getUserInfo = (params: {
+  sender: string;
+}): Promise<UserInfoResponse> => request.get('/user/info', { params });
 
 export const getUserShares = (params: {
   sender: string;
   nextCursor?: number;
-}) => 
-  request.get('/user/shares', { params });
+}) => request.get('/user/shares', { params });
 
 export const getBuyNodeRecord = (params: {
   sender: string;

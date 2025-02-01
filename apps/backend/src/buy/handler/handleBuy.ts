@@ -3,7 +3,7 @@ import { prisma } from '@/config/prisma';
 import { upsert as upsertBuyRecord } from '@/buy/dao/buyRecord.dao';
 import { upsert as upsertInvestChangeRecord } from '@/user/dao/investChangeRecord.dao';
 import { upsert as upsertGainsChangeRecord } from '@/user/dao/gainsChangeRecord.dao';
-import { PaymentDetails } from '@/user/formatter/formatBuy';
+import { PaymentDetails } from '@/buy/formatter/formatBuy';
 import {
   findUserByAddress,
   increaseTotalGains,

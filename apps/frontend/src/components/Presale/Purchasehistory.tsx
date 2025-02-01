@@ -53,10 +53,9 @@ const Purchasehistory = () => {
             : BigInt(0),
       }));
       setTimeout(() => {
-      setPurchaseHistory((prev) => [...prev, ...formattedData]); // 拼接新数据
-      setCursor(data.nextCursor); // 保存新的游标，便于下次请求
-    }, 1000);
-
+        setPurchaseHistory((prev) => [...prev, ...formattedData]); // 拼接新数据
+        setCursor(data.nextCursor); // 保存新的游标，便于下次请求
+      }, 1000);
     } catch (e: any) {
       console.log(`Failed to fetch purchase history: ${e.message}`);
       messageApi.error(`${t(handleTxError(e.message))}`);

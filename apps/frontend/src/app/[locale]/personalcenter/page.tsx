@@ -27,10 +27,11 @@ const Home = () => {
       if (account?.address) {
         try {
           setLoading(true);
-          const data  = await getUserInfo(account.address);
-          console.log(123123,data)
+          const data = await getUserInfo({
+            sender: account.address,
+          });
           if (data) {
-            setUserInfo({...data}); // data 已经是 UserInfoResponse 类型
+            setUserInfo(data);
           } else {
             message.error(t('无法获取用户信息'));
           }

@@ -12,7 +12,7 @@ export const formatBuyV2 = (
     eventSeq: eventId.eventSeq,
     sender: sender.toLowerCase(),
     rank: BigInt(rank), // 确保 rank 是数字
-    nodeNum: BigInt(nodeNum), 
+    nodeNum: BigInt(nodeNum),
     paymentAmount: BigInt(paymentAmount),
 
     timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
