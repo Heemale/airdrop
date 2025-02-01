@@ -18,12 +18,12 @@ export const formatBuyV2 = (
   return {
     txDigest: eventId.txDigest,
     eventSeq: eventId.eventSeq,
+    timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
     sender: sender.toLowerCase(),
-    rank: Number(rank), // 确保 rank 是数字
-    nodeNum: Number(nodeNum), // 确保 nodeNum 是数字
-    paymentAmount: Number(paymentAmount),
-    inviterGains: Number(inviterGains),
-    nodeReceiverGains: Number(nodeReceiverGains),
-    createAt: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
+    rank: BigInt(rank),
+    nodeNum: BigInt(nodeNum),
+    paymentAmount: BigInt(paymentAmount),
+    inviterGains: BigInt(inviterGains),
+    nodeReceiverGains: BigInt(nodeReceiverGains),
   };
 };

@@ -10,17 +10,24 @@ export const airdropClientV1 = new AirdropClient(
   suiClient,
   getConfig(SUI_NETWORK).package.outdated.find(
     (item) => item.version === 1,
-  ).packageId,
+  )?.packageId,
 );
 export const inviteClientV1 = new InviteClient(
   suiClient,
   getConfig(SUI_NETWORK).package.outdated.find(
     (item) => item.version === 1,
-  ).packageId,
+  )?.packageId,
 );
 export const nodeClientV1 = new NodeClient(
   suiClient,
   getConfig(SUI_NETWORK).package.outdated.find(
     (item) => item.version === 1,
-  ).packageId,
+  )?.packageId,
+);
+
+export const nodeClientV2 = new NodeClient(
+  suiClient,
+  getConfig(SUI_NETWORK).package.outdated.find(
+    (item) => item.version === 2,
+  )?.packageId,
 );
