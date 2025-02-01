@@ -2,9 +2,9 @@ import { Controller, Get, HttpException, Query } from '@nestjs/common';
 import { findClaimRecords } from '@/user/dao/claimRecord.dao';
 import { GetClaimRecordsDto } from '@/user/dto/getClaimRecords.dto';
 
-@Controller()
+@Controller('claim-airdrop-record')
 export class AirdropController {
-  @Get('claim-airdrop-record')
+  @Get()
   async getClaimRecords(@Query() params: GetClaimRecordsDto) {
     const { sender, pageSize = 25, nextCursor } = params;
 

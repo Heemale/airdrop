@@ -204,6 +204,7 @@ export class NodeClient {
     const customMapping = (rawEvent: any) => ({
       sender: rawEvent.sender as string,
       rank: rawEvent.rank as bigint,
+      timestamp:rawEvent.timestamp as bigint,
       nodeNum: rawEvent.node_num as bigint,
       paymentAmount: rawEvent.payment_amount as bigint,
       inviterGains: rawEvent.inviter_gains as bigint,

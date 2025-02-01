@@ -1,4 +1,5 @@
 import { TransactionSummary } from '../../types';
+import { EventId } from '@mysten/sui/client';
 
 export interface NodeInfo {
   // 等级
@@ -36,9 +37,11 @@ export interface BuyV2Summary extends TransactionSummary {
   sender: string;
   rank: bigint;
   nodeNum: bigint;
+  timestamp:bigint;
   paymentAmount: bigint;
   inviterGains: bigint;
   nodeReceiverGains: bigint;
+  nextCursor?: EventId | null;
 }
 
 export * from './index';
