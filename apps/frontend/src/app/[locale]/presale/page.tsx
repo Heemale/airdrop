@@ -14,7 +14,7 @@ const Home = async (props: Props) => {
   return (
     <>
       <div className="bg-[url('/presale_bg.jpg')] bg-cover bg-right sm:bg-center bg-no-repeat sm:h-[1080px]">
-        <NavBarWrapper locale={locale} />
+        <NavBarWrapper  />
         <PreSale>
           <NodeInfo locale={locale} />
         </PreSale>

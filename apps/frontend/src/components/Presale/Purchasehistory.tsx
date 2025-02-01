@@ -1,58 +1,49 @@
-'use client';
-
+'use client'; 
 import React, { useEffect, useState } from 'react';
 import { useClientTranslation } from '@/hook';
 import { formatAddress } from '@mysten/sui/utils';
 import { message } from 'antd';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { formatTimestamp, sleep } from '@/utils/time';
+import { getBuyInfo } from '@/api';
+import { useCurrentAccount } from '@mysten/dapp-kit';
 
-interface History {
+export interface History {
   rank: bigint;
   nodeNum: bigint;
   amount: bigint;
   time: bigint;
 }
-const simulatedData: History[] = [
-  {
-    rank: BigInt(1),
-    nodeNum: BigInt(2),
-    amount: BigInt(100),
-    time: BigInt(5000),
-  },
-  {
-    rank: BigInt(1),
-    nodeNum: BigInt(2),
-    amount: BigInt(100),
-    time: BigInt(5000),
-  },
-  {
-    rank: BigInt(1),
-    nodeNum: BigInt(2),
-    amount: BigInt(100),
-    time: BigInt(5000),
-  },
-];
+
 
 const Purchasehistory = () => {
+    const account = useCurrentAccount();
+
   const { t } = useClientTranslation();
   const [purchaseHistory, setPurchaseHistory] = useState<History[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
 
   const fetchPurchaseHistory = async () => {
     try {
-      // 假设 getnode 方法是异步的，并返回一个包含购买记录的数组
-      // const data = await inviteClient.getnode();
-      setPurchaseHistory(simulatedData);
+      const response = await getBuyInfo(account?.address!);
+      // 假设 response.data 是一个数组，且结构与 History 接口一致
+      const formattedData: History[] = response.data.map((item: any) => ({
+        rank: BigInt(item.rank),
+        nodeNum: BigInt(item.nodeNum),
+        amount: BigInt(item.paymentAmount),
+        time: BigInt(item.timestamp),
+      }));
+      setPurchaseHistory(formattedData);
     } catch (e: any) {
       console.log(`Failed to fetch purchase history: ${e.message}`);
       messageApi.error(`${t(handleTxError(e.message))}`);
     }
   };
-
   useEffect(() => {
-    fetchPurchaseHistory();
-  }, []);
+    if (account?.address) {
+      fetchPurchaseHistory();
+    }
+  }, [account?.address]);
 
   return (
     <div className="p-4">
@@ -64,7 +55,6 @@ const Purchasehistory = () => {
           {t('Equity purchase record')}
         </span>
       </div>
-
       {/* 表格部分 */}
       <div className="overflow-x-auto">
         <div className="relative">

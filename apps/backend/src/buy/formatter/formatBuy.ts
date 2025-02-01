@@ -27,6 +27,7 @@ export const formatBuy = async (
   });
   const {
     storageCost,
+    
     computationCost,
     nonRefundableStorageFee,
     storageRebate,

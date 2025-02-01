@@ -13,7 +13,7 @@ const Banner = (props: Props) => {
   const { locale } = props;
   return (
     <div className="bg-[url('/home_banner_bg.jpg')] bg-contain bg-no-repeat sm:bg-cover bg-right flex flex-col gap-6 sm:gap-12 mb-48 sm:mb-0 sm:h-[900px]">
-      <NavBarWrapper locale={locale} />
+      <NavBarWrapper  />
       <div className="flex flex-col gap-6 sm:gap-12 mx-4 sm:mx-16">
         <BannerTitle />
         <BannerDescription locale={locale} />

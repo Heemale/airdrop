@@ -11,9 +11,9 @@ export const formatBuyV2 = (
     txDigest: eventId.txDigest,
     eventSeq: eventId.eventSeq,
     sender: sender.toLowerCase(),
-    rank: Number(rank), // 确保 rank 是数字
-    nodeNum: Number(nodeNum), // 确保 nodeNum 是数
-    paymentAmount: Number(paymentAmount),
+    rank: BigInt(rank), // 确保 rank 是数字
+    nodeNum: BigInt(nodeNum), 
+    paymentAmount: BigInt(paymentAmount),
 
     timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
   };
