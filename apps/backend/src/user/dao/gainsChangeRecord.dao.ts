@@ -22,10 +22,9 @@ export const upsert = async <
   const db = tx ?? prisma;
   return db.gainsChangeRecord.upsert({
     where: {
-      txDigest_eventSeq_address: {
+      txDigest_eventSeq: {
         txDigest: data.txDigest,
         eventSeq: data.eventSeq,
-        address: data.address,
       },
     },
     update: {

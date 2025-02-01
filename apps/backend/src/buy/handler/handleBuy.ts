@@ -3,7 +3,12 @@ import { prisma } from '@/config/prisma';
 import { upsert as upsertBuyRecord } from '@/buy/dao/buyRecord.dao';
 import { upsert as upsertInvestChangeRecord } from '@/user/dao/investChangeRecord.dao';
 import { upsert as upsertGainsChangeRecord } from '@/user/dao/gainsChangeRecord.dao';
-import { PaymentDetails } from '@/buy/formatter/formatBuy';
+import { PaymentDetails } from '@/user/formatter/formatBuy';
+import {
+  findUserByAddress,
+  increaseTotalGains,
+  increaseTotalInvestment,
+} from '@/user/dao/user.dao';
 
 export const handleBuy = async (
   event: Prisma.BuyRecordCreateInput & PaymentDetails,
@@ -24,6 +29,8 @@ export const handleBuy = async (
         nodeReceiverAddress,
         nodeReceiverGains,
       } = event;
+
+      // 更新购买记录
       await upsertBuyRecord(
         {
           txDigest,
@@ -32,9 +39,13 @@ export const handleBuy = async (
           sender,
           rank,
           nodeNum,
+          paymentAmount,
+          inviterGains,
+          nodeReceiverGains,
         },
         tx,
       );
+
       // 更新投资变动表
       await upsertInvestChangeRecord(
         {
@@ -47,32 +58,32 @@ export const handleBuy = async (
         },
         tx,
       );
+
       // 更新收益变动表
-      if (inviterAddress) {
-        await upsertGainsChangeRecord(
-          {
-            txDigest,
-            eventSeq,
-            timestamp,
-            address: inviterAddress,
-            amount: inviterGains,
-            isIncrease: true,
-          },
-          tx,
-        );
+      await upsertGainsChangeRecord(
+        {
+          txDigest,
+          eventSeq,
+          timestamp,
+          address: inviterAddress,
+          amount: inviterGains,
+          isIncrease: true,
+          nodeReceiverAddress,
+          nodeReceiverGains,
+        },
+        tx,
+      );
+
+      // 更新用户投资金额
+      const user = await findUserByAddress(sender, tx);
+      if (user.totalInvestmentUpdateAt < BigInt(timestamp)) {
+        await increaseTotalInvestment(user.id, paymentAmount, timestamp, tx);
       }
-      if (nodeReceiverAddress) {
-        await upsertGainsChangeRecord(
-          {
-            txDigest,
-            eventSeq,
-            timestamp,
-            address: nodeReceiverAddress,
-            amount: nodeReceiverGains,
-            isIncrease: true,
-          },
-          tx,
-        );
+
+      // 更新邀请人收益金额
+      const invite = await findUserByAddress(inviterAddress, tx);
+      if (invite.totalGainsUpdateAt < BigInt(timestamp)) {
+        await increaseTotalGains(invite.id, inviterGains, timestamp, tx);
       }
     });
   } catch (error) {
