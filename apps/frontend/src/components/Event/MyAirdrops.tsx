@@ -6,7 +6,7 @@ import { ClaimSummary } from '@local/airdrop-sdk/airdrop';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { getCoinMetaData } from '@/sdk';
 import { message } from 'antd';
-import { getClaimInfo } from '@/api';
+import { getClaimAirdropRecord } from '@/api';
 import { formatTimestamp } from '@/utils/time';
 import Image from 'next/image';
 import Backdrop from '@mui/material/Backdrop';
@@ -32,7 +32,10 @@ const MyAirdrops = () => {
   ) => {
     setLoading(true);
     try {
-      const response = await getClaimInfo(sender!, cursor!);
+      const response = await getClaimAirdropRecord({
+        sender: sender!,
+        nextCursor: cursor!,
+      });
       const newAirdrops = response.data.list || [];
       setAirdropList((prev) => [...prev, ...newAirdrops]);
       setCursor(response.data.nextCursor || null);

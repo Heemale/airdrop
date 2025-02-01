@@ -1,17 +1,14 @@
 import request from '@/utils/request';
 
-export const getUserInfo =  (sender: string) =>
-  request.get('/user/info', {
-    params: { sender }, // 传递 sender 参数
-  });
-export const getTeamInfo = () => request.get('/team');
+export const getUserInfo = () => request.get('user/info');
 
-export const getBuyInfo = (sender: string) =>
-  request.get('/buy-node-record', {
-    params: { sender }, // 传递 sender 参数
-  });
+export const getUserShares = () => request.get('user/shares');
 
-export const getClaimInfo = (address: string, currentCursor: number) =>
-  request.get('/claim-airdrop-record', {
-    params: { address, currentCursor },
-  });
+export const getBuyNodeRecord = (params: { sender: string }) =>
+  request.get('buy-node-record', { params });
+
+export const getClaimAirdropRecord = (params: {
+  sender: string;
+  nextCursor?: number;
+  pageSize?: number;
+}) => request.get('claim-airdrop-record', { params });
