@@ -9,7 +9,7 @@ interface Props {
 }
 
 const Home = async (props: Props) => {
-  const { params } = props;
+  const { params } = await props;
   const { locale } = await params;
   const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
 
