@@ -14,6 +14,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { getCoinTypeName, isHexString } from '@/utils';
 import { useClientTranslation } from '@/hook';
 import type { CoinMetadata } from '@mysten/sui/client';
+import { convertSmallToLarge } from '@/utils/math';
 
 const MyAirdrops = () => {
   const account = useCurrentAccount();
@@ -89,6 +90,14 @@ const MyAirdrops = () => {
     return '/favicon.ico';
   };
 
+  const formatAmount = (amount: string, coinType: string) => {
+    const metadata = coinMetaDataMap[coinType];
+    if (metadata?.decimals) {
+      return convertSmallToLarge(amount, metadata.decimals.toString());
+    }
+    return amount;
+  };
+
   useEffect(() => {
     if (account?.address) {
       myAirdrops(account.address, null); // 初始化请求
@@ -133,7 +142,12 @@ const MyAirdrops = () => {
                   </div>
                   <div className="mt-2">
                     <span>{t('Receive copies')}: </span>
-                    <span>{airdrop.amount || 0}</span>
+                    <span>
+                      {formatAmount(
+                        airdrop.amount?.toString() || '0',
+                        airdrop.coinType,
+                      )}
+                    </span>
                   </div>
                 </div>
               </div>
