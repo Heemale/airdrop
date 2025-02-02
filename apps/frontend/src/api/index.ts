@@ -13,6 +13,36 @@ export interface UserInfoResponse {
   totalGains: string | null;
   /** 总投资金额 */
   totalInvestment: string | null;
+  nextCursor: number;
+}
+
+export interface ShareInfoResponse {
+  /**
+   * 用户地址
+   */
+  address: string;
+  /**
+   * 用户id
+   */
+  id: number;
+  /**
+   * 分享人数
+   */
+  shares: number;
+  /**
+   * 团队人数
+   */
+  teams: number;
+  /**
+   * 团队总投资金额
+   */
+  teamTotalInvestment: null | string;
+}
+
+export interface SharesResponse {
+  data: ShareInfoResponse[];
+  nextCursor: number | null;
+  hasNextPage: boolean;
 }
 
 export const getUserInfo = (params: {
@@ -21,16 +51,16 @@ export const getUserInfo = (params: {
 
 export const getUserShares = (params: {
   sender: string;
-  nextCursor?: number;
-}) => request.get('/user/shares', { params });
+  nextCursor?: number | null;
+}): Promise<SharesResponse> => request.get('/user/shares', { params });
 
 export const getBuyNodeRecord = (params: {
   sender: string;
-  nextCursor?: number;
+  nextCursor?: number | null;
 }) => request.get('/buy-node-record', { params });
 
 export const getClaimAirdropRecord = (params: {
   sender: string;
-  nextCursor?: number;
+  nextCursor?: number | null;
   pageSize?: number;
 }) => request.get('/claim-airdrop-record', { params });
