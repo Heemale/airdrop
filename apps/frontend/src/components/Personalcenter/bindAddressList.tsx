@@ -51,7 +51,7 @@ const BindAddressList = () => {
   // 在组件加载时获取绑定数据
   useEffect(() => {
     fetchBinds();
-  }, []);
+  }, [account]);
 
   // 滚动加载更多
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -73,11 +73,11 @@ const BindAddressList = () => {
         </div>
       </div>
       <div className="p-4 rounded-lg mb-4 sticky top-0 z-10">
-        <div className="grid grid-cols-4 gap-4">
+        <div className="flex justify-between">
           <div className="text-white text-sm font-bold justify-self-start">
             {t('Address')}
           </div>
-          <div className="text-white text-sm font-bold justify-self-end col-span-3">
+          <div className="text-white text-sm font-bold justify-self-end">
             {t('Sharers / Teams / Team total investment')}
           </div>
         </div>
@@ -96,11 +96,11 @@ const BindAddressList = () => {
                 key={bind.id}
                 className="bg-[rgba(13,24,41,0.7)] p-4 rounded-lg"
               >
-                <div className="grid  grid-cols-4 gap-4">
+                <div className="flex justify-between">
                   <div className="text-white text-l truncate">
                     {formatAddress(bind.address)}
                   </div>
-                  <div className="text-white text-l truncate justify-self-end align-self-start col-span-4 mt-[-40px]">
+                  <div className="text-white text-l truncate justify-self-end align-self-start">
                     {bind.shares.toString()} / {bind.teams.toString()} /{' '}
                     {bind.teamTotalInvestment
                       ? bind.teamTotalInvestment.toString()

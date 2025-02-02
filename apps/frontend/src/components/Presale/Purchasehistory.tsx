@@ -70,7 +70,7 @@ const Purchasehistory = () => {
   };
   useEffect(() => {
     fetchPurchaseHistory();
-  }, []);
+  }, [account]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const bottom =
