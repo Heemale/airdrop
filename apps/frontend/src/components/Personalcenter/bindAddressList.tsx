@@ -7,58 +7,44 @@ import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { message } from 'antd';
 import { getUserShares } from '@/api';
 import { useCurrentAccount } from '@mysten/dapp-kit';
-interface BindSummary {
-  id: number;
-  address: string;
-  sharers: number;
-  teams: number;
-  teamTotalInvest: number;
-}
+import type { SharesResponse, ShareInfoResponse } from '@/api';
 
 const BindAddressList = () => {
   const account = useCurrentAccount();
 
   const { t } = useClientTranslation();
-  const [binds, setBinds] = useState<BindSummary[]>([]);
+  const [binds, setBinds] = useState<ShareInfoResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [cursor, setCursor] = useState<number | null>(null); // 分页游标
 
   // 模拟获取绑定数据
   const fetchBinds = async (cursor: number | null = null) => {
-    setLoading(true);
-    try {
-      const response = await getUserShares({
-        sender: account?.address!,
-        nextCursor: cursor!,
-      });
-      console.log(1111111, response.data);
-      const { data } = response; // 后端返回的数据和下一个游标
-      const formattedData: BindSummary[] = data.map((item: any) => ({
-        id: item.id && !isNaN(Number(item.id)) ? Number(item.id) : 0,
-        address: item.address || '', // 默认值为空字符串
-        sharers:
-          item.sharers && !isNaN(Number(item.sharers))
-            ? Number(item.sharers)
-            : 0,
-        teams:
-          item.teams && !isNaN(Number(item.teams)) ? Number(item.teams) : 0,
-        teamTotalInvest:
-          item.teamTotalInvest && !isNaN(Number(item.teamTotalInvest))
-            ? Number(item.teamTotalInvest)
-            : 0,
-      }));
+    if (account?.address) {
+      console.log(1111, account.address);
+      try {
+        setLoading(true);
 
-      // 模拟延迟加载数据
-      setTimeout(() => {
-        setBinds((prevBinds) => [...prevBinds, ...formattedData]); // 拼接新数据
-        setCursor(data.nextCursor); // 保存新的游标，便于下次请求
-      }, 1000);
-    } catch (e: any) {
-      console.log(`Failed to load binding address: ${e.message}`);
-      messageApi.error(`${t(handleTxError(e.message))}`);
-    } finally {
-      setLoading(false);
+        const response: SharesResponse = await getUserShares({
+          sender: account?.address!,
+          nextCursor: cursor!,
+        });
+        console.log(1111111, response, 12123, response.data);
+
+        if (response?.data) {
+          setTimeout(() => {
+            setBinds((prevBinds) => [...prevBinds, ...response.data]); // 拼接新数据
+            setCursor(response.nextCursor); // 保存新的游标
+          }, 1000);
+        } else {
+          message.error(t('无法获取用户信息'));
+        }
+      } catch (e: any) {
+        console.log(`Failed to load binding address: ${e.message}`);
+        messageApi.error(`${t(handleTxError(e.message))}`);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -115,8 +101,10 @@ const BindAddressList = () => {
                     {formatAddress(bind.address)}
                   </div>
                   <div className="text-white text-l truncate justify-self-end align-self-start col-span-4 mt-[-40px]">
-                    {bind.sharers.toString()} / {bind.teams.toString()} /{' '}
-                    {bind.teamTotalInvest.toString()}
+                    {bind.shares.toString()} / {bind.teams.toString()} /{' '}
+                    {bind.teamTotalInvestment
+                      ? bind.teamTotalInvestment.toString()
+                      : 0}
                   </div>
                 </div>
               </div>
