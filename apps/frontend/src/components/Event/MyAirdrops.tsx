@@ -26,6 +26,7 @@ const MyAirdrops = () => {
   >({});
   const [messageApi, contextHolder] = message.useMessage();
   const { t } = useClientTranslation();
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   // 获取 Coin 元数据
   const fetchCoinMetaData = async (coinType: string) => {
@@ -33,11 +34,9 @@ const MyAirdrops = () => {
       const formattedCoinType = isHexString(coinType)
         ? coinType
         : '0x' + coinType;
-      console.log(123123, formattedCoinType);
       const metadata = await getCoinMetaData({
         coinType: formattedCoinType,
       });
-      console.log(2234, metadata);
       if (metadata) {
         setCoinMetaDataMap((prev) => ({
           ...prev,
@@ -63,6 +62,7 @@ const MyAirdrops = () => {
       const newAirdrops = response.data || [];
       setAirdropList((prev) => [...prev, ...newAirdrops]);
       setCursor(response.data.nextCursor || null);
+      setHasMore(response.data.nextCursor !== null && newAirdrops.length > 0);
 
       // 为每个新的空投获取代币元数据
       newAirdrops.forEach((airdrop: ClaimSummary) => {
@@ -138,7 +138,7 @@ const MyAirdrops = () => {
                     {getCoinTypeName(airdrop.coinType)} - ROUND {airdrop.round}
                   </div>
                   <div className="text-gray-400">
-                    {formatTimestamp(Number(airdrop.timestamp))}
+                    {formatTimestamp(Number(airdrop.timestamp) * 1000)}
                   </div>
                   <div className="mt-2">
                     <span>{t('Receive copies')}: </span>
@@ -159,6 +159,11 @@ const MyAirdrops = () => {
           </div>
         )}
       </div>
+      {!loading && !hasMore && airdropList.length > 0 && (
+        <div className="text-center text-gray-400 py-2">
+          {t('No more data')}
+        </div>
+      )}
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}

@@ -33,7 +33,7 @@ const Home = () => {
           if (data) {
             setUserInfo(data);
           } else {
-            message.error(t('无法获取用户信息'));
+            message.error(t('Unable to obtain user information'));
           }
         } catch (e: any) {
           console.log(`Failed to fetch UserInfo: ${e.message}`);
@@ -62,11 +62,13 @@ const Home = () => {
                     {userInfo?.shares || 0}
                   </div>
                   <div className="text-2xl font-bold text-gray-300 ml-2">
-                    sui
+                    {t('indivual')}
                   </div>
                 </div>
                 <br />
-                <div className="text-xl text-gray-300">分享地址</div>
+                <div className="text-xl text-gray-300">
+                  {t('share address')}
+                </div>
               </div>
               <div className="flex flex-col items-center">
                 <div className="flex items-baseline">
@@ -74,11 +76,11 @@ const Home = () => {
                     {userInfo?.teams || 0}
                   </div>
                   <div className="text-2xl font-bold text-gray-300 ml-2">
-                    个
+                    {t('indivual')}
                   </div>
                 </div>
                 <br />
-                <div className="text-xl text-gray-300">团队地址</div>
+                <div className="text-xl text-gray-300">{t('team address')}</div>
               </div>
               <div className="flex flex-col items-center">
                 <div className="flex items-baseline">
@@ -90,7 +92,9 @@ const Home = () => {
                   </div>
                 </div>
                 <br />
-                <div className="text-xl text-gray-300">个人认购</div>
+                <div className="text-xl text-gray-300">
+                  {t('Personal subscription')}
+                </div>
               </div>
             </div>
           </div>
@@ -105,7 +109,7 @@ const Home = () => {
               <div className="text-2xl font-bold text-gray-300 ml-2">sui</div>
             </div>
             <br />
-            <div className="text-xl text-gray-300">已领取收益</div>
+            <div className="text-xl text-gray-300">{t('Earned')}</div>
           </div>
           <div className="flex-1 bg-[url('/personal03.png')] bg-cover bg-center h-40 rounded-lg flex flex-col justify-center items-center text-white">
             <div className="flex items-baseline">
@@ -115,7 +119,9 @@ const Home = () => {
               <div className="text-2xl font-bold text-gray-300 ml-2">sui</div>
             </div>
             <br />
-            <div className="text-xl text-gray-300">团队总认购</div>
+            <div className="text-xl text-gray-300">
+              {t('Total team subscription')}
+            </div>
           </div>
         </div>
       </div>

@@ -17,7 +17,7 @@
   "Equity Price": "权益价格",
   "Event Announcements :": "活动公告：",
   "Announcement on the launch of Mercury World Platform｜Intellectual wealth and freedom": "水星世界平台公告｜智启财富 自在随心",
-  "We are excited to announce that Mercury World, an innovative platform that integrates SUIs theme, i-Ching wisdom and blockchain technology, will be launched soon! Based on the traditional I Ching philosophy and water culture, it links the digital economy and traditional culture, and provides in-depth analysis and multi-dimensional application scenarios. The platform symbolizes the inclusiveness and power of water, and is committed to becoming a digital smart hub for global users, covering digital asset trading, smart contract applications, cross-border cooperation, etc.": "我们激动地宣布，融合SUI主旨、易经智慧与区块链技术的创新平台——水星世界即将上线！基于传统易经哲学与水文化，链接数字经济与传统文化，提供深度解析和多维应用场景。平台象征“水”的包容与力量，致力于成为全球用户的数字化智慧枢纽，涵盖数字资产交易、智能合约应用、跨境合作等。",
+  "We are excited to announce that Mercury World, an innovative platform that integrates SUIs theme, i-Ching wisdom and blockchain technology, will be launched soon! Based on the traditional I Ching philosophy and water culture, it links the digital economy and traditional culture, and provides in-depth analysis and multi-dimensional application scenarios. The platform symbolizes the inclusiveness and power of water, and is committed to becoming a digital smart hub for global users, covering digital asset trading, smart contract applications, cross-border cooperation, etc.": "我们激动地宣布，融合SUI主旨、易经智慧与区块链技术的创新平台——水星世界即将上线！基于传统易经哲学与水文化，链接数字经济与传统文化，提供深度解析和多维应用场景。平台象征‘水’的包容与力量，致力于成为全球用户的数字化智慧枢纽，涵盖数字资产交易、智能合约应用、跨境合作等。",
   "Online benefits": "上线福利",
   "During the start-up period, a number of benefits such as registration rewards, transaction incentives, and ecological contribution awards will be launched. Early bird users can also enjoy exclusive discounts such as platform token airdrops and priority cooperation qualifications.": "启动期推出注册奖励、交易激励、生态贡献奖等多项福利。早鸟用户更享平台代币空投、优先合作资格等专属优惠。",
   "Mercury World invites you to embark on a journey of digital discovery and share a better future. Please pay attention to the official website and community (WeChat, Telegram, Twitter) for the latest updates. Mercury World invites you to embark on a journey of digital discovery and share a better future. Please pay attention to the official website and community (WeChat, Telegram, Twitter) for the latest updates.": "水星世界诚邀您共同开启数字探索之旅，共享美好未来。请关注官网及社群（微信、Telegram、Twitter）获取最新动态。",
@@ -106,7 +106,7 @@
   "Personal center": "个人中心",
   "My share": "我的分享",
 "Address": "地址",
-"Sharers / Teams / Team total investment": "分享人数 ／ 团队人数 ／ 团队总收益",
+"Sharers / Teams / Team total investment": "分享人数 ／ 团队人数 ／ 团队总认购",
 "loading...": "加载中...",
 "Please enter your invitation code":"请输入您的邀请码",
 "You need to bind the inviter before you can purchase benefits.":"您需要先绑定邀请人才能购买权益。",
@@ -116,8 +116,13 @@
 "Amount":"金额",
 "Time":"时间",
 "No records available":"无可用记录",
-"Receive copies":"领取数量"
-
-
-
+"Receive copies":"领取数量",
+"No more data": "没有更多数据",
+"indivual":"个",
+"share address":"分享地址",
+"team address":"团队地址",
+"Personal subscription":"个人认购",
+"Earned":"已领取收益",
+"Total team subscription":"团队总认购",
+"Unable to obtain user information":"无法获取用户信息"
 }
