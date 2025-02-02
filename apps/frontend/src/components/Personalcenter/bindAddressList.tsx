@@ -17,6 +17,7 @@ const BindAddressList = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [cursor, setCursor] = useState<number | null>(null); // 分页游标
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   // 模拟获取绑定数据
   const fetchBinds = async (cursor: number | null = null) => {
@@ -29,12 +30,14 @@ const BindAddressList = () => {
           sender: account?.address!,
           nextCursor: cursor!,
         });
-        console.log(1111111, response, 12123, response.data);
 
         if (response?.data) {
           setTimeout(() => {
             setBinds((prevBinds) => [...prevBinds, ...response.data]); // 拼接新数据
             setCursor(response.nextCursor); // 保存新的游标
+            setHasMore(
+              response.nextCursor !== null && response.data.length > 0,
+            );
           }, 1000);
         } else {
           message.error(t('无法获取用户信息'));
@@ -101,7 +104,7 @@ const BindAddressList = () => {
                     {formatAddress(bind.address)}
                   </div>
                   <div className="text-white text-l truncate justify-self-end align-self-start">
-                    {bind.shares.toString()} / {bind.teams.toString()} /{' '}
+                    {bind.shares.toString()} / {bind.teams.toString()} /
                     {bind.teamTotalInvestment
                       ? bind.teamTotalInvestment.toString()
                       : 0}
@@ -109,6 +112,11 @@ const BindAddressList = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        {!loading && !hasMore && binds.length > 0 && (
+          <div className="text-center text-gray-400 py-2">
+            {t('No more data')}
           </div>
         )}
       </div>

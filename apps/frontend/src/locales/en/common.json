@@ -116,7 +116,14 @@
   "Amount":"Amount",
   "Time":"Time",
   "No records available":"No records available",
-  "Receive copies":"Receive copies"
+  "Receive copies":"Receive copies",
+  "indivual":"indivual",
+  "share address":"share address",
+  "team address":"team address",
+  "Personal subscription":"Personal subscription",
+  "Earned":"Earned",
+  "Total team subscription":"Total team subscription",
+  "Unable to obtain user information":"Unable to obtain user information"
 
 
 }

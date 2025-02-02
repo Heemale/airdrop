@@ -7,6 +7,7 @@ import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { formatTimestamp, sleep } from '@/utils/time';
 import { getBuyNodeRecord } from '@/api';
 import { useCurrentAccount } from '@mysten/dapp-kit';
+import { convertSmallToLarge, subtract, toFixed } from '@/utils/math';
 
 export interface History {
   rank: bigint;
@@ -15,7 +16,7 @@ export interface History {
   time: bigint;
 }
 
-const Purchasehistory = () => {
+const PurchaseHistory = () => {
   const account = useCurrentAccount();
 
   const { t } = useClientTranslation();
@@ -23,6 +24,7 @@ const Purchasehistory = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [cursor, setCursor] = useState<number | null>(null); // 分页游标
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
   const fetchPurchaseHistory = async (cursor: number | null = null) => {
     if (account?.address) {
@@ -32,7 +34,6 @@ const Purchasehistory = () => {
           sender: account?.address!,
           nextCursor: cursor!,
         });
-        console.log(1111111, response.data);
         const { data } = response; // 后端返回的数据和下一个游标
         if (data) {
           const formattedData: History[] = data.map((item: any) => ({
@@ -49,16 +50,17 @@ const Purchasehistory = () => {
                 ? BigInt(item.paymentAmount)
                 : BigInt(0),
             time:
-              item.time && !isNaN(Number(item.time))
-                ? BigInt(item.time)
+              item.timestamp && !isNaN(Number(item.timestamp))
+                ? BigInt(item.timestamp)
                 : BigInt(0),
           }));
           setTimeout(() => {
             setPurchaseHistory((prev) => [...prev, ...formattedData]); // 拼接新数据
             setCursor(data.nextCursor); // 保存新的游标，便于下次请求
+            setHasMore(data.nextCursor !== null && formattedData.length > 0);
           }, 1000);
         } else {
-          message.error(t('无法获取用户信息'));
+          message.error(t('Unable to obtain user information'));
         }
       } catch (e: any) {
         console.log(`Failed to fetch purchase history: ${e.message}`);
@@ -98,19 +100,26 @@ const Purchasehistory = () => {
       >
         <div className="relative">
           <table className="min-w-full table-auto bg-transparent">
-            <thead className="sticky text-white top-0 bg-[url('/personal01.png')] bg-cover bg-center ">
+            <thead className="sticky text-white top-0 bg-[url('/personal01.png')] bg-cover bg-center">
               <tr>
-                <th className="px-4 py-2 text-left">{t('Equity number')}</th>
-                <th className="px-4 py-2 text-left">{t('Equity level')}</th>
-
-                <th className="px-4 py-2 text-left">{t('Amount')}</th>
-                <th className="px-4 py-2 text-left">{t('Time')}</th>
+                <th className="px-4 py-2 text-left whitespace-nowrap">
+                  {t('Equity number')}
+                </th>
+                <th className="px-4 py-2 text-left whitespace-nowrap">
+                  {t('Equity level')}
+                </th>
+                <th className="px-4 py-2 text-left whitespace-nowrap">
+                  {t('Amount')}
+                </th>
+                <th className="px-4 py-2 text-left whitespace-nowrap">
+                  {t('Time')}
+                </th>
               </tr>
             </thead>
             <tbody className="bg-[rgba(13,24,41,0.7)] text-white">
               {loading && (
                 <tr>
-                  <td colSpan={4} className="text-center">
+                  <td colSpan={4} className="text-center whitespace-nowrap">
                     {t('loading...')}
                   </td>
                 </tr>
@@ -118,27 +127,41 @@ const Purchasehistory = () => {
               {purchaseHistory.length > 0 ? (
                 purchaseHistory.map((record, index) => (
                   <tr key={index}>
-                    <td className="px-4 py-2">{record.rank}</td>
-                    <td className="px-4 py-2">{record.nodeNum}</td>
-                    <td className="px-4 py-2">{record.amount}</td>
-                    <td className="px-4 py-2">
-                      {formatTimestamp(Number(record.time))}
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      {record.rank}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      {record.nodeNum}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      {convertSmallToLarge(Number(record.amount), 9)}
+                    </td>
+                    <td className="px-4 py-2 whitespace-nowrap">
+                      {formatTimestamp(Number(record.time) * 1000)}
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td className="px-4 py-2 text-center" colSpan={4}>
+                  <td
+                    className="px-4 py-2 text-center whitespace-nowrap"
+                    colSpan={4}
+                  >
                     {t('No records available')}
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
+          {!loading && !hasMore && purchaseHistory.length > 0 && (
+            <div className="text-center text-gray-400 py-2">
+              {t('No more data')}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default Purchasehistory;
+export default PurchaseHistory;

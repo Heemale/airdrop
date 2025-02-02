@@ -116,6 +116,13 @@
 "Amount":"Số lượng",
 "Time":"Thời gian",
 "No records available":"Không có hồ sơ nào",
-"Receive copies":"Nhận bản sao"
+"Receive copies":"Nhận bản sao",
+"indivual":"cá nhân",
+"share address":"địa chỉ chia sẻ",
+"team address":"địa chỉ nhóm",
+"Personal subscription":"Đăng ký cá nhân",
+"Earned":"Kiếm được",
+"Total team subscription":"Tổng số đăng ký nhóm",
+"Unable to obtain user information":"Không thể lấy thông tin người dùng"
 
   }
