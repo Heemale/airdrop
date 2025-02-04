@@ -4,9 +4,9 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import NavBarWrapper from '@/components/NavBarWrapper';
 import { useCurrentAccount } from '@mysten/dapp-kit';
-import Share from '@/components/Personalcenter/share';
-import Recommender from '@/components/Personalcenter/recommender';
-import BindAddressList from '@/components/Personalcenter/bindAddressList';
+import Share from '@/components/PersonalCenter/Share';
+import Recommender from '@/components/PersonalCenter/Recommender';
+import BindAddressList from '@/components/PersonalCenter/BindAddressList';
 import { getUserInfo } from '@/api';
 import { useClientTranslation } from '@/hook';
 import { message } from 'antd';
@@ -48,7 +48,7 @@ const Home = () => {
   }, [account]);
 
   return (
-    <div className="bg-[url('/personalcenter_bg.png')] bg-cover bg-right sm:bg-center bg-no-repeat sm:h-[1080px]">
+    <div className="bg-[url('/personal_center_bg.png')] bg-cover bg-right sm:bg-center bg-no-repeat sm:h-[1080px]">
       <NavBarWrapper />
       {/* 数据卡片容器 */}
       <div className="container mx-auto px-4 pt-8">

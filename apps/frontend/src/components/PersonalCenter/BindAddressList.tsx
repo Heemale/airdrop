@@ -22,7 +22,6 @@ const BindAddressList = () => {
   // 模拟获取绑定数据
   const fetchBinds = async (cursor: number | null = null) => {
     if (account?.address) {
-      console.log(1111, account.address);
       try {
         setLoading(true);
 
@@ -97,7 +96,7 @@ const BindAddressList = () => {
             {binds.map((bind) => (
               <div
                 key={bind.id}
-                className="bg-[rgba(13,24,41,0.7)] p-4 rounded-lg"
+                className="bg-[rgba(13,24,41,0.7)] py-2 sm:p-4 rounded-lg"
               >
                 <div className="flex justify-between">
                   <div className="text-white text-l truncate">

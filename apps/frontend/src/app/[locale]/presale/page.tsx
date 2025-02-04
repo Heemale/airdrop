@@ -2,7 +2,8 @@ import * as React from 'react';
 import NavBarWrapper from '@/components/NavBarWrapper';
 import PreSale from '@/components/Presale/PreSale';
 import NodeInfo from '@/components/Presale/NodeInfo';
-import PurchaseHistory from '@/components/Presale/Purchasehistory';
+import PurchaseHistory from '@/components/Presale/PurchaseHistory';
+
 interface Props {
   params: Promise<{ locale: string }>;
 }

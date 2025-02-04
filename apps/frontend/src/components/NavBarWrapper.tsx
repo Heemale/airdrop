@@ -29,7 +29,7 @@ const pages: Array<Page> = [
   {
     id: '3',
     name: 'Personal center',
-    link: '/personalcenter',
+    link: '/personal-center',
   },
 ];
 

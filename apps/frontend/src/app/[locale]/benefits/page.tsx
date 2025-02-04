@@ -4,12 +4,13 @@ import Link from 'next/link';
 import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
 import MyAirdrops from '@/components/Event/MyAirdrops';
+
 interface Props {
   params: Promise<{ locale: string }>;
 }
 
 const Home = async (props: Props) => {
-  const { params } = await props;
+  const { params } = props;
   const { locale } = await params;
   const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
 

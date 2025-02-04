@@ -52,11 +52,13 @@ export const getUserInfo = (params: {
 export const getUserShares = (params: {
   sender: string;
   nextCursor?: number | null;
+  pageSize?: number;
 }): Promise<SharesResponse> => request.get('/user/shares', { params });
 
 export const getBuyNodeRecord = (params: {
   sender: string;
   nextCursor?: number | null;
+  pageSize?: number;
 }) => request.get('/buy-node-record', { params });
 
 export const getClaimAirdropRecord = (params: {
