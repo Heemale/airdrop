@@ -6,7 +6,7 @@ import { GetClaimRecordsDto } from '@/user/dto/getClaimRecords.dto';
 export class AirdropController {
   @Get()
   async getClaimRecords(@Query() params: GetClaimRecordsDto) {
-    const { sender, pageSize = 25, nextCursor } = params;
+    const { sender, pageSize = 5, nextCursor } = params;
 
     if (!sender) {
       throw new HttpException('Invalid parameters: sender is required.', 400);

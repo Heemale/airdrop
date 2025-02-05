@@ -27,14 +27,16 @@ const PurchaseHistory = () => {
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const fetchPurchaseHistory = async (cursor: number | null = null) => {
+    if (!hasMore || loading) return; // 防止重复加载
+    
     if (account?.address) {
+      setLoading(true);
       try {
-        setLoading(true);
         const response = await getBuyNodeRecord({
           sender: account?.address!,
           nextCursor: cursor!,
         });
-        const { data } = response; // 后端返回的数据和下一个游标
+        const { data } = response;
         if (data) {
           const formattedData: History[] = data.map((item: any) => ({
             rank:
@@ -54,10 +56,23 @@ const PurchaseHistory = () => {
                 ? BigInt(item.timestamp)
                 : BigInt(0),
           }));
+
           setTimeout(() => {
-            setPurchaseHistory((prev) => [...prev, ...formattedData]); // 拼接新数据
-            setCursor(data.nextCursor); // 保存新的游标，便于下次请求
-            setHasMore(data.nextCursor !== null && formattedData.length > 0);
+            // 使用 Set 去重
+            const existingRanks = new Set(purchaseHistory.map(item => item.rank.toString()));
+            const uniqueNewData = formattedData.filter(item => !existingRanks.has(item.rank.toString()));
+            
+            setPurchaseHistory(prev => [...prev, ...uniqueNewData]);
+            // @ts-ignore
+            setCursor(response.nextCursor);
+            // @ts-ignore
+            setHasMore(response.nextCursor !== null && uniqueNewData.length > 0);
+            setLoading(false);
+            console.log(11111,cursor)
+            console.log(22222,hasMore)
+            console.log(33333,loading)
+
+
           }, 1000);
         } else {
           message.error(t('Unable to obtain user information'));
@@ -65,7 +80,6 @@ const PurchaseHistory = () => {
       } catch (e: any) {
         console.log(`Failed to fetch purchase history: ${e.message}`);
         messageApi.error(`${t(handleTxError(e.message))}`);
-      } finally {
         setLoading(false);
       }
     }
@@ -78,8 +92,8 @@ const PurchaseHistory = () => {
     const bottom =
       e.currentTarget.scrollHeight ===
       e.currentTarget.scrollTop + e.currentTarget.clientHeight;
-    if (bottom && !loading && cursor) {
-      fetchPurchaseHistory(cursor); // 滚动到底部时加载更多数据
+    if (bottom && !loading && cursor && hasMore) {
+      fetchPurchaseHistory(cursor);
     }
   };
 

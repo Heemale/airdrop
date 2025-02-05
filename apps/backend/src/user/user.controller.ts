@@ -49,7 +49,7 @@ export class UserController {
   async getShares(@Query() params: GetSharesDto) {
     const sender = params.sender && params.sender.toLowerCase();
     const nextCursor = params.nextCursor && Number(params.nextCursor);
-    const pageSize = params.pageSize ? Number(params.pageSize) : 25;
+    const pageSize = params.pageSize ? Number(params.pageSize) : 5;
 
     if (!sender) {
       throw new HttpException('Invalid sender.', 400);
