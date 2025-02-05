@@ -27,7 +27,7 @@ export class BuyScheduler {
         }
         if (logs.hasNextPage) this.cursor = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`BetBearScheduler getAllBetBearTask error => ${message}`);
+        console.error(`BuyScheduler subscribe error => ${message}`);
       }
       await sleep(1);
     }
