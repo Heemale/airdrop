@@ -53,16 +53,37 @@ const MyAirdrops = () => {
     sender: string | null = null,
     cursor: number | null = null,
   ) => {
-    setLoading(true);
+    if (!hasMore || loading) return; // 防止重复加载
     try {
       const response = await getClaimAirdropRecord({
         sender: sender!,
         nextCursor: cursor!,
       });
       const newAirdrops = response.data || [];
-      setAirdropList((prev) => [...prev, ...newAirdrops]);
-      setCursor(response.data.nextCursor || null);
-      setHasMore(response.data.nextCursor !== null && newAirdrops.length > 0);
+      console.log(newAirdrops)
+      setTimeout(() => {
+        // 使用 timestamp 和 round 的组合作为唯一键
+        const existingKeys = new Set(
+          airdropList.map((item: ClaimSummary) => `${item.timestamp}-${item.round}`)
+        );
+        const uniqueNewAirdrops = newAirdrops.filter(
+          (item: ClaimSummary) => !existingKeys.has(`${item.timestamp}-${item.round}`)
+        );
+
+        setAirdropList(prev => [...prev, ...uniqueNewAirdrops]);
+        // @ts-ignore
+
+        setCursor(response.nextCursor);
+        // @ts-ignore
+
+        setHasMore(response.nextCursor !== null && uniqueNewAirdrops.length > 0);
+        setLoading(false);
+        // @ts-ignore
+
+        console.log(11111, response.nextCursor)
+        console.log(22222, hasMore)
+        console.log(33333, loading)
+      }, 1000);
 
       // 为每个新的空投获取代币元数据
       newAirdrops.forEach((airdrop: ClaimSummary) => {
@@ -73,7 +94,6 @@ const MyAirdrops = () => {
     } catch (e: any) {
       console.error(`Error fetching airdrops: ${e.message}`);
       messageApi.error(`Error: ${e.message}`);
-    } finally {
       setLoading(false);
     }
   };
@@ -102,6 +122,7 @@ const MyAirdrops = () => {
     if (account?.address) {
       myAirdrops(account.address, null); // 初始化请求
     }
+
   }, [account]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -109,8 +130,8 @@ const MyAirdrops = () => {
       e.currentTarget.scrollHeight ===
       e.currentTarget.scrollTop + e.currentTarget.clientHeight;
 
-    if (bottom && !loading && cursor) {
-      myAirdrops(account?.address, cursor); // 滚动到底部时加载更多
+    if (bottom && !loading && cursor && hasMore) {
+      myAirdrops(account?.address, cursor);
     }
   };
 
@@ -121,6 +142,8 @@ const MyAirdrops = () => {
       style={{ maxHeight: '600px', overflowY: 'auto' }}
     >
       <div className="flex flex-col gap-4">
+        {loading && <div className="text-white">{t('loading...')}</div>}
+
         {airdropList.length > 0 ? (
           airdropList.map((airdrop, index) => (
             <div key={index} className="bg-gray-800 rounded-lg p-4 w-full">
@@ -158,12 +181,11 @@ const MyAirdrops = () => {
             {t('No records available')}
           </div>
         )}
+
+       
       </div>
-      {!loading && !hasMore && airdropList.length > 0 && (
-        <div className="text-center text-gray-400 py-2">
-          {t('No more data')}
-        </div>
-      )}
+     
+          <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}

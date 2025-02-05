@@ -117,9 +117,7 @@ const InviteDialog = () => {
       PaperProps={{
         style: {
           width: '90vw',
-          height: '70vh',
           maxWidth: '600px',
-          maxHeight: '600px',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -128,11 +126,12 @@ const InviteDialog = () => {
           marginLeft: '2px',
           marginRight: '2px',
           position: 'relative',
+          padding: '20px 0',
         },
       }}
     >
       <div className="relative">
-        <div className="flex justify-center mb-4 ">
+        <div className="flex justify-center">
           <img src="/bind.png" alt="" className="w-30 h-30" />
         </div>
         <div className="flex flex-col gap-4 mx-4 mt-8">

@@ -16,7 +16,7 @@ export class BuyV2RecordController {
 
   @Get()
   async getBuyRecords(@Query() params: GetBuyInfoDto) {
-    const { sender, pageSize = 25, nextCursor } = params;
+    const { sender, pageSize = 5, nextCursor } = params;
 
     // 参数校验
     if (!sender) {
