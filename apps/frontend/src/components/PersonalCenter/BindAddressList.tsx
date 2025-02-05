@@ -7,7 +7,7 @@ import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { message } from 'antd';
 import { getUserShares } from '@/api';
 import { useCurrentAccount } from '@mysten/dapp-kit';
-import type { SharesResponse, ShareInfoResponse } from '@/api';
+import type { ShareInfoResponse } from '@/api';
 
 const BindAddressList = () => {
   const account = useCurrentAccount();
@@ -45,9 +45,6 @@ const BindAddressList = () => {
               response.nextCursor !== null && uniqueNewData.length > 0,
             );
             setLoading(false);
-            console.log(11111, cursor);
-            console.log(22222, hasMore);
-            console.log(33333, loading);
           }, 1000);
         } else {
           message.error(t('无法获取用户信息'));

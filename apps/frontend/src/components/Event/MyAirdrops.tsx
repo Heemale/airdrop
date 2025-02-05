@@ -6,7 +6,7 @@ import { ClaimSummary } from '@local/airdrop-sdk/airdrop';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { getCoinMetaData } from '@/sdk';
 import { message } from 'antd';
-import { getClaimAirdropRecord } from '@/api';
+import { getClaimAirdropRecord, ClaimAirdropRecord } from '@/api';
 import { formatTimestamp } from '@/utils/time';
 import Image from 'next/image';
 import Backdrop from '@mui/material/Backdrop';
@@ -20,7 +20,7 @@ const MyAirdrops = () => {
   const account = useCurrentAccount();
   const [loading, setLoading] = useState<boolean>(false);
   const [cursor, setCursor] = useState<number | null>(null);
-  const [airdropList, setAirdropList] = useState<Array<ClaimSummary>>([]);
+  const [airdropList, setAirdropList] = useState<Array<ClaimAirdropRecord>>([]);
   const [coinMetaDataMap, setCoinMetaDataMap] = useState<
     Record<string, CoinMetadata>
   >({});
@@ -62,15 +62,10 @@ const MyAirdrops = () => {
       const newAirdrops = response.data || [];
 
       setTimeout(() => {
-        // 使用 timestamp 和 round 的组合作为唯一键
-        const existingKeys = new Set(
-          airdropList.map(
-            (item: ClaimSummary) => `${item.timestamp}-${item.round}`,
-          ),
-        );
+        // 使用 id 作为唯一键
+        const existingIds = new Set(airdropList.map((item) => item.id));
         const uniqueNewAirdrops = newAirdrops.filter(
-          (item: ClaimSummary) =>
-            !existingKeys.has(`${item.timestamp}-${item.round}`),
+          (item: ClaimAirdropRecord) => !existingIds.has(item.id),
         );
 
         setAirdropList((prev) => [...prev, ...uniqueNewAirdrops]);
@@ -82,7 +77,7 @@ const MyAirdrops = () => {
       }, 1000);
 
       // 为每个新的空投获取代币元数据
-      newAirdrops.forEach((airdrop: ClaimSummary) => {
+      newAirdrops.forEach((airdrop: ClaimAirdropRecord) => {
         if (airdrop.coinType && !coinMetaDataMap[airdrop.coinType]) {
           fetchCoinMetaData(airdrop.coinType);
         }
@@ -139,43 +134,37 @@ const MyAirdrops = () => {
       <div className="flex flex-col gap-4">
         {loading && <div className="text-white">{t('loading...')}</div>}
 
-        {airdropList.length > 0 ? (
-          airdropList.map((airdrop, index) => (
-            <div key={index} className="bg-gray-800 rounded-lg p-4 w-full">
-              <div className="flex items-center gap-4">
-                <div className="w-[50px] sm:w-[70px] flex-shrink-0">
-                  <Image
-                    src={coinImage(airdrop.coinType)}
-                    width={50}
-                    height={50}
-                    alt="coin-logo"
-                  />
+        {airdropList.map((airdrop, index) => (
+          <div key={index} className="bg-gray-800 rounded-lg p-4 w-full">
+            <div className="flex items-center gap-4">
+              <div className="w-[50px] sm:w-[70px] flex-shrink-0">
+                <Image
+                  src={coinImage(airdrop.coinType!)}
+                  width={50}
+                  height={50}
+                  alt="coin-logo"
+                />
+              </div>
+              <div className="flex-grow">
+                <div className="text-lg font-semibold">
+                  {getCoinTypeName(airdrop.coinType!)} - ROUND {airdrop.round}
                 </div>
-                <div className="flex-grow">
-                  <div className="text-lg font-semibold">
-                    {getCoinTypeName(airdrop.coinType)} - ROUND {airdrop.round}
-                  </div>
-                  <div className="text-gray-400">
-                    {formatTimestamp(Number(airdrop.timestamp) * 1000)}
-                  </div>
-                  <div className="mt-2">
-                    <span>{t('Receive copies')}: </span>
-                    <span>
-                      {formatAmount(
-                        airdrop.amount?.toString() || '0',
-                        airdrop.coinType,
-                      )}
-                    </span>
-                  </div>
+                <div className="text-gray-400">
+                  {formatTimestamp(Number(airdrop.timestamp) * 1000)}
+                </div>
+                <div className="mt-2">
+                  <span>{t('Receive copies')}: </span>
+                  <span>
+                    {formatAmount(
+                      airdrop.amount?.toString() || '0',
+                      airdrop.coinType!,
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
-          ))
-        ) : (
-          <div className="text-center text-gray-400">
-            {t('No records available')}
           </div>
-        )}
+        ))}
       </div>
 
       <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
