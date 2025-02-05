@@ -2,11 +2,10 @@
 
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { ClaimSummary } from '@local/airdrop-sdk/airdrop';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { getCoinMetaData } from '@/sdk';
 import { message } from 'antd';
-import { getClaimAirdropRecord, ClaimAirdropRecord } from '@/api';
+import { getClaimAirdropRecord } from '@/api';
 import { formatTimestamp } from '@/utils/time';
 import Image from 'next/image';
 import Backdrop from '@mui/material/Backdrop';
@@ -15,6 +14,7 @@ import { getCoinTypeName, isHexString } from '@/utils';
 import { useClientTranslation } from '@/hook';
 import type { CoinMetadata } from '@mysten/sui/client';
 import { convertSmallToLarge } from '@/utils/math';
+import type { ClaimAirdropRecord } from '@/api/types/response';
 
 const MyAirdrops = () => {
   const account = useCurrentAccount();

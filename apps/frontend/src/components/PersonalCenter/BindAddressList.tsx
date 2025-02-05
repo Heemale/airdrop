@@ -3,17 +3,17 @@
 import React, { useEffect, useState } from 'react';
 import { useClientTranslation } from '@/hook';
 import { formatAddress } from '@mysten/sui/utils';
-import { handleDevTxError, handleTxError } from '@/sdk/error';
+import { handleTxError } from '@/sdk/error';
 import { message } from 'antd';
 import { getUserShares } from '@/api';
 import { useCurrentAccount } from '@mysten/dapp-kit';
-import type { ShareInfoResponse } from '@/api';
+import type { UserSharesResponse } from '@/api/types/response';
 
 const BindAddressList = () => {
   const account = useCurrentAccount();
 
   const { t } = useClientTranslation();
-  const [binds, setBinds] = useState<ShareInfoResponse[]>([]);
+  const [binds, setBinds] = useState<UserSharesResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [cursor, setCursor] = useState<number | null>(null); // 分页游标
@@ -45,7 +45,7 @@ const BindAddressList = () => {
               response.nextCursor !== null && uniqueNewData.length > 0,
             );
             setLoading(false);
-         }, 1000);
+          }, 1000);
         } else {
           message.error(t('无法获取用户信息'));
         }

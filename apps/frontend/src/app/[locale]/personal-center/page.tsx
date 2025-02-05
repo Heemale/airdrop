@@ -11,7 +11,7 @@ import { getUserInfo } from '@/api';
 import { useClientTranslation } from '@/hook';
 import { message } from 'antd';
 import { handleTxError } from '@/sdk/error';
-import type { UserInfoResponse } from '@/api'; // 假设我们导出了这个类型
+import type { UserInfoResponse } from '@/api/types/response';
 
 const Home = () => {
   const account = useCurrentAccount();
