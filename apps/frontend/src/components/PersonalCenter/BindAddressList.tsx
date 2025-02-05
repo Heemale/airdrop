@@ -45,7 +45,7 @@ const BindAddressList = () => {
               response.nextCursor !== null && uniqueNewData.length > 0,
             );
             setLoading(false);
-          }, 1000);
+         }, 1000);
         } else {
           message.error(t('无法获取用户信息'));
         }
