@@ -22,7 +22,7 @@ const BindAddressList = () => {
   // 模拟获取绑定数据
   const fetchBinds = async (cursor: number | null = null) => {
     if (!hasMore || loading) return; // 防止重复加载
-    
+
     if (account?.address) {
       try {
         setLoading(true);
@@ -34,16 +34,20 @@ const BindAddressList = () => {
         if (response?.data) {
           setTimeout(() => {
             // 使用 Set 去重
-            const existingIds = new Set(binds.map(item => item.id));
-            const uniqueNewData = response.data.filter(item => !existingIds.has(item.id));
-            
-            setBinds(prev => [...prev, ...uniqueNewData]);
+            const existingIds = new Set(binds.map((item) => item.id));
+            const uniqueNewData = response.data.filter(
+              (item) => !existingIds.has(item.id),
+            );
+
+            setBinds((prev) => [...prev, ...uniqueNewData]);
             setCursor(response.nextCursor);
-            setHasMore(response.nextCursor !== null && uniqueNewData.length > 0);
+            setHasMore(
+              response.nextCursor !== null && uniqueNewData.length > 0,
+            );
             setLoading(false);
-            console.log(11111,cursor)
-            console.log(22222,hasMore)
-            console.log(33333,loading)
+            console.log(11111, cursor);
+            console.log(22222, hasMore);
+            console.log(33333, loading);
           }, 1000);
         } else {
           message.error(t('无法获取用户信息'));
@@ -118,8 +122,10 @@ const BindAddressList = () => {
             ))}
           </div>
         )}
-          <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
-          </div>
+        <div className="text-center text-gray-400 py-2">
+          {t('No more data')}
+        </div>
+      </div>
     </div>
   );
 };

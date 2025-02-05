@@ -60,29 +60,25 @@ const MyAirdrops = () => {
         nextCursor: cursor!,
       });
       const newAirdrops = response.data || [];
-      console.log(newAirdrops)
+
       setTimeout(() => {
         // 使用 timestamp 和 round 的组合作为唯一键
         const existingKeys = new Set(
-          airdropList.map((item: ClaimSummary) => `${item.timestamp}-${item.round}`)
+          airdropList.map(
+            (item: ClaimSummary) => `${item.timestamp}-${item.round}`,
+          ),
         );
         const uniqueNewAirdrops = newAirdrops.filter(
-          (item: ClaimSummary) => !existingKeys.has(`${item.timestamp}-${item.round}`)
+          (item: ClaimSummary) =>
+            !existingKeys.has(`${item.timestamp}-${item.round}`),
         );
 
-        setAirdropList(prev => [...prev, ...uniqueNewAirdrops]);
-        // @ts-ignore
-
+        setAirdropList((prev) => [...prev, ...uniqueNewAirdrops]);
         setCursor(response.nextCursor);
-        // @ts-ignore
-
-        setHasMore(response.nextCursor !== null && uniqueNewAirdrops.length > 0);
+        setHasMore(
+          response.nextCursor !== null && uniqueNewAirdrops.length > 0,
+        );
         setLoading(false);
-        // @ts-ignore
-
-        console.log(11111, response.nextCursor)
-        console.log(22222, hasMore)
-        console.log(33333, loading)
       }, 1000);
 
       // 为每个新的空投获取代币元数据
@@ -122,7 +118,6 @@ const MyAirdrops = () => {
     if (account?.address) {
       myAirdrops(account.address, null); // 初始化请求
     }
-
   }, [account]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -181,11 +176,9 @@ const MyAirdrops = () => {
             {t('No records available')}
           </div>
         )}
-
-       
       </div>
-     
-          <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
+
+      <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
       <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}

@@ -28,7 +28,7 @@ const PurchaseHistory = () => {
 
   const fetchPurchaseHistory = async (cursor: number | null = null) => {
     if (!hasMore || loading) return; // 防止重复加载
-    
+
     if (account?.address) {
       setLoading(true);
       try {
@@ -59,20 +59,24 @@ const PurchaseHistory = () => {
 
           setTimeout(() => {
             // 使用 Set 去重
-            const existingRanks = new Set(purchaseHistory.map(item => item.rank.toString()));
-            const uniqueNewData = formattedData.filter(item => !existingRanks.has(item.rank.toString()));
-            
-            setPurchaseHistory(prev => [...prev, ...uniqueNewData]);
+            const existingRanks = new Set(
+              purchaseHistory.map((item) => item.rank.toString()),
+            );
+            const uniqueNewData = formattedData.filter(
+              (item) => !existingRanks.has(item.rank.toString()),
+            );
+
+            setPurchaseHistory((prev) => [...prev, ...uniqueNewData]);
             // @ts-ignore
             setCursor(response.nextCursor);
             // @ts-ignore
-            setHasMore(response.nextCursor !== null && uniqueNewData.length > 0);
+            setHasMore(
+              response.nextCursor !== null && uniqueNewData.length > 0,
+            );
             setLoading(false);
-            console.log(11111,cursor)
-            console.log(22222,hasMore)
-            console.log(33333,loading)
-
-
+            console.log(11111, cursor);
+            console.log(22222, hasMore);
+            console.log(33333, loading);
           }, 1000);
         } else {
           message.error(t('Unable to obtain user information'));
