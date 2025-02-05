@@ -74,9 +74,6 @@ const PurchaseHistory = () => {
               response.nextCursor !== null && uniqueNewData.length > 0,
             );
             setLoading(false);
-            console.log(11111, cursor);
-            console.log(22222, hasMore);
-            console.log(33333, loading);
           }, 1000);
         } else {
           message.error(t('Unable to obtain user information'));
@@ -142,33 +139,20 @@ const PurchaseHistory = () => {
                   </td>
                 </tr>
               )}
-              {purchaseHistory.length > 0 ? (
-                purchaseHistory.map((record, index) => (
-                  <tr key={index}>
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      {record.rank}
-                    </td>
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      {record.nodeNum}
-                    </td>
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      {convertSmallToLarge(Number(record.amount), 9)}
-                    </td>
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      {formatTimestamp(Number(record.time) * 1000)}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    className="px-4 py-2 text-center whitespace-nowrap"
-                    colSpan={4}
-                  >
-                    {t('No records available')}
+              {purchaseHistory.map((record, index) => (
+                <tr key={index}>
+                  <td className="px-4 py-2 whitespace-nowrap">{record.rank}</td>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    {record.nodeNum}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    {convertSmallToLarge(Number(record.amount), 9)}
+                  </td>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    {formatTimestamp(Number(record.time) * 1000)}
                   </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </table>
           {!loading && !hasMore && purchaseHistory.length > 0 && (
