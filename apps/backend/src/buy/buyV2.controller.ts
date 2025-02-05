@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpException,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, HttpException, Query } from '@nestjs/common';
 import { BuyService } from './buyV2.service';
 import { findBuyRecordsBySender } from '@/buy/dao/buyV2.dao';
 import { GetBuyInfoDto } from '@/buy/dto/buyV2.dto';
@@ -16,7 +9,7 @@ export class BuyV2RecordController {
 
   @Get()
   async getBuyRecords(@Query() params: GetBuyInfoDto) {
-    const { sender, pageSize = 5, nextCursor } = params;
+    const { sender, pageSize = 25, nextCursor } = params;
 
     // 参数校验
     if (!sender) {

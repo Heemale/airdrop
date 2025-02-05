@@ -132,7 +132,7 @@ const InviteDialog = () => {
     >
       <div className="relative">
         <div className="flex justify-center">
-          <img src="/bind.png" alt="" className="w-30 h-30" />
+          <img src="/bind.png" alt="" className="w-[180px]" />
         </div>
         <div className="flex flex-col gap-4 mx-4 mt-8">
           <div className="text-white text-2xl font-bold text-center mb-4">
@@ -164,12 +164,14 @@ const InviteDialog = () => {
               {t('BIND INVITER')}
             </button>
           </div>
-        </div>
-        <div
-          className="text-sm font-bold text-center mb-4"
-          style={{ color: '#ffffff' }}
-        >
-          {t('You need to bind the inviter before you can purchase benefits.')}
+          <div
+            className="text-sm font-bold text-center"
+            style={{ color: '#ffffff' }}
+          >
+            {t(
+              'You need to bind the inviter before you can purchase benefits.',
+            )}
+          </div>
         </div>
       </div>
       <Backdrop

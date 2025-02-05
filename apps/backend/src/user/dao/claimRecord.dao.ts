@@ -27,7 +27,7 @@ export const findClaimRecords = async (
 
   const hasNextPage = data.length === pageSize;
   const nextCursor = hasNextPage ? data[data.length - 1].id : null;
-console.log(123212323,nextCursor)
+
   return {
     data,
     nextCursor,
