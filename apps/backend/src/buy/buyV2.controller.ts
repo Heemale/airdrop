@@ -3,11 +3,11 @@ import { BuyService } from './buyV2.service';
 import { findBuyRecordsBySender } from '@/buy/dao/buyV2.dao';
 import { GetBuyInfoDto } from '@/buy/dto/buyV2.dto';
 
-@Controller('buy-node-record')
+@Controller()
 export class BuyV2RecordController {
   constructor(private readonly buyService: BuyService) {}
 
-  @Get()
+  @Get('buy-node-record')
   async getBuyRecords(@Query() params: GetBuyInfoDto) {
     const { sender, pageSize = 25, nextCursor } = params;
 

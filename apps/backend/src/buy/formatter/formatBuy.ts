@@ -48,11 +48,7 @@ export const formatBuy = async (
       txDigest: eventId.txDigest,
       eventSeq: eventId.eventSeq,
       sender: sender.toLowerCase(),
-      node: {
-        connect: {
-          rank, // 使用嵌套写入方式连接 Node 记录
-        },
-      },
+      rank,
       nodeNum,
       timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
       paymentAddress: null,
@@ -73,11 +69,7 @@ export const formatBuy = async (
       txDigest: eventId.txDigest,
       eventSeq: eventId.eventSeq,
       sender: sender.toLowerCase(),
-      node: {
-        connect: {
-          rank, // 使用嵌套写入方式连接 Node 记录
-        },
-      },
+      rank,
       nodeNum,
       timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
       paymentAddress: senderChange.owner.AddressOwner.toLowerCase(),
@@ -97,11 +89,7 @@ export const formatBuy = async (
       txDigest: eventId.txDigest,
       eventSeq: eventId.eventSeq,
       sender: sender.toLowerCase(),
-      node: {
-        connect: {
-          rank, // 使用嵌套写入方式连接 Node 记录
-        },
-      },
+      rank,
       nodeNum,
       timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
       paymentAddress: null,
@@ -120,11 +108,7 @@ export const formatBuy = async (
     txDigest: eventId.txDigest,
     eventSeq: eventId.eventSeq,
     sender: sender.toLowerCase(),
-    node: {
-      connect: {
-        rank, // 使用嵌套写入方式连接 Node 记录
-      },
-    },
+    rank,
     nodeNum,
     timestamp: BigInt(toFixed(convertSmallToLarge(timestampMs, 3), 0)),
     paymentAddress: senderChange.owner.AddressOwner.toLowerCase(),

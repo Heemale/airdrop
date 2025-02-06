@@ -120,10 +120,10 @@ const PurchaseHistory = () => {
               {purchaseHistory.map((record, index) => (
                 <tr key={index}>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {record.node.name}
+                    {record.node.description}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {record.node.description}
+                    {record.node.name}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     {convertSmallToLarge(Number(record.paymentAmount), 9)} sui
