@@ -119,10 +119,9 @@ const BindAddressList = () => {
             ))}
           </div>
         )}
-        <div className="text-center text-gray-400 py-2">
-          {t('No more data')}
-        </div>
-      </div>
+{!loading && !hasMore && binds.length > 0 && (
+        <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
+      )}      </div>
     </div>
   );
 };

@@ -4,6 +4,7 @@ import { INVITE } from '@local/airdrop-sdk/utils';
 import React, { useEffect, useState } from 'react';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useClientTranslation } from '@/hook';
+import { formatAddress } from '@mysten/sui/utils';
 
 const Recommender = () => {
   const account = useCurrentAccount();
@@ -51,7 +52,7 @@ const Recommender = () => {
         <div className="text-gray-300 break-all">
           {account ? (
             inviter ? (
-              inviter
+              formatAddress(inviter)
             ) : (
               <div>{t('Please bind the inviter')}</div>
             )

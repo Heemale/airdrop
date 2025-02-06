@@ -167,8 +167,9 @@ const MyAirdrops = () => {
         ))}
       </div>
 
-      <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
-      <Backdrop
+      {!loading && !hasMore && airdropList.length > 0 && (
+        <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
+      )}      <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
       >

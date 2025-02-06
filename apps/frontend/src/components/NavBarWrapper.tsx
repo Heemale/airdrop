@@ -23,7 +23,7 @@ const pages: Array<Page> = [
   },
   {
     id: '2',
-    name: 'Event',
+    name: 'Airdrop event',
     link: '/event',
   },
   {

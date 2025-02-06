@@ -1,8 +1,8 @@
 import { Resource } from 'i18next';
 
 const i18nConfig = {
-  locales: ['en', 'zh'],
   defaultLocale: 'en',
+  locales: ['en', 'zh', 'vi'],
   i18nNamespaces: ['common'],
 };
 
