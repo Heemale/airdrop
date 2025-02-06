@@ -65,13 +65,12 @@ const PurchaseHistory = () => {
   }, [account]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const bottom =
-      e.currentTarget.scrollHeight ===
-      e.currentTarget.scrollTop + e.currentTarget.clientHeight;
-    if (bottom && !loading && cursor && hasMore) {
-      fetchPurchaseHistory(account?.address,cursor);
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // 当滚动到距离底部10px以内时，认为到达底部
+    const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
+    if (isBottom && !loading && cursor) {
+      fetchPurchaseHistory(account?.address,cursor); // 滚动到底部时加载更多数据
     }
-   
   };
 
   return (

@@ -115,16 +115,15 @@ const MyAirdrops = () => {
     }
   }, [account]);
 
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const bottom =
-      e.currentTarget.scrollHeight ===
-      e.currentTarget.scrollTop + e.currentTarget.clientHeight;
 
-    if (bottom && !loading && cursor && hasMore) {
-      myAirdrops(account?.address, cursor);
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // 当滚动到距离底部10px以内时，认为到达底部
+    const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
+    if (isBottom && !loading && cursor) {
+      myAirdrops(account?.address,cursor); // 滚动到底部时加载更多数据
     }
   };
-
   return (
     <div
       className="bg-gradient-to-b from-[#010101] to-[#222] flex flex-col gap-4 sm:gap-6 border border-gray-600 rounded-3xl px-3 sm:px-6 py-8 text-white"
