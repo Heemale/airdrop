@@ -41,7 +41,7 @@ const BindAddressList = () => {
 
             setBinds((prev) => [...prev, ...uniqueNewData]);
             setCursor(response.nextCursor);
-            console.log(response.nextCursor)
+            console.log(response.nextCursor);
             setHasMore(
               response.nextCursor !== null && uniqueNewData.length > 0,
             );
@@ -71,7 +71,6 @@ const BindAddressList = () => {
       fetchBinds(cursor); // 滚动到底部时加载更多数据
     }
   };
-  
 
   return (
     <div className="p-4">
@@ -121,9 +120,12 @@ const BindAddressList = () => {
             ))}
           </div>
         )}
-{!loading && !hasMore && binds.length > 0 && (
-        <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
-      )}      </div>
+        {!loading && !hasMore && binds.length > 0 && (
+          <div className="text-center text-gray-400 py-2">
+            {t('No more data')}
+          </div>
+        )}{' '}
+      </div>
     </div>
   );
 };

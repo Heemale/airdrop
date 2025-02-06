@@ -115,13 +115,12 @@ const MyAirdrops = () => {
     }
   }, [account]);
 
-
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     // 当滚动到距离底部10px以内时，认为到达底部
     const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
     if (isBottom && !loading && cursor) {
-      myAirdrops(account?.address,cursor); // 滚动到底部时加载更多数据
+      myAirdrops(account?.address, cursor); // 滚动到底部时加载更多数据
     }
   };
   return (
@@ -165,10 +164,12 @@ const MyAirdrops = () => {
           </div>
         ))}
       </div>
-
       {!loading && !hasMore && airdropList.length > 0 && (
-        <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
-      )}      <Backdrop
+        <div className="text-center text-gray-400 py-2">
+          {t('No more data')}
+        </div>
+      )}{' '}
+      <Backdrop
         sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
         open={loading}
       >

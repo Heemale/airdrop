@@ -23,7 +23,7 @@ export const handleBuy = async (
           connect: {
             rank, // 使用嵌套写入方式连接 Node 记录
           },
-        },          
+        },
         nodeNum,
         timestamp,
         paymentAddress,
@@ -45,7 +45,8 @@ export const handleBuy = async (
             connect: {
               rank, // 使用嵌套写入方式连接 Node 记录
             },
-          },            nodeNum,
+          },
+          nodeNum,
           paymentAmount,
           inviterGains,
           nodeReceiverGains,

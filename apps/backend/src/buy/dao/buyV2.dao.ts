@@ -20,7 +20,7 @@ export const findBuyRecordsBySender = async (
       paymentAmount: true,
       node: {
         select: {
-          description:true,
+          description: true,
           name: true,
         },
       },
@@ -34,7 +34,7 @@ export const findBuyRecordsBySender = async (
   });
   const hasNextPage = records.length === pageSize;
   const nextCursor = records.length > 0 ? records[records.length - 1].id : null;
-console.log(111111,records)
+  console.log(111111, records);
   return {
     data: records,
     nextCursor,

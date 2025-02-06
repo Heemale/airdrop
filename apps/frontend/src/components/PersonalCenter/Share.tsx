@@ -35,7 +35,8 @@ const Share = () => {
       </div>
       <div className="relative mt-4">
         {/* 内容层 - 深色半透明背景 */}
-        <div className="relative w-full py-3 px-6 
+        <div
+          className="relative w-full py-3 px-6 
           bg-[rgba(13,24,41,0.8)] 
           rounded-lg
           text-white font-bold 

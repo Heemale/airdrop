@@ -56,13 +56,13 @@ model User {
 /// 权益表
 model Node {
   id          Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
-  rank        BigInt? @unique/// 节点等级
+  rank        BigInt?  @unique /// 节点等级
   name        String?  @db.VarChar(255) /// 名称
   description String?  @db.Text /// 描述
   isOpen      Boolean? @default(false) @map("is_open") // 是否开启
   createAt    BigInt?  @map("create_at") /// 创建时间
   updateAt    BigInt?  @map("update_at") /// 更新时间
-  buyRecords  BuyRecord[] @relation("BuyRecordToNode")
+
   @@map("swld_node")
 }
 
@@ -112,7 +112,7 @@ model BuyRecord {
   nodeReceiverGains BigInt? @map("node_receiver_gains") /// 平台返利金额
   createAt          BigInt? @map("create_at") /// 创建时间
   updateAt          BigInt? @map("update_at") /// 更新时间
-  node           Node?    @relation("BuyRecordToNode", fields: [rank], references: [rank])
+
   @@unique([txDigest, eventSeq])
   @@map("swld_buy_record")
 }

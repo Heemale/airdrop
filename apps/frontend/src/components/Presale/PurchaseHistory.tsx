@@ -21,14 +21,18 @@ const PurchaseHistory = () => {
   const account = useCurrentAccount();
 
   const { t } = useClientTranslation();
-  const [purchaseHistory, setPurchaseHistory] = useState<Array<BuyNodeRecord>>([]);
+  const [purchaseHistory, setPurchaseHistory] = useState<Array<BuyNodeRecord>>(
+    [],
+  );
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [cursor, setCursor] = useState<number | null>(null); // 分页游标
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const fetchPurchaseHistory = async (sender: string | null = null,
-    cursor: number | null = null,) => {
+  const fetchPurchaseHistory = async (
+    sender: string | null = null,
+    cursor: number | null = null,
+  ) => {
     if (!hasMore || loading) return;
 
     if (account?.address) {
@@ -40,19 +44,18 @@ const PurchaseHistory = () => {
         });
         const newBuy = response.data || [];
 
-          setTimeout(() => {
-            // 使用 Set 去重
-            const existingIds = new Set(purchaseHistory.map(item => item.id));
-            const uniqueNewData = newBuy.filter(
-              (item: BuyNodeRecord) => !existingIds.has(item.id)
-            );
-            
-            setPurchaseHistory(prev => [...prev, ...uniqueNewData]);
-            setCursor(response.nextCursor);
-            setHasMore(response.nextCursor !== null && uniqueNewData.length > 0);
-            setLoading(false);
-          }, 1000);
-        
+        setTimeout(() => {
+          // 使用 Set 去重
+          const existingIds = new Set(purchaseHistory.map((item) => item.id));
+          const uniqueNewData = newBuy.filter(
+            (item: BuyNodeRecord) => !existingIds.has(item.id),
+          );
+
+          setPurchaseHistory((prev) => [...prev, ...uniqueNewData]);
+          setCursor(response.nextCursor);
+          setHasMore(response.nextCursor !== null && uniqueNewData.length > 0);
+          setLoading(false);
+        }, 1000);
       } catch (e: any) {
         console.log(`Failed to fetch purchase history: ${e.message}`);
         messageApi.error(`${t(handleTxError(e.message))}`);
@@ -69,7 +72,7 @@ const PurchaseHistory = () => {
     // 当滚动到距离底部10px以内时，认为到达底部
     const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
     if (isBottom && !loading && cursor) {
-      fetchPurchaseHistory(account?.address,cursor); // 滚动到底部时加载更多数据
+      fetchPurchaseHistory(account?.address, cursor); // 滚动到底部时加载更多数据
     }
   };
 
@@ -84,15 +87,26 @@ const PurchaseHistory = () => {
         </span>
       </div>
       {/* 表格部分 */}
-      <div className="w-full overflow-x-auto max-h-[400px]" onScroll={handleScroll}>
+      <div
+        className="w-full overflow-x-auto max-h-[400px]"
+        onScroll={handleScroll}
+      >
         <div className="min-w-[600px] lg:w-full">
           <table className="w-full table-auto bg-transparent">
             <thead className="sticky text-white top-0 bg-[url('/personal01.png')] bg-cover bg-center">
               <tr>
-                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Equity level')}</th>
-                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Equity Name')}</th>
-                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Amount')}</th>
-                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Time')}</th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">
+                  {t('Equity level')}
+                </th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">
+                  {t('Equity Name')}
+                </th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">
+                  {t('Amount')}
+                </th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">
+                  {t('Time')}
+                </th>
               </tr>
             </thead>
             <tbody className="bg-[rgba(13,24,41,0.7)] text-white">
@@ -105,7 +119,9 @@ const PurchaseHistory = () => {
               )}
               {purchaseHistory.map((record, index) => (
                 <tr key={index}>
-                  <td className="px-4 py-2 whitespace-nowrap">{record.node.name}</td>
+                  <td className="px-4 py-2 whitespace-nowrap">
+                    {record.node.name}
+                  </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     {record.node.description}
                   </td>
@@ -119,18 +135,18 @@ const PurchaseHistory = () => {
               ))}
               {!loading && !hasMore && purchaseHistory.length > 0 && (
                 <tr>
-                  <td colSpan={4} className="text-center whitespace-nowrap py-2 text-gray-400">
+                  <td
+                    colSpan={4}
+                    className="text-center whitespace-nowrap py-2 text-gray-400"
+                  >
                     {t('No more data')}
                   </td>
                 </tr>
               )}
             </tbody>
-            
           </table>
-          
         </div>
       </div>
-
     </div>
   );
 };

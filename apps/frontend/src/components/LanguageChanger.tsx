@@ -24,8 +24,8 @@ const languages: Array<LanguageType> = [
   },
   {
     key: 'vi',
-    name: 'Tiếng Việt'
-  }
+    name: 'Tiếng Việt',
+  },
 ];
 
 const LanguageChanger = () => {
