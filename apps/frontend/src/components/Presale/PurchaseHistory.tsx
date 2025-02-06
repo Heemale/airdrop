@@ -89,8 +89,8 @@ const PurchaseHistory = () => {
           <table className="w-full table-auto bg-transparent">
             <thead className="sticky text-white top-0 bg-[url('/personal01.png')] bg-cover bg-center">
               <tr>
-                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Equity number')}</th>
                 <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Equity level')}</th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Equity Name')}</th>
                 <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Amount')}</th>
                 <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Time')}</th>
               </tr>
@@ -105,12 +105,12 @@ const PurchaseHistory = () => {
               )}
               {purchaseHistory.map((record, index) => (
                 <tr key={index}>
-                  <td className="px-4 py-2 whitespace-nowrap">{record.rank}</td>
+                  <td className="px-4 py-2 whitespace-nowrap">{record.node.name}</td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {record.nodeNum}
+                    {record.node.description}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {convertSmallToLarge(Number(record.paymentAmount), 9)}
+                    {convertSmallToLarge(Number(record.paymentAmount), 9)} sui
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     {formatTimestamp(Number(record.timestamp) * 1000)}

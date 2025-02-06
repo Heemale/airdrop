@@ -3,6 +3,10 @@ export interface PaginatedResponse<T> {
   hasNextPage: boolean;
   nextCursor: number | null;
 }
+export interface Node{
+  description:string;
+  name:string;
+}
 
 export interface UserInfoResponse {
   /**
@@ -71,6 +75,7 @@ export interface BuyNodeRecord {
    * 用户地址
    */
   sender: string;
+  node:Node;
   /**
    * 权益等级
    */

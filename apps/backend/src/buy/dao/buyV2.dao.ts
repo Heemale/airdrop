@@ -18,6 +18,12 @@ export const findBuyRecordsBySender = async (
       timestamp: true,
       nodeNum: true,
       paymentAmount: true,
+      node: {
+        select: {
+          description:true,
+          name: true,
+        },
+      },
     },
     take: pageSize,
     skip: cursor ? 1 : 0,
@@ -28,7 +34,7 @@ export const findBuyRecordsBySender = async (
   });
   const hasNextPage = records.length === pageSize;
   const nextCursor = records.length > 0 ? records[records.length - 1].id : null;
-
+console.log(111111,records)
   return {
     data: records,
     nextCursor,
