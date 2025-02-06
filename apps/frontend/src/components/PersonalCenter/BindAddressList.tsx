@@ -41,6 +41,7 @@ const BindAddressList = () => {
 
             setBinds((prev) => [...prev, ...uniqueNewData]);
             setCursor(response.nextCursor);
+            console.log(response.nextCursor)
             setHasMore(
               response.nextCursor !== null && uniqueNewData.length > 0,
             );
@@ -63,13 +64,14 @@ const BindAddressList = () => {
 
   // 滚动加载更多
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const bottom =
-      e.currentTarget.scrollHeight ===
-      e.currentTarget.scrollTop + e.currentTarget.clientHeight;
-    if (bottom && !loading && cursor) {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // 当滚动到距离底部10px以内时，认为到达底部
+    const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
+    if (isBottom && !loading && cursor) {
       fetchBinds(cursor); // 滚动到底部时加载更多数据
     }
   };
+  
 
   return (
     <div className="p-4">
@@ -82,10 +84,10 @@ const BindAddressList = () => {
       </div>
       <div className="p-4 rounded-lg mb-4 sticky top-0 z-10">
         <div className="flex justify-between">
-          <div className="text-white text-sm font-bold justify-self-start">
+          <div className="text-white text-xs sm:text-sm font-bold justify-self-start">
             {t('Address')}
           </div>
-          <div className="text-white text-sm font-bold justify-self-end">
+          <div className="text-white text-xs sm:text-sm font-bold justify-self-end">
             {t('Sharers / Teams / Team total investment')}
           </div>
         </div>
@@ -119,10 +121,9 @@ const BindAddressList = () => {
             ))}
           </div>
         )}
-        <div className="text-center text-gray-400 py-2">
-          {t('No more data')}
-        </div>
-      </div>
+{!loading && !hasMore && binds.length > 0 && (
+        <div className="text-center text-gray-400 py-2">{t('No more data')}</div>
+      )}      </div>
     </div>
   );
 };

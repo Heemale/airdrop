@@ -15,7 +15,6 @@ import {
 import { useState } from 'react';
 import { Page } from './NavBarWrapper';
 import './sui-button.css';
-import InviteFriend from '@/components/InviteFriend';
 
 interface Props {
   pages: Array<Page>;
@@ -44,7 +43,7 @@ const NavBar = (props: Props) => {
       <div className="w-full max-w-screen-xl flex justify-between items-center py-5 px-4">
         <div className="w-[115px] sm:w-[320px] items-center">
           <Link href={'/'}>
-            <Image src="/01.png" width={320} height={280} alt="logo" />
+            <Image src="/03.jpg" width={320} height={280} alt="logo" />
           </Link>
         </div>
 
@@ -55,7 +54,6 @@ const NavBar = (props: Props) => {
               <div className="text-white">{page.name}</div>
             </Link>
           ))}
-          <InviteFriend />
           <LanguageChanger />
           {children}
         </div>
@@ -85,9 +83,6 @@ const NavBar = (props: Props) => {
                   <ListItemText className="text-gradient" primary={page.name} />
                 </ListItem>
               ))}
-              <ListItem>
-                <InviteFriend />
-              </ListItem>
               <ListItem>
                 <LanguageChanger />
               </ListItem>

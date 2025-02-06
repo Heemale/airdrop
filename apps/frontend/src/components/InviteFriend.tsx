@@ -30,7 +30,7 @@ const InviteFriend = () => {
           <div className="text-white cursor-pointer">{t('Invite friends')}</div>
         </CopyToClipboard>
       ) : (
-        <div className="text-gray-500 cursor-not-allowed">
+        <div className="text-[#40cafd] font-normal cursor-not-allowed">
           {t('Invite friends')}
         </div>
       )}

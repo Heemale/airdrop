@@ -8,6 +8,7 @@ import { formatTimestamp, sleep } from '@/utils/time';
 import { getBuyNodeRecord } from '@/api';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { convertSmallToLarge, subtract, toFixed } from '@/utils/math';
+import type { BuyNodeRecord } from '@/api/types/response';
 
 export interface History {
   rank: bigint;
@@ -20,14 +21,15 @@ const PurchaseHistory = () => {
   const account = useCurrentAccount();
 
   const { t } = useClientTranslation();
-  const [purchaseHistory, setPurchaseHistory] = useState<History[]>([]);
+  const [purchaseHistory, setPurchaseHistory] = useState<Array<BuyNodeRecord>>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
   const [cursor, setCursor] = useState<number | null>(null); // 分页游标
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const fetchPurchaseHistory = async (cursor: number | null = null) => {
-    if (!hasMore || loading) return; // 防止重复加载
+  const fetchPurchaseHistory = async (sender: string | null = null,
+    cursor: number | null = null,) => {
+    if (!hasMore || loading) return;
 
     if (account?.address) {
       setLoading(true);
@@ -36,48 +38,21 @@ const PurchaseHistory = () => {
           sender: account?.address!,
           nextCursor: cursor!,
         });
-        const { data } = response;
-        if (data) {
-          const formattedData: History[] = data.map((item: any) => ({
-            rank:
-              item.rank && !isNaN(Number(item.rank))
-                ? BigInt(item.rank)
-                : BigInt(0),
-            nodeNum:
-              item.nodeNum && !isNaN(Number(item.nodeNum))
-                ? BigInt(item.nodeNum)
-                : BigInt(0),
-            amount:
-              item.paymentAmount && !isNaN(Number(item.paymentAmount))
-                ? BigInt(item.paymentAmount)
-                : BigInt(0),
-            time:
-              item.timestamp && !isNaN(Number(item.timestamp))
-                ? BigInt(item.timestamp)
-                : BigInt(0),
-          }));
+        const newBuy = response.data || [];
 
           setTimeout(() => {
             // 使用 Set 去重
-            const existingRanks = new Set(
-              purchaseHistory.map((item) => item.rank.toString()),
+            const existingIds = new Set(purchaseHistory.map(item => item.id));
+            const uniqueNewData = newBuy.filter(
+              (item: BuyNodeRecord) => !existingIds.has(item.id)
             );
-            const uniqueNewData = formattedData.filter(
-              (item) => !existingRanks.has(item.rank.toString()),
-            );
-
-            setPurchaseHistory((prev) => [...prev, ...uniqueNewData]);
-            // @ts-ignore
+            
+            setPurchaseHistory(prev => [...prev, ...uniqueNewData]);
             setCursor(response.nextCursor);
-            // @ts-ignore
-            setHasMore(
-              response.nextCursor !== null && uniqueNewData.length > 0,
-            );
+            setHasMore(response.nextCursor !== null && uniqueNewData.length > 0);
             setLoading(false);
           }, 1000);
-        } else {
-          message.error(t('Unable to obtain user information'));
-        }
+        
       } catch (e: any) {
         console.log(`Failed to fetch purchase history: ${e.message}`);
         messageApi.error(`${t(handleTxError(e.message))}`);
@@ -86,15 +61,15 @@ const PurchaseHistory = () => {
     }
   };
   useEffect(() => {
-    fetchPurchaseHistory();
+    fetchPurchaseHistory(account?.address, null);
   }, [account]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const bottom =
-      e.currentTarget.scrollHeight ===
-      e.currentTarget.scrollTop + e.currentTarget.clientHeight;
-    if (bottom && !loading && cursor && hasMore) {
-      fetchPurchaseHistory(cursor);
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // 当滚动到距离底部10px以内时，认为到达底部
+    const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
+    if (isBottom && !loading && cursor) {
+      fetchPurchaseHistory(account?.address,cursor); // 滚动到底部时加载更多数据
     }
   };
 
@@ -109,26 +84,15 @@ const PurchaseHistory = () => {
         </span>
       </div>
       {/* 表格部分 */}
-      <div
-        className="overflow-x-auto max-h-[400px]"
-        onScroll={handleScroll} // 将滚动监听器移到这里
-      >
-        <div className="relative">
-          <table className="min-w-full table-auto bg-transparent">
+      <div className="w-full overflow-x-auto max-h-[400px]" onScroll={handleScroll}>
+        <div className="min-w-[600px] lg:w-full">
+          <table className="w-full table-auto bg-transparent">
             <thead className="sticky text-white top-0 bg-[url('/personal01.png')] bg-cover bg-center">
               <tr>
-                <th className="px-4 py-2 text-left whitespace-nowrap">
-                  {t('Equity number')}
-                </th>
-                <th className="px-4 py-2 text-left whitespace-nowrap">
-                  {t('Equity level')}
-                </th>
-                <th className="px-4 py-2 text-left whitespace-nowrap">
-                  {t('Amount')}
-                </th>
-                <th className="px-4 py-2 text-left whitespace-nowrap">
-                  {t('Time')}
-                </th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Equity number')}</th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Equity level')}</th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Amount')}</th>
+                <th className="px-4 py-2 text-left whitespace-nowrap w-1/4">{t('Time')}</th>
               </tr>
             </thead>
             <tbody className="bg-[rgba(13,24,41,0.7)] text-white">
@@ -146,22 +110,27 @@ const PurchaseHistory = () => {
                     {record.nodeNum}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {convertSmallToLarge(Number(record.amount), 9)}
+                    {convertSmallToLarge(Number(record.paymentAmount), 9)}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
-                    {formatTimestamp(Number(record.time) * 1000)}
+                    {formatTimestamp(Number(record.timestamp) * 1000)}
                   </td>
                 </tr>
               ))}
+              {!loading && !hasMore && purchaseHistory.length > 0 && (
+                <tr>
+                  <td colSpan={4} className="text-center whitespace-nowrap py-2 text-gray-400">
+                    {t('No more data')}
+                  </td>
+                </tr>
+              )}
             </tbody>
+            
           </table>
-          {!loading && !hasMore && purchaseHistory.length > 0 && (
-            <div className="text-center text-gray-400 py-2">
-              {t('No more data')}
-            </div>
-          )}
+          
         </div>
       </div>
+
     </div>
   );
 };
