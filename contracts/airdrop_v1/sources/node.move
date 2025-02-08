@@ -441,7 +441,19 @@ module airdrop::node {
             i = i + 1;
         };
     }
-    
+
+    // TODO 临时增加的测试方法（v1没有的方法）
+    public fun claim_times(nodes: &Nodes, round: u64, node_num: u64): u64 {
+        let round_map_times = nodes.limits.get(&node_num);
+
+        let is_exists = round_map_times.contains(&round);
+        if (is_exists) {
+            let user_purchased_quantity: &u64 = round_map_times.get(&round);
+            *user_purchased_quantity
+        } else {
+            0
+        }
+    }
 
     // === Assertions ===
 

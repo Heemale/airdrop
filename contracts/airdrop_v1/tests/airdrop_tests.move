@@ -1,13 +1,12 @@
 #[test_only]
 module airdrop::airdrop_tests {
-    use sui::test_scenario::{Self, ctx};
+    use sui::test_scenario::{Self, Scenario, ctx};
     use sui::sui::{SUI};
     use sui::coin::{Self, Coin};
     use airdrop::airdrop::{Self, AdminCap, Airdrops};
     use airdrop::node::{Self, Nodes};
     use airdrop::invite::{Self, Invite};
-    use sui::clock::{Self};
-
+    use sui::clock::{Self, Clock};
 
     const Admin: address = @0x1;
     const Receiver: address = @0x2;
@@ -15,6 +14,124 @@ module airdrop::airdrop_tests {
     const User2: address = @0x4;
 
     const E: u64 = 1;
+
+    // === 部署空投合约 ===
+    fun deploy(scenario: &mut Scenario) {
+        airdrop::init_for_test(ctx(scenario));
+        test_scenario::next_tx(scenario, Admin);
+    }
+
+    // === 实例化对象 ===
+    fun init_objects(adminCap: &AdminCap, scenario: &mut Scenario) {
+        test_scenario::next_tx(scenario, Admin);
+        airdrop::new(
+            adminCap,
+            ctx(scenario)
+        );
+        test_scenario::next_tx(scenario, Admin);
+
+        test_scenario::next_tx(scenario, Admin);
+        airdrop::new_node<SUI>(
+            adminCap,
+            Receiver,
+            ctx(scenario)
+        );
+
+        test_scenario::next_tx(scenario, Admin);
+        airdrop::new_invite(
+            adminCap,
+            Admin,
+            200,
+            ctx(scenario)
+        );
+    }
+
+    // === 绑定邀请关系 ===
+    fun bind_invite(invite: &mut Invite, scenario: &mut Scenario) {
+        test_scenario::next_tx(scenario, User);
+        invite::bind(invite, Admin, ctx(scenario));
+        // let inviter = invite::inviters(&invite, User);
+        // assert!(inviter == Admin, E);
+    }
+
+    // === 添加节点 ===
+    fun insert_node(adminCap: &AdminCap, nodes: &mut Nodes, scenario: &mut Scenario) {
+        test_scenario::next_tx(scenario, Admin);
+        airdrop::insert_node(
+            adminCap,
+            nodes,
+            b"Node 1", // 节点名称
+            b"Description of Node 1", // 节点描述
+            2, // 每轮空投购买次数
+            1000, // 价格
+            10, // 总数量
+        );
+    }
+
+    // === 购买节点 ===
+    fun buy_node(nodes: &mut Nodes, invite: &Invite, scenario: &mut Scenario) {
+        test_scenario::next_tx(scenario, User);
+        {
+            let wallet = coin::mint_for_testing<SUI>(1000, ctx(scenario));
+            node::buy<SUI>(
+                nodes,
+                invite,
+                1, // 节点等级
+                wallet,
+                ctx(scenario)
+            );
+        };
+
+        // // === 检查购买节点的等级 ===
+        // assert!(node::nodes_rank(&nodes, User) == 1, E);
+        //
+        // // === 检查接收人接收到的资金 ===
+        // let receiver_coin: Coin<SUI> = test_scenario::take_from_address<Coin<SUI>>(
+        //     &scenario,
+        //     node::receiver(&nodes)
+        // );
+        // assert!(receiver_coin.value() == 980, E);
+        // transfer::public_transfer(receiver_coin, node::receiver(&nodes));
+        //
+        // // === 检查邀请人接收到的资金 ===
+        // let inviter = invite::inviters(&invite, User);
+        // let inviter_coin: Coin<SUI> = test_scenario::take_from_address<Coin<SUI>>(
+        //     &scenario,
+        //     inviter
+        // );
+        // assert!(inviter_coin.value() == 20, E);
+        // transfer::public_transfer(inviter_coin, inviter);
+    }
+
+    // === 添加空投 ===
+    fun insert_airdrop(adminCap: &AdminCap, airdrops: &mut Airdrops, scenario: &mut Scenario) {
+        test_scenario::next_tx(scenario, Admin);
+        let pay_coin = coin::mint_for_testing<SUI>(1_000_000_000, ctx(scenario));
+        airdrop::insert<SUI>(
+            adminCap,
+            airdrops,
+            1000, // 开始时间
+            2000, // 结束时间
+            10,
+            100000,
+            b"Test Airdrop",
+            pay_coin,
+            b"http://localhost:3000/01.png",
+            ctx(scenario),
+        );
+    }
+
+    // === 领取空投 ===
+    fun cliam_airdrop(airdrops: &mut Airdrops, nodes: &mut Nodes, clock: &Clock, scenario: &mut Scenario) {
+        test_scenario::next_tx(scenario, User);
+        airdrop::claim<SUI>(
+            airdrops,
+            nodes,
+            1, // round
+            clock,
+            ctx(scenario),
+        );
+    }
 
     #[test]
     fun test_invite() {
@@ -165,6 +282,59 @@ module airdrop::airdrop_tests {
         assert!(node::is_already_buy_node(&nodes, User) == false, E);
         assert!(node::remaining_quantity_of_claim(&nodes, User, 1) == 0, E);
         assert!(node::remaining_quantity_of_claim(&nodes, User2, 1) == 3, E);
+
+        // === 结束测试 ===
+        transfer::public_transfer(adminCap, Admin);
+        clock::destroy_for_testing(clock);
+        test_scenario::return_shared(nodes);
+        test_scenario::return_shared(invite);
+        test_scenario::return_shared(airdrops);
+        test_scenario::end(scenario);
+    }
+
+    #[test]
+    fun test_cliam() {
+        // === 开始测试 ===
+        let mut scenario = test_scenario::begin(Admin);
+
+        deploy(&mut scenario);
+        let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
+
+        init_objects(&adminCap, &mut scenario);
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        let mut clock = clock::create_for_testing(ctx(&mut scenario));
+        let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
+        let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
+        let mut invite = test_scenario::take_shared<Invite>(&scenario);
+
+        bind_invite(&mut invite, &mut scenario);
+        insert_node(&adminCap, &mut nodes, &mut scenario);
+        buy_node(&mut nodes, &invite, &mut scenario);
+        insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        clock::set_for_testing(&mut clock, 1500);
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        cliam_airdrop(&mut airdrops, &mut nodes, &clock, &mut scenario);
+        let remaining_times = node::remaining_quantity_of_claim(&nodes, User, 1);
+        assert!(remaining_times == 1, E);
+        let claim_times = node::claim_times(&nodes, 1, 1);
+        assert!(claim_times == 1, E);
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        cliam_airdrop(&mut airdrops, &mut nodes, &clock, &mut scenario);
+        let remaining_times = node::remaining_quantity_of_claim(&nodes, User, 1);
+        assert!(remaining_times == 0, E);
+        let claim_times = node::claim_times(&nodes, 1, 1);
+        assert!(claim_times == 2, E);
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        cliam_airdrop(&mut airdrops, &mut nodes, &clock, &mut scenario);
+        let claim_times = node::claim_times(&nodes, 1, 1);
+        // bug 1: 没有拦截，还能继续领取
+        assert!(claim_times != 3, E);
 
         // === 结束测试 ===
         transfer::public_transfer(adminCap, Admin);
