@@ -15,6 +15,8 @@ module airdrop::airdrop {
     use airdrop::invest::{Self, Invest};
     use airdrop::global::{Global};
 
+    // === Error ===
+
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 1;
     // 异常: 轮次不存在
@@ -27,6 +29,7 @@ module airdrop::airdrop {
     const ENoRemainingShares: u64 = 5;
     // 异常：方法已弃用
     const EMethodDeprecated: u64 = 6;
+
     // === Struct ===
 
     // 空投列表对象
@@ -41,7 +44,7 @@ module airdrop::airdrop {
     }
 
     // 空投对象
-    public struct Airdrop has store {
+    public struct Airdrop has store, drop {
         // 轮次
         round: u64,
         // 开始时间
@@ -71,8 +74,6 @@ module airdrop::airdrop {
         id: UID,
     }
 
-    // === Event ===
-
     public struct AirdropInfo has copy, drop {
         // 轮次
         round: u64,
@@ -98,6 +99,8 @@ module airdrop::airdrop {
         remaining_balance: u64,
     }
 
+    // === Event ===
+
     public struct Claim has copy, drop {
         // 用户
         sender: address,
@@ -107,6 +110,33 @@ module airdrop::airdrop {
         coin_type: TypeName,
         // 数量
         amount: u64,
+    }
+
+    public struct AirdropChange has copy, drop {
+        // 轮次
+        round: u64,
+        // 开始时间
+        start_time: u64,
+        // 结束时间
+        end_time: u64,
+        // 总份数
+        total_shares: u64,
+        // 已领取份数
+        claimed_shares: u64,
+        // 总资金
+        total_balance: u64,
+        // 是否开放
+        is_open: bool,
+        // 描述
+        description: vector<u8>,
+        // 货币类型
+        coin_type: TypeName,
+        // 空投图片
+        image_url: vector<u8>,
+        // 空投剩余资金
+        remaining_balance: u64,
+        // 是否移除
+        is_remove: bool,
     }
 
     fun init(ctx: &mut TxContext) {
@@ -178,7 +208,7 @@ module airdrop::airdrop {
         let coin_type = type_name::get<T>();
 
         // 增加空投对象
-        let aidrop = Airdrop {
+        let airdrop = Airdrop {
             round,
             start_time,
             end_time,
@@ -191,8 +221,54 @@ module airdrop::airdrop {
             image_url,
             remaining_balance: total_balance,
         };
-        airdrops.airdrops.insert(round, aidrop);
+
+        event::emit(AirdropChange {
+            round: airdrop.round,
+            start_time: airdrop.start_time,
+            end_time: airdrop.end_time,
+            total_shares: airdrop.total_shares,
+            claimed_shares: airdrop.claimed_shares,
+            total_balance: airdrop.total_balance,
+            is_open: airdrop.is_open,
+            description: airdrop.description,
+            coin_type: airdrop.coin_type,
+            image_url: airdrop.image_url,
+            remaining_balance: airdrop.remaining_balance,
+            is_remove: false
+        });
+
+        airdrops.airdrops.insert(round, airdrop);
         bag::add(&mut airdrops.treasury_balances, round, coin::into_balance(wallet));
+    }
+
+    entry fun remove<T>(
+        admin_cap: &AdminCap,
+        airdrops: &mut Airdrops,
+        round: u64,
+        ctx: &mut TxContext
+    ) {
+        let sender = tx_context::sender(ctx);
+
+        withdraw_internal<T>(admin_cap, airdrops, round, sender, ctx);
+
+        let airdrop: &Airdrop = airdrops.airdrops.get(&round);
+
+        event::emit(AirdropChange {
+            round: airdrop.round,
+            start_time: airdrop.start_time,
+            end_time: airdrop.end_time,
+            total_shares: airdrop.total_shares,
+            claimed_shares: airdrop.claimed_shares,
+            total_balance: airdrop.total_balance,
+            is_open: airdrop.is_open,
+            description: airdrop.description,
+            coin_type: airdrop.coin_type,
+            image_url: airdrop.image_url,
+            remaining_balance: airdrop.remaining_balance,
+            is_remove: true
+        });
+
+        airdrops.airdrops.remove(&round);
     }
 
     /*
@@ -216,11 +292,26 @@ module airdrop::airdrop {
         description: vector<u8>,
     ) {
         assert_round_not_found(airdrops, round);
-        let aidrop: &mut Airdrop = airdrops.airdrops.get_mut(&round);
-        aidrop.start_time = start_time;
-        aidrop.end_time = end_time;
-        aidrop.is_open = is_open;
-        aidrop.description = description;
+        let airdrop: &mut Airdrop = airdrops.airdrops.get_mut(&round);
+        airdrop.start_time = start_time;
+        airdrop.end_time = end_time;
+        airdrop.is_open = is_open;
+        airdrop.description = description;
+
+        event::emit(AirdropChange {
+            round: airdrop.round,
+            start_time: airdrop.start_time,
+            end_time: airdrop.end_time,
+            total_shares: airdrop.total_shares,
+            claimed_shares: airdrop.claimed_shares,
+            total_balance: airdrop.total_balance,
+            is_open: airdrop.is_open,
+            description: airdrop.description,
+            coin_type: airdrop.coin_type,
+            image_url: airdrop.image_url,
+            remaining_balance: airdrop.remaining_balance,
+            is_remove: false,
+        });
     }
 
     /*
@@ -232,20 +323,48 @@ module airdrop::airdrop {
      * @param round: 轮次
      */
     entry fun withdraw<T>(
-        _admin_cap: &AdminCap,
+        admin_cap: &AdminCap,
         airdrops: &mut Airdrops,
         round: u64,
         ctx: &mut TxContext
     ) {
         let sender = tx_context::sender(ctx);
+
+        withdraw_internal<T>(admin_cap, airdrops, round, sender, ctx);
+
+        let airdrop: &Airdrop = airdrops.airdrops.get(&round);
+
+        event::emit(AirdropChange {
+            round: airdrop.round,
+            start_time: airdrop.start_time,
+            end_time: airdrop.end_time,
+            total_shares: airdrop.total_shares,
+            claimed_shares: airdrop.claimed_shares,
+            total_balance: airdrop.total_balance,
+            is_open: airdrop.is_open,
+            description: airdrop.description,
+            coin_type: airdrop.coin_type,
+            image_url: airdrop.image_url,
+            remaining_balance: airdrop.remaining_balance,
+            is_remove: false,
+        });
+    }
+
+    fun withdraw_internal<T>(
+        _admin_cap: &AdminCap,
+        airdrops: &mut Airdrops,
+        round: u64,
+        receiver: address,
+        ctx: &mut TxContext
+    ) {
         assert_round_not_found(airdrops, round);
-        let aidrop_balance: &mut Balance<T> = bag::borrow_mut(&mut airdrops.treasury_balances, round);
-        let treasury_balance = aidrop_balance.withdraw_all();
+        let airdrop_balance: &mut Balance<T> = bag::borrow_mut(&mut airdrops.treasury_balances, round);
+        let treasury_balance = airdrop_balance.withdraw_all();
         let treasury_coin = coin::from_balance(treasury_balance, ctx);
         let airdrop: &mut Airdrop = airdrops.airdrops.get_mut(&round);
         airdrop.is_open = false;
         airdrop.remaining_balance = 0;
-        transfer::public_transfer(treasury_coin, sender);
+        transfer::public_transfer(treasury_coin, receiver);
     }
 
     /*
@@ -273,8 +392,11 @@ module airdrop::airdrop {
         clock: &Clock,
         limits: &Limits,
         invest: &mut Invest,
+        global: &Global,
         ctx: &mut TxContext,
     ) {
+        global.assert_pause();
+
         let sender = tx_context::sender(ctx);
         // 断言：回合需要存在
         assert_round_not_found(airdrops, round);
@@ -316,7 +438,22 @@ module airdrop::airdrop {
             round,
             coin_type,
             amount: per_share_amount,
-        })
+        });
+
+        event::emit(AirdropChange {
+            round: airdrop.round,
+            start_time: airdrop.start_time,
+            end_time: airdrop.end_time,
+            total_shares: airdrop.total_shares,
+            claimed_shares: airdrop.claimed_shares,
+            total_balance: airdrop.total_balance,
+            is_open: airdrop.is_open,
+            description: airdrop.description,
+            coin_type: airdrop.coin_type,
+            image_url: airdrop.image_url,
+            remaining_balance: airdrop.remaining_balance,
+            is_remove: false,
+        });
     }
 
     public fun new_invite(
@@ -439,15 +576,6 @@ module airdrop::airdrop {
         global: &mut Global
     ) {
         global.un_pause();
-    }
-
-    public fun update_initialization_list(
-        _admin_cap: &AdminCap,
-        global: &mut Global,
-        object_type: TypeName,
-        status: bool
-    ) {
-        global.update_initialization_list(object_type, status);
     }
 
     public fun airdrops(airdrops: &Airdrops) {

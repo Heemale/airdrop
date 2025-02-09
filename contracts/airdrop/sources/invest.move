@@ -3,6 +3,8 @@ module airdrop::invest {
     use sui::event;
     use sui::vec_map::{Self, VecMap};
 
+    // === Struct ===
+
     // 投资对象
     public struct Invest has key, store {
         id: UID,
@@ -15,6 +17,8 @@ module airdrop::invest {
         // 最近一次收益累计金额
         last_accumulated_gains: VecMap<address, u64>,
     }
+
+    // === Event ===
 
     public struct UpdateInvest has copy, drop {
         // 用户
@@ -183,22 +187,16 @@ module airdrop::invest {
         // 最新一次投资金额
         let is_exists = invest.last_investment.contains(&address);
         if (is_exists) {
-            let last_investment = invest.last_investment.get(&address);
-            let last_investment = *last_investment + amount;
             invest.last_investment.remove(&address);
-            invest.last_investment.insert(address, last_investment);
-        } else {
-            invest.last_investment.insert(address, amount);
         };
+        invest.last_investment.insert(address, amount);
 
         // 最近一次收益累计金额
         let is_exists = invest.last_accumulated_gains.contains(&address);
         if (is_exists) {
             invest.last_accumulated_gains.remove(&address);
-            invest.last_accumulated_gains.insert(address, 0);
-        } else {
-            invest.last_accumulated_gains.insert(address, 0);
         };
+        invest.last_accumulated_gains.insert(address, 0);
     }
 
     /*
@@ -234,31 +232,19 @@ module airdrop::invest {
             });
         };
 
-        // 购买节点，累计收益重新计算
-        if (amount == 0) {
-            let is_exists = invest.last_accumulated_gains.contains(&address);
-            if (is_exists) {
-                invest.last_accumulated_gains.remove(&address);
-                invest.last_accumulated_gains.insert(address, amount);
-            } else {
-                invest.last_accumulated_gains.insert(address, amount);
-            };
-            false
+        // 最近一次收益累计金额
+        let is_exists = invest.last_accumulated_gains.contains(&address);
+        if (is_exists) {
+            let accumulated_gains = invest.last_accumulated_gains.get(&address);
+            let accumulated_gains = *accumulated_gains + amount;
+            invest.last_accumulated_gains.remove(&address);
+            invest.last_accumulated_gains.insert(address, accumulated_gains);
+
+            is_need_forbid_node(invest, address, accumulated_gains)
         } else {
-            // 最近一次收益累计金额
-            let is_exists = invest.last_accumulated_gains.contains(&address);
-            if (is_exists) {
-                let accumulated_gains = invest.last_accumulated_gains.get(&address);
-                let accumulated_gains = *accumulated_gains + amount;
-                invest.last_accumulated_gains.remove(&address);
-                invest.last_accumulated_gains.insert(address, accumulated_gains);
+            invest.last_accumulated_gains.insert(address, amount);
 
-                is_need_forbid_node(invest, address, accumulated_gains)
-            } else {
-                invest.last_accumulated_gains.insert(address, amount);
-
-                is_need_forbid_node(invest, address, amount)
-            }
+            is_need_forbid_node(invest, address, amount)
         }
     }
 

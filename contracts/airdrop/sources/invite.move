@@ -1,9 +1,11 @@
 module airdrop::invite {
     // === Imports ===
 
+    use airdrop::global::Global;
     use sui::vec_map::{Self, VecMap};
     use sui::address::{Self};
     use sui::event::{Self};
+
     // === Errors ===
 
     // 异常: 非法调用人
@@ -14,6 +16,8 @@ module airdrop::invite {
     const EAlreadyBindInviter: u64 = 3;
     // 异常: 未绑定邀请人
     const ENotBindInviter: u64 = 4;
+    // 异常：方法已弃用
+    const EMethodDeprecated: u64 = 5;
 
     // === Struct ===
 
@@ -73,18 +77,38 @@ module airdrop::invite {
         invite.inviter_fee = inviter_fee;
     }
 
+    entry fun bind(
+        _invite: &mut Invite,
+        _inviter: address,
+        _ctx: &TxContext
+    ) {
+        assert!(false, EMethodDeprecated);
+    }
+
     /*
      * @notice 绑定邀请关系
      *
      * @param invite: invite对象
      * @param inviter: 邀请人地址
      */
-    entry fun bind(invite: &mut Invite, inviter: address, ctx: &TxContext) {
+    entry fun bind_v2(
+        invite: &mut Invite,
+        inviter: address,
+        global: &Global,
+        ctx: &TxContext
+    ) {
+        global.assert_pause();
+
         let sender = tx_context::sender(ctx);
+        // 断言：必须是合法调用人
         assert_invalid_sender(invite, sender);
+        // 断言：必须是合法邀请人
         assert_invalid_inviter(invite, inviter);
+        // 断言：需要未绑定邀请关系
         assert_already_bind_inviter(invite, sender);
+
         invite.inviters.insert(sender, inviter);
+
         event::emit(Bind {
             sender,
             inviter,
@@ -118,22 +142,22 @@ module airdrop::invite {
     // === Assertions ===
 
     public fun assert_invalid_sender(invite: &Invite, sender: address) {
-        // 调用人不能是root用户
+        // 断言：调用人不能是root用户
         assert!(!(&sender == &invite.root), EInvalidSender);
     }
 
     public fun assert_invalid_inviter(invite: &Invite, inviter: address) {
-        // 邀请人必须是root用户或者已绑定的用户
+        // 断言：邀请人必须是root用户或者已绑定的用户
         assert!(&inviter == &invite.root || invite.inviters.contains(&inviter), EInvalidInviter);
     }
 
     public fun assert_already_bind_inviter(invite: &Invite, sender: address) {
-        // 调用人必须未绑定邀请人
+        // 断言：需要未绑定邀请关系
         assert!(!invite.inviters.contains(&sender), EAlreadyBindInviter);
     }
 
     public fun assert_not_bind_inviter(invite: &Invite, sender: address) {
-        // 调用人必须未绑定邀请人
+        // 断言：需要已绑定邀请关系
         assert!(invite.inviters.contains(&sender), ENotBindInviter);
     }
 }

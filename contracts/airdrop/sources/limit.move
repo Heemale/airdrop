@@ -3,6 +3,8 @@ module airdrop::limit {
     use sui::event;
     use sui::vec_map::{Self, VecMap};
 
+    // === Struct ===
+
     // 特殊列表对象
     public struct Limits has key, store {
         id: UID,
@@ -17,6 +19,8 @@ module airdrop::limit {
         // 是否限制
         isLimit: bool,
     }
+
+    // === Event ===
 
     public struct ModifyLimit has copy, drop {
         // 地址

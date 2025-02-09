@@ -5,9 +5,11 @@ module airdrop::node {
     use sui::coin::{Coin};
     use sui::event::{Self};
     use std::type_name::{Self, TypeName};
+    use airdrop::global::Global;
     use airdrop::invite::{Self, Invite};
     use airdrop::invest::{Self, Invest};
     use airdrop::limit::{Self, Limits};
+
     // === Constants ===
 
     const MathBase: u64 = 10000;
@@ -17,8 +19,10 @@ module airdrop::node {
     // 异常: 余额不足
     const ECoinBalanceNotEnough: u64 = 1;
     // 异常: 已购买权益
+    #[allow(unused_const)]
     const EAlreadyBuyNode: u64 = 2;
     // 异常: 未购买权益
+    #[allow(unused_const)]
     const ENotBuyNode: u64 = 3;
     // 异常: 权益已售罄
     const ENodeSoldOut: u64 = 4;
@@ -32,14 +36,10 @@ module airdrop::node {
     const EInsufficientRemainingQuantity: u64 = 8;
     // 异常：方法已弃用
     const EMethodDeprecated: u64 = 9;
-
-    // 几种状态
-    // 是否拥有权益
-    // 是否禁用权益
-
-    // 几种断言
-    // 未拥有权益
-    // 需要购买权益
+    // 异常: 不需要购买权益
+    const ENoNeedBuyNode: u64 = 10;
+    // 异常: 需要购买权益
+    const EMustBuyNode: u64 = 11;
 
     // === Struct ===
 
@@ -87,8 +87,8 @@ module airdrop::node {
         rank: u8,
         // 权益序列号
         node_num: u64,
-        // 是否合法
-        is_invalid: bool
+        // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
+        is_invalid: bool,
     }
 
     public struct NodeInfo has copy, drop {
@@ -111,6 +111,28 @@ module airdrop::node {
     }
 
     // === Event ===
+
+    // 权益对象变更
+    public struct NodeChange has copy, drop {
+        // 等级
+        rank: u8,
+        // 名称
+        name: vector<u8>,
+        // 描述
+        description: vector<u8>,
+        // 每轮可领取空投数量
+        limit: u64,
+        // 价格
+        price: u64,
+        // 总量
+        total_quantity: u64,
+        // 已购买的数量
+        purchased_quantity: u64,
+        // 是否开启
+        is_open: bool,
+        // 是否移除
+        is_remove: bool,
+    }
 
     #[allow(unused_field)]
     public struct Buy has copy, drop {
@@ -198,6 +220,19 @@ module airdrop::node {
             purchased_quantity: 0,
             is_open: true,
         };
+
+        event::emit(NodeChange {
+            rank: node.rank,
+            name: node.name,
+            description: node.description,
+            limit: node.limit,
+            price: node.price,
+            total_quantity: node.total_quantity,
+            purchased_quantity: node.purchased_quantity,
+            is_open: node.is_open,
+            is_remove: false
+        });
+
         nodes.nodes.insert(rank, node);
     }
 
@@ -211,6 +246,20 @@ module airdrop::node {
         nodes: &mut Nodes,
         rank: u8
     ) {
+        let node = nodes.nodes.get(&rank);
+
+        event::emit(NodeChange {
+            rank: node.rank,
+            name: node.name,
+            description: node.description,
+            limit: node.limit,
+            price: node.price,
+            total_quantity: node.total_quantity,
+            purchased_quantity: node.purchased_quantity,
+            is_open: node.is_open,
+            is_remove: true
+        });
+
         nodes.nodes.remove(&rank);
     }
 
@@ -234,14 +283,27 @@ module airdrop::node {
         total_quantity: u64,
         is_open: bool,
     ) {
-        let nodeMut: &mut Node = nodes.nodes.get_mut(&rank);
-        nodeMut.rank = rank;
-        nodeMut.name = name;
-        nodeMut.description = description;
-        nodeMut.price = price;
-        nodeMut.limit = limit;
-        nodeMut.total_quantity = total_quantity;
-        nodeMut.is_open = is_open;
+        let node: &mut Node = nodes.nodes.get_mut(&rank);
+
+        node.rank = rank;
+        node.name = name;
+        node.description = description;
+        node.price = price;
+        node.limit = limit;
+        node.total_quantity = total_quantity;
+        node.is_open = is_open;
+
+        event::emit(NodeChange {
+            rank: node.rank,
+            name: node.name,
+            description: node.description,
+            limit: node.limit,
+            price: node.price,
+            total_quantity: node.total_quantity,
+            purchased_quantity: node.purchased_quantity,
+            is_open: node.is_open,
+            is_remove: false
+        });
     }
 
     /*
@@ -257,7 +319,7 @@ module airdrop::node {
 
     // 更新某个权益在某个回合购买次数
     public(package) fun update_purchased_quantity(nodes: &mut Nodes, sender: address, round: u64) {
-        assert_not_buy_node_v2(nodes, sender);
+        assert_no_need_buy_node(nodes, sender);
         let user: &mut User = nodes.users.get_mut(&sender);
         let mut quantity: u64 = 1;
 
@@ -310,19 +372,21 @@ module airdrop::node {
         rank: u8,
         mut wallet: Coin<T>,
         invest: &mut Invest,
+        global: &Global,
         ctx: &mut TxContext,
     ) {
+        global.assert_pause();
+
         let sender = tx_context::sender(ctx);
 
         // 断言：需要合法的代币类型
         assert_invalid_coin_type<T>(nodes.coin_type);
-        // 断言：需要未购买
-        assert_already_buy_node_v2(nodes, sender);
-        // 断言：需要绑定邀请关系
+        // 断言：需要已绑定邀请关系
         invite::assert_not_bind_inviter(invite, sender);
+        // 断言：需要购买权益
+        assert_no_need_buy_node(nodes, sender);
 
         nodes.node_num_index = nodes.node_num_index + 1;
-
         let node: &mut Node = nodes.nodes.get_mut(&rank);
 
         // 断言：需要足够的代币余额
@@ -338,11 +402,13 @@ module airdrop::node {
             let user = nodes.users.get_mut(&sender);
             user.rank = rank;
             user.node_num = nodes.node_num_index;
+            // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
             user.is_invalid = true;
         } else {
             let user = User {
                 rank: node.rank,
                 node_num: nodes.node_num_index,
+                // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
                 is_invalid: true,
             };
             nodes.users.insert(sender, user);
@@ -377,8 +443,6 @@ module airdrop::node {
 
         // 更新用户投资
         invest::update_invest(invest, sender, node.price);
-        // 更新用户收益
-        invest::update_gains(invest, sender, 0);
 
         // 更新邀请人收益
         let is_need_forbiden = invest::update_gains(invest, inviter, inviter_rebate_value);
@@ -387,22 +451,33 @@ module airdrop::node {
         };
     }
 
+    entry fun transfer(
+        _nodes: &mut Nodes,
+        _receiver: address,
+        _ctx: &TxContext,
+    ) {
+        assert!(false, EMethodDeprecated);
+    }
+
     /*
      * @notice 转移权益
      */
-    entry fun transfer(
+    entry fun transfer_v2(
         nodes: &mut Nodes,
         receiver: address,
+        global: &Global,
         ctx: &TxContext,
     ) {
+        global.assert_pause();
+
         let sender = tx_context::sender(ctx);
         let rank = nodes_rank(nodes, sender);
         let node = nodes.nodes.get(&rank);
 
         // 权益发送人必须已购买权益
-        assert_not_buy_node_v2(nodes, sender);
+        assert_no_need_buy_node(nodes, sender);
         // 权益接收人必须未拥有权益
-        assert_already_buy_node_v2(nodes, receiver);
+        assert_must_buy_node(nodes, receiver);
 
         let node_sender: &mut User = nodes.users.get_mut(&sender);
         let node_num: u64 = node_sender.node_num;
@@ -418,12 +493,14 @@ module airdrop::node {
             let node_receiver: &mut User = nodes.users.get_mut(&receiver);
             node_receiver.rank = rank;
             node_receiver.node_num = node_num;
+            // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
             node_receiver.is_invalid = true;
         }
         else {
             let node_receiver = User {
                 rank: node.rank,
                 node_num,
+                // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
                 is_invalid: true,
             };
             nodes.users.insert(receiver, node_receiver);
@@ -441,11 +518,13 @@ module airdrop::node {
         let is_exists = nodes.users.contains(&address);
         if (is_exists) {
             let user: &mut User = nodes.users.get_mut(&address);
+            // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
             user.is_invalid = true;
         } else {
             let user = User {
                 rank: 0,
                 node_num: 0,
+                // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
                 is_invalid: true,
             };
             nodes.users.insert(address, user);
@@ -548,6 +627,7 @@ module airdrop::node {
         let is_exists = nodes.users.contains(&sender);
         if (is_exists) {
             let user: &User = nodes.users.get(&sender);
+            // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
             user.rank != 0 && !user.is_invalid
         } else {
             false
@@ -559,6 +639,7 @@ module airdrop::node {
         let is_exists = nodes.users.contains(&sender);
         if (is_exists) {
             let user: &User = nodes.users.get(&sender);
+            // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
             user.rank != 0 && user.is_invalid
         } else {
             false
@@ -590,18 +671,20 @@ module airdrop::node {
         assert!(false, EMethodDeprecated);
     }
 
-    public fun assert_already_buy_node_v2(nodes: &Nodes, sender: address) {
+    public fun assert_no_need_buy_node(nodes: &Nodes, sender: address) {
+        // 断言：需要购买权益
         let is_exists = is_need_buy_node(nodes, sender);
-        assert!(!is_exists, EAlreadyBuyNode);
+        assert!(is_exists, ENoNeedBuyNode);
     }
 
     public fun assert_not_buy_node(_users: &VecMap<address, User>, _sender: address) {
         assert!(false, EMethodDeprecated);
     }
 
-    public fun assert_not_buy_node_v2(nodes: &Nodes, sender: address) {
+    public fun assert_must_buy_node(nodes: &Nodes, sender: address) {
+        // 断言：不需要购买权益
         let is_exists = is_need_buy_node(nodes, sender);
-        assert!(is_exists, ENotBuyNode);
+        assert!(!is_exists, EMustBuyNode);
     }
 
     public fun assert_node_sold_out(node: &Node) {
