@@ -375,7 +375,7 @@ module airdrop::node {
         global: &Global,
         ctx: &mut TxContext,
     ) {
-        global.assert_pause();
+        global.assert_paused();
         global.assert_object_invalid(nodes.uid());
         global.assert_object_invalid(invite.uid());
 
@@ -470,7 +470,7 @@ module airdrop::node {
         global: &Global,
         ctx: &TxContext,
     ) {
-        global.assert_pause();
+        global.assert_paused();
         global.assert_object_invalid(nodes.uid());
 
         let sender = tx_context::sender(ctx);

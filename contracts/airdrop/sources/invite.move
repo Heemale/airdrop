@@ -97,7 +97,7 @@ module airdrop::invite {
         global: &Global,
         ctx: &TxContext
     ) {
-        global.assert_pause();
+        global.assert_paused();
         global.assert_object_invalid(invite.uid());
 
         let sender = tx_context::sender(ctx);

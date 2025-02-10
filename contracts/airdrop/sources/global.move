@@ -77,7 +77,7 @@ module airdrop::global {
 
     // === Assertions ===
 
-    public fun assert_pause(self: &Global) {
+    public fun assert_paused(self: &Global) {
         assert!(!self.is_pause, EPaused);
     }
 

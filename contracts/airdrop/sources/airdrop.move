@@ -395,7 +395,7 @@ module airdrop::airdrop {
         global: &Global,
         ctx: &mut TxContext,
     ) {
-        global.assert_pause();
+        global.assert_paused();
         global.assert_object_invalid(airdrops.uid());
         global.assert_object_invalid(nodes.uid());
 
