@@ -5,6 +5,8 @@ module airdrop::invest {
 
     // === Struct ===
 
+    public struct INVEST has drop {}
+
     // 投资对象
     public struct Invest has key, store {
         id: UID,
@@ -42,10 +44,7 @@ module airdrop::invest {
         total_gains: u64,
     }
 
-    /*
-     * @notice 创建投资对象
-     */
-    public(package) fun new(ctx: &mut TxContext) {
+    fun init(_witness: INVEST, ctx: &mut TxContext) {
         let invest = Invest {
             id: object::new(ctx),
             total_investment: vec_map::empty(),

@@ -375,7 +375,9 @@ module airdrop::node {
         global: &Global,
         ctx: &mut TxContext,
     ) {
-        global.assert_pause();
+        global.assert_paused();
+        global.assert_object_invalid(nodes.uid());
+        global.assert_object_invalid(invite.uid());
 
         let sender = tx_context::sender(ctx);
 
@@ -468,7 +470,8 @@ module airdrop::node {
         global: &Global,
         ctx: &TxContext,
     ) {
-        global.assert_pause();
+        global.assert_paused();
+        global.assert_object_invalid(nodes.uid());
 
         let sender = tx_context::sender(ctx);
         let rank = nodes_rank(nodes, sender);
@@ -663,6 +666,10 @@ module airdrop::node {
             });
             i = i + 1;
         };
+    }
+
+    public fun uid(self: &Nodes) :&UID {
+        &self.id
     }
 
     // === Assertions ===
