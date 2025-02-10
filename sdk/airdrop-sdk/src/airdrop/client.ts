@@ -12,6 +12,7 @@ import type {
 import { AirdropInfo } from './types';
 import { Summary } from '../types';
 import { ClaimSummary } from './types';
+import { ChangeSummary } from './types';
 
 export class AirdropClient {
   constructor(
@@ -353,6 +354,29 @@ export class AirdropClient {
         coinType: ('0x' + rawEvent.coin_type.name) as string,
         amount: rawEvent.amount as bigint,
         timestamp: rawEvent.timestamp as bigint,
+      };
+    };
+    return this.handleEventReturns(resp, customMapping);
+  }
+  async changeAirdrop(
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ): Promise<Summary<ChangeSummary>> {
+    const resp = await this.queryEvents('AirdropChange', input);
+
+    const customMapping = (rawEvent: any) => {
+      return {
+        description: rawEvent.description as string,
+        round: rawEvent.round as bigint,
+        coinType: ('0x' + rawEvent.coin_type.name) as string,
+        startTime: rawEvent.start_time as bigint,
+        endTime: rawEvent.end_time as bigint,
+        isOpen: rawEvent.is_open as boolean,
+        totalShares: rawEvent.total_shares as bigint,
+        claimedShares: rawEvent.claimed_shares as bigint,
+        totalBalance: rawEvent.total_balance as bigint,
+        imageUrl: rawEvent.image_url as string,
+        remainingBalance: rawEvent.remaining_balance as bigint,
+        isRemove: rawEvent.is_remove as boolean,
       };
     };
     return this.handleEventReturns(resp, customMapping);

@@ -75,7 +75,6 @@ const AirdropItem = (props: Props) => {
         data.round,
         SUI_CLOCK_OBJECT_ID,
       );
-
       try {
         await devTransaction(tx, account.address);
       } catch (e: any) {

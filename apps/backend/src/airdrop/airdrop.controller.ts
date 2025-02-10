@@ -1,40 +1,35 @@
 import { Controller, Get, HttpException, Query } from '@nestjs/common';
-import { BuyService } from './buyV2.service';
-import { findBuyRecordsBySender } from '@/buy/dao/buyV2.dao';
-import { GetBuyInfoDto } from '@/buy/dto/buyV2.dto';
+import { findClaimRecords } from '@/airdrop/dao/claimRecord.dao';
+import { GetClaimRecordsDto } from '@/airdrop/dto/getClaimRecords.dto';
 
-@Controller()
-export class BuyV2RecordController {
-  constructor(private readonly buyService: BuyService) {}
-
-  @Get('buy-node-record')
-  async getBuyRecords(@Query() params: GetBuyInfoDto) {
+@Controller('claim-airdrop-record')
+export class AirdropController {
+  @Get()
+  async getClaimRecords(@Query() params: GetClaimRecordsDto) {
     const { sender, pageSize = 25, nextCursor } = params;
 
-    // 参数校验
     if (!sender) {
-      throw new HttpException('Sender address is required', 400);
+      throw new HttpException('Invalid parameters: sender is required.', 400);
     }
+
     if (nextCursor && isNaN(Number(nextCursor))) {
       throw new HttpException('Invalid nextCursor.', 400);
     }
+
     if (
       isNaN(Number(pageSize)) ||
       Number(pageSize) <= 0 ||
       Number(pageSize) > 200
     ) {
-      throw new HttpException('Page size must be between 1 and 200', 400);
+      throw new HttpException('Page size must be between 1 and 200.', 400);
     }
 
     try {
-      // 查询购买记录
-      return await findBuyRecordsBySender(
-        sender,
+      return await findClaimRecords(
+        sender.toLowerCase(),
         nextCursor && Number(nextCursor),
         Number(pageSize),
       );
-
-      // 查询记录总数
     } catch ({ message }) {
       console.log(`FindClaimRecords error: ${message}`);
       throw new HttpException('Error retrieving claim records.', 500);

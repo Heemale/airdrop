@@ -5,7 +5,6 @@ export interface BindSummary extends TransactionSummary {
   sender: string;
   inviter: string;
   nextCursor?: EventId | null;
-
 }
 
 export * from './index';

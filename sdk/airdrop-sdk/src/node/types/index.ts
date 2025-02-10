@@ -26,22 +26,34 @@ export interface BuySummary extends TransactionSummary {
   nodeNum: bigint;
 }
 
-export interface TransferSummary extends TransactionSummary {
-  sender: string;
-  receiver: string;
+export interface AddSummary extends TransactionSummary {
   rank: bigint;
-  nodeNum: bigint;
+  name: string;
+  description: string;
+  isOpen: boolean;
+  createAt: bigint;
 }
 
 export interface BuyV2Summary extends TransactionSummary {
   sender: string;
   rank: bigint;
   nodeNum: bigint;
-  timestamp:bigint;
+  timestamp: bigint;
   paymentAmount: bigint;
   inviterGains: bigint;
   nodeReceiverGains: bigint;
   nextCursor?: EventId | null;
 }
 
+export interface ChangeSummary extends TransactionSummary {
+  rank: bigint;
+  name: string;
+  description: string;
+  isOpen: boolean;
+  limit: bigint;
+  price: bigint;
+  totalQuantity: bigint;
+  purchasedQuantity: bigint;
+  isRemove: boolean;
+}
 export * from './index';

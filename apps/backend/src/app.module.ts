@@ -3,10 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { ScheduleModule } from '@nestjs/schedule';
-import { BuyModule } from './buy/buyV2.module';
+import { BuyModule } from './node/buyV2.module';
+import { AirdropModule } from './airdrop/airdrop.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), UserModule, BuyModule],
+  imports: [ScheduleModule.forRoot(), UserModule, BuyModule, AirdropModule],
   controllers: [AppController],
   providers: [AppService],
 })
