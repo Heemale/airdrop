@@ -5,8 +5,6 @@ module airdrop::invest {
 
     // === Struct ===
 
-    public struct INVEST has drop {}
-
     // 投资对象
     public struct Invest has key, store {
         id: UID,
@@ -44,7 +42,7 @@ module airdrop::invest {
         total_gains: u64,
     }
 
-    fun init(_witness: INVEST, ctx: &mut TxContext) {
+    fun init(ctx: &mut TxContext) {
         let invest = Invest {
             id: object::new(ctx),
             total_investment: vec_map::empty(),
@@ -68,7 +66,8 @@ module airdrop::invest {
     ): bool {
         // 总投资金额
         let is_exists = invest.total_investment.contains(&address);
-        if (is_exists) {
+
+        let (amount, is_increse, total_investment) = if (is_exists) {
             let total_investment = *invest.total_investment.get(&address);
 
             let is_increse = fix_total_investment > total_investment;
@@ -81,26 +80,22 @@ module airdrop::invest {
             invest.total_investment.remove(&address);
             invest.total_investment.insert(address, fix_total_investment);
 
-            event::emit(UpdateInvest {
-                address,
-                amount,
-                is_increse,
-                total_investment,
-            });
+            (amount, is_increse, total_investment)
         } else {
             invest.total_investment.insert(address, fix_total_investment);
 
-            event::emit(UpdateInvest {
-                address,
-                amount: fix_total_investment,
-                is_increse: true,
-                total_investment: fix_total_investment
-            });
+            (fix_total_investment, true, fix_total_investment)
         };
+        event::emit(UpdateInvest {
+            address,
+            amount,
+            is_increse,
+            total_investment,
+        });
 
         // 总收益金额
         let is_exists = invest.total_gains.contains(&address);
-        if (is_exists) {
+        let (amount, is_increse, total_gains) = if (is_exists) {
             let total_gains = *invest.total_gains.get(&address);
 
             let is_increse = fix_total_gains > total_gains;
@@ -113,40 +108,32 @@ module airdrop::invest {
             invest.total_investment.remove(&address);
             invest.total_investment.insert(address, fix_total_gains);
 
-            event::emit(UpdateGains {
-                address,
-                amount,
-                is_increse,
-                total_gains,
-            });
+            (amount, is_increse, total_gains)
         } else {
             invest.total_investment.insert(address, fix_total_gains);
 
-            event::emit(UpdateGains {
-                address,
-                amount: fix_total_gains,
-                is_increse: true,
-                total_gains: fix_total_gains
-            });
+            (fix_total_gains, true, fix_total_gains)
         };
+        event::emit(UpdateGains {
+            address,
+            amount,
+            is_increse,
+            total_gains,
+        });
 
         // 最新一次投资金额
         let is_exists = invest.last_investment.contains(&address);
         if (is_exists) {
             invest.last_investment.remove(&address);
-            invest.last_investment.insert(address, fix_last_investment);
-        } else {
-            invest.last_investment.insert(address, fix_last_investment);
         };
+        invest.last_investment.insert(address, fix_last_investment);
 
         // 最近一次收益累计金额
         let is_exists = invest.last_accumulated_gains.contains(&address);
         if (is_exists) {
             invest.last_accumulated_gains.remove(&address);
-            invest.last_accumulated_gains.insert(address, fix_accumulated_gains);
-        } else {
-            invest.last_accumulated_gains.insert(address, fix_accumulated_gains);
         };
+        invest.last_accumulated_gains.insert(address, fix_accumulated_gains);
         is_need_forbid_node(invest, address, fix_accumulated_gains)
     }
 
@@ -260,5 +247,12 @@ module airdrop::invest {
         } else {
             false
         }
+    }
+
+    // === Testing ===
+
+    #[test_only]
+    entry fun init_for_test(ctx: &mut TxContext) {
+        init(ctx);
     }
 }

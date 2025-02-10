@@ -140,8 +140,12 @@ module airdrop::invite {
         invite.inviter_fee
     }
 
-    public fun uid(self: &Invite) :&UID {
+    public fun uid(self: &Invite): &UID {
         &self.id
+    }
+
+    public fun is_bind(self: &Invite, sender: address): bool {
+        self.inviters.contains(&sender)
     }
 
     // === Assertions ===
@@ -158,11 +162,11 @@ module airdrop::invite {
 
     public fun assert_already_bind_inviter(invite: &Invite, sender: address) {
         // 断言：需要未绑定邀请关系
-        assert!(!invite.inviters.contains(&sender), EAlreadyBindInviter);
+        assert!(!invite.is_bind(sender), EAlreadyBindInviter);
     }
 
     public fun assert_not_bind_inviter(invite: &Invite, sender: address) {
         // 断言：需要已绑定邀请关系
-        assert!(invite.inviters.contains(&sender), ENotBindInviter);
+        assert!(invite.is_bind(sender), ENotBindInviter);
     }
 }

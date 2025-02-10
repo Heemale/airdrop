@@ -367,9 +367,6 @@ module airdrop::airdrop {
         transfer::public_transfer(treasury_coin, receiver);
     }
 
-    /*
-     * @notice 领取空投
-     */
     #[allow(unused_type_parameter)]
     entry fun claim<T>(
         _airdrops: &mut Airdrops,
@@ -383,7 +380,7 @@ module airdrop::airdrop {
     }
 
     /*
-     * @notice 领取空投v2
+     * @notice 领取空投
      */
     entry fun claim_v2<T>(
         airdrops: &mut Airdrops,
@@ -410,7 +407,7 @@ module airdrop::airdrop {
         assert_no_remaining_shares(airdrop);
         // 断言：剩余领取次数需要足够
         node::assert_insufficient_remaining_quantity(nodes, sender, round, limits);
-        node::update_purchased_quantity(nodes, sender, round);
+        node::update_claim_times(nodes, sender, round);
 
         let per_share_amount = airdrop.total_balance / airdrop.total_shares;
         airdrop.claimed_shares = airdrop.claimed_shares + 1;
@@ -597,7 +594,7 @@ module airdrop::airdrop {
         };
     }
 
-    public fun uid(self: &Airdrops) :&UID {
+    public fun uid(self: &Airdrops): &UID {
         &self.id
     }
 
@@ -617,7 +614,7 @@ module airdrop::airdrop {
     }
 
     public fun assert_no_remaining_shares(airdrop: &Airdrop) {
-        assert!(airdrop.total_shares - airdrop.claimed_shares > 0, ENoRemainingShares);
+        assert!(airdrop.total_shares > airdrop.claimed_shares, ENoRemainingShares);
     }
 
     // === Testing ===

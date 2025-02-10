@@ -11,8 +11,6 @@ module airdrop::global {
 
     // === Struct ===
 
-    public struct GLOBAL has drop {}
-
     // 全局对象
     public struct Global has key, store {
         id: UID,
@@ -32,7 +30,7 @@ module airdrop::global {
         is_valid: bool,
     }
 
-    fun init(_witness: GLOBAL, ctx: &mut TxContext) {
+    fun init(ctx: &mut TxContext) {
         let global = Global {
             id: object::new(ctx),
             is_pause: true,
@@ -84,5 +82,12 @@ module airdrop::global {
     public fun assert_object_invalid(self: &Global, object: &UID) {
         let id = object::uid_as_inner(object);
         assert!(self.object_is_valid(id), EObjectInvalid);
+    }
+
+    // === Testing ===
+
+    #[test_only]
+    entry fun init_for_test(ctx: &mut TxContext) {
+        init(ctx);
     }
 }

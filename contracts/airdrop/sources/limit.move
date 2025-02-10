@@ -5,8 +5,6 @@ module airdrop::limit {
 
     // === Struct ===
 
-    public struct LIMIT has drop {}
-
     // 特殊列表对象
     public struct Limits has key, store {
         id: UID,
@@ -33,7 +31,7 @@ module airdrop::limit {
         is_limit: bool,
     }
 
-    fun init(_witness: LIMIT, ctx: &mut TxContext) {
+    fun init(ctx: &mut TxContext) {
         let limits = Limits {
             id: object::new(ctx),
             special_user_limit: vec_map::empty(),
@@ -75,11 +73,11 @@ module airdrop::limit {
         });
     }
 
-    public fun special_limit_remaining_quantity(
+    public fun special_limit_remaining_claim_times(
         limits: &Limits,
         address: &address,
-        node_limit_quantity: u64,
-        user_purchased_quantity: u64,
+        node_limit_times: u64,
+        user_claimed_times: u64,
     ): u64 {
         // 是否在限制名单中
         let is_exists = limits.special_user_limit.contains(address);
@@ -87,16 +85,31 @@ module airdrop::limit {
             // 是否被限制
             let special_user_limit = limits.special_user_limit.get(address);
             if (special_user_limit.isLimit) {
-                if (user_purchased_quantity > special_user_limit.times) {
-                    0
+                if (special_user_limit.times > user_claimed_times) {
+                    special_user_limit.times - user_claimed_times
                 } else {
-                    special_user_limit.times - user_purchased_quantity
+                    0
                 }
             } else {
-                node_limit_quantity - user_purchased_quantity
+                if (node_limit_times > user_claimed_times) {
+                    node_limit_times - user_claimed_times
+                } else {
+                    0
+                }
             }
         } else {
-            node_limit_quantity - user_purchased_quantity
+            if (node_limit_times > user_claimed_times) {
+                node_limit_times - user_claimed_times
+            } else {
+                0
+            }
         }
+    }
+
+    // === Testing ===
+
+    #[test_only]
+    entry fun init_for_test(ctx: &mut TxContext) {
+        init(ctx);
     }
 }
