@@ -150,23 +150,23 @@ module airdrop::invite {
 
     // === Assertions ===
 
+    // 断言：调用人不能是root用户
     public fun assert_invalid_sender(invite: &Invite, sender: address) {
-        // 断言：调用人不能是root用户
         assert!(!(&sender == &invite.root), EInvalidSender);
     }
 
+    // 断言：邀请人必须是root用户或者已绑定的用户
     public fun assert_invalid_inviter(invite: &Invite, inviter: address) {
-        // 断言：邀请人必须是root用户或者已绑定的用户
         assert!(&inviter == &invite.root || invite.inviters.contains(&inviter), EInvalidInviter);
     }
 
+    // 断言：需要未绑定邀请关系
     public fun assert_already_bind_inviter(invite: &Invite, sender: address) {
-        // 断言：需要未绑定邀请关系
         assert!(!invite.is_bind(sender), EAlreadyBindInviter);
     }
 
+    // 断言：需要已绑定邀请关系
     public fun assert_not_bind_inviter(invite: &Invite, sender: address) {
-        // 断言：需要已绑定邀请关系
         assert!(invite.is_bind(sender), ENotBindInviter);
     }
 }

@@ -7,7 +7,7 @@ module airdrop::global {
     // === Error ===
 
     const EPaused: u64 = 0;
-    const EObjectInvalid: u64 = 1;
+    const EInvalidObject: u64 = 1;
 
     // === Struct ===
 
@@ -81,7 +81,7 @@ module airdrop::global {
 
     public fun assert_object_invalid(self: &Global, object: &UID) {
         let id = object::uid_as_inner(object);
-        assert!(self.object_is_valid(id), EObjectInvalid);
+        assert!(self.object_is_valid(id), EInvalidObject);
     }
 
     // === Testing ===

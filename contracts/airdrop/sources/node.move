@@ -589,16 +589,7 @@ module airdrop::node {
                     // 此编号权益是否领取过空投
                     let is_exists = nodes.limits.contains(&user.node_num);
                     let user_claimed_times: u64 = if (is_exists) {
-                        let round_times_map = nodes.limits.get(&user.node_num);
-
-                        // 此编号权益是否领取过当前轮空投
-                        let is_exists = round_times_map.contains(&round);
-                        if (is_exists) {
-                            let user_claimed_times: &u64 = round_times_map.get(&round);
-                            *user_claimed_times
-                        } else {
-                            0
-                        }
+                        claimed_times(nodes, round, user.node_num)
                     } else {
                         0
                     };
@@ -616,6 +607,19 @@ module airdrop::node {
             } else {
                 0
             }
+        } else {
+            0
+        }
+    }
+
+    public fun claimed_times(self: &Nodes, round: u64, node_num: u64): u64 {
+        let round_times_map = self.limits.get(&node_num);
+
+        // 此编号权益是否领取过当前轮空投
+        let is_exists = round_times_map.contains(&round);
+        if (is_exists) {
+            let user_claimed_times: &u64 = round_times_map.get(&round);
+            *user_claimed_times
         } else {
             0
         }
