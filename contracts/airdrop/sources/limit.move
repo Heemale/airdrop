@@ -5,6 +5,8 @@ module airdrop::limit {
 
     // === Struct ===
 
+    public struct LIMIT has drop {}
+
     // 特殊列表对象
     public struct Limits has key, store {
         id: UID,
@@ -31,10 +33,7 @@ module airdrop::limit {
         is_limit: bool,
     }
 
-    /*
-     * @notice 创建特殊限制列表对象
-     */
-    public(package) fun new(ctx: &mut TxContext) {
+    fun init(_witness: LIMIT, ctx: &mut TxContext) {
         let limits = Limits {
             id: object::new(ctx),
             special_user_limit: vec_map::empty(),

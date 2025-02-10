@@ -396,6 +396,8 @@ module airdrop::airdrop {
         ctx: &mut TxContext,
     ) {
         global.assert_pause();
+        global.assert_object_invalid(airdrops.uid());
+        global.assert_object_invalid(nodes.uid());
 
         let sender = tx_context::sender(ctx);
         // 断言：回合需要存在
@@ -516,13 +518,6 @@ module airdrop::airdrop {
         node::modify_nodes<T>(nodes, receiver);
     }
 
-    public fun new_limits(
-        _admin_cap: &AdminCap,
-        ctx: &mut TxContext
-    ) {
-        limit::new(ctx);
-    }
-
     public fun modify_special_limits(
         _admin_cap: &AdminCap,
         limits: &mut Limits,
@@ -531,13 +526,6 @@ module airdrop::airdrop {
         is_limit: bool,
     ) {
         limit::modify(limits, address, times, is_limit);
-    }
-
-    public fun new_invest(
-        _admin_cap: &AdminCap,
-        ctx: &mut TxContext,
-    ) {
-        invest::new(ctx);
     }
 
     public fun modify_invest(
@@ -578,6 +566,15 @@ module airdrop::airdrop {
         global.un_pause();
     }
 
+    public fun update_initialization_list(
+        _admin_cap: &AdminCap,
+        global: &mut Global,
+        object: ID,
+        is_valid: bool
+    ) {
+        global.update_initialization_list(object, is_valid);
+    }
+
     public fun airdrops(airdrops: &Airdrops) {
         let length = airdrops.airdrops.size();
         let mut i = 1;
@@ -598,6 +595,10 @@ module airdrop::airdrop {
             });
             i = i + 1;
         };
+    }
+
+    public fun uid(self: &Airdrops) :&UID {
+        &self.id
     }
 
     // === Assertions ===

@@ -1,7 +1,7 @@
 module airdrop::invite {
     // === Imports ===
 
-    use airdrop::global::Global;
+    use airdrop::global::{Global};
     use sui::vec_map::{Self, VecMap};
     use sui::address::{Self};
     use sui::event::{Self};
@@ -98,6 +98,7 @@ module airdrop::invite {
         ctx: &TxContext
     ) {
         global.assert_pause();
+        global.assert_object_invalid(invite.uid());
 
         let sender = tx_context::sender(ctx);
         // 断言：必须是合法调用人
@@ -137,6 +138,10 @@ module airdrop::invite {
 
     public fun inviter_fee(invite: &Invite): u64 {
         invite.inviter_fee
+    }
+
+    public fun uid(self: &Invite) :&UID {
+        &self.id
     }
 
     // === Assertions ===
