@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { upsert } from '@/user/dao/claimRecord.dao';
+import { upsert } from '@/airdrop/dao/claimRecord.dao';
 
 export const handleClaim = async (event: Prisma.ClaimRecordCreateInput) => {
   await upsert(event);

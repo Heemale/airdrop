@@ -55,13 +55,18 @@ model User {
 
 /// 权益表
 model Node {
-  id          Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
-  rank        BigInt?  @unique /// 节点等级
-  name        String?  @db.VarChar(255) /// 名称
-  description String?  @db.Text /// 描述
-  isOpen      Boolean? @default(false) @map("is_open") // 是否开启
-  createAt    BigInt?  @map("create_at") /// 创建时间
-  updateAt    BigInt?  @map("update_at") /// 更新时间
+  id                Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
+  rank              BigInt?  @unique /// 节点等级
+  name              String?  @db.VarChar(255) /// 名称
+  description       String?  @db.Text /// 描述
+  isOpen            Boolean? @default(false) @map("is_open") // 是否开启
+  createAt          BigInt?  @map("create_at") /// 创建时间
+  updateAt          BigInt?  @map("update_at") /// 更新时间
+  isRemove          Boolean? ///是否转移
+  limit             BigInt?
+  price             BigInt?
+  totalQuantity     BigInt?
+  purchasedQuantity BigInt?
 
   @@map("swld_node")
 }
@@ -82,6 +87,7 @@ model Airdrop {
   remainingBalance BigInt?  @map("remaining_balance") /// 空投剩余资金
   createAt         BigInt?  @map("create_at") /// 创建时间
   updateAt         BigInt?  @map("update_at") /// 更新时间
+  isRemove         Boolean?
 
   @@map("swld_airdrop")
 }

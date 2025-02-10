@@ -7,11 +7,12 @@ import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { MODULE_CLOB } from './utils/constants';
-import { NodeInfo, TransferSummary } from './types';
+import { NodeInfo, AddSummary } from './types';
 import { bcs } from '@mysten/sui/bcs';
 import { Summary } from '../types';
 import { BuySummary } from './types';
 import { BuyV2Summary } from './types';
+import { ChangeSummary } from './types';
 
 export class NodeClient {
   constructor(
@@ -197,14 +198,14 @@ export class NodeClient {
     return this.handleEventReturns(resp, customMapping);
   }
 
-  async getV2AllBuy(
+  async getAllBuyV2(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
   ): Promise<Summary<BuyV2Summary>> {
     const resp = await this.queryEvents('BuyV2', input);
     const customMapping = (rawEvent: any) => ({
       sender: rawEvent.sender as string,
       rank: rawEvent.rank as bigint,
-      timestamp:rawEvent.timestamp as bigint,
+      timestamp: rawEvent.timestamp as bigint,
       nodeNum: rawEvent.node_num as bigint,
       paymentAmount: rawEvent.payment_amount as bigint,
       inviterGains: rawEvent.inviter_gains as bigint,
@@ -213,19 +214,37 @@ export class NodeClient {
     return this.handleEventReturns(resp, customMapping);
   }
 
-  async getAllTransfer(
+  async addNode(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
-  ): Promise<Summary<TransferSummary>> {
-    const resp = await this.queryEvents('Transfer', input);
+  ): Promise<Summary<AddSummary>> {
+    const resp = await this.queryEvents('', input);
     const customMapping = (rawEvent: any) => ({
-      sender: rawEvent.sender as string,
-      receiver: rawEvent.receiver as string,
       rank: rawEvent.rank as bigint,
-      nodeNum: rawEvent.node_num as bigint,
+      createAt: rawEvent.create_at as bigint,
+      name: rawEvent.name as string,
+      description: rawEvent.description as bigint,
+      isOpen: rawEvent.node_receiver_gains as boolean,
     });
     return this.handleEventReturns(resp, customMapping);
   }
 
+  async changeNode(
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ): Promise<Summary<ChangeSummary>> {
+    const resp = await this.queryEvents('NodeChange', input);
+    const customMapping = (rawEvent: any) => ({
+      rank: rawEvent.rank as bigint,
+      name: rawEvent.name as string,
+      limit: rawEvent.limit as bigint,
+      price: rawEvent.price as bigint,
+      totalQuantity: rawEvent.total_quantity as bigint,
+      description: rawEvent.description as bigint,
+      purchasedQuantity: rawEvent.purchased_quantity as bigint,
+      isOpen: rawEvent.node_receiver_gains as boolean,
+      isRemove: rawEvent.is_remove as boolean,
+    });
+    return this.handleEventReturns(resp, customMapping);
+  }
   async queryEvents(
     eventName: string,
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,

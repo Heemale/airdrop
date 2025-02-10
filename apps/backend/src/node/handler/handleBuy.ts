@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/config/prisma';
-import { upsert as upsertBuyRecord } from '@/buy/dao/buyRecord.dao';
+import { upsert as upsertBuyRecord } from '@/node/dao/buyRecord.dao';
 import { upsert as upsertInvestChangeRecord } from '@/user/dao/investChangeRecord.dao';
 import { upsert as upsertGainsChangeRecord } from '@/user/dao/gainsChangeRecord.dao';
-import { PaymentDetails } from '@/buy/formatter/formatBuy';
+import { PaymentDetails } from '@/node/formatter/formatBuy';
 import {
   findUserByAddress,
   increaseTotalGains,

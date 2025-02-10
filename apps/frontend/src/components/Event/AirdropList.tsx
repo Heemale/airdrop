@@ -21,9 +21,6 @@ interface Props {
   unpurchasedNode: string;
   claimText: string;
 }
-
-const startTime = BigInt(getCurrentTimestampMs());
-
 const AirdropList = (props: Props) => {
   const {
     isOngoing,
@@ -61,6 +58,7 @@ const AirdropList = (props: Props) => {
   const getAirdropList = async () => {
     try {
       const airdropData = await airdropClientV1.airdrops(AIRDROPS);
+      console.log(1111111, airdropData);
       setAirdropList(airdropData);
     } catch (e: any) {
       console.log(`getAirdropList error: ${e.messag}`);

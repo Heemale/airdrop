@@ -6,7 +6,7 @@ export interface InvestInfo {
   // 总收益金额
   total_gains: BigInt;
   // 最新一次投资金额
-  last_investment:BigInt;
+  last_investment: BigInt;
   // 最近一次收益累计金额
   last_accumulated_gains: BigInt;
 }
