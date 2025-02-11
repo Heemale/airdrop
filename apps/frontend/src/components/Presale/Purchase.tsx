@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import Button from '@/components/Button';
-import { inviteClientV1, nodeClientV1, devTransaction } from '@/sdk';
-import { NODES, INVITE, PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
+import { inviteClientV2, nodeClientV2, devTransaction } from '@/sdk';
+import { NODES, INVITE, PAY_COIN_TYPE, INVEST, GLOBAL } from '@/sdk';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
@@ -29,12 +29,12 @@ const Purchase = () => {
   const [loading, setLoading] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
-
+  const [NodeStatus, setNodeStatus] = useState<number>(0);
   const buyNode = async () => {
     try {
       if (node && account && account.address) {
         setLoading(true);
-        const tx = await nodeClientV1.buy(
+        const tx = await nodeClientV2.buy_v2(
           PAY_COIN_TYPE,
           NODES,
           INVITE,
@@ -42,6 +42,8 @@ const Purchase = () => {
           null,
           node.price,
           account.address,
+          INVEST,
+          GLOBAL,
         );
 
         try {
@@ -86,7 +88,7 @@ const Purchase = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const isAlreadyBuyNode = await nodeClientV1.isAlreadyBuyNode(
+        const isAlreadyBuyNode = await nodeClientV2.isAlreadyBuyNode(
           NODES,
           user,
         );
@@ -97,12 +99,24 @@ const Purchase = () => {
       }
     }
   };
+  const getNodeStatus = async () => {
+    if (account && account.address) {
+      try {
+        const user = account.address;
+        const getNodeStatus = await nodeClientV2.getNodeStatus(NODES, user);
+        setNodeStatus(Number(getNodeStatus));
+      } catch (e: any) {
+        console.log(`getNodeStatus: ${e.message}`);
+        messageApi.error(`${t(handleTxError(e.message.trim()))}`);
+      }
+    }
+  };
 
   const updateInvite = async () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const inviter = await inviteClientV1.inviters(INVITE, user);
+        const inviter = await inviteClientV2.inviters(INVITE, user);
         setInviter(inviter);
       } catch (e: any) {
         console.log(`updateInvite: ${e.message}`);
@@ -125,19 +139,27 @@ const Purchase = () => {
             text={t('BIND INVITER')}
             onClick={bind}
           />
-        ) : isAlreadyBuyNode ? (
+        ) : NodeStatus === 1 ? (
           <button
             className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
             disabled
           >
             {t('PURCHASED EQUITY')}
           </button>
-        ) : (
+        ) : NodeStatus === 0 ? (
           <Button
             className="text-white w-full"
             text={t('BUY')}
             onClick={buyNode}
           />
+        ) : NodeStatus === 2 ? (
+          <Button
+            className="text-white w-full"
+            text={t('Activate again')}
+            onClick={buyNode}
+          />
+        ) : (
+          t('The return value gets inconsistent')
         )
       ) : (
         <ConnectWallet />

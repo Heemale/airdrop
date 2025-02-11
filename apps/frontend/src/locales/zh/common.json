@@ -123,5 +123,7 @@
 "Personal subscription":"个人认购",
 "Earned":"已领取收益",
 "Total team subscription":"团队总认购",
-"Unable to obtain user information":"无法获取用户信息"
+"Unable to obtain user information":"无法获取用户信息",
+"The return value gets inconsistent":"返回值获取不符",
+"Activate again":"再次激活"
 }

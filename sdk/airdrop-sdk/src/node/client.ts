@@ -83,6 +83,76 @@ export class NodeClient {
     return tx;
   }
 
+  async buy_v2(
+    T: string,
+    nodes: string,
+    invite: string,
+    rank: number,
+    wallet: string | null,
+    amount: bigint | null,
+    owner: string,
+    invest: string,
+    global: string,
+  ): Promise<Transaction> {
+    const tx = new Transaction();
+    if (wallet) {
+      tx.moveCall({
+        typeArguments: [T],
+        target: `${this.packageId}::${MODULE_CLOB}::buy_v2`,
+        arguments: [
+          tx.object(nodes),
+          tx.object(invite),
+          tx.pure.u8(Number(rank)),
+          tx.object(wallet),
+          tx.object(invest),
+          tx.object(global),
+        ],
+      });
+    } else {
+      if (T === '0x2::sui::SUI' && amount) {
+        const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(amount)]);
+        tx.moveCall({
+          typeArguments: [T],
+          target: `${this.packageId}::${MODULE_CLOB}::buy_v2`,
+          arguments: [
+            tx.object(nodes),
+            tx.object(invite),
+            tx.pure.u8(rank),
+            coin,
+            tx.object(invest),
+            tx.object(global),
+          ],
+        });
+      } else {
+        // @ts-ignore
+        const coins = await this.suiClient.getCoins({
+          owner,
+          coinType: T,
+        });
+        if (!coins.data.length) throw new Error('No coins.');
+        if (coins.data.length > 1) {
+          tx.mergeCoins(
+            tx.object(coins.data[0]['coinObjectId']),
+            coins.data.slice(1).map((e: any) => tx.object(e['coinObjectId'])),
+          );
+        }
+        const coin = tx.object(coins.data[0]['coinObjectId']); //合并后使用
+        tx.moveCall({
+          typeArguments: [T],
+          target: `${this.packageId}::${MODULE_CLOB}::buy_v2`,
+          arguments: [
+            tx.object(nodes),
+            tx.object(invite),
+            tx.pure.u8(rank),
+            coin,
+            tx.object(invest),
+            tx.object(global),
+          ],
+        });
+      }
+    }
+    return tx;
+  }
   async transfer(nodes: string, receiver: string): Promise<Transaction> {
     const tx = new Transaction();
     tx.moveCall({
@@ -126,6 +196,26 @@ export class NodeClient {
       // @ts-ignore
       return customMapping(event?.parsedJson);
     });
+  }
+  async getNodeStatus(nodes: string, sender: string): Promise<bigint> {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${this.packageId}::${MODULE_CLOB}::user_node_status`,
+      arguments: [tx.object(nodes), tx.pure.address(sender)],
+    });
+
+    // @ts-ignore
+    const res: DevInspectResults =
+      await this.suiClient.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: normalizeSuiAddress('0x0'),
+      });
+    // @ts-ignore
+    const value = res?.results[0]?.returnValues[0][0];
+
+    // 返回 u64 类型的节点状态值
+    return value;
   }
 
   async isAlreadyBuyNode(nodes: string, sender: string): Promise<boolean> {
