@@ -11,8 +11,8 @@ module airdrop::airdrop {
     use sui::clock::{Self, Clock};
     use airdrop::invite::{Self, Invite};
     use airdrop::node::{Self, Nodes};
-    use airdrop::limit::{Self, Limits};
-    use airdrop::invest::{Self, Invest};
+    use airdrop::limit::{Limits};
+    use airdrop::invest::{Invest};
     use airdrop::global::{Global};
 
     // === Error ===
@@ -421,11 +421,7 @@ module airdrop::airdrop {
         // 如果空投收益代币类型是SUI
         if (coin_type == type_name::get<SUI>()) {
             // 更新收益
-            let is_need_forbiden = invest::update_gains(
-                invest,
-                sender,
-                per_share_amount
-            );
+            let is_need_forbiden = invest.update_gains(sender, per_share_amount);
             // 如果达到条件，禁用权益
             if (is_need_forbiden) {
                 node::forbiden(nodes, sender);
@@ -522,7 +518,7 @@ module airdrop::airdrop {
         times: u64,
         is_limit: bool,
     ) {
-        limit::modify(limits, address, times, is_limit);
+        limits.modify(address, times, is_limit);
     }
 
     public fun modify_invest(
@@ -535,8 +531,7 @@ module airdrop::airdrop {
         fix_last_investment: u64,
         fix_accumulated_gains: u64,
     ) {
-        let is_need_forbiden = invest::modify(
-            invest,
+        let is_need_forbiden = invest.modify(
             address,
             fix_total_investment,
             fix_total_gains,

@@ -57,7 +57,7 @@ module airdrop::invest {
      * @notice 修改投资对象investment数据
      */
     public(package) fun modify(
-        invest: &mut Invest,
+        self: &mut Invest,
         address: address,
         fix_total_investment: u64,
         fix_total_gains: u64,
@@ -65,10 +65,10 @@ module airdrop::invest {
         fix_accumulated_gains: u64,
     ): bool {
         // 总投资金额
-        let is_exists = invest.total_investment.contains(&address);
+        let is_exists = self.total_investment.contains(&address);
 
         let (amount, is_increse, total_investment) = if (is_exists) {
-            let total_investment = *invest.total_investment.get(&address);
+            let total_investment = *self.total_investment.get(&address);
 
             let is_increse = fix_total_investment > total_investment;
             let amount = if (is_increse) {
@@ -77,12 +77,12 @@ module airdrop::invest {
                 total_investment - fix_total_investment
             };
 
-            invest.total_investment.remove(&address);
-            invest.total_investment.insert(address, fix_total_investment);
+            self.total_investment.remove(&address);
+            self.total_investment.insert(address, fix_total_investment);
 
             (amount, is_increse, total_investment)
         } else {
-            invest.total_investment.insert(address, fix_total_investment);
+            self.total_investment.insert(address, fix_total_investment);
 
             (fix_total_investment, true, fix_total_investment)
         };
@@ -94,9 +94,9 @@ module airdrop::invest {
         });
 
         // 总收益金额
-        let is_exists = invest.total_gains.contains(&address);
+        let is_exists = self.total_gains.contains(&address);
         let (amount, is_increse, total_gains) = if (is_exists) {
-            let total_gains = *invest.total_gains.get(&address);
+            let total_gains = *self.total_gains.get(&address);
 
             let is_increse = fix_total_gains > total_gains;
             let amount = if (is_increse) {
@@ -105,12 +105,12 @@ module airdrop::invest {
                 total_gains - fix_total_gains
             };
 
-            invest.total_investment.remove(&address);
-            invest.total_investment.insert(address, fix_total_gains);
+            self.total_investment.remove(&address);
+            self.total_investment.insert(address, fix_total_gains);
 
             (amount, is_increse, total_gains)
         } else {
-            invest.total_investment.insert(address, fix_total_gains);
+            self.total_investment.insert(address, fix_total_gains);
 
             (fix_total_gains, true, fix_total_gains)
         };
@@ -122,36 +122,36 @@ module airdrop::invest {
         });
 
         // 最新一次投资金额
-        let is_exists = invest.last_investment.contains(&address);
+        let is_exists = self.last_investment.contains(&address);
         if (is_exists) {
-            invest.last_investment.remove(&address);
+            self.last_investment.remove(&address);
         };
-        invest.last_investment.insert(address, fix_last_investment);
+        self.last_investment.insert(address, fix_last_investment);
 
         // 最近一次收益累计金额
-        let is_exists = invest.last_accumulated_gains.contains(&address);
+        let is_exists = self.last_accumulated_gains.contains(&address);
         if (is_exists) {
-            invest.last_accumulated_gains.remove(&address);
+            self.last_accumulated_gains.remove(&address);
         };
-        invest.last_accumulated_gains.insert(address, fix_accumulated_gains);
-        is_need_forbid_node(invest, address, fix_accumulated_gains)
+        self.last_accumulated_gains.insert(address, fix_accumulated_gains);
+        is_need_forbid_node(self, address, fix_accumulated_gains)
     }
 
     /*
      * @notice 更新投资数据
      */
     public(package) fun update_invest(
-        invest: &mut Invest,
+        self: &mut Invest,
         address: address,
         amount: u64,
     ) {
         // 总投资金额
-        let is_exists = invest.total_investment.contains(&address);
+        let is_exists = self.total_investment.contains(&address);
         if (is_exists) {
-            let total_investment = *invest.total_investment.get(&address);
+            let total_investment = *self.total_investment.get(&address);
             let total_investment = total_investment + amount;
-            invest.total_investment.remove(&address);
-            invest.total_investment.insert(address, total_investment);
+            self.total_investment.remove(&address);
+            self.total_investment.insert(address, total_investment);
 
             event::emit(UpdateInvest {
                 address,
@@ -160,7 +160,7 @@ module airdrop::invest {
                 total_investment
             });
         } else {
-            invest.total_investment.insert(address, amount);
+            self.total_investment.insert(address, amount);
 
             event::emit(UpdateInvest {
                 address,
@@ -171,35 +171,35 @@ module airdrop::invest {
         };
 
         // 最新一次投资金额
-        let is_exists = invest.last_investment.contains(&address);
+        let is_exists = self.last_investment.contains(&address);
         if (is_exists) {
-            invest.last_investment.remove(&address);
+            self.last_investment.remove(&address);
         };
-        invest.last_investment.insert(address, amount);
+        self.last_investment.insert(address, amount);
 
         // 最近一次收益累计金额
-        let is_exists = invest.last_accumulated_gains.contains(&address);
+        let is_exists = self.last_accumulated_gains.contains(&address);
         if (is_exists) {
-            invest.last_accumulated_gains.remove(&address);
+            self.last_accumulated_gains.remove(&address);
         };
-        invest.last_accumulated_gains.insert(address, 0);
+        self.last_accumulated_gains.insert(address, 0);
     }
 
     /*
      * @notice 更新收益数据
      */
     public(package) fun update_gains(
-        invest: &mut Invest,
+        self: &mut Invest,
         address: address,
         amount: u64,
     ): bool {
         // 总收益金额
-        let is_exists = invest.total_gains.contains(&address);
+        let is_exists = self.total_gains.contains(&address);
         if (is_exists) {
-            let total_gains = *invest.total_gains.get(&address);
+            let total_gains = *self.total_gains.get(&address);
             let total_gains = total_gains + amount;
-            invest.total_gains.remove(&address);
-            invest.total_gains.insert(address, total_gains);
+            self.total_gains.remove(&address);
+            self.total_gains.insert(address, total_gains);
 
             event::emit(UpdateGains {
                 address,
@@ -208,7 +208,7 @@ module airdrop::invest {
                 total_gains
             });
         } else {
-            invest.total_gains.insert(address, amount);
+            self.total_gains.insert(address, amount);
 
             event::emit(UpdateGains {
                 address,
@@ -219,29 +219,29 @@ module airdrop::invest {
         };
 
         // 最近一次收益累计金额
-        let is_exists = invest.last_accumulated_gains.contains(&address);
+        let is_exists = self.last_accumulated_gains.contains(&address);
         if (is_exists) {
-            let accumulated_gains = invest.last_accumulated_gains.get(&address);
+            let accumulated_gains = self.last_accumulated_gains.get(&address);
             let accumulated_gains = *accumulated_gains + amount;
-            invest.last_accumulated_gains.remove(&address);
-            invest.last_accumulated_gains.insert(address, accumulated_gains);
+            self.last_accumulated_gains.remove(&address);
+            self.last_accumulated_gains.insert(address, accumulated_gains);
 
-            is_need_forbid_node(invest, address, accumulated_gains)
+            self.is_need_forbid_node(address, accumulated_gains)
         } else {
-            invest.last_accumulated_gains.insert(address, amount);
+            self.last_accumulated_gains.insert(address, amount);
 
-            is_need_forbid_node(invest, address, amount)
+            self.is_need_forbid_node(address, amount)
         }
     }
 
     public fun is_need_forbid_node(
-        invest: &Invest,
+        self: &Invest,
         address: address,
         accumulated_gains: u64,
     ): bool {
-        let is_exists = invest.last_investment.contains(&address);
+        let is_exists = self.last_investment.contains(&address);
         if (is_exists) {
-            let last_investment = invest.last_investment.get(&address);
+            let last_investment = self.last_investment.get(&address);
             // 如果收益为2倍，则禁用权益
             accumulated_gains >= *last_investment * 2
         } else {

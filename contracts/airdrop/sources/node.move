@@ -7,8 +7,8 @@ module airdrop::node {
     use std::type_name::{Self, TypeName};
     use airdrop::global::Global;
     use airdrop::invite::{Self, Invite};
-    use airdrop::invest::{Self, Invest};
-    use airdrop::limit::{Self, Limits};
+    use airdrop::invest::{Invest};
+    use airdrop::limit::{Limits};
     // use std::debug::print;
     // use std::ascii::{string};
 
@@ -383,7 +383,7 @@ module airdrop::node {
         _nodes: &mut Nodes,
         _invite: &Invite,
         _rank: u8,
-        mut wallet: Coin<T>,
+        wallet: Coin<T>,
         ctx: &TxContext,
     ) {
         let sender = tx_context::sender(ctx);
@@ -469,10 +469,10 @@ module airdrop::node {
         });
 
         // 更新用户投资
-        invest::update_invest(invest, sender, node.price);
+        invest.update_invest(sender, node.price);
 
         // 更新邀请人收益
-        let is_need_forbiden = invest::update_gains(invest, inviter, inviter_rebate_value);
+        let is_need_forbiden = invest.update_gains(inviter, inviter_rebate_value);
         if (is_need_forbiden) {
             forbiden(nodes, inviter);
         };
@@ -600,27 +600,19 @@ module airdrop::node {
                         0
                     };
 
-                    // print(&string(b"--- [ remaining_quantity_of_claim_v2 user_claimed_times ] ---"));
-                    // print(&user_claimed_times);
-                    // print(&string(b"--- [ remaining_quantity_of_claim_v2 user_claimed_times ] ---"));
-
                     // 计算特殊限制
-                    limit::special_limit_remaining_claim_times(
-                        limits,
+                    limits.special_limit_remaining_claim_times(
                         &sender,
                         node_limit_times,
                         user_claimed_times
                     )
                 } else {
-                    // print(&string(b"this num node's rank not available"));
                     0
                 }
             } else {
-                // print(&string(b"user is not active"));
                 0
             }
         } else {
-            // print(&string(b"user is not exist"));
             0
         }
     }

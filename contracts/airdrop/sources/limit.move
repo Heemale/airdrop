@@ -19,7 +19,7 @@ module airdrop::limit {
         // 限制次数
         times: u64,
         // 是否限制
-        isLimit: bool,
+        is_limit: bool,
     }
 
     // === Event ===
@@ -50,22 +50,22 @@ module airdrop::limit {
      * @param isLimit: 是否限制
      */
     public(package) fun modify(
-        limits: &mut Limits,
+        self: &mut Limits,
         address: address,
         times: u64,
         is_limit: bool,
     ) {
-        let is_exists = limits.special_user_limit.contains(&address);
+        let is_exists = self.special_user_limit.contains(&address);
         if (is_exists) {
-            let special_user_limit: &mut SpecialUserLimit = limits.special_user_limit.get_mut(&address);
+            let special_user_limit: &mut SpecialUserLimit = self.special_user_limit.get_mut(&address);
             special_user_limit.times = times;
-            special_user_limit.isLimit = is_limit;
+            special_user_limit.is_limit = is_limit;
         } else {
             let special_user_limit = SpecialUserLimit {
                 times,
-                isLimit: is_limit,
+                is_limit: is_limit,
             };
-            limits.special_user_limit.insert(address, special_user_limit);
+            self.special_user_limit.insert(address, special_user_limit);
         };
 
         event::emit(ModifyLimit {
@@ -76,41 +76,45 @@ module airdrop::limit {
     }
 
     public fun special_limit_remaining_claim_times(
-        limits: &Limits,
+        self: &Limits,
         address: &address,
         node_limit_times: u64,
         user_claimed_times: u64,
     ): u64 {
         // 是否在限制名单中
-        let is_exists = limits.special_user_limit.contains(address);
+        let is_exists = self.special_user_limit.contains(address);
         if (is_exists) {
             // 是否被限制
-            let special_user_limit = limits.special_user_limit.get(address);
-            if (special_user_limit.isLimit) {
+            let special_user_limit = self.special_user_limit.get(address);
+            if (special_user_limit.is_limit) {
                 if (special_user_limit.times > user_claimed_times) {
-                    // print(&string(b"--- [ special_limit_remaining_claim_times ] 1 ---"));
                     special_user_limit.times - user_claimed_times
                 } else {
-                    // print(&string(b"--- [ special_limit_remaining_claim_times ] 2 ---"));
                     0
                 }
             } else {
                 if (node_limit_times > user_claimed_times) {
-                    // print(&string(b"--- [ special_limit_remaining_claim_times ] 3 ---"));
                     node_limit_times - user_claimed_times
                 } else {
-                    // print(&string(b"--- [ special_limit_remaining_claim_times ] 4 ---"));
                     0
                 }
             }
         } else {
             if (node_limit_times > user_claimed_times) {
-                // print(&string(b"--- [ special_limit_remaining_claim_times ] 5 ---"));
                 node_limit_times - user_claimed_times
             } else {
-                // print(&string(b"--- [ special_limit_remaining_claim_times ] 6 ---"));
                 0
             }
+        }
+    }
+
+    public fun special_user_limit(self: &Limits, address: address): (u64, bool) {
+        let is_exists = self.special_user_limit.contains(&address);
+        if (is_exists) {
+            let special_user_limit: &SpecialUserLimit = self.special_user_limit.get(&address);
+            (special_user_limit.times, special_user_limit.is_limit)
+        } else {
+            (0, false)
         }
     }
 
