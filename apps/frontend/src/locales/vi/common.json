@@ -122,6 +122,7 @@
 "Personal subscription":"Đăng ký cá nhân",
 "Earned":"Kiếm được",
 "Total team subscription":"Tổng số đăng ký nhóm",
-"Unable to obtain user information":"Không thể lấy thông tin người dùng"
-
+"Unable to obtain user information":"Không thể lấy thông tin người dùng",
+"The return value gets inconsistent":"Giá trị trả về không nhất quán",
+"Activate again":"Kích hoạt lại"
   }
