@@ -9,8 +9,8 @@ import {
 } from '@mysten/dapp-kit';
 import { useContext, useEffect, useState } from 'react';
 import ConnectWallet from '@/components/ConnectWallet';
-import { inviteClientV1, nodeClientV1, devTransaction } from '@/sdk';
-import { INVITE, NODES } from '@local/airdrop-sdk/utils';
+import { inviteClientV2, nodeClientV2, devTransaction } from '@/sdk';
+import { INVITE, NODES } from '@/sdk';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { message } from 'antd';
@@ -38,7 +38,7 @@ const Next = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const isAlreadyBuyNode = await nodeClientV1.isAlreadyBuyNode(
+        const isAlreadyBuyNode = await nodeClientV2.isAlreadyBuyNode(
           NODES,
           user,
         );
@@ -54,7 +54,7 @@ const Next = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const inviter = await inviteClientV1.inviters(INVITE, user);
+        const inviter = await inviteClientV2.inviters(INVITE, user);
         setInviter(inviter);
       } catch (e: any) {
         console.log(`updateInvite: ${e.message}`);
@@ -71,7 +71,7 @@ const Next = () => {
     try {
       if (account && account.address && receiver) {
         setLoading(true);
-        const tx = await nodeClientV1.transfer(NODES, receiver);
+        const tx = await nodeClientV2.transfer(NODES, receiver);
 
         try {
           await devTransaction(tx, account.address);

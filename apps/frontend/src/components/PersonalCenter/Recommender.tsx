@@ -1,6 +1,6 @@
 'use client';
-import { inviteClientV1, devTransaction } from '@/sdk';
-import { INVITE } from '@local/airdrop-sdk/utils';
+import { inviteClientV2, devTransaction } from '@/sdk';
+import { INVITE } from '@/sdk';
 import React, { useEffect, useState } from 'react';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useClientTranslation } from '@/hook';
@@ -15,7 +15,7 @@ const Recommender = () => {
   const getInviter = async () => {
     if (account) {
       try {
-        const inviterAddress = await inviteClientV1.inviters(
+        const inviterAddress = await inviteClientV2.inviters(
           INVITE,
           account.address,
         );

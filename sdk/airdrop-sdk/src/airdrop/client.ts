@@ -175,6 +175,32 @@ export class AirdropClient {
     return tx;
   }
 
+  claim_v2(
+    T: string,
+    adminCap: string,
+    nodes: string,
+    round: bigint,
+    clock: string,
+    limits: string,
+    invest: string,
+    global: string,
+  ): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [T],
+      target: `${this.packageId}::${MODULE_CLOB}::claim_v2`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(nodes),
+        tx.pure.u64(round),
+        tx.object(clock),
+        tx.object(limits),
+        tx.object(invest),
+        tx.object(global),
+      ],
+    });
+    return tx;
+  }
   newInvite(adminCap: string, root: string, inviter_fee: bigint): Transaction {
     const tx = new Transaction();
     tx.moveCall({

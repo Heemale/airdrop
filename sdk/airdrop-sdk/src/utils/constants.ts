@@ -35,6 +35,9 @@ export const getConfig = (network: 'mainnet' | 'testnet') => {
       INVITE: '',
       NODES: '',
       AIRDROPS: '',
+      GLOBAL: '',
+      LIMITS: '',
+      INVEST: '',
       PAY_COIN_TYPE: '0x2::sui::SUI',
     };
   } else {

@@ -30,6 +30,19 @@ export class InviteClient {
     return tx;
   }
 
+  bind_v2(invite: string, inviter: string, global: string): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${this.packageId}::${MODULE_CLOB}::bind_v2`,
+      arguments: [
+        tx.object(invite),
+        tx.pure.address(inviter),
+        tx.object(global),
+      ],
+    });
+    return tx;
+  }
   async inviters(invite: string, user: string): Promise<string> {
     const tx = new Transaction();
     tx.moveCall({
