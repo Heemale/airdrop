@@ -9,6 +9,8 @@ module airdrop::node {
     use airdrop::invite::{Self, Invite};
     use airdrop::invest::{Self, Invest};
     use airdrop::limit::{Self, Limits};
+    // use std::debug::print;
+    // use std::ascii::{string};
 
     // === Constants ===
 
@@ -340,26 +342,30 @@ module airdrop::node {
     // 更新某个权益在某个回合购买次数
     public(package) fun update_claim_times(nodes: &mut Nodes, sender: address, round: u64) {
         let user: &mut User = nodes.users.get_mut(&sender);
-        let mut quantity: u64 = 1;
+        let mut times: u64 = 1;
 
         // 此权益是否领取过空投
         let is_exists = nodes.limits.contains(&user.node_num);
         if (is_exists) {
-            let round_map_times = nodes.limits.get_mut(&user.node_num);
+            let round_times_map = nodes.limits.get_mut(&user.node_num);
 
             // 此权益是否领取过当前轮空投
-            let is_exists = round_map_times.contains(&round);
+            let is_exists = round_times_map.contains(&round);
             if (is_exists) {
-                let user_purchased_quantity: &u64 = round_map_times.get(&round);
-                quantity = *user_purchased_quantity + 1;
-                round_map_times.remove(&round);
-                round_map_times.insert(round, quantity);
-            } else {
-                round_map_times.insert(round, quantity);
-            }
+                let user_claimed_times: &u64 = round_times_map.get(&round);
+                times = *user_claimed_times + 1;
+                round_times_map.remove(&round);
+            };
+            // print(&string(b"--- [ update_claim_times user_claimed_times ] ---"));
+            // print(&times);
+            // print(&string(b"--- [ update_claim_times user_claimed_times ] ---"));
+            round_times_map.insert(round, times);
         } else {
             let mut round_map_times = vec_map::empty<u64, u64>();
-            round_map_times.insert(round, quantity);
+            round_map_times.insert(round, times);
+            // print(&string(b"--- [ update_claim_times user_claimed_times ] ---"));
+            // print(&times);
+            // print(&string(b"--- [ update_claim_times user_claimed_times ] ---"));
             nodes.limits.insert(user.node_num, round_map_times);
         }
     }
@@ -518,7 +524,7 @@ module airdrop::node {
             node_receiver.node_num = node_num;
             // 转移到新地址，新地址需要重新购买进行激活
             // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
-            node_receiver.is_invalid = false;
+            node_receiver.is_invalid = true;
         } else {
             let node_receiver = User {
                 rank: node.rank,
@@ -589,19 +595,14 @@ module airdrop::node {
                     // 此编号权益是否领取过空投
                     let is_exists = nodes.limits.contains(&user.node_num);
                     let user_claimed_times: u64 = if (is_exists) {
-                        let round_times_map = nodes.limits.get(&user.node_num);
-
-                        // 此编号权益是否领取过当前轮空投
-                        let is_exists = round_times_map.contains(&round);
-                        if (is_exists) {
-                            let user_claimed_times: &u64 = round_times_map.get(&round);
-                            *user_claimed_times
-                        } else {
-                            0
-                        }
+                        nodes.claimed_times(round, user.node_num)
                     } else {
                         0
                     };
+
+                    // print(&string(b"--- [ remaining_quantity_of_claim_v2 user_claimed_times ] ---"));
+                    // print(&user_claimed_times);
+                    // print(&string(b"--- [ remaining_quantity_of_claim_v2 user_claimed_times ] ---"));
 
                     // 计算特殊限制
                     limit::special_limit_remaining_claim_times(
@@ -611,11 +612,27 @@ module airdrop::node {
                         user_claimed_times
                     )
                 } else {
+                    // print(&string(b"this num node's rank not available"));
                     0
                 }
             } else {
+                // print(&string(b"user is not active"));
                 0
             }
+        } else {
+            // print(&string(b"user is not exist"));
+            0
+        }
+    }
+
+    public fun claimed_times(self: &Nodes, round: u64, node_num: u64): u64 {
+        let round_times_map = self.limits.get(&node_num);
+
+        // 此编号权益是否领取过当前轮空投
+        let is_exists = round_times_map.contains(&round);
+        if (is_exists) {
+            let user_claimed_times: &u64 = round_times_map.get(&round);
+            *user_claimed_times
         } else {
             0
         }
@@ -759,6 +776,9 @@ module airdrop::node {
             round,
             limits
         );
+        // print(&string(b"--- [ assert_insufficient_remaining_quantity times ] ---"));
+        // print(&times);
+        // print(&string(b"--- [ assert_insufficient_remaining_quantity times ] ---"));
         assert!(times > 0, EInsufficientRemainingQuantity);
     }
 }

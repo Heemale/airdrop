@@ -249,6 +249,39 @@ module airdrop::invest {
         }
     }
 
+    public fun invest_info(self: &Invest, address: address): (u64, u64, u64, u64) {
+        let total_investment: u64 = if (self.total_investment.contains(&address)) {
+            *self.total_investment.get(&address)
+        } else {
+            0
+        };
+
+        let total_gains: u64 = if (self.total_gains.contains(&address)) {
+            *self.total_gains.get(&address)
+        } else {
+            0
+        };
+
+        let last_investment: u64 = if (self.last_investment.contains(&address)) {
+            *self.last_investment.get(&address)
+        } else {
+            0
+        };
+
+        let last_accumulated_gains: u64 = if (self.last_accumulated_gains.contains(&address)) {
+            *self.last_accumulated_gains.get(&address)
+        } else {
+            0
+        };
+
+        (
+            total_investment,
+            total_gains,
+            last_investment,
+            last_accumulated_gains
+        )
+    }
+
     // === Testing ===
 
     #[test_only]

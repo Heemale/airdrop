@@ -2,6 +2,8 @@ module airdrop::limit {
 
     use sui::event;
     use sui::vec_map::{Self, VecMap};
+    // use std::debug::print;
+    // use std::ascii::{string};
 
     // === Struct ===
 
@@ -86,21 +88,27 @@ module airdrop::limit {
             let special_user_limit = limits.special_user_limit.get(address);
             if (special_user_limit.isLimit) {
                 if (special_user_limit.times > user_claimed_times) {
+                    // print(&string(b"--- [ special_limit_remaining_claim_times ] 1 ---"));
                     special_user_limit.times - user_claimed_times
                 } else {
+                    // print(&string(b"--- [ special_limit_remaining_claim_times ] 2 ---"));
                     0
                 }
             } else {
                 if (node_limit_times > user_claimed_times) {
+                    // print(&string(b"--- [ special_limit_remaining_claim_times ] 3 ---"));
                     node_limit_times - user_claimed_times
                 } else {
+                    // print(&string(b"--- [ special_limit_remaining_claim_times ] 4 ---"));
                     0
                 }
             }
         } else {
             if (node_limit_times > user_claimed_times) {
+                // print(&string(b"--- [ special_limit_remaining_claim_times ] 5 ---"));
                 node_limit_times - user_claimed_times
             } else {
+                // print(&string(b"--- [ special_limit_remaining_claim_times ] 6 ---"));
                 0
             }
         }
