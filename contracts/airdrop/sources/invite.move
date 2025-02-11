@@ -1,10 +1,10 @@
 module airdrop::invite {
     // === Imports ===
 
-    use airdrop::global::{Global};
     use sui::vec_map::{Self, VecMap};
     use sui::address::{Self};
     use sui::event::{Self};
+    use airdrop::global::{Global};
 
     // === Errors ===
 

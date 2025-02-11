@@ -1,8 +1,7 @@
 module airdrop::global {
 
     use sui::event;
-    use sui::vec_map;
-    use sui::vec_map::VecMap;
+    use sui::vec_map::{Self, VecMap};
 
     // === Error ===
 
@@ -80,7 +79,7 @@ module airdrop::global {
     }
 
     public fun assert_object_invalid(self: &Global, object: &UID) {
-        let id = object::uid_as_inner(object);
+        let id: &ID = object::uid_as_inner(object);
         assert!(self.object_is_valid(id), EInvalidObject);
     }
 
