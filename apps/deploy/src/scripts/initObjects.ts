@@ -1,5 +1,5 @@
 import { signAndExecuteTransaction } from '@/sdk/utils';
-import { ADMIN_CAP, PACKAGE_ID, PAY_COIN_TYPE } from '@local/airdrop-sdk/utils';
+import { ADMIN_CAP, PACKAGE_ID, PAY_COIN_TYPE } from '@/sdk/constants';
 import { adminKeypair } from '@/sdk';
 import { MODULE_CLOB } from '@local/airdrop-sdk/airdrop';
 import { Transaction } from '@mysten/sui/transactions';
@@ -33,7 +33,7 @@ const main = async () => {
 
   const res = await signAndExecuteTransaction(tx, adminKeypair);
   console.log({ res });
-  console.log('init success');
+  console.log('Init objects success');
 };
 
 main().catch(({ message }) => {

@@ -1,8 +1,8 @@
 import { INVITE } from '@local/airdrop-sdk/utils';
-import { inviteClientV1, userKeypair } from '@/sdk';
+import { inviteClient, userKeypair } from '@/sdk';
 
 const inviters = async () => {
-  const res = await inviteClientV1.inviters(INVITE, userKeypair.toSuiAddress());
+  const res = await inviteClient.inviters(INVITE, userKeypair.toSuiAddress());
   console.log({ res });
 };
 
