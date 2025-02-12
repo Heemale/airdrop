@@ -76,16 +76,21 @@ module airdrop::invest {
             } else {
                 total_investment - fix_total_investment
             };
-
             self.total_investment.remove(&address);
-            self.total_investment.insert(address, fix_total_investment);
 
             (amount, is_increse, total_investment)
         } else {
-            self.total_investment.insert(address, fix_total_investment);
-
             (fix_total_investment, true, fix_total_investment)
         };
+        self.total_investment.insert(address, fix_total_investment);
+
+        // 最新一次投资金额
+        let is_exists = self.last_investment.contains(&address);
+        if (is_exists) {
+            self.last_investment.remove(&address);
+        };
+        self.last_investment.insert(address, fix_last_investment);
+
         event::emit(UpdateInvest {
             address,
             amount,
@@ -104,29 +109,13 @@ module airdrop::invest {
             } else {
                 total_gains - fix_total_gains
             };
-
             self.total_investment.remove(&address);
-            self.total_investment.insert(address, fix_total_gains);
 
             (amount, is_increse, total_gains)
         } else {
-            self.total_investment.insert(address, fix_total_gains);
-
             (fix_total_gains, true, fix_total_gains)
         };
-        event::emit(UpdateGains {
-            address,
-            amount,
-            is_increse,
-            total_gains,
-        });
-
-        // 最新一次投资金额
-        let is_exists = self.last_investment.contains(&address);
-        if (is_exists) {
-            self.last_investment.remove(&address);
-        };
-        self.last_investment.insert(address, fix_last_investment);
+        self.total_investment.insert(address, fix_total_gains);
 
         // 最近一次收益累计金额
         let is_exists = self.last_accumulated_gains.contains(&address);
@@ -134,11 +123,19 @@ module airdrop::invest {
             self.last_accumulated_gains.remove(&address);
         };
         self.last_accumulated_gains.insert(address, fix_accumulated_gains);
-        is_need_forbid_node(self, address, fix_accumulated_gains)
+
+        event::emit(UpdateGains {
+            address,
+            amount,
+            is_increse,
+            total_gains,
+        });
+
+        self.is_need_forbid_node(address, fix_accumulated_gains)
     }
 
     /*
-     * @notice 更新投资数据
+     * @notice 投资更新数据
      */
     public(package) fun update_invest(
         self: &mut Invest,
@@ -147,28 +144,16 @@ module airdrop::invest {
     ) {
         // 总投资金额
         let is_exists = self.total_investment.contains(&address);
-        if (is_exists) {
+        let total_investment = if (is_exists) {
             let total_investment = *self.total_investment.get(&address);
             let total_investment = total_investment + amount;
             self.total_investment.remove(&address);
-            self.total_investment.insert(address, total_investment);
 
-            event::emit(UpdateInvest {
-                address,
-                amount,
-                is_increse: true,
-                total_investment
-            });
+            total_investment
         } else {
-            self.total_investment.insert(address, amount);
-
-            event::emit(UpdateInvest {
-                address,
-                amount,
-                is_increse: true,
-                total_investment: amount
-            });
+            amount
         };
+        self.total_investment.insert(address, total_investment);
 
         // 最新一次投资金额
         let is_exists = self.last_investment.contains(&address);
@@ -177,16 +162,38 @@ module airdrop::invest {
         };
         self.last_investment.insert(address, amount);
 
+        event::emit(UpdateInvest {
+            address,
+            amount,
+            is_increse: true,
+            total_investment
+        });
+
+        // 总收益金额
+        let is_exists = self.total_gains.contains(&address);
+        let total_gains: u64 = if (is_exists) {
+            *self.last_accumulated_gains.get(&address)
+        } else {
+            0
+        };
+
         // 最近一次收益累计金额
         let is_exists = self.last_accumulated_gains.contains(&address);
         if (is_exists) {
             self.last_accumulated_gains.remove(&address);
         };
         self.last_accumulated_gains.insert(address, 0);
+
+        event::emit(UpdateGains {
+            address,
+            amount: 0,
+            is_increse: true,
+            total_gains
+        });
     }
 
     /*
-     * @notice 更新收益数据
+     * @notice 收益更新数据
      */
     public(package) fun update_gains(
         self: &mut Invest,
@@ -195,43 +202,38 @@ module airdrop::invest {
     ): bool {
         // 总收益金额
         let is_exists = self.total_gains.contains(&address);
-        if (is_exists) {
+        let total_gains = if (is_exists) {
             let total_gains = *self.total_gains.get(&address);
             let total_gains = total_gains + amount;
             self.total_gains.remove(&address);
-            self.total_gains.insert(address, total_gains);
 
-            event::emit(UpdateGains {
-                address,
-                amount,
-                is_increse: true,
-                total_gains
-            });
+            total_gains
         } else {
-            self.total_gains.insert(address, amount);
-
-            event::emit(UpdateGains {
-                address,
-                amount,
-                is_increse: true,
-                total_gains: amount
-            });
+            amount
         };
+        self.total_gains.insert(address, total_gains);
+
+        event::emit(UpdateGains {
+            address,
+            amount,
+            is_increse: true,
+            total_gains
+        });
 
         // 最近一次收益累计金额
         let is_exists = self.last_accumulated_gains.contains(&address);
-        if (is_exists) {
+        let accumulated_gains = if (is_exists) {
             let accumulated_gains = self.last_accumulated_gains.get(&address);
             let accumulated_gains = *accumulated_gains + amount;
             self.last_accumulated_gains.remove(&address);
-            self.last_accumulated_gains.insert(address, accumulated_gains);
 
-            self.is_need_forbid_node(address, accumulated_gains)
+            accumulated_gains
         } else {
-            self.last_accumulated_gains.insert(address, amount);
+            amount
+        };
+        self.last_accumulated_gains.insert(address, accumulated_gains);
 
-            self.is_need_forbid_node(address, amount)
-        }
+        self.is_need_forbid_node(address, accumulated_gains)
     }
 
     public fun is_need_forbid_node(
@@ -249,7 +251,7 @@ module airdrop::invest {
         }
     }
 
-    public fun invest_info(self: &Invest, address: address): (u64, u64, u64, u64) {
+    public fun info(self: &Invest, address: address): (u64, u64, u64, u64) {
         let total_investment: u64 = if (self.total_investment.contains(&address)) {
             *self.total_investment.get(&address)
         } else {

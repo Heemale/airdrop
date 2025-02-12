@@ -9,8 +9,6 @@ module airdrop::node {
     use airdrop::invite::{Self, Invite};
     use airdrop::invest::{Invest};
     use airdrop::limit::{Limits};
-    // use std::debug::print;
-    // use std::ascii::{string};
 
     // === Constants ===
 
@@ -356,16 +354,10 @@ module airdrop::node {
                 times = *user_claimed_times + 1;
                 round_times_map.remove(&round);
             };
-            // print(&string(b"--- [ update_claim_times user_claimed_times ] ---"));
-            // print(&times);
-            // print(&string(b"--- [ update_claim_times user_claimed_times ] ---"));
             round_times_map.insert(round, times);
         } else {
             let mut round_map_times = vec_map::empty<u64, u64>();
             round_map_times.insert(round, times);
-            // print(&string(b"--- [ update_claim_times user_claimed_times ] ---"));
-            // print(&times);
-            // print(&string(b"--- [ update_claim_times user_claimed_times ] ---"));
             nodes.limits.insert(user.node_num, round_map_times);
         }
     }
@@ -392,7 +384,7 @@ module airdrop::node {
     }
 
     entry fun buy_v2<T>(
-        nodes: &mut Nodes,
+        self: &mut Nodes,
         invite: &Invite,
         rank: u8,
         mut wallet: Coin<T>,
@@ -401,20 +393,20 @@ module airdrop::node {
         ctx: &mut TxContext,
     ) {
         global.assert_paused();
-        global.assert_object_invalid(nodes.uid());
+        global.assert_object_invalid(self.uid());
         global.assert_object_invalid(invite.uid());
 
         let sender = tx_context::sender(ctx);
 
         // 断言：需要合法的代币类型
-        assert_invalid_coin_type<T>(nodes.coin_type);
+        assert_invalid_coin_type<T>(self.coin_type);
         // 断言：需要已绑定邀请关系
         invite::assert_not_bind_inviter(invite, sender);
         // 断言：需要购买权益
-        assert_no_need_buy_node(nodes, sender);
+        assert_no_need_buy_node(self, sender);
 
-        nodes.node_num_index = nodes.node_num_index + 1;
-        let node: &mut Node = nodes.nodes.get_mut(&rank);
+        self.node_num_index = self.node_num_index + 1;
+        let node: &mut Node = self.nodes.get_mut(&rank);
 
         // 断言：需要足够的代币余额
         assert!(wallet.value() >= node.price, ECoinBalanceNotEnough);
@@ -423,22 +415,22 @@ module airdrop::node {
         // 断言：需要权益开放购买
         assert_node_not_open(node);
 
-        let is_exists = nodes.users.contains(&sender);
+        let is_exists = self.users.contains(&sender);
         if (is_exists) {
             // 如果用户已存在，用新编号的权益更新
-            let user = nodes.users.get_mut(&sender);
+            let user = self.users.get_mut(&sender);
             user.rank = rank;
-            user.node_num = nodes.node_num_index;
+            user.node_num = self.node_num_index;
             // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
             user.is_invalid = true;
         } else {
             let user = User {
                 rank: node.rank,
-                node_num: nodes.node_num_index,
+                node_num: self.node_num_index,
                 // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
                 is_invalid: true,
             };
-            nodes.users.insert(sender, user);
+            self.users.insert(sender, user);
         };
 
         // 更新权益信息
@@ -457,12 +449,12 @@ module airdrop::node {
         let inviter_rebate = wallet.split(inviter_rebate_value, ctx);
         let inviter = invite::inviters(invite, sender);
         transfer::public_transfer(inviter_rebate, inviter);
-        transfer::public_transfer(wallet, nodes.receiver);
+        transfer::public_transfer(wallet, self.receiver);
 
         event::emit(BuyV2 {
             sender,
             rank,
-            node_num: nodes.node_num_index,
+            node_num: self.node_num_index,
             payment_amount: node.price,
             inviter_gains: inviter_rebate_value,
             node_receiver_gains: receiver_rebate_value,
@@ -474,7 +466,7 @@ module airdrop::node {
         // 更新邀请人收益
         let is_need_forbiden = invest.update_gains(inviter, inviter_rebate_value);
         if (is_need_forbiden) {
-            forbiden(nodes, inviter);
+            self.forbiden(inviter);
         };
     }
 
@@ -490,24 +482,24 @@ module airdrop::node {
      * @notice 转移权益
      */
     entry fun transfer_v2(
-        nodes: &mut Nodes,
+        self: &mut Nodes,
         receiver: address,
         global: &Global,
         ctx: &TxContext,
     ) {
         global.assert_paused();
-        global.assert_object_invalid(nodes.uid());
+        global.assert_object_invalid(self.uid());
 
         let sender = tx_context::sender(ctx);
-        let rank = nodes_rank(nodes, sender);
-        let node = nodes.nodes.get(&rank);
+        let rank = nodes_rank(self, sender);
+        let node = self.nodes.get(&rank);
 
         // 断言：权益发送人必须激活权益
-        assert_must_active_node(nodes, sender);
+        assert_must_active_node(self, sender);
         // 断言：必须要是合法接收人
-        assert_invalid_receiver(nodes, receiver);
+        assert_invalid_receiver(self, receiver);
 
-        let node_sender: &mut User = nodes.users.get_mut(&sender);
+        let node_sender: &mut User = self.users.get_mut(&sender);
         let node_num: u64 = node_sender.node_num;
 
         // 更新权益发送人信息
@@ -516,10 +508,10 @@ module airdrop::node {
         // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
         node_sender.is_invalid = false;
 
-        let is_exists = nodes.users.contains(&receiver);
+        let is_exists = self.users.contains(&receiver);
         // 更新权益接收人信息
         if (is_exists) {
-            let node_receiver: &mut User = nodes.users.get_mut(&receiver);
+            let node_receiver: &mut User = self.users.get_mut(&receiver);
             node_receiver.rank = rank;
             node_receiver.node_num = node_num;
             // 转移到新地址，新地址需要重新购买进行激活
@@ -532,7 +524,7 @@ module airdrop::node {
                 // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
                 is_invalid: true,
             };
-            nodes.users.insert(receiver, node_receiver);
+            self.users.insert(receiver, node_receiver);
         };
 
         event::emit(Transfer {
@@ -543,10 +535,10 @@ module airdrop::node {
         })
     }
 
-    public(package) fun forbiden(nodes: &mut Nodes, address: address) {
-        let is_exists = nodes.users.contains(&address);
+    public(package) fun forbiden(self: &mut Nodes, address: address) {
+        let is_exists = self.users.contains(&address);
         if (is_exists) {
-            let user: &mut User = nodes.users.get_mut(&address);
+            let user: &mut User = self.users.get_mut(&address);
             // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
             user.is_invalid = false;
         } else {
@@ -556,7 +548,7 @@ module airdrop::node {
                 // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
                 is_invalid: false,
             };
-            nodes.users.insert(address, user);
+            self.users.insert(address, user);
         }
     }
 
@@ -575,27 +567,27 @@ module airdrop::node {
     }
 
     public fun remaining_quantity_of_claim_v2(
-        nodes: &Nodes,
+        self: &Nodes,
         sender: address,
         round: u64,
         limits: &Limits
     ): u64 {
         // 用户
-        let is_exists = nodes.users.contains(&sender);
+        let is_exists = self.users.contains(&sender);
         if (is_exists) {
-            let user: &User = nodes.users.get(&sender);
-            if (nodes.is_active(sender)) {
+            let user: &User = self.users.get(&sender);
+            if (self.is_active(sender)) {
                 // 权益
-                let is_exists = nodes.nodes.contains(&user.rank);
+                let is_exists = self.nodes.contains(&user.rank);
                 if (is_exists) {
-                    let node: &Node = nodes.nodes.get(&user.rank);
+                    let node: &Node = self.nodes.get(&user.rank);
                     // 此编号权益每轮可领取次数
                     let node_limit_times = node.limit;
 
                     // 此编号权益是否领取过空投
-                    let is_exists = nodes.limits.contains(&user.node_num);
+                    let is_exists = self.limits.contains(&user.node_num);
                     let user_claimed_times: u64 = if (is_exists) {
-                        nodes.claimed_times(round, user.node_num)
+                        self.claimed_times(round, user.node_num)
                     } else {
                         0
                     };
@@ -710,6 +702,17 @@ module airdrop::node {
         &self.id
     }
 
+    public fun users(self: &Nodes, sender: address): (u8, u64, bool) {
+        let is_exists = self.users.contains(&sender);
+        if (is_exists) {
+            let user = self.users.get(&sender);
+            // 注：实际上是"是否合法", 而不是"是否非法"(此处为命名错误)
+            (user.rank, user.node_num, user.is_invalid)
+        } else {
+            (0, 0, false)
+        }
+    }
+
     // === Assertions ===
 
     public fun assert_already_buy_node(_users: &VecMap<address, User>, _sender: address) {
@@ -762,15 +765,7 @@ module airdrop::node {
         round: u64,
         limits: &Limits,
     ) {
-        let times = remaining_quantity_of_claim_v2(
-            nodes,
-            sender,
-            round,
-            limits
-        );
-        // print(&string(b"--- [ assert_insufficient_remaining_quantity times ] ---"));
-        // print(&times);
-        // print(&string(b"--- [ assert_insufficient_remaining_quantity times ] ---"));
+        let times = nodes.remaining_quantity_of_claim_v2(sender, round, limits);
         assert!(times > 0, EInsufficientRemainingQuantity);
     }
 }

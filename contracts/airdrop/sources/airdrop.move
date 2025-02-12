@@ -424,7 +424,7 @@ module airdrop::airdrop {
             let is_need_forbiden = invest.update_gains(sender, per_share_amount);
             // 如果达到条件，禁用权益
             if (is_need_forbiden) {
-                node::forbiden(nodes, sender);
+                nodes.forbiden(sender);
             };
         };
 
@@ -540,7 +540,7 @@ module airdrop::airdrop {
         );
         // 如果达到条件，禁用权益
         if (is_need_forbiden) {
-            node::forbiden(nodes, address);
+            nodes.forbiden(address);
         };
     }
 
