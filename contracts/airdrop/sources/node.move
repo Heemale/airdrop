@@ -375,7 +375,7 @@ module airdrop::node {
         _nodes: &mut Nodes,
         _invite: &Invite,
         _rank: u8,
-        wallet: Coin<T>,
+        mut wallet: Coin<T>,
         ctx: &TxContext,
     ) {
         let sender = tx_context::sender(ctx);
@@ -587,7 +587,7 @@ module airdrop::node {
                     // 此编号权益是否领取过空投
                     let is_exists = self.limits.contains(&user.node_num);
                     let user_claimed_times: u64 = if (is_exists) {
-                        self.claimed_times(round, user.node_num)
+                        claim_times(self, round, user.node_num)
                     } else {
                         0
                     };
@@ -609,8 +609,33 @@ module airdrop::node {
         }
     }
 
-    public fun claimed_times(self: &Nodes, round: u64, node_num: u64): u64 {
-        let round_times_map = self.limits.get(&node_num);
+    public fun is_already_buy_node(_nodes: &Nodes, _sender: address): bool {
+        assert!(false, EMethodDeprecated);
+        false
+    }
+
+    // 节点列表
+    public fun node_list(nodes: &Nodes) {
+        let length = nodes.nodes.size() as u8;
+        let mut i: u8 = 1;
+        while (i < length + 1) {
+            let node = nodes.nodes.get(&i);
+            event::emit(NodeInfo {
+                rank: node.rank,
+                name: node.name,
+                description: node.description,
+                limit: node.limit,
+                price: node.price,
+                total_quantity: node.total_quantity,
+                purchased_quantity: node.purchased_quantity,
+                is_open: node.is_open,
+            });
+            i = i + 1;
+        };
+    }
+
+    public fun claim_times(nodes: &Nodes, round: u64, node_num: u64): u64 {
+        let round_times_map = nodes.limits.get(&node_num);
 
         // 此编号权益是否领取过当前轮空投
         let is_exists = round_times_map.contains(&round);
@@ -620,11 +645,6 @@ module airdrop::node {
         } else {
             0
         }
-    }
-
-    public fun is_already_buy_node(_nodes: &Nodes, _sender: address): bool {
-        assert!(false, EMethodDeprecated);
-        false
     }
 
     // 用户的权益状态
@@ -677,26 +697,6 @@ module airdrop::node {
         }
     }
 
-    // 节点列表
-    public fun node_list(nodes: &Nodes) {
-        let length = nodes.nodes.size() as u8;
-        let mut i: u8 = 1;
-        while (i < length + 1) {
-            let node = nodes.nodes.get(&i);
-            event::emit(NodeInfo {
-                rank: node.rank,
-                name: node.name,
-                description: node.description,
-                limit: node.limit,
-                price: node.price,
-                total_quantity: node.total_quantity,
-                purchased_quantity: node.purchased_quantity,
-                is_open: node.is_open,
-            });
-            i = i + 1;
-        };
-    }
-
     // 读取Nodes的UID
     public fun uid(self: &Nodes): &UID {
         &self.id
@@ -716,6 +716,10 @@ module airdrop::node {
     // === Assertions ===
 
     public fun assert_already_buy_node(_users: &VecMap<address, User>, _sender: address) {
+        assert!(false, EMethodDeprecated);
+    }
+
+    public fun assert_not_buy_node(_users: &VecMap<address, User>, _sender: address) {
         assert!(false, EMethodDeprecated);
     }
 
