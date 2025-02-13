@@ -23,36 +23,36 @@ export const getConfig = (network: 'mainnet' | 'testnet') => {
     return {
       package: {
         packageId:
-          '0xf7f877b7fb4ba945e3c3f4805a7e05588a72f001e41f82aac41defcbfdd42768',
+          '0xac0684d466a96c467ce1f2e65b224cdf8c9064fb5524966cb65c508f4f4e3c85',
         outdated: [
           {
             packageId:
-              '0xf7f877b7fb4ba945e3c3f4805a7e05588a72f001e41f82aac41defcbfdd42768',
+              '0xac0684d466a96c467ce1f2e65b224cdf8c9064fb5524966cb65c508f4f4e3c85',
             version: 2,
           },
           {
             packageId:
-              '0xc817d2ec33635da00c74b4f0e315cf67af945d20669c4d347be9a453bf4b03a5',
+              '0xb87677cd27227d3bb33f93706340d3f3c576a6d46351c055b7c1f080f2560846',
             version: 1,
           },
         ],
       },
       ADMIN_CAP:
-        '0x4a21de0c6b46faa39900bc7141047fa4e0a40129badb02af797d3aff20362747',
+        '0xc2584aeff49810add129bbab0d6edb0c38734cb557ca04f73a876170ce5a1017',
       UPGRADE_CAP:
-        '0xa952fcf320aee419ed732750eecdede7184e3b4f8b9ffbbebb8f7edb454904bb',
+        '0xe1adcd72b6ed5195b393b72a13be3cc9b13d6e1cc360da9d283c6f102fe5147c',
       INVITE:
-        '0x7ea4d2926e1b36a2eacceb1453a38a17bf4c694217f8bbad7470e3de95394f45',
+        '0x4be53ee5c674da50b9ef21223788babad8096fc33d4890e61057a14004317f4c',
       NODES:
-        '0xdca2b321a34c3ea0f3ed46293e5feb0df61fc5ce20b91fa47d0ea3cfd42bfb57',
+        '0xe7ee0e8914fa735d91e7be190f2afa84dcd5607e6a0a544352ee262c74eda386',
       AIRDROPS:
-        '0x4cb77de15eda9590fad786a41c742d1b17360c4d93ea4332acfaaa61cfb67f18',
+        '0x56b603537898718ab70d9d4e2697f88f6bb2c30147dedeffc4090c23c9be402c',
       GLOBAL:
-        '0x16d0f62d38a29011e8cc0162c612070d0c6879de2567c7c45c10f42da3dcefab',
+        '0xc5bd162fdeea75e1f832afb96a0a048855974b7b2b91540cc7ad82362e9c276b',
       LIMITS:
-        '0xbd41cd3234467b9dac302de545229361449f1a47c891c28ed41969c9786355bf',
+        '0x63c699db6f7b03182efae4fffbbb346b762ffdcd6ef898ea9135b7a90c9f4301',
       INVEST:
-        '0x9938fe842e626ce01a35045f69098fa95d4a83837a8754ae9dc6c1b288d2b24e',
+        '0xc00172f568638ae3b98f6a1ea386415f2f2b5b7c2e749e0f8ac152f6a329a092',
       PAY_COIN_TYPE: '0x2::sui::SUI',
     };
   } else {

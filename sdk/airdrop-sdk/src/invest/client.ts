@@ -1,7 +1,6 @@
 import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
-import { PACKAGE_ID } from '../utils/constants';
 import { MODULE_CLOB } from './utils/constants';
 import type {
   DevInspectResults,
@@ -13,13 +12,16 @@ import { Summary } from '../types';
 import { UpdateInvestSummary } from './types';
 
 export class InvestClient {
-  constructor(public suiClient: SuiClient) {}
+  constructor(
+    public suiClient: SuiClient,
+    public packageId: string,
+  ) {}
 
   async modify(invest: string, user: string): Promise<boolean> {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${PACKAGE_ID}::${MODULE_CLOB}::modify`,
+      target: `${this.packageId}::${MODULE_CLOB}::modify`,
       arguments: [tx.object(invest), tx.pure.address(user)],
     });
 
@@ -57,7 +59,7 @@ export class InvestClient {
     // @ts-ignore
     return this.suiClient.queryEvents({
       query: {
-        MoveEventType: `${PACKAGE_ID}::${MODULE_CLOB}::${eventName}`,
+        MoveEventType: `${this.packageId}::${MODULE_CLOB}::${eventName}`,
       },
       ...input,
     });
