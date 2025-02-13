@@ -4,8 +4,9 @@ module airdrop::global {
     use sui::vec_map::{Self, VecMap};
 
     // === Error ===
-
+    //合约已暂停
     const EPaused: u64 = 0;
+    //对象无效
     const EInvalidObject: u64 = 1;
 
     // === Struct ===

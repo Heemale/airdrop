@@ -5,6 +5,8 @@ export const ERROR_CODE: Record<string, Record<string, string>> = {
     '3': 'ERoundExited',
     '4': 'EInvalidClaimTime',
     '5': 'ENoRemainingShares',
+    '6': 'EMethodDeprecated',
+
   },
   node: {
     '1': 'ECoinBalanceNotEnough',
@@ -14,12 +16,25 @@ export const ERROR_CODE: Record<string, Record<string, string>> = {
     '5': 'EExceedsPurchaseLimit',
     '6': 'EInvalidCoinType',
     '7': 'ENodeNotOpen',
+    '9': 'EMethodDeprecated',
+    '8': 'EInsufficientRemainingQuantity',
+    '10': 'ENoNeedBuyNode',
+    '11': 'EMustActiveNode',
+    '12': 'EInvalidReceiver',
+    '13': 'EExceedsClaimLimit',
+
+
   },
   invite: {
     '1': 'EInvalidSender',
     '2': 'EInvalidInviter',
     '3': 'EAlreadyBindInviter',
     '4': 'ENotBindInviter',
+    '5': 'EMethodDeprecated',
+  },
+  global: {
+    '0': 'EPaused',
+    '1': 'EInvalidObject',
   },
 };
 
