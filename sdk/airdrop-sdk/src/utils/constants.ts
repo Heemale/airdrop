@@ -59,8 +59,13 @@ export const getConfig = (network: 'mainnet' | 'testnet') => {
     return {
       package: {
         packageId:
-          '0x8b3bbb05feb9245f0b5c80008c75929c82beef7c8b4a8f7ceac26b9bf7e7bafb',
+          '0x3a2f575f290e6232c23d1fb67bced9eba734a5bfb2e1b66f0604709f0e7d01ac',
         outdated: [
+          {
+            packageId:
+              '0x3a2f575f290e6232c23d1fb67bced9eba734a5bfb2e1b66f0604709f0e7d01ac',
+            version: 3,
+          },
           {
             packageId:
               '0x8b3bbb05feb9245f0b5c80008c75929c82beef7c8b4a8f7ceac26b9bf7e7bafb',
