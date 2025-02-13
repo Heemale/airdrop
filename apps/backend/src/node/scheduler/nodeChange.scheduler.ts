@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
-import { nodeClientV2 } from '@/sdk';
-import { formatBuyV2 } from '@/node/formatter/formatBuyV2';
-import { handleBuyV2 } from '@/node/handler/handleBuyV2';
+import { nodeClient } from '@/sdk';
+import { formatChange } from '@/node/formatter/formatChange';
+import { handleChange } from '@/node/handler/handlerChange';
 import { sleep } from '@/utils/time';
 
 @Injectable()
-export class BuyV2Scheduler {
+export class NodeChangeScheduler {
   cursor: EventId | null = null;
 
   @Cron(new Date(Date.now() + 5 * 1000))
@@ -18,16 +18,16 @@ export class BuyV2Scheduler {
   async subscribe() {
     while (true) {
       try {
-        const logs = await nodeClientV2.getAllBuyV2({
+        const logs = await nodeClient.changeNode({
           cursor: this.cursor,
           order: 'ascending',
         });
         for (const log of logs.data) {
-          await handleBuyV2(formatBuyV2(log));
+          await handleChange(formatChange(log));
         }
         if (logs.hasNextPage) this.cursor = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`BuyV2Scheduler subscribe error => ${message}`);
+        console.error(`NodeChangeScheduler subscribe error => ${message}`);
       }
       await sleep(1);
     }

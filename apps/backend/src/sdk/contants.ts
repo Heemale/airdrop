@@ -9,6 +9,10 @@ export const PACKAGE_ID_V1 = config.package.outdated.find(
   (item) => item.version === 1,
 )?.packageId;
 
+export const PACKAGE_ID_V2 = config.package.outdated.find(
+  (item) => item.version === 2,
+)?.packageId;
+
 export const {
   ADMIN_CAP,
   UPGRADE_CAP,
