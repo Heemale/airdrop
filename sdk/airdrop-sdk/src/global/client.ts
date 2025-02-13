@@ -1,17 +1,15 @@
 import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
-import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { MODULE_CLOB } from './utils/constants';
 import type {
-  DevInspectResults,
   PaginationArguments,
   PaginatedEvents,
   OrderArguments,
 } from '@mysten/sui/client';
 import { Summary } from '../types';
-import { UpdateInvestSummary } from './types';
+import { UpdateInitializationSummary } from './types';
 
-export class InvestClient {
+export class GlobalClient {
   constructor(
     public suiClient: SuiClient,
     public packageId: string,
@@ -28,50 +26,31 @@ export class InvestClient {
   }
 
   async modify(
-    invest: string,
-    user: string,
-    fix_total_investment: bigint,
-    fix_total_gains: bigint,
-    fix_last_investment: bigint,
-    fix_accumulated_gains: bigint,
-  ): Promise<boolean> {
+    global: string,
+    object: string,
+    is_valid: boolean,
+  ): Promise<Transaction> {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${this.packageId}::${MODULE_CLOB}::modify`,
+      target: `${this.packageId}::${MODULE_CLOB}::update_initialization_list`,
       arguments: [
-        tx.object(invest),
-        tx.pure.address(user),
-        tx.pure.u64(fix_total_investment),
-        tx.pure.u64(fix_total_gains),
-        tx.pure.u64(fix_last_investment),
-        tx.pure.u64(fix_accumulated_gains),
+        tx.object(global),
+        tx.pure.id(object),
+        tx.pure.bool(is_valid),
       ],
     });
 
-    // @ts-ignore
-    const res: DevInspectResults =
-      await this.suiClient.devInspectTransactionBlock({
-        transactionBlock: tx,
-        sender: normalizeSuiAddress('0x0'),
-      });
-
-    // @ts-ignore
-    const value = res?.results[0]?.returnValues[0][0];
-
-    // 强制转换为布尔值并返回
-    return !!value; // 或者直接使用 Boolean(value)
+    return tx;
   }
 
-  async updateInvest(
+  async updateInitialization(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
-  ): Promise<Summary<UpdateInvestSummary>> {
-    const resp = await this.queryEvents('UpdateInvest', input);
+  ): Promise<Summary<UpdateInitializationSummary>> {
+    const resp = await this.queryEvents('UpdateInitializationList', input);
     const customMapping = (rawEvent: any) => ({
-      address: rawEvent.address as string,
-      amount: rawEvent.amount as bigint,
-      isIncrese: rawEvent.is_increse as boolean,
-      totalInvestment: rawEvent.total_investment as bigint,
+      object: rawEvent.object as bigint,
+      ivValid: rawEvent.is_valid as boolean,
     });
     return this.handleEventReturns(resp, customMapping);
   }
