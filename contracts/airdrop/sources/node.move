@@ -370,12 +370,12 @@ module airdrop::node {
      * @param rank: 等级
      * @param wallet: 支付的代币对象
      */
-    #[allow(unused_let_mut, unused_type_parameter)]
+    #[allow(unused_type_parameter)]
     entry fun buy<T>(
         _nodes: &mut Nodes,
         _invite: &Invite,
         _rank: u8,
-        mut wallet: Coin<T>,
+        wallet: Coin<T>,
         ctx: &TxContext,
     ) {
         let sender = tx_context::sender(ctx);
@@ -395,6 +395,7 @@ module airdrop::node {
         global.assert_paused();
         global.assert_object_invalid(self.uid());
         global.assert_object_invalid(invite.uid());
+        global.assert_object_invalid(invest.uid());
 
         let sender = tx_context::sender(ctx);
 

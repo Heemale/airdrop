@@ -29,7 +29,7 @@ module airdrop::global {
         is_valid: bool,
     }
 
-    fun init(ctx: &mut TxContext) {
+    public(package) fun new(ctx: &mut TxContext) {
         let global = Global {
             id: object::new(ctx),
             is_pause: true,
@@ -81,12 +81,5 @@ module airdrop::global {
     public fun assert_object_invalid(self: &Global, object: &UID) {
         let id: &ID = object::uid_as_inner(object);
         assert!(self.object_is_valid(id), EInvalidObject);
-    }
-
-    // === Testing ===
-
-    #[test_only]
-    entry fun init_for_test(ctx: &mut TxContext) {
-        init(ctx);
     }
 }

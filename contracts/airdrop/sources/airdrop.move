@@ -11,9 +11,9 @@ module airdrop::airdrop {
     use sui::clock::{Self, Clock};
     use airdrop::invite::{Self, Invite};
     use airdrop::node::{Self, Nodes};
-    use airdrop::limit::{Limits};
-    use airdrop::invest::{Invest};
-    use airdrop::global::{Global};
+    use airdrop::limit::{Self,Limits};
+    use airdrop::invest::{Self, Invest};
+    use airdrop::global::{Self, Global};
 
     // === Error ===
 
@@ -44,7 +44,7 @@ module airdrop::airdrop {
     }
 
     // 空投对象
-    public struct Airdrop has store, drop {
+    public struct Airdrop has store {
         // 轮次
         round: u64,
         // 开始时间
@@ -241,36 +241,6 @@ module airdrop::airdrop {
         bag::add(&mut airdrops.treasury_balances, round, coin::into_balance(wallet));
     }
 
-    entry fun remove<T>(
-        admin_cap: &AdminCap,
-        airdrops: &mut Airdrops,
-        round: u64,
-        ctx: &mut TxContext
-    ) {
-        let sender = tx_context::sender(ctx);
-
-        withdraw_internal<T>(admin_cap, airdrops, round, sender, ctx);
-
-        let airdrop: &Airdrop = airdrops.airdrops.get(&round);
-
-        event::emit(AirdropChange {
-            round: airdrop.round,
-            start_time: airdrop.start_time,
-            end_time: airdrop.end_time,
-            total_shares: airdrop.total_shares,
-            claimed_shares: airdrop.claimed_shares,
-            total_balance: airdrop.total_balance,
-            is_open: airdrop.is_open,
-            description: airdrop.description,
-            coin_type: airdrop.coin_type,
-            image_url: airdrop.image_url,
-            remaining_balance: airdrop.remaining_balance,
-            is_remove: true
-        });
-
-        airdrops.airdrops.remove(&round);
-    }
-
     /*
      * @notice 修改空投
      *
@@ -373,7 +343,6 @@ module airdrop::airdrop {
         _nodes: &mut Nodes,
         _round: u64,
         _clock: &Clock,
-        _special_limits: &Limits,
         _ctx: &mut TxContext,
     ) {
         assert!(false, EMethodDeprecated);
@@ -395,6 +364,8 @@ module airdrop::airdrop {
         global.assert_paused();
         global.assert_object_invalid(airdrops.uid());
         global.assert_object_invalid(nodes.uid());
+        global.assert_object_invalid(limits.uid());
+        global.assert_object_invalid(invest.uid());
 
         let sender = tx_context::sender(ctx);
         // 断言：回合需要存在
@@ -511,6 +482,13 @@ module airdrop::airdrop {
         node::modify_nodes<T>(nodes, receiver);
     }
 
+    public fun new_limit(
+        _admin_cap: &AdminCap,
+        ctx: &mut TxContext
+    ) {
+        limit::new(ctx);
+    }
+
     public fun modify_special_limits(
         _admin_cap: &AdminCap,
         limits: &mut Limits,
@@ -544,6 +522,13 @@ module airdrop::airdrop {
         };
     }
 
+    public fun new_global(
+        _admin_cap: &AdminCap,
+        ctx: &mut TxContext
+    ) {
+        global::new(ctx);
+    }
+
     public fun pause(
         _admin_cap: &AdminCap,
         global: &mut Global
@@ -565,6 +550,13 @@ module airdrop::airdrop {
         is_valid: bool
     ) {
         global.update_initialization_list(object, is_valid);
+    }
+
+    public fun new_invest(
+        _admin_cap: &AdminCap,
+        ctx: &mut TxContext
+    ) {
+        invest::new(ctx);
     }
 
     public fun airdrops(airdrops: &Airdrops) {

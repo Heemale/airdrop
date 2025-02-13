@@ -1,7 +1,7 @@
 #[test_only]
 module airdrop::airdrop_tests {
-    use airdrop::limit::{Self, Limits};
-    use airdrop::invest::{Self, Invest};
+    use airdrop::limit::{Limits};
+    use airdrop::invest::{Invest};
     use airdrop::global::{Self, Global};
     use sui::test_scenario::{Self, Scenario, ctx};
     use sui::sui::{SUI};
@@ -33,9 +33,6 @@ module airdrop::airdrop_tests {
         test_scenario::next_tx(scenario, Admin);
         {
             airdrop::init_for_test(ctx(scenario));
-            global::init_for_test(ctx(scenario));
-            invest::init_for_test(ctx(scenario));
-            limit::init_for_test(ctx(scenario));
         }
     }
 
@@ -58,7 +55,48 @@ module airdrop::airdrop_tests {
                 200,
                 ctx(scenario)
             );
+            airdrop::new_global(
+                adminCap,
+                ctx(scenario)
+            );
+            airdrop::new_invest(
+                adminCap,
+                ctx(scenario)
+            );
+            airdrop::new_limit(
+                adminCap,
+                ctx(scenario)
+            );
         }
+    }
+
+    fun update_initialization_list(
+        global: &mut Global,
+        airdrops: &Airdrops,
+        nodes: &Nodes,
+        invite: &Invite,
+        limits: &Limits,
+        invest: &Invest,
+        scenario: &mut Scenario
+    ) {
+        test_scenario::next_tx(scenario, Admin);
+        {
+            global.un_pause();
+            let id: &ID = object::uid_as_inner(airdrops.uid());
+            global.update_initialization_list(*id, true);
+
+            let id: &ID = object::uid_as_inner(nodes.uid());
+            global.update_initialization_list(*id, true);
+
+            let id: &ID = object::uid_as_inner(invite.uid());
+            global.update_initialization_list(*id, true);
+
+            let id: &ID = object::uid_as_inner(limits.uid());
+            global.update_initialization_list(*id, true);
+
+            let id: &ID = object::uid_as_inner(invest.uid());
+            global.update_initialization_list(*id, true);
+        };
     }
 
     // === 绑定邀请关系 ===
@@ -69,7 +107,9 @@ module airdrop::airdrop_tests {
         scenario: &mut Scenario
     ) {
         test_scenario::next_tx(scenario, sender);
-        invite::bind_v2(invite, Admin, global, ctx(scenario));
+        {
+            invite::bind_v2(invite, Admin, global, ctx(scenario));
+        }
     }
 
     // === 添加节点 ===
@@ -243,9 +283,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -254,6 +291,9 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
@@ -288,9 +328,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -299,19 +336,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -345,9 +375,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -355,19 +382,12 @@ module airdrop::airdrop_tests {
         let airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         bind_invite_v2(&mut invite, &global, User, &mut scenario);
         let rank: u8 = 1;
@@ -417,9 +437,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -428,19 +445,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -477,9 +487,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -488,19 +495,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -536,9 +536,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -547,19 +544,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -608,9 +598,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -619,19 +606,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -699,9 +679,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -710,19 +687,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -802,9 +772,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let mut limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -813,19 +780,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let mut limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -871,9 +831,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let mut limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -882,19 +839,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let mut limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -947,9 +897,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -958,19 +905,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -1013,9 +953,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -1024,19 +961,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 
@@ -1069,9 +999,6 @@ module airdrop::airdrop_tests {
 
         test_scenario::next_tx(&mut scenario, Admin);
         let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
-        let mut global = test_scenario::take_shared<Global>(&scenario);
-        let mut invest = test_scenario::take_shared<Invest>(&scenario);
-        let limits = test_scenario::take_shared<Limits>(&scenario);
 
         init_objects(&adminCap, &mut scenario);
 
@@ -1080,19 +1007,12 @@ module airdrop::airdrop_tests {
         let mut airdrops = test_scenario::take_shared<Airdrops>(&scenario);
         let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
         let mut invite = test_scenario::take_shared<Invite>(&scenario);
+        let mut global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
 
-        test_scenario::next_tx(&mut scenario, Admin);
-        {
-            global.un_pause();
-            let id: &ID = object::uid_as_inner(airdrops.uid());
-            global.update_initialization_list(*id, true);
+        update_initialization_list(&mut global, &airdrops, &nodes, &invite, &limits, &invest, &mut scenario);
 
-            let id: &ID = object::uid_as_inner(nodes.uid());
-            global.update_initialization_list(*id, true);
-
-            let id: &ID = object::uid_as_inner(invite.uid());
-            global.update_initialization_list(*id, true);
-        };
         insert_node(&adminCap, &mut nodes, &mut scenario);
         insert_airdrop(&adminCap, &mut airdrops, &mut scenario);
 

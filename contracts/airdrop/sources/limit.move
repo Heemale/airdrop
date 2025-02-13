@@ -2,8 +2,6 @@ module airdrop::limit {
 
     use sui::event;
     use sui::vec_map::{Self, VecMap};
-    // use std::debug::print;
-    // use std::ascii::{string};
 
     // === Struct ===
 
@@ -33,7 +31,7 @@ module airdrop::limit {
         is_limit: bool,
     }
 
-    fun init(ctx: &mut TxContext) {
+    public(package) fun new(ctx: &mut TxContext) {
         let limits = Limits {
             id: object::new(ctx),
             special_user_limit: vec_map::empty(),
@@ -118,10 +116,8 @@ module airdrop::limit {
         }
     }
 
-    // === Testing ===
-
-    #[test_only]
-    entry fun init_for_test(ctx: &mut TxContext) {
-        init(ctx);
+    // 读取Limits的UID
+    public fun uid(self: &Limits): &UID {
+        &self.id
     }
 }

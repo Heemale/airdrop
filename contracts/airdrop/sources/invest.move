@@ -42,7 +42,7 @@ module airdrop::invest {
         total_gains: u64,
     }
 
-    fun init(ctx: &mut TxContext) {
+    public(package) fun new(ctx: &mut TxContext) {
         let invest = Invest {
             id: object::new(ctx),
             total_investment: vec_map::empty(),
@@ -284,10 +284,8 @@ module airdrop::invest {
         )
     }
 
-    // === Testing ===
-
-    #[test_only]
-    entry fun init_for_test(ctx: &mut TxContext) {
-        init(ctx);
+    // 读取Invest的UID
+    public fun uid(self: &Invest): &UID {
+        &self.id
     }
 }
