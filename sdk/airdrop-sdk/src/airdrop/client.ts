@@ -12,7 +12,7 @@ import type {
 import { AirdropInfo } from './types';
 import { Summary } from '../types';
 import { ClaimSummary } from './types';
-import { ChangeSummary } from './types';
+import { AirdropChangeSummary } from './types';
 
 export class AirdropClient {
   constructor(
@@ -386,7 +386,7 @@ export class AirdropClient {
   }
   async changeAirdrop(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
-  ): Promise<Summary<ChangeSummary>> {
+  ): Promise<Summary<AirdropChangeSummary>> {
     const resp = await this.queryEvents('AirdropChange', input);
 
     const customMapping = (rawEvent: any) => {

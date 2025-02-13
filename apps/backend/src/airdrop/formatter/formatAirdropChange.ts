@@ -1,9 +1,8 @@
-import { ChangeSummary } from '@local/airdrop-sdk/airdrop';
+import { AirdropChangeSummary } from '@local/airdrop-sdk/airdrop';
 import { Prisma } from '@prisma/client';
-import { convertSmallToLarge, toFixed } from '@/utils/math';
 
-export const formatChange = (
-  eventObject: ChangeSummary,
+export const formatAirdropChange = (
+  eventObject: AirdropChangeSummary,
 ): Prisma.AirdropCreateInput => {
   const {
     round,
@@ -15,6 +14,7 @@ export const formatChange = (
     totalBalance,
     coinType,
     imageUrl,
+    isOpen,
     isRemove,
     remainingBalance,
   } = eventObject;
@@ -23,8 +23,8 @@ export const formatChange = (
     coinType,
     totalShares: BigInt(totalShares),
     description: description.toLowerCase(),
-    isOpen: true,
-    isRemove: true,
+    isOpen,
+    isRemove,
     imageUrl: imageUrl.toLowerCase(),
     claimedShares: BigInt(claimedShares),
     totalBalance: BigInt(totalBalance),

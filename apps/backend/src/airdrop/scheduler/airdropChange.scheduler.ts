@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
 import { airdropClientV1 } from '@/sdk';
-import { formatChange } from '@/airdrop/formatter/formatChange';
-import { handleChange } from '@/airdrop/handler/handlerChange';
+import { formatAirdropChange } from '@/airdrop/formatter/formatAirdropChange';
+import { handleAirdropChange } from '@/airdrop/handler/handleAirdropChange';
 import { sleep } from '@/utils/time';
 
 @Injectable()
-export class ChangeScheduler {
+export class AirdropChangeScheduler {
   cursor: EventId | null = null;
 
   @Cron(new Date(Date.now() + 5 * 1000))
@@ -23,7 +23,7 @@ export class ChangeScheduler {
           order: 'ascending',
         });
         for (const log of logs.data) {
-          await handleChange(formatChange(log));
+          await handleAirdropChange(formatAirdropChange(log));
         }
         if (logs.hasNextPage) this.cursor = logs.nextCursor;
       } catch ({ message }) {

@@ -9,7 +9,7 @@ import type {
   OrderArguments,
 } from '@mysten/sui/client';
 import { Summary } from '../types';
-import { UpdateInvestSummary, UpdateGainsSummary } from './types';
+import { UpdateGainsSummary, UpdateInvestSummary } from './types';
 
 export class InvestClient {
   constructor(
@@ -63,7 +63,7 @@ export class InvestClient {
     return !!value; // 或者直接使用 Boolean(value)
   }
 
-  async updateInvest(
+  async getAllUpdateInvest(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
   ): Promise<Summary<UpdateInvestSummary>> {
     const resp = await this.queryEvents('UpdateInvest', input);
@@ -76,7 +76,7 @@ export class InvestClient {
     return this.handleEventReturns(resp, customMapping);
   }
 
-  async updateGains(
+  async getAllUpdateGains(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
   ): Promise<Summary<UpdateGainsSummary>> {
     const resp = await this.queryEvents('UpdateGains', input);
@@ -88,6 +88,7 @@ export class InvestClient {
     });
     return this.handleEventReturns(resp, customMapping);
   }
+
   async queryEvents(
     eventName: string,
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
