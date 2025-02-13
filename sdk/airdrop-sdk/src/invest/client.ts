@@ -84,6 +84,7 @@ export class InvestClient {
     return this.suiClient.queryEvents({
       query: {
         MoveEventType: `${this.packageId}::${MODULE_CLOB}::${eventName}`,
+        MoveEventType: `${this.packageId}::${MODULE_CLOB}::${eventName}`,
       },
       ...input,
     });

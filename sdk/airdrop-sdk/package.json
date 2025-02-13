@@ -13,13 +13,25 @@
 			"import": "./dist/esm/airdrop/index.js",
 			"require": "./dist/cjs/airdrop/index.js"
 		},
-		"./node": {
-			"import": "./dist/esm/node/index.js",
-			"require": "./dist/cjs/node/index.js"
+		"./global": {
+			"import": "./dist/esm/global/index.js",
+			"require": "./dist/cjs/global/index.js"
+		},
+		"./invest": {
+			"import": "./dist/esm/invest/index.js",
+			"require": "./dist/cjs/invest/index.js"
 		},
 		"./invite": {
 			"import": "./dist/esm/invite/index.js",
 			"require": "./dist/cjs/invite/index.js"
+		},
+		"./limit": {
+			"import": "./dist/esm/limit/index.js",
+			"require": "./dist/cjs/limit/index.js"
+		},
+		"./node": {
+			"import": "./dist/esm/node/index.js",
+			"require": "./dist/cjs/node/index.js"
 		},
 		"./types": {
 			"import": "./dist/esm/types/index.js",
@@ -34,7 +46,10 @@
 		"CHANGELOG.md",
 		"airdrop",
 		"dist",
+		"global",
+		"invest",
 		"invite",
+		"limit",
 		"node",
 		"src",
 		"types",

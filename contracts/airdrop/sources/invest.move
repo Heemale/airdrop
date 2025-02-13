@@ -26,7 +26,7 @@ module airdrop::invest {
         // 数量
         amount: u64,
         // 是否增加
-        is_increse: bool,
+        is_increase: bool,
         // 总投资金额
         total_investment: u64,
     }
@@ -37,7 +37,7 @@ module airdrop::invest {
         // 数量
         amount: u64,
         // 是否增加
-        is_increse: bool,
+        is_increase: bool,
         // 总收益金额
         total_gains: u64,
     }
@@ -67,18 +67,18 @@ module airdrop::invest {
         // 总投资金额
         let is_exists = self.total_investment.contains(&address);
 
-        let (amount, is_increse, total_investment) = if (is_exists) {
+        let (amount, is_increase, total_investment) = if (is_exists) {
             let total_investment = *self.total_investment.get(&address);
 
-            let is_increse = fix_total_investment > total_investment;
-            let amount = if (is_increse) {
+            let is_increase = fix_total_investment > total_investment;
+            let amount = if (is_increase) {
                 fix_total_investment - total_investment
             } else {
                 total_investment - fix_total_investment
             };
             self.total_investment.remove(&address);
 
-            (amount, is_increse, total_investment)
+            (amount, is_increase, total_investment)
         } else {
             (fix_total_investment, true, fix_total_investment)
         };
@@ -94,24 +94,24 @@ module airdrop::invest {
         event::emit(UpdateInvest {
             address,
             amount,
-            is_increse,
+            is_increase,
             total_investment,
         });
 
         // 总收益金额
         let is_exists = self.total_gains.contains(&address);
-        let (amount, is_increse, total_gains) = if (is_exists) {
+        let (amount, is_increase, total_gains) = if (is_exists) {
             let total_gains = *self.total_gains.get(&address);
 
-            let is_increse = fix_total_gains > total_gains;
-            let amount = if (is_increse) {
+            let is_increase = fix_total_gains > total_gains;
+            let amount = if (is_increase) {
                 fix_total_gains - total_gains
             } else {
                 total_gains - fix_total_gains
             };
             self.total_investment.remove(&address);
 
-            (amount, is_increse, total_gains)
+            (amount, is_increase, total_gains)
         } else {
             (fix_total_gains, true, fix_total_gains)
         };
@@ -127,7 +127,7 @@ module airdrop::invest {
         event::emit(UpdateGains {
             address,
             amount,
-            is_increse,
+            is_increase,
             total_gains,
         });
 
@@ -165,7 +165,7 @@ module airdrop::invest {
         event::emit(UpdateInvest {
             address,
             amount,
-            is_increse: true,
+            is_increase: true,
             total_investment
         });
 
@@ -187,7 +187,7 @@ module airdrop::invest {
         event::emit(UpdateGains {
             address,
             amount: 0,
-            is_increse: true,
+            is_increase: true,
             total_gains
         });
     }
@@ -216,7 +216,7 @@ module airdrop::invest {
         event::emit(UpdateGains {
             address,
             amount,
-            is_increse: true,
+            is_increase: true,
             total_gains
         });
 
