@@ -11,17 +11,12 @@ import { InvestModule } from './invest/invest.module';
 
 @Module({
   imports: [
-    
     ScheduleModule.forRoot(),
-   
     UserModule,
-   
     BuyModule,
-   
     AirdropModule,
     GlobalModule,
     LimitModule,
-  ,
     InvestModule,
   ],
   controllers: [AppController],

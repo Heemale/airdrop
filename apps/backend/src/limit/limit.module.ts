@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ModifyLimitScheduler } from '@/limit/scheduler/modifyLimit.scheduler';
+// import { ModifyLimitScheduler } from '@/limit/scheduler/modifyLimit.scheduler';
 
 @Module({
   controllers: [],
-  providers: [ModifyLimitScheduler],
+  providers: [],
 })
 export class LimitModule {}
