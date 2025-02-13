@@ -4,9 +4,9 @@ import { Prisma } from '@prisma/client';
 export const formatModifyLimit = (
   eventObject: SpecialUserLimitSummary,
 ): Prisma.SpecialLimitUncheckedCreateInput => {
-  const { times, is_limit } = eventObject;
+  const { times, isLimit } = eventObject;
   return {
-    times: BigInt(times),
-    isLimit:is_limit,
+    times,
+    isLimit,
   };
 };
