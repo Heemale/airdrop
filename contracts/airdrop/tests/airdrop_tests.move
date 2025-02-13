@@ -1044,4 +1044,60 @@ module airdrop::airdrop_tests {
         test_scenario::return_shared(airdrops);
         test_scenario::end(scenario);
     }
+
+    // 测试转移权益给权益被禁用的接收人
+    #[test]
+    fun test_modify_invest() {
+        let mut scenario = test_scenario::begin(Admin);
+
+        deploy(&mut scenario);
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        let adminCap = test_scenario::take_from_address<AdminCap>(&scenario, Admin);
+
+        init_objects(&adminCap, &mut scenario);
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        let clock = clock::create_for_testing(ctx(&mut scenario));
+        let airdrops = test_scenario::take_shared<Airdrops>(&scenario);
+        let mut nodes = test_scenario::take_shared<Nodes>(&scenario);
+        let invite = test_scenario::take_shared<Invite>(&scenario);
+        let global = test_scenario::take_shared<Global>(&scenario);
+        let mut invest = test_scenario::take_shared<Invest>(&scenario);
+        let limits = test_scenario::take_shared<Limits>(&scenario);
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        airdrop::modify_invest(
+            &adminCap,
+            &mut invest,
+            &mut nodes,
+            User,
+            1000,
+            2000,
+            1000,
+            2000
+        );
+
+        test_scenario::next_tx(&mut scenario, Admin);
+        airdrop::modify_invest(
+            &adminCap,
+            &mut invest,
+            &mut nodes,
+            User2,
+            1000,
+            1,
+            1000,
+            1
+        );
+
+        transfer::public_transfer(adminCap, Admin);
+        clock::destroy_for_testing(clock);
+        test_scenario::return_shared(global);
+        test_scenario::return_shared(invest);
+        test_scenario::return_shared(limits);
+        test_scenario::return_shared(nodes);
+        test_scenario::return_shared(invite);
+        test_scenario::return_shared(airdrops);
+        test_scenario::end(scenario);
+    }
 }
