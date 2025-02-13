@@ -8,6 +8,7 @@ import { AirdropModule } from './airdrop/airdrop.module';
 import { GlobalModule } from './global/global.module';
 import { LimitModule } from './limit/limit.module';
 import { InvestModule } from './invest/invest.module';
+import { InvestModule } from './invest/invest.module';
 
 @Module({
   imports: [
@@ -21,7 +22,6 @@ import { InvestModule } from './invest/invest.module';
     AirdropModule,
     GlobalModule,
     LimitModule,
-  ,
     InvestModule,
   ],
   controllers: [AppController],

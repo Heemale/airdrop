@@ -18,5 +18,5 @@ export const airdropClientV2 = new AirdropClient(suiClient, PACKAGE_ID);
 export const globalClientV2 = new GlobalClient(suiClient, PACKAGE_ID);
 export const investClientV2 = new InvestClient(suiClient, PACKAGE_ID);
 export const inviteClientV2 = new InviteClient(suiClient, PACKAGE_ID);
-export const limitClient = new LimitClient(suiClient, PACKAGE_ID);
+export const limitClientV2 = new LimitClient(suiClient, PACKAGE_ID);
 export const nodeClientV2 = new NodeClient(suiClient, PACKAGE_ID);

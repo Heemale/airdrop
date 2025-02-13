@@ -1,8 +1,7 @@
 import { Module } from '@nestjs/common';
-import { UpdateInitializationListScheduler } from '@/global/scheduler/updateInitializationList.scheduler';
 
 @Module({
   controllers: [],
-  providers: [UpdateInitializationListScheduler],
+  providers: [],
 })
 export class GlobalModule {}
