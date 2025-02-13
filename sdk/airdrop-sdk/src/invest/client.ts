@@ -17,12 +17,36 @@ export class InvestClient {
     public packageId: string,
   ) {}
 
-  async modify(invest: string, user: string): Promise<boolean> {
+  new(): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${this.packageId}::${MODULE_CLOB}::new`,
+      arguments: [],
+    });
+    return tx;
+  }
+
+  async modify(
+    invest: string,
+    user: string,
+    fix_total_investment: bigint,
+    fix_total_gains: bigint,
+    fix_last_investment: bigint,
+    fix_accumulated_gains: bigint,
+  ): Promise<boolean> {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
       target: `${this.packageId}::${MODULE_CLOB}::modify`,
-      arguments: [tx.object(invest), tx.pure.address(user)],
+      arguments: [
+        tx.object(invest),
+        tx.pure.address(user),
+        tx.pure.u64(fix_total_investment),
+        tx.pure.u64(fix_total_gains),
+        tx.pure.u64(fix_last_investment),
+        tx.pure.u64(fix_accumulated_gains),
+      ],
     });
 
     // @ts-ignore

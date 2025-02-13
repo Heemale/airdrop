@@ -1,5 +1,5 @@
 {
 	"private": true,
-	"import": "../dist/esm/invite/index.js",
-	"main": "../dist/cjs/invite/index.js"
+	"import": "../dist/esm/limit/index.js",
+	"main": "../dist/cjs/limit/index.js"
 }
