@@ -31,6 +31,24 @@ const main = async () => {
     arguments: [tx.object(ADMIN_CAP)],
   });
 
+  tx.moveCall({
+    typeArguments: [],
+    target: `${PACKAGE_ID}::${MODULE_CLOB}::new_limit`,
+    arguments: [tx.object(ADMIN_CAP)],
+  });
+
+  tx.moveCall({
+    typeArguments: [],
+    target: `${PACKAGE_ID}::${MODULE_CLOB}::new_invest`,
+    arguments: [tx.object(ADMIN_CAP)],
+  });
+
+  tx.moveCall({
+    typeArguments: [],
+    target: `${PACKAGE_ID}::${MODULE_CLOB}::new_global`,
+    arguments: [tx.object(ADMIN_CAP)],
+  });
+
   const res = await signAndExecuteTransaction(tx, adminKeypair);
   console.log({ res });
   console.log('Init objects success');

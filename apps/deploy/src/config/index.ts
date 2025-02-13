@@ -5,4 +5,3 @@ export const ADMIN_SECRET = process.env.ADMIN_SECRET!;
 export const USER_SECRET = process.env.USER_SECRET!;
 export const SUI_FULL_NODE = process.env.SUI_FULL_NODE!;
 export const SUI_NETWORK = process.env.SUI_NETWORK as 'mainnet' | 'testnet';
-export const PACKAGE_VERSION = Number(process.env.PACKAGE_VERSION);
