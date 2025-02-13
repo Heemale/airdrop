@@ -4,9 +4,9 @@ import { AirdropClient } from '@local/airdrop-sdk/airdrop';
 import { InviteClient } from '@local/airdrop-sdk/invite';
 import { NodeClient } from '@local/airdrop-sdk/node';
 import { PACKAGE_ID, PACKAGE_ID_V1 } from '@/sdk/contants';
-import { GlobalClient } from "@local/airdrop-sdk/global";
-import { InvestClient } from "@local/airdrop-sdk/invest";
-import { LimitClient } from "@local/airdrop-sdk/limit";
+import { GlobalClient } from '@local/airdrop-sdk/global';
+import { InvestClient } from '@local/airdrop-sdk/invest';
+import { LimitClient } from '@local/airdrop-sdk/limit';
 
 export const suiClient = new SuiClient({ url: RPC });
 

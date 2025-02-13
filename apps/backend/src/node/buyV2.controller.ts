@@ -1,12 +1,9 @@
 import { Controller, Get, HttpException, Query } from '@nestjs/common';
-import { BuyService } from './buyV2.service';
 import { findBuyRecordsBySender } from '@/node/dao/buyV2.dao';
 import { GetBuyInfoDto } from '@/node/dto/buyV2.dto';
 
 @Controller()
 export class BuyV2RecordController {
-  constructor(private readonly buyService: BuyService) {}
-
   @Get('buy-node-record')
   async getBuyRecords(@Query() params: GetBuyInfoDto) {
     const { sender, pageSize = 25, nextCursor } = params;

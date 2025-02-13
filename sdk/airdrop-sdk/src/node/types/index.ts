@@ -45,7 +45,7 @@ export interface BuyV2Summary extends TransactionSummary {
   nextCursor?: EventId | null;
 }
 
-export interface ChangeSummary extends TransactionSummary {
+export interface NodeChangeSummary extends TransactionSummary {
   rank: bigint;
   name: string;
   description: string;

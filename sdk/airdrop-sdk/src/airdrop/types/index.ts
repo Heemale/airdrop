@@ -33,7 +33,7 @@ export interface ClaimSummary extends TransactionSummary {
   timestamp: bigint;
   nextCursor?: EventId | null;
 }
-export interface ChangeSummary extends TransactionSummary {
+export interface AirdropChangeSummary extends TransactionSummary {
   round: bigint;
   startTime: bigint;
   endTime: bigint;

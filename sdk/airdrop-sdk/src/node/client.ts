@@ -12,7 +12,7 @@ import { bcs } from '@mysten/sui/bcs';
 import { Summary } from '../types';
 import { BuySummary } from './types';
 import { BuyV2Summary } from './types';
-import { ChangeSummary } from './types';
+import { NodeChangeSummary } from './types';
 
 export class NodeClient {
   constructor(
@@ -320,7 +320,7 @@ export class NodeClient {
 
   async changeNode(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
-  ): Promise<Summary<ChangeSummary>> {
+  ): Promise<Summary<NodeChangeSummary>> {
     const resp = await this.queryEvents('NodeChange', input);
     const customMapping = (rawEvent: any) => ({
       rank: rawEvent.rank as bigint,
