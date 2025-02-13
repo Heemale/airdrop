@@ -499,6 +499,13 @@ module airdrop::airdrop {
         limits.modify(address, times, is_limit);
     }
 
+    public fun new_invest(
+        _admin_cap: &AdminCap,
+        ctx: &mut TxContext
+    ) {
+        invest::new(ctx);
+    }
+
     public fun modify_invest(
         _admin_cap: &AdminCap,
         invest: &mut Invest,
@@ -550,13 +557,6 @@ module airdrop::airdrop {
         is_valid: bool
     ) {
         global.update_initialization_list(object, is_valid);
-    }
-
-    public fun new_invest(
-        _admin_cap: &AdminCap,
-        ctx: &mut TxContext
-    ) {
-        invest::new(ctx);
     }
 
     public fun airdrops(airdrops: &Airdrops) {
