@@ -4,12 +4,12 @@ import Image from 'next/image';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import {
-  airdropClientV2,
+  airdropClient,
   getCoinMetaData,
-  nodeClientV2,
+  nodeClient,
   devTransaction,
 } from '@/sdk';
-import { AIRDROPS, NODES, LIMITS, INVEST, GLOBAL } from '@/sdk';
+import { AIRDROPS, NODES, LIMITS, INVEST, GLOBAL } from '@/sdk/constants';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
 import {
@@ -68,7 +68,7 @@ const AirdropItem = (props: Props) => {
     if (!account) return;
     setLoading(true);
     try {
-      const tx = airdropClientV2.claim_v2(
+      const tx = airdropClient.claim_v2(
         data.coinType,
         AIRDROPS,
         NODES,
@@ -113,7 +113,7 @@ const AirdropItem = (props: Props) => {
   const remainingQuantityOfClaim = async () => {
     if (!account) return;
     try {
-      const times = await nodeClientV2.remainingQuantityOfClaim(
+      const times = await nodeClient.remainingQuantityOfClaim(
         NODES,
         account.address,
         data.round,

@@ -1,6 +1,6 @@
 'use client';
-import { inviteClientV2, devTransaction } from '@/sdk';
-import { INVITE } from '@/sdk';
+import { inviteClient } from '@/sdk';
+import { INVITE } from '@/sdk/constants';
 import React, { useEffect, useState } from 'react';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { useClientTranslation } from '@/hook';
@@ -15,7 +15,7 @@ const Recommender = () => {
   const getInviter = async () => {
     if (account) {
       try {
-        const inviterAddress = await inviteClientV2.inviters(
+        const inviterAddress = await inviteClient.inviters(
           INVITE,
           account.address,
         );
