@@ -68,6 +68,8 @@ const NodeData = () => {
                     borderColor: '#40cafd', // 聚焦时边框颜色
                   },
                 }}
+                placeholder={t('Select Equity')} // 选择权益的默认字
+                inputProps={{ style: { textAlign: 'center' } }}
               />
             )}
             sx={{
