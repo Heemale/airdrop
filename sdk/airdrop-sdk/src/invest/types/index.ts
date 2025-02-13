@@ -10,15 +10,17 @@ export interface InvestInfo {
   // 最近一次收益累计金额
   last_accumulated_gains: BigInt;
 }
+
 export interface UpdateInvestSummary extends TransactionSummary {
   address: string;
   amount: bigint;
-  is_increase: boolean;
-  total_investment: bigint;
+  isIncrease: boolean;
+  totalInvestment: bigint;
 }
+
 export interface UpdateGainsSummary extends TransactionSummary {
   address: string;
   amount: bigint;
-  is_increase: boolean;
-  total_gains: bigint;
+  isIncrease: boolean;
+  totalGains: bigint;
 }
