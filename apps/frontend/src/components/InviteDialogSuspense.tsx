@@ -9,8 +9,8 @@ import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { inviteClientV2, devTransaction } from '@/sdk';
-import { INVITE, GLOBAL } from '@/sdk';
+import { inviteClient, devTransaction } from '@/sdk';
+import { INVITE, GLOBAL } from '@/sdk/constants';
 import { message } from 'antd';
 import { sleep } from '@/utils/time';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
@@ -48,7 +48,7 @@ const InviteDialog = () => {
     if (!account) return;
     setLoading(true);
     try {
-      const tx = inviteClientV2.bind_v2(INVITE, inputValue, GLOBAL);
+      const tx = inviteClient.bind_v2(INVITE, inputValue, GLOBAL);
 
       try {
         await devTransaction(tx, account.address);

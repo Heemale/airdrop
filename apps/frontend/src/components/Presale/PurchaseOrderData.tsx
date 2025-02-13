@@ -10,7 +10,7 @@ import { message } from 'antd';
 import { useRouter } from 'next/navigation';
 import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
-import { PAY_COIN_TYPE } from '@/sdk';
+import { PAY_COIN_TYPE } from '@/sdk/constants';
 
 const PurchaseOrderData = () => {
   const { t } = useClientTranslation();

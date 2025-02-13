@@ -2,8 +2,8 @@
 
 import * as React from 'react';
 import Button from '@/components/Button';
-import { inviteClientV2, nodeClientV2, devTransaction } from '@/sdk';
-import { NODES, INVITE, PAY_COIN_TYPE, INVEST, GLOBAL } from '@/sdk';
+import { inviteClient, nodeClient, devTransaction } from '@/sdk';
+import { NODES, INVITE, PAY_COIN_TYPE, INVEST, GLOBAL } from '@/sdk/constants';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
@@ -34,7 +34,7 @@ const Purchase = () => {
     try {
       if (node && account && account.address) {
         setLoading(true);
-        const tx = await nodeClientV2.buy_v2(
+        const tx = await nodeClient.buy_v2(
           PAY_COIN_TYPE,
           NODES,
           INVITE,
@@ -88,10 +88,7 @@ const Purchase = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const isAlreadyBuyNode = await nodeClientV2.isAlreadyBuyNode(
-          NODES,
-          user,
-        );
+        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
         setIsAlreadyBuyNode(isAlreadyBuyNode);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
@@ -103,7 +100,7 @@ const Purchase = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const getNodeStatus = await nodeClientV2.getNodeStatus(NODES, user);
+        const getNodeStatus = await nodeClient.getNodeStatus(NODES, user);
         setNodeStatus(Number(getNodeStatus));
       } catch (e: any) {
         console.log(`getNodeStatus: ${e.message}`);
@@ -116,7 +113,7 @@ const Purchase = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const inviter = await inviteClientV2.inviters(INVITE, user);
+        const inviter = await inviteClient.inviters(INVITE, user);
         setInviter(inviter);
       } catch (e: any) {
         console.log(`updateInvite: ${e.message}`);
