@@ -27,11 +27,6 @@ export const getConfig = (network: 'mainnet' | 'testnet') => {
         outdated: [
           {
             packageId:
-              '0xac0684d466a96c467ce1f2e65b224cdf8c9064fb5524966cb65c508f4f4e3c85',
-            version: 2,
-          },
-          {
-            packageId:
               '0xb87677cd27227d3bb33f93706340d3f3c576a6d46351c055b7c1f080f2560846',
             version: 1,
           },
@@ -61,11 +56,6 @@ export const getConfig = (network: 'mainnet' | 'testnet') => {
         packageId:
           '0x3a2f575f290e6232c23d1fb67bced9eba734a5bfb2e1b66f0604709f0e7d01ac',
         outdated: [
-          {
-            packageId:
-              '0x3a2f575f290e6232c23d1fb67bced9eba734a5bfb2e1b66f0604709f0e7d01ac',
-            version: 3,
-          },
           {
             packageId:
               '0x8b3bbb05feb9245f0b5c80008c75929c82beef7c8b4a8f7ceac26b9bf7e7bafb',

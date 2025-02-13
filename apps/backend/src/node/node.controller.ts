@@ -3,7 +3,7 @@ import { findBuyRecordsBySender } from '@/node/dao/buyV2.dao';
 import { GetBuyInfoDto } from '@/node/dto/buyV2.dto';
 
 @Controller()
-export class BuyV2RecordController {
+export class NodeController {
   @Get('buy-node-record')
   async getBuyRecords(@Query() params: GetBuyInfoDto) {
     const { sender, pageSize = 25, nextCursor } = params;
