@@ -5,9 +5,9 @@ import { convertSmallToLarge, toFixed } from '@/utils/math';
 export const formatModifyLimit = (
   eventObject: SpecialUserLimitSummary,
 ): Prisma.SpecialLimitUncheckedCreateInput => {
-  const { times } = eventObject;
+  const { times,is_limit } = eventObject;
   return {
     times: BigInt(times),
-    isLimit: true,
+    isLimit: is_limit,
   };
 };
