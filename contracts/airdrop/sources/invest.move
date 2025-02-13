@@ -109,13 +109,13 @@ module airdrop::invest {
             } else {
                 total_gains - fix_total_gains
             };
-            self.total_investment.remove(&address);
+            self.total_gains.remove(&address);
 
             (amount, is_increase, total_gains)
         } else {
             (fix_total_gains, true, fix_total_gains)
         };
-        self.total_investment.insert(address, fix_total_gains);
+        self.total_gains.insert(address, fix_total_gains);
 
         // 最近一次收益累计金额
         let is_exists = self.last_accumulated_gains.contains(&address);
