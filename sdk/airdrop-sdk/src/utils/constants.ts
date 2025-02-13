@@ -59,8 +59,13 @@ export const getConfig = (network: 'mainnet' | 'testnet') => {
     return {
       package: {
         packageId:
-          '0x17192ccd391112180395ca60d6cd68ad97816ed1a8557e83c995c43c24b7a67f',
+          '0x8b3bbb05feb9245f0b5c80008c75929c82beef7c8b4a8f7ceac26b9bf7e7bafb',
         outdated: [
+          {
+            packageId:
+              '0x8b3bbb05feb9245f0b5c80008c75929c82beef7c8b4a8f7ceac26b9bf7e7bafb',
+            version: 2,
+          },
           {
             packageId:
               '0x17192ccd391112180395ca60d6cd68ad97816ed1a8557e83c995c43c24b7a67f',
@@ -78,9 +83,12 @@ export const getConfig = (network: 'mainnet' | 'testnet') => {
         '0x9982d11548a495a92d17fa144fd1b13c3115f1b789890ef80d1c256616bd7ea4',
       AIRDROPS:
         '0xedd84d036dfda620c26c402edbe786473e0467a0a87aca7fe099c368768cfdb4',
-      GLOBAL: '',
-      LIMITS: '',
-      INVEST: '',
+      GLOBAL:
+        '0x38cae477c4c7b46e9afc0e8969d264f73c3830147ec43c5b9f79f1a271697062',
+      LIMITS:
+        '0xa2474ac5beb399f2afcc158dd51368050b6c3af93f42300032537ddabda86a5a',
+      INVEST:
+        '0x542ecad243608a5a6defe2d209dca707c657bf6698923c6df8e7b1492d230e0d',
       PAY_COIN_TYPE: '0x2::sui::SUI',
     };
   }
