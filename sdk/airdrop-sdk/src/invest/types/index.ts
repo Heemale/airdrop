@@ -13,6 +13,12 @@ export interface InvestInfo {
 export interface UpdateInvestSummary extends TransactionSummary {
   address: string;
   amount: bigint;
-  is_increse: boolean;
+  is_increase: boolean;
   total_investment: bigint;
+}
+export interface UpdateGainsSummary extends TransactionSummary {
+  address: string;
+  amount: bigint;
+  is_increase: boolean;
+  total_gains: bigint;
 }

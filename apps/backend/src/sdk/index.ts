@@ -3,6 +3,9 @@ import { SuiClient } from '@mysten/sui/client';
 import { AirdropClient } from '@local/airdrop-sdk/airdrop';
 import { InviteClient } from '@local/airdrop-sdk/invite';
 import { NodeClient } from '@local/airdrop-sdk/node';
+import { GlobalClient } from '@local/airdrop-sdk/global';
+import { LimitClient } from '@local/airdrop-sdk/limit';
+
 import { getConfig } from '@local/airdrop-sdk/utils';
 
 export const suiClient = new SuiClient({ url: RPC });
@@ -13,6 +16,20 @@ export const airdropClientV1 = new AirdropClient(
   )?.packageId,
 );
 export const inviteClientV1 = new InviteClient(
+  suiClient,
+  getConfig(SUI_NETWORK).package.outdated.find(
+    (item) => item.version === 1,
+  )?.packageId,
+);
+
+export const globalClientV2 = new GlobalClient(
+  suiClient,
+  getConfig(SUI_NETWORK).package.outdated.find(
+    (item) => item.version === 1,
+  )?.packageId,
+);
+
+export const limitV2 = new LimitClient(
   suiClient,
   getConfig(SUI_NETWORK).package.outdated.find(
     (item) => item.version === 1,

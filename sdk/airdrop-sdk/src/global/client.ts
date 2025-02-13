@@ -7,7 +7,7 @@ import type {
   OrderArguments,
 } from '@mysten/sui/client';
 import { Summary } from '../types';
-import { UpdateInitializationSummary } from './types';
+import { UpdateInitializationListSummary } from './types';
 
 export class GlobalClient {
   constructor(
@@ -46,10 +46,10 @@ export class GlobalClient {
 
   async updateInitialization(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
-  ): Promise<Summary<UpdateInitializationSummary>> {
+  ): Promise<Summary<UpdateInitializationListSummary>> {
     const resp = await this.queryEvents('UpdateInitializationList', input);
     const customMapping = (rawEvent: any) => ({
-      object: rawEvent.object as bigint,
+      object: rawEvent.object as string,
       ivValid: rawEvent.is_valid as boolean,
     });
     return this.handleEventReturns(resp, customMapping);

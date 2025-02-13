@@ -9,7 +9,7 @@ import type {
   OrderArguments,
 } from '@mysten/sui/client';
 import { Summary } from '../types';
-import { UpdateInvestSummary } from './types';
+import { UpdateInvestSummary, UpdateGainsSummary } from './types';
 
 export class InvestClient {
   constructor(
@@ -70,12 +70,24 @@ export class InvestClient {
     const customMapping = (rawEvent: any) => ({
       address: rawEvent.address as string,
       amount: rawEvent.amount as bigint,
-      isIncrese: rawEvent.is_increse as boolean,
+      isIncrease: rawEvent.is_increase as boolean,
       totalInvestment: rawEvent.total_investment as bigint,
     });
     return this.handleEventReturns(resp, customMapping);
   }
 
+  async updateGains(
+    input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
+  ): Promise<Summary<UpdateGainsSummary>> {
+    const resp = await this.queryEvents('UpdateGains', input);
+    const customMapping = (rawEvent: any) => ({
+      address: rawEvent.address as string,
+      amount: rawEvent.amount as bigint,
+      isIncrease: rawEvent.is_increase as boolean,
+      totalGains: rawEvent.total_gains as bigint,
+    });
+    return this.handleEventReturns(resp, customMapping);
+  }
   async queryEvents(
     eventName: string,
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
@@ -83,7 +95,6 @@ export class InvestClient {
     // @ts-ignore
     return this.suiClient.queryEvents({
       query: {
-        MoveEventType: `${this.packageId}::${MODULE_CLOB}::${eventName}`,
         MoveEventType: `${this.packageId}::${MODULE_CLOB}::${eventName}`,
       },
       ...input,

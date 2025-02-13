@@ -62,7 +62,7 @@ model Node {
   isOpen            Boolean? @default(false) @map("is_open") // 是否开启
   createAt          BigInt?  @map("create_at") /// 创建时间
   updateAt          BigInt?  @map("update_at") /// 更新时间
-  isRemove          Boolean? ///是否转移
+  isRemove          Boolean? @map("is_remove") ///是否转移
   limit             BigInt?
   price             BigInt?
   totalQuantity     BigInt?
@@ -87,7 +87,7 @@ model Airdrop {
   remainingBalance BigInt?  @map("remaining_balance") /// 空投剩余资金
   createAt         BigInt?  @map("create_at") /// 创建时间
   updateAt         BigInt?  @map("update_at") /// 更新时间
-  isRemove         Boolean?
+  isRemove         Boolean? @map("is_remove")
 
   @@map("swld_airdrop")
 }
@@ -102,6 +102,15 @@ model SpecialLimit {
   updateAt BigInt?  @map("update_at") /// 更新时间
 
   @@map("swld_special_limit")
+}
+
+/// 全局表
+model Object {
+  id      Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
+  object  String?  @unique @db.VarChar(72) /// 对象id
+  isValid Boolean? @map("is_valid")
+
+  @@map("swld_object")
 }
 
 /// 购买权益记录表

@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
-import { nodeClientV2 } from '@/sdk';
-import { formatBuyV2 } from '@/node/formatter/formatBuyV2';
-import { handleBuyV2 } from '@/node/handler/handleBuyV2';
+import { globalClientV2 } from '@/sdk';
+import { formatUpdateInitializationList } from '@/global/formatter/formatUpdateInitializationList';
+import { handlerUpdateInitializationList } from '@/global/handler/handlerUpdateInitializationList';
 import { sleep } from '@/utils/time';
 
 @Injectable()
-export class BuyV2Scheduler {
+export class UpdateInitializationListScheduler {
   cursor: EventId | null = null;
 
   @Cron(new Date(Date.now() + 5 * 1000))
@@ -18,16 +18,20 @@ export class BuyV2Scheduler {
   async subscribe() {
     while (true) {
       try {
-        const logs = await nodeClientV2.getAllBuyV2({
+        const logs = await globalClientV2.updateInitialization({
           cursor: this.cursor,
           order: 'ascending',
         });
         for (const log of logs.data) {
-          await handleBuyV2(formatBuyV2(log));
+          await handlerUpdateInitializationList(
+            formatUpdateInitializationList(log),
+          );
         }
         if (logs.hasNextPage) this.cursor = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`BuyV2Scheduler subscribe error => ${message}`);
+        console.error(
+          `UpdateInitializationListScheduler subscribe error => ${message}`,
+        );
       }
       await sleep(1);
     }
