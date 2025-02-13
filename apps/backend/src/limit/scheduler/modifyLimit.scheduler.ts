@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
-import { limitClient } from '@/sdk';
+import { limitClientV2 } from '@/sdk';
 import { formatModifyLimit } from '@/limit/formatter/formatModifyLimit';
 import { handlerModifyLimit } from '@/limit/handler/handlerModifyLimit';
 import { sleep } from '@/utils/time';
@@ -18,7 +18,7 @@ export class ModifyLimitScheduler {
   async subscribe() {
     while (true) {
       try {
-        const logs = await limitClient.modifyLimit({
+        const logs = await limitClientV2.modifyLimit({
           cursor: this.cursor,
           order: 'ascending',
         });

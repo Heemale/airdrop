@@ -23,6 +23,6 @@ export const formatChange = (
     price: BigInt(price),
     totalQuantity: BigInt(totalQuantity),
     purchasedQuantity: BigInt(purchasedQuantity),
-    isRemove: true,
+    isRemove: isRemove,
   };
 };
