@@ -20,7 +20,6 @@ import { handleTxError, handleDevTxError } from '@/sdk/error';
 import { useClientTranslation } from '@/hook';
 import i18nConfig from '@/i18nConfig';
 import { formatAddress } from '@mysten/sui/utils';
-import initTranslations from '@/app/i18n';
 
 const InviteDialog = () => {
   const { t } = useClientTranslation();
@@ -46,9 +45,9 @@ const InviteDialog = () => {
 
   const handleBind = async () => {
     if (!account) return;
-    setLoading(true);
     try {
-      const tx = inviteClient.bind_v2(INVITE, inputValue, GLOBAL);
+      setLoading(true);
+      const tx = inviteClient.bindV2(INVITE, inputValue, GLOBAL);
 
       try {
         await devTransaction(tx, account.address);
@@ -101,13 +100,13 @@ const InviteDialog = () => {
 
   useEffect(() => {
     // 切换账号要清除 inviter
-    if (account) {
-      const addressBefore = localStorage.getItem('address');
-      if (addressBefore && addressBefore !== '') {
-        setInputValue('');
-      }
-      localStorage.setItem('address', account.address);
+    if (!account) return;
+
+    const addressBefore = localStorage.getItem('address');
+    if (addressBefore && addressBefore !== '') {
+      setInputValue('');
     }
+    localStorage.setItem('address', account.address);
   }, [account]);
 
   return (

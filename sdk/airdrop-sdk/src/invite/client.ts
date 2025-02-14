@@ -30,7 +30,7 @@ export class InviteClient {
     return tx;
   }
 
-  bind_v2(invite: string, inviter: string, global: string): Transaction {
+  bindV2(invite: string, inviter: string, global: string): Transaction {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
