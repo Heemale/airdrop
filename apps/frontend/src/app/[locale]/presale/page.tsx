@@ -4,27 +4,17 @@ import PreSale from '@/components/Presale/PreSale';
 import NodeInfo from '@/components/Presale/NodeInfo';
 import PurchaseHistory from '@/components/Presale/PurchaseHistory';
 
-interface Props {
-  params: Promise<{ locale: string }>;
-}
-
-const Home = async (props: Props) => {
-  const { params } = props;
-  const { locale } = await params;
-
+const Home = async () => {
   return (
-    <>
-      <div className="bg-[url('/presale_bg.jpg')] bg-cover bg-right sm:bg-center bg-no-repeat sm:h-[1080px]">
-        <NavBarWrapper />
-        <PreSale>
-          <NodeInfo locale={locale} />
-        </PreSale>
-
-        <div className="max-w-4xl mx-auto mt-8 p-4">
-          <PurchaseHistory />
-        </div>
+    <div className="bg-[url('/presale_bg.jpg')] bg-cover bg-right sm:bg-center bg-no-repeat sm:h-[1080px]">
+      <NavBarWrapper />
+      <PreSale>
+        <NodeInfo />
+      </PreSale>
+      <div className="max-w-4xl mx-auto mt-8 p-4">
+        <PurchaseHistory />
       </div>
-    </>
+    </div>
   );
 };
 

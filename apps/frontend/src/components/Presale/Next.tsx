@@ -19,6 +19,12 @@ import { useClientTranslation } from '@/hook';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { NodeStatus } from '@local/airdrop-sdk/node';
 
+// 测试数据
+// const account = {
+//   address:
+//     '0x2ff7e1caaab6dbe36bf791ca3ece7dea7371cc2480bda6337754024b322fa985',
+// };
+
 const Next = () => {
   const { t } = useClientTranslation();
   const account = useCurrentAccount();

@@ -1,80 +1,76 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useClientTranslation } from '@/hook';
-import { formatAddress } from '@mysten/sui/utils';
 import { message } from 'antd';
-import { handleDevTxError, handleTxError } from '@/sdk/error';
-import { formatTimestamp, sleep } from '@/utils/time';
+import { handleTxError } from '@/sdk/error';
+import { formatTimestamp } from '@/utils/time';
 import { getBuyNodeRecord } from '@/api';
 import { useCurrentAccount } from '@mysten/dapp-kit';
-import { convertSmallToLarge, subtract, toFixed } from '@/utils/math';
+import { convertSmallToLarge } from '@/utils/math';
 import type { BuyNodeRecord } from '@/api/types/response';
 
-export interface History {
-  rank: bigint;
-  nodeNum: bigint;
-  amount: bigint;
-  time: bigint;
-}
+// 测试数据
+// const account = {
+//   address:
+//     '0x2ff7e1caaab6dbe36bf791ca3ece7dea7371cc2480bda6337754024b322fa985',
+// };
 
 const PurchaseHistory = () => {
-  const account = useCurrentAccount();
-
   const { t } = useClientTranslation();
+  const account = useCurrentAccount();
+  const [messageApi, contextHolder] = message.useMessage();
+
   const [purchaseHistory, setPurchaseHistory] = useState<Array<BuyNodeRecord>>(
     [],
   );
-  const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState<boolean>(false);
-  const [cursor, setCursor] = useState<number | null>(null); // 分页游标
+  const [cursor, setCursor] = useState<number | null>(null);
   const [hasMore, setHasMore] = useState<boolean>(true);
 
-  const fetchPurchaseHistory = async (
-    sender: string | null = null,
-    cursor: number | null = null,
-  ) => {
+  const fetchPurchaseHistory = async (cursor: number | null = null) => {
     if (!hasMore || loading) return;
 
-    if (account?.address) {
+    if (!account) return;
+
+    try {
       setLoading(true);
-      try {
-        const response = await getBuyNodeRecord({
-          sender: account?.address!,
-          nextCursor: cursor!,
-        });
-        const newBuy = response.data || [];
+      const response = await getBuyNodeRecord({
+        sender: account?.address!,
+        nextCursor: cursor!,
+      });
+      const newBuy = response.data || [];
 
-        setTimeout(() => {
-          // 使用 Set 去重
-          const existingIds = new Set(purchaseHistory.map((item) => item.id));
-          const uniqueNewData = newBuy.filter(
-            (item: BuyNodeRecord) => !existingIds.has(item.id),
-          );
+      setTimeout(() => {
+        // 使用 Set 去重
+        const existingIds = new Set(purchaseHistory.map((item) => item.id));
+        const uniqueNewData = newBuy.filter(
+          (item: BuyNodeRecord) => !existingIds.has(item.id),
+        );
 
-          setPurchaseHistory((prev) => [...prev, ...uniqueNewData]);
-          setCursor(response.nextCursor);
-          setHasMore(response.nextCursor !== null && uniqueNewData.length > 0);
-          setLoading(false);
-        }, 1000);
-      } catch (e: any) {
-        console.log(`Failed to fetch purchase history: ${e.message}`);
-        messageApi.error(`${t(handleTxError(e.message))}`);
+        setPurchaseHistory((prev) => [...prev, ...uniqueNewData]);
+        setCursor(response.nextCursor);
+        setHasMore(response.nextCursor !== null && uniqueNewData.length > 0);
         setLoading(false);
-      }
+      }, 1000);
+    } catch (e: any) {
+      console.log(`Failed to fetch purchase history: ${e.message}`);
+      messageApi.error(`${t(handleTxError(e.message))}`);
+      setLoading(false);
     }
   };
-  useEffect(() => {
-    fetchPurchaseHistory(account?.address, null);
-  }, [account]);
 
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     // 当滚动到距离底部10px以内时，认为到达底部
     const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
     if (isBottom && !loading && cursor) {
-      fetchPurchaseHistory(account?.address, cursor); // 滚动到底部时加载更多数据
+      fetchPurchaseHistory(cursor);
     }
   };
+
+  useEffect(() => {
+    fetchPurchaseHistory(null);
+  }, [account]);
 
   return (
     <div className="p-4">
@@ -110,13 +106,6 @@ const PurchaseHistory = () => {
               </tr>
             </thead>
             <tbody className="bg-[rgba(13,24,41,0.7)] text-white">
-              {loading && (
-                <tr>
-                  <td colSpan={4} className="text-center whitespace-nowrap">
-                    {t('loading...')}
-                  </td>
-                </tr>
-              )}
               {purchaseHistory.map((record, index) => (
                 <tr key={index}>
                   <td className="px-4 py-2 whitespace-nowrap">
@@ -133,6 +122,13 @@ const PurchaseHistory = () => {
                   </td>
                 </tr>
               ))}
+              {loading && (
+                <tr>
+                  <td colSpan={4} className="text-center whitespace-nowrap">
+                    {t('loading...')}
+                  </td>
+                </tr>
+              )}
               {!loading && !hasMore && purchaseHistory.length > 0 && (
                 <tr>
                   <td
