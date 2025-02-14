@@ -336,7 +336,7 @@ module airdrop::airdrop_tests {
         test_scenario::next_tx(&mut scenario, Admin);
         cliam_airdrop(&mut airdrops, &mut nodes, &clock, &mut scenario);
         let claim_times = node::claim_times(&nodes, 1, 1);
-        // bug 1: 没有拦截，还能继续领取
+        // 🐞 bug 1: 没有拦截，还能继续领取
         assert!(claim_times != 3, EData);
 
         // === 结束测试 ===
