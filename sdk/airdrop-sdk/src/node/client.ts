@@ -257,6 +257,33 @@ export class NodeClient {
     return bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0]));
   }
 
+  async remainingQuantityOfClaimV2(
+    nodes: string,
+    sender: string,
+    round: bigint,
+    limits: string,
+  ) {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${this.packageId}::${MODULE_CLOB}::remaining_quantity_of_claim_v2`,
+      arguments: [
+        tx.object(nodes),
+        tx.pure.address(sender),
+        tx.pure.u64(round),
+        tx.object(limits),
+      ],
+    });
+    // @ts-ignore
+    const res: DevInspectResults =
+      await this.suiClient.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: normalizeSuiAddress('0x0'),
+      });
+    // @ts-ignore
+    return bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0]));
+  }
+
   async receiver(nodes: string): Promise<string> {
     const tx = new Transaction();
     tx.moveCall({

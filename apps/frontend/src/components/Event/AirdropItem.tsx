@@ -113,10 +113,11 @@ const AirdropItem = (props: Props) => {
   const remainingQuantityOfClaim = async () => {
     if (!account) return;
     try {
-      const times = await nodeClient.remainingQuantityOfClaim(
+      const times = await nodeClient.remainingQuantityOfClaimV2(
         NODES,
         account.address,
         data.round,
+        LIMITS,
       );
       setRemainingClaimTimes(BigInt(times));
     } catch (e: any) {
@@ -138,13 +139,10 @@ const AirdropItem = (props: Props) => {
 
   const coinImage = () => {
     if (!coinMetaData) return '/favicon.ico';
-    // @ts-ignore
     if (coinMetaData.iconUrl) {
-      // @ts-ignore
       return coinMetaData.iconUrl;
     } else {
-      // @ts-ignore
-      if (coin && coin.symbol === 'SUI') {
+      if (coinMetaData && coinMetaData.symbol === 'SUI') {
         return '/sui-sui-logo.png';
       }
     }
