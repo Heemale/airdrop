@@ -6,7 +6,7 @@ import {
   NODES,
   INVITE,
   PAY_COIN_TYPE,
-} from "@local/airdrop-sdk/utils";
+} from "@/sdk/constants";
 import {
   Button,
   Table,
@@ -18,9 +18,9 @@ import {
   Switch,
 } from "antd";
 import {
-  airdropClientV1,
-  nodeClientV1,
-  inviteClientV1,
+  airdropClient,
+  nodeClient,
+  inviteClient,
   devTransaction,
   getCoinMetaData,
 } from "@/sdk";
@@ -187,7 +187,7 @@ const AdminPage = () => {
   const fetchAirdropList = async () => {
     try {
       setLoading(true);
-      const list = await airdropClientV1.airdrops(AIRDROPS);
+      const list = await airdropClient.airdrops(AIRDROPS);
       setAirdropList(
         await Promise.all(
           list.map(async (item) => {
@@ -228,7 +228,7 @@ const AdminPage = () => {
     try {
       setLoading(true);
 
-      const tx = airdropClientV1.withdraw(coinType, ADMIN_CAP, AIRDROPS, round);
+      const tx = airdropClient.withdraw(coinType, ADMIN_CAP, AIRDROPS, round);
 
       await devTransaction(tx, account.address);
 
@@ -277,7 +277,7 @@ const AdminPage = () => {
         return;
       }
 
-      const tx = await airdropClientV1.insert(
+      const tx = await airdropClient.insert(
         values.coinType,
         ADMIN_CAP,
         AIRDROPS,
@@ -328,7 +328,7 @@ const AdminPage = () => {
     try {
       const startTime = dayjs(values.startTime).valueOf();
       const endTime = dayjs(values.endTime).valueOf();
-      const tx = airdropClientV1.modify(
+      const tx = airdropClient.modify(
         ADMIN_CAP,
         AIRDROPS,
         values.round,
@@ -409,7 +409,7 @@ const AdminPage = () => {
     try {
       setLoading(true);
       const [list, coinMetaData] = await Promise.all([
-        nodeClientV1.nodeList(NODES),
+        nodeClient.nodeList(NODES),
         getCoinMetaData({ coinType: PAY_COIN_TYPE }),
       ]);
       setNodeList(
@@ -451,7 +451,7 @@ const AdminPage = () => {
       }
 
       const { name, description, limit, price, total_quantity } = values;
-      const tx = airdropClientV1.insertNode(
+      const tx = airdropClient.insertNode(
         ADMIN_CAP,
         NODES,
         name,
@@ -504,7 +504,7 @@ const AdminPage = () => {
         return;
       }
 
-      const tx = airdropClientV1.modifyNode(
+      const tx = airdropClient.modifyNode(
         ADMIN_CAP,
         NODES,
         values.rank,
@@ -541,8 +541,8 @@ const AdminPage = () => {
   const fetchInviteInfo = async () => {
     try {
       const [root, fee] = await Promise.all([
-        await inviteClientV1.root(INVITE),
-        await inviteClientV1.inviterFee(INVITE),
+        await inviteClient.root(INVITE),
+        await inviteClient.inviterFee(INVITE),
       ]);
       setFee(fee);
       setRoot(root);
@@ -565,7 +565,7 @@ const AdminPage = () => {
         return;
       }
 
-      const tx = airdropClientV1.modifyInvite(
+      const tx = airdropClient.modifyInvite(
         ADMIN_CAP,
         INVITE,
         root,
@@ -596,7 +596,7 @@ const AdminPage = () => {
 
   const fetchReceiver = async () => {
     try {
-      const receivers = await nodeClientV1.receiver(NODES);
+      const receivers = await nodeClient.receiver(NODES);
       set_receiver(receivers);
     } catch (error: any) {
       messageApi.error(`获取分红信息失败: ${error.message}`);
@@ -612,7 +612,7 @@ const AdminPage = () => {
 
     try {
       const { receiver } = value;
-      const tx = airdropClientV1.modify_nodes(
+      const tx = airdropClient.modify_nodes(
         PAY_COIN_TYPE,
         ADMIN_CAP,
         NODES,
@@ -1090,10 +1090,6 @@ const AdminPage = () => {
           </Modal>
         </div>
       </div>
-
-
-
-      
     </div>
   );
 };
