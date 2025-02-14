@@ -11,7 +11,7 @@ const ConnectWallet = () => {
     <ConnectModal
       trigger={
         <button className="w-full relative inline-block bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-white font-bold text-center text-lg py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer">
-          {t('TRANSFER EQUITY')}
+          {t('CONNECT WALLET')}
         </button>
       }
     />

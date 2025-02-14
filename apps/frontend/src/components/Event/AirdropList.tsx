@@ -35,12 +35,12 @@ const AirdropList = (props: Props) => {
 
   const account = useCurrentAccount();
   const { t } = useClientTranslation();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [airdropList, setAirdropList] = useState<Array<AirdropInfo>>([]);
   const [nodeStatus, setNodeStatus] = useState<NodeStatus>(
     NodeStatus.NODE_NOT_OWNED,
   );
-  const [messageApi, contextHolder] = message.useMessage();
 
   const getNodeStatus = async () => {
     if (account && account.address) {
@@ -49,7 +49,7 @@ const AirdropList = (props: Props) => {
         const nodeStatus = await nodeClient.getNodeStatus(NODES, user);
         setNodeStatus(nodeStatus);
       } catch (e: any) {
-        console.log(`getIsAlreadyBuyNode: ${e.message}`);
+        console.log(`getNodeStatus: ${e.message}`);
         messageApi.error(`${t(handleTxError(e.message))}`);
       }
     }
@@ -58,7 +58,6 @@ const AirdropList = (props: Props) => {
   const getAirdropList = async () => {
     try {
       const airdropData = await airdropClient.airdrops(AIRDROPS);
-      console.log(1111111, airdropData);
       setAirdropList(airdropData);
     } catch (e: any) {
       console.log(`getAirdropList error: ${e.messag}`);

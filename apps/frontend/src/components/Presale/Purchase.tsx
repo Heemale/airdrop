@@ -31,7 +31,8 @@ const Purchase = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const [nodeStatus, setNodeStatus] = useState<NodeStatus>(
     NodeStatus.NODE_NOT_OWNED,
-  );  const buyNode = async () => {
+  );
+  const buyNode = async () => {
     try {
       if (node && account && account.address) {
         setLoading(true);
