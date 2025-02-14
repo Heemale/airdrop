@@ -83,7 +83,7 @@ export class NodeClient {
     return tx;
   }
 
-  async buy_v2(
+  async buyV2(
     T: string,
     nodes: string,
     invite: string,
@@ -159,6 +159,24 @@ export class NodeClient {
       typeArguments: [],
       target: `${this.packageId}::${MODULE_CLOB}::transfer`,
       arguments: [tx.object(nodes), tx.pure.address(receiver)],
+    });
+    return tx;
+  }
+
+  async transferV2(
+    nodes: string,
+    receiver: string,
+    global: string,
+  ): Promise<Transaction> {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${this.packageId}::${MODULE_CLOB}::transfer_v2`,
+      arguments: [
+        tx.object(nodes),
+        tx.pure.address(receiver),
+        tx.object(global),
+      ],
     });
     return tx;
   }

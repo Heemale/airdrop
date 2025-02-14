@@ -10,7 +10,7 @@ import {
 import { useContext, useEffect, useState } from 'react';
 import ConnectWallet from '@/components/ConnectWallet';
 import { inviteClient, nodeClient, devTransaction } from '@/sdk';
-import { INVITE, NODES } from '@/sdk/constants';
+import { GLOBAL, INVITE, NODES } from '@/sdk/constants';
 import { InviteDialogContext } from '@/context/InviteDialogContext';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { message } from 'antd';
@@ -76,7 +76,7 @@ const Next = () => {
 
     try {
       setLoading(true);
-      const tx = await nodeClient.transfer(NODES, receiver);
+      const tx = await nodeClient.transferV2(NODES, receiver, GLOBAL);
 
       try {
         await devTransaction(tx, account.address);

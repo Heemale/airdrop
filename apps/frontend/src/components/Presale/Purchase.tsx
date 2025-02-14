@@ -39,7 +39,7 @@ const Purchase = () => {
 
     try {
       setLoading(true);
-      const tx = await nodeClient.buy_v2(
+      const tx = await nodeClient.buyV2(
         PAY_COIN_TYPE,
         NODES,
         INVITE,
