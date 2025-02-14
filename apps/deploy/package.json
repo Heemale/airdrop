@@ -12,7 +12,8 @@
     "unpause": "npx ts-node -r tsconfig-paths/register src/scripts/unpause.ts",
     "updateInitializationList": "npx ts-node -r tsconfig-paths/register src/scripts/updateInitializationList.ts",
     "bind": "npx ts-node -r tsconfig-paths/register src/scripts/test/bind.ts",
-    "inviters": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviters.ts"
+    "inviters": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviters.ts",
+    "reamingTimes": "npx ts-node -r tsconfig-paths/register src/scripts/test/reamingTimes.ts"
   },
   "keywords": [],
   "author": "",
