@@ -11,6 +11,7 @@ import { message } from 'antd';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { handleTxError } from '@/sdk/error';
 import { useClientTranslation } from '@/hook';
+import { NodeStatus } from '@local/airdrop-sdk/node';
 
 interface Props {
   isOngoing?: boolean;
@@ -36,15 +37,17 @@ const AirdropList = (props: Props) => {
   const { t } = useClientTranslation();
 
   const [airdropList, setAirdropList] = useState<Array<AirdropInfo>>([]);
-  const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
+  const [nodeStatus, setNodeStatus] = useState<NodeStatus>(
+    NodeStatus.NODE_NOT_OWNED,
+  );
   const [messageApi, contextHolder] = message.useMessage();
 
-  const getIsAlreadyBuyNode = async () => {
+  const getNodeStatus = async () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
-        setIsAlreadyBuyNode(isAlreadyBuyNode);
+        const nodeStatus = await nodeClient.getNodeStatus(NODES, user);
+        setNodeStatus(nodeStatus);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
         messageApi.error(`${t(handleTxError(e.message))}`);
@@ -69,7 +72,7 @@ const AirdropList = (props: Props) => {
   };
 
   useEffect(() => {
-    getIsAlreadyBuyNode();
+    getNodeStatus();
   }, [account]);
 
   useEffect(() => {
@@ -95,7 +98,7 @@ const AirdropList = (props: Props) => {
                 totalCopies={totalCopies}
                 rewardQuantityPerCopy={rewardQuantityPerCopy}
                 unpurchasedNode={unpurchasedNode}
-                isAlreadyBuyNode={isAlreadyBuyNode}
+                nodeStatus={nodeStatus}
                 claimText={claimText}
               />
             ))
@@ -114,7 +117,7 @@ const AirdropList = (props: Props) => {
                   totalCopies={totalCopies}
                   rewardQuantityPerCopy={rewardQuantityPerCopy}
                   unpurchasedNode={unpurchasedNode}
-                  isAlreadyBuyNode={isAlreadyBuyNode}
+                  nodeStatus={nodeStatus}
                   claimText={claimText}
                 />
               );

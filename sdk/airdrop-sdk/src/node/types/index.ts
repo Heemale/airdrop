@@ -56,4 +56,11 @@ export interface NodeChangeSummary extends TransactionSummary {
   purchasedQuantity: bigint;
   isRemove: boolean;
 }
+
+export enum NodeStatus {
+  NODE_NOT_OWNED = 0,
+  NODE_ACTIVE = 1,
+  NODE_DISABLED = 2,
+}
+
 export * from './index';

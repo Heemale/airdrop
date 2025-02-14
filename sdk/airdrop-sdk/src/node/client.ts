@@ -7,7 +7,7 @@ import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { MODULE_CLOB } from './utils/constants';
-import { NodeInfo, AddSummary } from './types';
+import { NodeInfo, AddSummary, NodeStatus } from './types';
 import { bcs } from '@mysten/sui/bcs';
 import { Summary } from '../types';
 import { BuySummary } from './types';
@@ -197,7 +197,7 @@ export class NodeClient {
       return customMapping(event?.parsedJson);
     });
   }
-  async getNodeStatus(nodes: string, sender: string): Promise<bigint> {
+  async getNodeStatus(nodes: string, sender: string): Promise<NodeStatus> {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
@@ -211,11 +211,10 @@ export class NodeClient {
         transactionBlock: tx,
         sender: normalizeSuiAddress('0x0'),
       });
-    // @ts-ignore
-    const value = res?.results[0]?.returnValues[0][0];
 
-    // 返回 u64 类型的节点状态值
-    return value;
+    return Number(
+      bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0])),
+    );
   }
 
   async isAlreadyBuyNode(nodes: string, sender: string): Promise<boolean> {

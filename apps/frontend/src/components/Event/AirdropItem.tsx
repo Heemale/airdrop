@@ -5,11 +5,11 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import {
   airdropClient,
+  devTransaction,
   getCoinMetaData,
   nodeClient,
-  devTransaction,
 } from '@/sdk';
-import { AIRDROPS, NODES, LIMITS, INVEST, GLOBAL } from '@/sdk/constants';
+import { AIRDROPS, GLOBAL, INVEST, LIMITS, NODES } from '@/sdk/constants';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
 import {
@@ -23,9 +23,10 @@ import { convertSmallToLarge, divide } from '@/utils/math';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
-import { handleTxError, handleDevTxError } from '@/sdk/error';
+import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { useRouter } from 'next/navigation';
 import type { CoinMetadata } from '@mysten/sui/client';
+import { NodeStatus } from '@local/airdrop-sdk/node';
 
 export interface Props {
   data: AirdropInfo;
@@ -35,7 +36,7 @@ export interface Props {
   totalCopies: string;
   rewardQuantityPerCopy: string;
   unpurchasedNode: string;
-  isAlreadyBuyNode: boolean;
+  nodeStatus: NodeStatus;
   claimText: string;
 }
 
@@ -48,7 +49,7 @@ const AirdropItem = (props: Props) => {
     totalCopies,
     rewardQuantityPerCopy,
     unpurchasedNode,
-    isAlreadyBuyNode,
+    nodeStatus,
     claimText,
   } = props;
 
@@ -184,7 +185,9 @@ const AirdropItem = (props: Props) => {
         </div>
       </div>
       <div>{data.description}</div>
-      {isAlreadyBuyNode && isOngoing && remainingClaimTimes > BigInt(0) ? (
+      {nodeStatus === NodeStatus.NODE_ACTIVE &&
+      isOngoing &&
+      remainingClaimTimes > BigInt(0) ? (
         <button
           onClick={claim}
           className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
