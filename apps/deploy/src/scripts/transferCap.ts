@@ -1,11 +1,11 @@
 import { Transaction } from '@mysten/sui/transactions';
 import { signAndExecuteTransaction } from '@/sdk/utils';
 import { ADMIN_CAP, UPGRADE_CAP } from '@/sdk/constants';
-import { ownerKeypair, adminKeypair } from '@/sdk';
+import { adminKeypair } from '@/sdk';
 
 const objects = [ADMIN_CAP, UPGRADE_CAP];
 
-const receiver = adminKeypair.toSuiAddress();
+const receiver = '';
 
 const transferCap = async () => {
   const tx = new Transaction();
@@ -14,7 +14,7 @@ const transferCap = async () => {
     tx.transferObjects([tx.object(item)], tx.pure.address(receiver));
   });
 
-  const res = await signAndExecuteTransaction(tx, ownerKeypair);
+  const res = await signAndExecuteTransaction(tx, adminKeypair);
   console.log({ res });
   console.log('TransferCap success');
 };

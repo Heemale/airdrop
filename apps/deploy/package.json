@@ -8,11 +8,11 @@
     "insertNodes": "npx ts-node -r tsconfig-paths/register src/scripts/insertNodes.ts",
     "insertAirdrops": "npx ts-node -r tsconfig-paths/register src/scripts/insertAirdrops.ts",
     "transferCap": "npx ts-node -r tsconfig-paths/register src/scripts/transferCap.ts",
+    "pause": "npx ts-node -r tsconfig-paths/register src/scripts/pause.ts",
+    "unpause": "npx ts-node -r tsconfig-paths/register src/scripts/unpause.ts",
+    "updateInitializationList": "npx ts-node -r tsconfig-paths/register src/scripts/updateInitializationList.ts",
     "bind": "npx ts-node -r tsconfig-paths/register src/scripts/test/bind.ts",
-    "inviters": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviters.ts",
-    "pause": "npx ts-node -r tsconfig-paths/register src/scripts/test/pause.ts",
-    "unpause": "npx ts-node -r tsconfig-paths/register src/scripts/test/unpause.ts",
-    "updateInitializationList": "npx ts-node -r tsconfig-paths/register src/scripts/test/updateInitializationList.ts"
+    "inviters": "npx ts-node -r tsconfig-paths/register src/scripts/test/inviters.ts"
   },
   "keywords": [],
   "author": "",
