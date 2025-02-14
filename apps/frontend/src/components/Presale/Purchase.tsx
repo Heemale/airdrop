@@ -129,6 +129,7 @@ const Purchase = () => {
 
   return (
     <div className="col-span-2">
+      
       {account ? (
         inviter === normalizeSuiAddress('0x0') ? (
           <Button
