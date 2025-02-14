@@ -29,7 +29,6 @@ const Purchase = () => {
 
   const [loading, setLoading] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
   const [nodeStatus, setNodeStatus] = useState<NodeStatus>(
     NodeStatus.NODE_NOT_OWNED,
   );  const buyNode = async () => {
@@ -65,7 +64,7 @@ const Purchase = () => {
               console.log({ digest: result.digest });
               messageApi.success(`Success: ${result.digest}`);
               setLoading(false);
-              await getIsAlreadyBuyNode();
+              await getNodeStatus();
             },
             onError: ({ message }) => {
               console.log(`BuyNode: ${message}`);
@@ -85,19 +84,6 @@ const Purchase = () => {
   const bind = () => {
     setOpen(true);
   };
-
-  const getIsAlreadyBuyNode = async () => {
-    if (account && account.address) {
-      try {
-        const user = account.address;
-        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
-        setIsAlreadyBuyNode(isAlreadyBuyNode);
-      } catch (e: any) {
-        console.log(`getIsAlreadyBuyNode: ${e.message}`);
-        messageApi.error(`${t(handleTxError(e.message.trim()))}`);
-      }
-    }
-  };
   const getNodeStatus = async () => {
     if (account && account.address) {
       try {
@@ -105,7 +91,7 @@ const Purchase = () => {
         const nodeStatus = await nodeClient.getNodeStatus(NODES, user);
         setNodeStatus(nodeStatus);
       } catch (e: any) {
-        console.log(`getIsAlreadyBuyNode: ${e.message}`);
+        console.log(`getNodeStatus: ${e.message}`);
         messageApi.error(`${t(handleTxError(e.message))}`);
       }
     }

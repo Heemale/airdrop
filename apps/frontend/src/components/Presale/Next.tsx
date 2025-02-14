@@ -17,6 +17,7 @@ import { message } from 'antd';
 import { PresaleContext } from '@/context/PresaleContext';
 import { useClientTranslation } from '@/hook';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
+import { NodeStatus } from '@local/airdrop-sdk/node';
 
 const Next = () => {
   const account = useCurrentAccount();
@@ -28,7 +29,9 @@ const Next = () => {
   const [receiver, setReceiver] = useState('');
   const [loading, setLoading] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<number | null>(null);
+  const [isAlreadyBuyNode, setIsAlreadyBuyNode] =  useState<NodeStatus>(
+    NodeStatus.NODE_NOT_OWNED,
+  );
 
   const bind = () => {
     setOpen(true);
@@ -38,7 +41,7 @@ const Next = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const isAlreadyBuyNode = await nodeClient.isAlreadyBuyNode(NODES, user);
+        const isAlreadyBuyNode = await nodeClient.getNodeStatus(NODES, user);
         setIsAlreadyBuyNode(isAlreadyBuyNode ? 1 : 0);
       } catch (e: any) {
         console.log(`getIsAlreadyBuyNode: ${e.message}`);
