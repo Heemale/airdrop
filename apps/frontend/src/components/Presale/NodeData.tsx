@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import { NodeInfo } from '@local/airdrop-sdk/node';
 import { Autocomplete, TextField } from '@mui/material';
 import { nodeClient } from '@/sdk';
-import { NODES } from '@/sdk/constants';
+import { NODES } from '../../sdk/constants';
 import { convertSmallToLarge } from '@/utils/math';
 import { PresaleContext } from '@/context/PresaleContext';
 import { message } from 'antd';
@@ -50,6 +50,8 @@ const NodeData = () => {
             renderInput={(params) => (
               <TextField
                 {...params}
+                placeholder="Select Equity" // 设置默认占位文本
+                InputLabelProps={{ style:{ textAlign: 'center' }}} // 保持 label 始终在输入框上方
                 sx={{
                   backgroundColor: 'transparent', // 设置输入框背景为透明
                   height: '35px', // 保持输入框高度
@@ -68,8 +70,6 @@ const NodeData = () => {
                     borderColor: '#40cafd', // 聚焦时边框颜色
                   },
                 }}
-                placeholder={t('Select Equity')} // 选择权益的默认字
-                inputProps={{ style: { textAlign: 'center' } }}
               />
             )}
             sx={{
