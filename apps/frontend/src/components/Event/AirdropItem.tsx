@@ -69,7 +69,7 @@ const AirdropItem = (props: Props) => {
     try {
       setLoading(true);
 
-      const tx = airdropClient.claim_v2(
+      const tx = airdropClient.claimV2(
         data.coinType,
         AIRDROPS,
         NODES,

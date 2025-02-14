@@ -175,7 +175,7 @@ export class AirdropClient {
     return tx;
   }
 
-  claim_v2(
+  claimV2(
     T: string,
     adminCap: string,
     nodes: string,
