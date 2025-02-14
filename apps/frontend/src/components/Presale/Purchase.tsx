@@ -18,6 +18,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
+import { NodeStatus } from '@local/airdrop-sdk/node';
 
 const Purchase = () => {
   const account = useCurrentAccount();
@@ -29,8 +30,9 @@ const Purchase = () => {
   const [loading, setLoading] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [isAlreadyBuyNode, setIsAlreadyBuyNode] = useState<boolean>(false);
-  const [NodeStatus, setNodeStatus] = useState<number>(0);
-  const buyNode = async () => {
+  const [nodeStatus, setNodeStatus] = useState<NodeStatus>(
+    NodeStatus.NODE_NOT_OWNED,
+  );  const buyNode = async () => {
     try {
       if (node && account && account.address) {
         setLoading(true);
@@ -100,11 +102,11 @@ const Purchase = () => {
     if (account && account.address) {
       try {
         const user = account.address;
-        const getNodeStatus = await nodeClient.getNodeStatus(NODES, user);
-        setNodeStatus(Number(getNodeStatus));
+        const nodeStatus = await nodeClient.getNodeStatus(NODES, user);
+        setNodeStatus(nodeStatus);
       } catch (e: any) {
-        console.log(`getNodeStatus: ${e.message}`);
-        messageApi.error(`${t(handleTxError(e.message.trim()))}`);
+        console.log(`getIsAlreadyBuyNode: ${e.message}`);
+        messageApi.error(`${t(handleTxError(e.message))}`);
       }
     }
   };
@@ -124,12 +126,11 @@ const Purchase = () => {
 
   useEffect(() => {
     updateInvite();
-    getIsAlreadyBuyNode();
+    getNodeStatus();
   }, [account]);
 
   return (
     <div className="col-span-2">
-      
       {account ? (
         inviter === normalizeSuiAddress('0x0') ? (
           <Button
@@ -137,20 +138,20 @@ const Purchase = () => {
             text={t('BIND INVITER')}
             onClick={bind}
           />
-        ) : NodeStatus === 1 ? (
+        ) : nodeStatus === NodeStatus.NODE_ACTIVE ? (
           <button
             className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
             disabled
           >
             {t('PURCHASED EQUITY')}
           </button>
-        ) : NodeStatus === 0 ? (
+        ) : nodeStatus === NodeStatus.NODE_NOT_OWNED ? (
           <Button
             className="text-white w-full"
             text={t('BUY')}
             onClick={buyNode}
           />
-        ) : NodeStatus === 2 ? (
+        ) : nodeStatus === NodeStatus.NODE_DISABLED ? (
           <Button
             className="text-white w-full"
             text={t('Activate again')}

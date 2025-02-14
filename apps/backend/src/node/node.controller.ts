@@ -1,7 +1,7 @@
 import { Controller, Get, HttpException, Query } from '@nestjs/common';
 import { findBuyRecordsBySender } from '@/node/dao/buyV2.dao';
 import { GetBuyInfoDto } from '@/node/dto/buyV2.dto';
-import { getAllNodes } from '@/node/dao/nodeList.dao'; // 导入 getAllNodes 函数
+import { findAllNodes } from '@/node/dao/nodeList.dao'; // 导入 getAllNodes 函数
 
 @Controller()
 export class NodeController {
@@ -42,9 +42,7 @@ export class NodeController {
   @Get('all-nodes')
   async getAllNodes() {
     try {
-      const nodes = await getAllNodes();
-      console.log(nodes)
-      return nodes;
+      return await findAllNodes();
     } catch ({ message }) {
       console.log(`GetAllNodes error: ${message}`);
       throw new HttpException('Error retrieving all nodes.', 500);
