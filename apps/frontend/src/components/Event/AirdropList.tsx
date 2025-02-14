@@ -19,9 +19,14 @@ interface Props {
   chainText: string;
   totalCopies: string;
   rewardQuantityPerCopy: string;
-  unpurchasedNode: string;
   claimText: string;
 }
+
+const checkIsGoing = (startTime: bigint, endTime: bigint): boolean => {
+  const timestampMs = getCurrentTimestampMs();
+  return timestampMs >= startTime && timestampMs <= endTime;
+};
+
 const AirdropList = (props: Props) => {
   const {
     isOngoing,
@@ -29,29 +34,25 @@ const AirdropList = (props: Props) => {
     chainText,
     totalCopies,
     rewardQuantityPerCopy,
-    unpurchasedNode,
     claimText,
   } = props;
 
-  const account = useCurrentAccount();
   const { t } = useClientTranslation();
+  const account = useCurrentAccount();
   const [messageApi, contextHolder] = message.useMessage();
 
   const [airdropList, setAirdropList] = useState<Array<AirdropInfo>>([]);
-  const [nodeStatus, setNodeStatus] = useState<NodeStatus>(
-    NodeStatus.NODE_NOT_OWNED,
-  );
+  const [nodeStatus, setNodeStatus] = useState<NodeStatus | null>(null);
 
   const getNodeStatus = async () => {
-    if (account && account.address) {
-      try {
-        const user = account.address;
-        const nodeStatus = await nodeClient.getNodeStatus(NODES, user);
-        setNodeStatus(nodeStatus);
-      } catch (e: any) {
-        console.log(`getNodeStatus: ${e.message}`);
-        messageApi.error(`${t(handleTxError(e.message))}`);
-      }
+    if (!account) return;
+
+    try {
+      const nodeStatus = await nodeClient.getNodeStatus(NODES, account.address);
+      setNodeStatus(nodeStatus);
+    } catch (e: any) {
+      console.log(`getNodeStatus: ${e.message}`);
+      messageApi.error(`${t(handleTxError(e.message))}`);
     }
   };
 
@@ -63,11 +64,6 @@ const AirdropList = (props: Props) => {
       console.log(`getAirdropList error: ${e.messag}`);
       messageApi.error(`${t(handleTxError(e.message))}`);
     }
-  };
-
-  const checkIsGoing = (startTime: bigint, endTime: bigint): boolean => {
-    const timestampMs = getCurrentTimestampMs();
-    return timestampMs >= startTime && timestampMs <= endTime;
   };
 
   useEffect(() => {
@@ -96,7 +92,6 @@ const AirdropList = (props: Props) => {
                 chainText={chainText}
                 totalCopies={totalCopies}
                 rewardQuantityPerCopy={rewardQuantityPerCopy}
-                unpurchasedNode={unpurchasedNode}
                 nodeStatus={nodeStatus}
                 claimText={claimText}
               />
@@ -115,7 +110,6 @@ const AirdropList = (props: Props) => {
                   chainText={chainText}
                   totalCopies={totalCopies}
                   rewardQuantityPerCopy={rewardQuantityPerCopy}
-                  unpurchasedNode={unpurchasedNode}
                   nodeStatus={nodeStatus}
                   claimText={claimText}
                 />

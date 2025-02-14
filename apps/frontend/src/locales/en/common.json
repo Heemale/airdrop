@@ -124,7 +124,7 @@
   "Total team subscription": "Total team subscription",
   "Unable to obtain user information": "Unable to obtain user information",
   "The return value gets inconsistent": "The return value gets inconsistent",
-  "Activate again": "Activate again",
+  "PLEASE REACTIVATE RIGHTS": "PLEASE REACTIVATE RIGHTS",
   "Select Equity": "Select Equity",
   "EInsufficientRemainingQuantity": "Insufficient remaining quantity",
   "EMethodDeprecated": "Method deprecated",
@@ -133,5 +133,6 @@
   "EInvalidReceiver": "Invalid receiver",
   "EExceedsClaimLimit": "Exceeds claim limit",
   "EPaused": "Contract is paused",
-  "EInvalidObject": "Invalid object"
+  "EInvalidObject": "Invalid object",
+  "PLEASE PURCHASE RIGHTS": "PLEASE PURCHASE RIGHTS"
 }
