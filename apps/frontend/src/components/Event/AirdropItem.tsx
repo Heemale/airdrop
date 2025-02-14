@@ -185,15 +185,29 @@ const AirdropItem = (props: Props) => {
         </div>
       </div>
       <div>{data.description}</div>
-      {nodeStatus === NodeStatus.NODE_ACTIVE &&
-      isOngoing &&
-      remainingClaimTimes > BigInt(0) ? (
-        <button
-          onClick={claim}
-          className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
-        >
-          {t(claimText)}
-        </button>
+      {isOngoing && remainingClaimTimes > BigInt(0) ? (
+        nodeStatus === NodeStatus.NODE_ACTIVE ? (
+          <button
+            onClick={claim}
+            className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+          >
+            {t(claimText)}
+          </button>
+        ) : nodeStatus === NodeStatus.NODE_NOT_OWNED ? (
+          <button
+            className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+          >
+            {t('BUY')}
+          </button>
+        ) : nodeStatus === NodeStatus.NODE_DISABLED ? (
+          <button
+            className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+          >
+            t('Activate again')
+          </button>
+        ) : (
+          t('The return value gets inconsistent')
+        )
       ) : (
         <button
           className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}

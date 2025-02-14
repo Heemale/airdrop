@@ -50,7 +50,7 @@ const NodeData = () => {
             renderInput={(params) => (
               <TextField
                 {...params}
-                placeholder="Select Equity" // 设置默认占位文本
+                placeholder={t('Select Equity')} // 设置默认占位文本
                 InputLabelProps={{ style: { textAlign: 'center' } }} // 保持 label 始终在输入框上方
                 sx={{
                   backgroundColor: 'transparent', // 设置输入框背景为透明

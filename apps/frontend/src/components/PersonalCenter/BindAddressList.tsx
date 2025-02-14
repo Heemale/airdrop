@@ -8,7 +8,6 @@ import { message } from 'antd';
 import { getUserShares } from '@/api';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import type { UserSharesResponse } from '@/api/types/response';
-
 const BindAddressList = () => {
   const account = useCurrentAccount();
 
@@ -124,7 +123,7 @@ const BindAddressList = () => {
           <div className="text-center text-gray-400 py-2">
             {t('No more data')}
           </div>
-        )}{' '}
+        )}
       </div>
     </div>
   );
