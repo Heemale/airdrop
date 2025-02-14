@@ -6,7 +6,6 @@ export const ERROR_CODE: Record<string, Record<string, string>> = {
     '4': 'EInvalidClaimTime',
     '5': 'ENoRemainingShares',
     '6': 'EMethodDeprecated',
-
   },
   node: {
     '1': 'ECoinBalanceNotEnough',
@@ -22,8 +21,6 @@ export const ERROR_CODE: Record<string, Record<string, string>> = {
     '11': 'EMustActiveNode',
     '12': 'EInvalidReceiver',
     '13': 'EExceedsClaimLimit',
-
-
   },
   invite: {
     '1': 'EInvalidSender',
