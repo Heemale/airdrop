@@ -181,6 +181,16 @@ export class NodeClient {
     return tx;
   }
 
+  removeNode(nodes: string, rank: number): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${this.packageId}::${MODULE_CLOB}::remove`,
+      arguments: [tx.object(nodes), tx.pure.u8(rank)],
+    });
+    return tx;
+  }
+
   async nodeList(nodes: string): Promise<Array<NodeInfo>> {
     const tx = new Transaction();
     tx.moveCall({
