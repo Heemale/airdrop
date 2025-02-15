@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import {
-  AIRDROPS,
-  NODES,
-  INVITE,
-  PAY_COIN_TYPE,
-} from "@/sdk/constants";
+import { AIRDROPS, NODES, INVITE, PAY_COIN_TYPE } from "@/sdk/constants";
 import {
   Button,
   Table,
@@ -35,6 +30,9 @@ import { formatTimestamp } from "../utils/time";
 import { convertLargeToSmall, convertSmallToLarge } from "../utils/math";
 import { handleDevTxError } from "@/sdk/error";
 import { isHexString } from "@/utils";
+import { getNodeInfo } from "@/api";
+
+import type { NodeInfoResponse } from "@/api/types/response";
 
 export interface NodeInfo {
   // 等级
@@ -103,7 +101,7 @@ const AdminPage = () => {
 
   const [showInviteModal, setShowInviteModal] = useState(false); // 控制邀请弹窗显示
   const [editReceiver, setEditReceiver] = useState(false);
-
+console.log('account',account)
   // 表格列配置
   const columns = [
     { title: "轮次", dataIndex: "round", key: "round" },
@@ -406,28 +404,52 @@ const AdminPage = () => {
 
   // 获取节点列表
   const fetchNodeList = async () => {
-    try {
-      setLoading(true);
-      const [list, coinMetaData] = await Promise.all([
-        nodeClient.nodeList(NODES),
-        getCoinMetaData({ coinType: PAY_COIN_TYPE }),
-      ]);
-      setNodeList(
-        list.map((item) => {
-          const { price, ...rest } = item;
-          return {
-            price: convertSmallToLarge(
-              price,
-              coinMetaData ? coinMetaData.decimals : 9,
-            ),
-            ...rest,
+    console.log(123123,account?.address)
+    if (account) {
+      try {
+        setLoading(true);       
+        const response = await getNodeInfo({
+          sender: account.address,
+        }); // 获取节点信息
+        console.log("response", response);
+        if (Array.isArray(response)) {
+          // 确保返回值是数组
+          // 遍历返回的数据并赋值给 NodeInfo
+          const formattedNodeList: NodeInfo[] = response.map((node) => ({
+            rank: node.rank,
+            name: node.name,
+            description: node.description,
+            limit: BigInt(node.limit), // 假设 limit 是 bigint 类型
+            price: node.price,
+            total_quantity: BigInt(node.totalQuantity), // 假设 total_quantity 是 bigint 类型
+            purchased_quantity: BigInt(node.purchasedQuantity), // 假设 purchased_quantity 是 bigint 类型
+            isOpen: node.isOpen,
+            
+          }));
+          console.log("formattedNodeList", formattedNodeList);
+          setNodeList(formattedNodeList); // 更新状态
+        } else {
+          // 如果返回的是单个节点，直接处理
+          const node = response; // 假设 response 是单个节点
+          const formattedNode: NodeInfo = {
+            rank: node.rank,
+            name: node.name,
+            description: node.description,
+            limit: BigInt(node.limit),
+            price: node.price!,
+            total_quantity: BigInt(node.totalQuantity!),
+            purchased_quantity: BigInt(node.purchasedQuantity!),
+            isOpen: node.isOpen,
           };
-        }),
-      );
-    } catch (error: any) {
-      messageApi.error(`获取节点列表失败: ${error.message}`);
-    } finally {
-      setLoading(false);
+          console.log("formattedNode", formattedNode);
+
+          setNodeList([formattedNode]); // 将单个节点包装成数组并更新状态
+        }
+      } catch (error: any) {
+        messageApi.error(`获取节点列表失败: ${error.message}`);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 

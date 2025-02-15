@@ -12,6 +12,7 @@ export const findAllNodes = async () => {
         rank: true,
         name: true,
         description: true,
+        limit:true,
         isOpen: true,
         isRemove: true,
         price: true,
@@ -32,6 +33,7 @@ export const findAllNodes = async () => {
         rank: node.rank.toString(),
         name: node.name,
         description: node.description,
+        limit:node.limit.toString(),
         isOpen: node.isOpen,
         isRemove: node.isRemove,
 
@@ -44,7 +46,6 @@ export const findAllNodes = async () => {
           : null,
       };
     });
-console.log(123,formattedNodes)
     return formattedNodes;
   } catch (error) {
     console.error('Error retrieving nodes:', error);
