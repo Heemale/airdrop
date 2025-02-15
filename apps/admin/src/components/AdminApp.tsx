@@ -1,26 +1,19 @@
 'use client';
 
 import { Admin, Resource, ListGuesser, EditGuesser } from 'react-admin';
-import jsonServerProvider from 'ra-data-json-server';
 import Dashboard from '@/components/Dashboard';
-
-const dataProvider = jsonServerProvider('https://jsonplaceholder.typicode.com');
+import { dataProvider } from 'ra-data-simple-prisma';
+import { UserList } from '@/components/page/user/UserList';
+import { UserEdit } from '@/components/page/user/UserEdit';
 
 const AdminApp = () => (
-  <Admin dataProvider={dataProvider} dashboard={Dashboard}>
+  <Admin dataProvider={dataProvider('/api')} dashboard={Dashboard}>
     <Resource
-      name="users"
-      list={ListGuesser}
-      edit={EditGuesser}
-      recordRepresentation="name"
+      name="user"
+      options={{ label: '用户表' }}
+      list={UserList}
+      edit={UserEdit}
     />
-    <Resource
-      name="posts"
-      list={ListGuesser}
-      edit={EditGuesser}
-      recordRepresentation="title"
-    />
-    <Resource name="comments" list={ListGuesser} edit={EditGuesser} />
   </Admin>
 );
 
