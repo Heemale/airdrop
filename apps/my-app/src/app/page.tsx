@@ -21,6 +21,7 @@ import {
 } from "@/sdk";
 import { ADMIN_CAP } from "@local/airdrop-sdk/utils";
 import ConnectButton from "./components/ConnectButton";
+
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
@@ -87,6 +88,7 @@ const AdminPage = () => {
   const [showNodeModal, setShowNodeModal] = useState(false); // 控制节点弹窗显示
   const [showNewNodeModal, setShowNewNodeModal] = useState(false); // 控制新增节点弹窗显示
   const [editingNode, setEditingNode] = useState<NodeInfo | null>(null); // 当前编辑的节点信息
+  const [removeNode, setRemoveNode] = useState<number | null>(null); // 当前编辑的节点信息
   const [form] = Form.useForm(); // 表单控制
   const account = useCurrentAccount();
   const [nodeForm] = Form.useForm(); // 节点表单控制
@@ -98,10 +100,10 @@ const AdminPage = () => {
   const [root, setRoot] = useState<string | null>(null);
   const [fee, setFee] = useState<number>(0);
   const [receiver_, set_receiver] = useState<string | null>(null);
-
+  const [showRmoveNodeModal, setShowRmoveNodeModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false); // 控制邀请弹窗显示
   const [editReceiver, setEditReceiver] = useState(false);
-console.log('account',account)
+  console.log("account", account);
   // 表格列配置
   const columns = [
     { title: "轮次", dataIndex: "round", key: "round" },
@@ -180,6 +182,15 @@ console.log('account',account)
       ),
     },
   ];
+
+  function checkImageExists(url: string) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+    });
+  }
 
   // 获取空投列表
   const fetchAirdropList = async () => {
@@ -275,6 +286,11 @@ console.log('account',account)
         return;
       }
 
+      // 检查图片链接是否有效，若无效则使用默认图片
+      const validImageUrl = (await checkImageExists(values.image_url))
+        ? values.image_url
+        : "/sui-sui-logo.png"; // 替换成你的默认图片路径
+
       const tx = await airdropClient.insert(
         values.coinType,
         ADMIN_CAP,
@@ -285,7 +301,7 @@ console.log('account',account)
         BigInt(convertLargeToSmall(values.totalBalance, coinMetaData.decimals)),
         values.description,
         null,
-        values.image_url,
+        validImageUrl, // 使用有效的图片链接
         BigInt(convertLargeToSmall(values.totalBalance, coinMetaData.decimals)),
         account.address,
       );
@@ -400,56 +416,66 @@ console.log('account',account)
         </Button>
       ),
     },
+    {
+      title: "移除节点",
+      key: "remove",
+      render: (_: any, record: NodeInfo) => (
+        <Button
+          onClick={() => {
+            setRemoveNode(record.rank);
+            setShowRmoveNodeModal(true);
+          }}
+        >
+          移除节点
+        </Button>
+      ),
+    },
   ];
 
   // 获取节点列表
   const fetchNodeList = async () => {
-    console.log(123123,account?.address)
-    if (account) {
-      try {
-        setLoading(true);       
-        const response = await getNodeInfo({
-          sender: account.address,
-        }); // 获取节点信息
-        console.log("response", response);
-        if (Array.isArray(response)) {
-          // 确保返回值是数组
-          // 遍历返回的数据并赋值给 NodeInfo
-          const formattedNodeList: NodeInfo[] = response.map((node) => ({
-            rank: node.rank,
-            name: node.name,
-            description: node.description,
-            limit: BigInt(node.limit), // 假设 limit 是 bigint 类型
-            price: node.price,
-            total_quantity: BigInt(node.totalQuantity), // 假设 total_quantity 是 bigint 类型
-            purchased_quantity: BigInt(node.purchasedQuantity), // 假设 purchased_quantity 是 bigint 类型
-            isOpen: node.isOpen,
-            
-          }));
-          console.log("formattedNodeList", formattedNodeList);
-          setNodeList(formattedNodeList); // 更新状态
-        } else {
-          // 如果返回的是单个节点，直接处理
-          const node = response; // 假设 response 是单个节点
-          const formattedNode: NodeInfo = {
-            rank: node.rank,
-            name: node.name,
-            description: node.description,
-            limit: BigInt(node.limit),
-            price: node.price!,
-            total_quantity: BigInt(node.totalQuantity!),
-            purchased_quantity: BigInt(node.purchasedQuantity!),
-            isOpen: node.isOpen,
-          };
-          console.log("formattedNode", formattedNode);
+    try {
+      setLoading(true);
+      console.log(2222222);
+      const response = await getNodeInfo(); // 获取节点信息
 
-          setNodeList([formattedNode]); // 将单个节点包装成数组并更新状态
-        }
-      } catch (error: any) {
-        messageApi.error(`获取节点列表失败: ${error.message}`);
-      } finally {
-        setLoading(false);
+      console.log("response", response);
+      if (Array.isArray(response)) {
+        // 确保返回值是数组
+        // 遍历返回的数据并赋值给 NodeInfo
+        const formattedNodeList: NodeInfo[] = response.map((node) => ({
+          rank: node.rank,
+          name: node.name,
+          description: node.description,
+          limit: BigInt(node.limit), // 假设 limit 是 bigint 类型
+          price: node.price,
+          total_quantity: BigInt(node.totalQuantity), // 假设 total_quantity 是 bigint 类型
+          purchased_quantity: BigInt(node.purchasedQuantity), // 假设 purchased_quantity 是 bigint 类型
+          isOpen: node.isOpen,
+        }));
+        console.log("formattedNodeList", formattedNodeList);
+        setNodeList(formattedNodeList); // 更新状态
+      } else {
+        // 如果返回的是单个节点，直接处理
+        const node = response; // 假设 response 是单个节点
+        const formattedNode: NodeInfo = {
+          rank: node.rank,
+          name: node.name,
+          description: node.description,
+          limit: BigInt(node.limit),
+          price: node.price!,
+          total_quantity: BigInt(node.totalQuantity!),
+          purchased_quantity: BigInt(node.purchasedQuantity!),
+          isOpen: node.isOpen,
+        };
+        console.log("formattedNode", formattedNode);
+
+        setNodeList([formattedNode]); // 将单个节点包装成数组并更新状态
       }
+    } catch (error: any) {
+      messageApi.error(`获取节点列表失败: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -553,6 +579,39 @@ console.log('account',account)
           },
         },
       );
+    } catch (e: any) {
+      messageApi.error(handleDevTxError(e.message.trim()));
+      setLoading(false);
+      return;
+    }
+  };
+
+  // 移除节点
+  const handleRemoveNode = async () => {
+    if (!account) {
+      messageApi.error("请先连接钱包");
+      return;
+    }
+    if (removeNode === null) return; // 确保 removeNode 有值
+    console.log(123, removeNode);
+    try {
+      const tx = airdropClient.removeNode(ADMIN_CAP, NODES, removeNode);
+      console.log("tx", tx);
+      await devTransaction(tx, account.address);
+      signAndExecuteTransaction(
+        { transaction: tx },
+        {
+          onSuccess: async (tx) => {
+            messageApi.success(`节点移除成功: ${tx.digest}`);
+            setShowRmoveNodeModal(false);
+            fetchNodeList(); // 更新节点列表
+          },
+          onError: ({ message }) => {
+            messageApi.error(`节点移除失败: ${message}`);
+          },
+        },
+      );
+      console.log(123123, tx);
     } catch (e: any) {
       messageApi.error(handleDevTxError(e.message.trim()));
       setLoading(false);
@@ -1013,6 +1072,17 @@ console.log('account',account)
               </Form.Item>
             </Form>
           </Modal>
+
+          <Modal
+            title="确认移除节点"
+            open={showRmoveNodeModal}
+            onCancel={() => setShowRmoveNodeModal(false)}
+            onOk={handleRemoveNode}
+            okText="确认"
+            cancelText="取消"
+          >
+            <p>您确定要移除节点 "{removeNode}" 吗？</p>
+          </Modal>
         </div>
       </div>
       <div className="flex flex-col gap-4 overflow-x-auto">
@@ -1105,7 +1175,6 @@ console.log('account',account)
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                 <Button type="primary" htmlType="submit" loading={loading}>
                   提交
-                  <Form.Item wrapperCol={{ offset: 8, span: 16 }}></Form.Item>
                 </Button>
               </Form.Item>
             </Form>

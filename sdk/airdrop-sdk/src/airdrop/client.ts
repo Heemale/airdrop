@@ -275,7 +275,7 @@ export class AirdropClient {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
-      target: `${this.packageId}::${MODULE_CLOB}::remove_node`,
+      target: `${this.packageId}::${MODULE_CLOB}::remove_nodes`,
       arguments: [tx.object(adminCap), tx.object(nodes), tx.pure.u8(rank)],
     });
     return tx;

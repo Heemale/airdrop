@@ -2,7 +2,3 @@ export interface PaginatedRequest {
   nextCursor?: number | null;
   pageSize?: number;
 }
-
-export interface GetNodeInfoRequest {
-  sender: string;
-}
