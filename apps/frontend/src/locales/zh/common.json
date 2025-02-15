@@ -125,7 +125,7 @@
   "Total team subscription": "团队总认购",
   "Unable to obtain user information": "无法获取用户信息",
   "The return value gets inconsistent": "返回值获取不符",
-  "Activate again": "再次激活",
+  "PLEASE REACTIVATE RIGHTS": "请再次激活权益",
   "Select Equity": "选择权益",
   "EInsufficientRemainingQuantity": "剩余次数不足",
   "EMethodDeprecated": "方法已弃用",
@@ -134,5 +134,6 @@
   "EInvalidReceiver": "非法接收人",
   "EExceedsClaimLimit": "超出当前节点每轮可领取空投数量",
   "EPaused": "合约已暂停",
-  "EInvalidObject": "对象无效"
+  "EInvalidObject": "对象无效",
+  "PLEASE PURCHASE RIGHTS": "请购买权益"
 }

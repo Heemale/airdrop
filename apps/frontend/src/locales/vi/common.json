@@ -124,7 +124,7 @@
   "Total team subscription": "Tổng số đăng ký nhóm",
   "Unable to obtain user information": "Không thể lấy thông tin người dùng",
   "The return value gets inconsistent": "Giá trị trả về không nhất quán",
-  "Activate again": "Kích hoạt lại",
+  "PLEASE REACTIVATE RIGHTS": "Vui lòng kích hoạt lại quyền",
   "Select Equity": "Chọn vốn chủ sở hữu",
   "EInsufficientRemainingQuantity": "Số lượng còn lại không đủ",
   "EMethodDeprecated": "Phương pháp đã bị ngừng",
@@ -133,5 +133,6 @@
   "EInvalidReceiver": "Người nhận không hợp lệ",
   "EExceedsClaimLimit": "Vượt quá giới hạn yêu cầu",
   "EPaused": "Hợp đồng đã tạm dừng",
-  "EInvalidObject": "Đối tượng không hợp lệ"
+  "EInvalidObject": "Đối tượng không hợp lệ",
+  "PLEASE PURCHASE RIGHTS": "Vui lòng mua quyền"
 }

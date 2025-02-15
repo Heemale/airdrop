@@ -21,59 +21,62 @@ import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { NodeStatus } from '@local/airdrop-sdk/node';
 
 const Purchase = () => {
-  const account = useCurrentAccount();
-  const { node } = useContext(PresaleContext);
-  const { inviter, setOpen, setInviter } = useContext(InviteDialogContext);
-  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const { t } = useClientTranslation();
-
-  const [loading, setLoading] = React.useState(false);
+  const account = useCurrentAccount();
+  const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
+  const { node } = useContext(PresaleContext);
   const [messageApi, contextHolder] = message.useMessage();
+
+  const { inviter, setOpen, setInviter } = useContext(InviteDialogContext);
+  const [loading, setLoading] = useState(false);
   const [nodeStatus, setNodeStatus] = useState<NodeStatus>(
     NodeStatus.NODE_NOT_OWNED,
-  );  const buyNode = async () => {
+  );
+
+  const buyNode = async () => {
+    if (!account) return;
+    if (!node) return;
+
     try {
-      if (node && account && account.address) {
-        setLoading(true);
-        const tx = await nodeClient.buy_v2(
-          PAY_COIN_TYPE,
-          NODES,
-          INVITE,
-          node.rank,
-          null,
-          node.price,
-          account.address,
-          INVEST,
-          GLOBAL,
-        );
+      setLoading(true);
+      const tx = await nodeClient.buyV2(
+        PAY_COIN_TYPE,
+        NODES,
+        INVITE,
+        node.rank,
+        null,
+        node.price,
+        account.address,
+        INVEST,
+        GLOBAL,
+      );
 
-        try {
-          await devTransaction(tx, account.address);
-        } catch (e: any) {
-          messageApi.error(`${t(handleDevTxError(e.message.trim()))}`);
-          setLoading(false);
-          return;
-        }
-
-        signAndExecuteTransaction(
-          {
-            transaction: tx,
-          },
-          {
-            onSuccess: async (result) => {
-              console.log({ digest: result.digest });
-              messageApi.success(`Success: ${result.digest}`);
-              setLoading(false);
-              await getNodeStatus();
-            },
-            onError: ({ message }) => {
-              console.log(`BuyNode: ${message}`);
-              messageApi.error(`${t(handleTxError(message.trim()))}`);
-              setLoading(false);
-            },
-          },
-        );
+      try {
+        await devTransaction(tx, account.address);
+      } catch (e: any) {
+        messageApi.error(`${t(handleDevTxError(e.message.trim()))}`);
+        setLoading(false);
+        return;
       }
+
+      signAndExecuteTransaction(
+        {
+          transaction: tx,
+        },
+        {
+          onSuccess: async (result) => {
+            console.log({ digest: result.digest });
+            messageApi.success(`Success: ${result.digest}`);
+            setLoading(false);
+            await getNodeStatus();
+          },
+          onError: ({ message }) => {
+            console.log(`BuyNode: ${message}`);
+            messageApi.error(`${t(handleTxError(message.trim()))}`);
+            setLoading(false);
+          },
+        },
+      );
     } catch (e: any) {
       console.log(`BuyNode: ${e.message}`);
       messageApi.error(`${t(handleTxError(e.message.trim()))}`);
@@ -84,29 +87,28 @@ const Purchase = () => {
   const bind = () => {
     setOpen(true);
   };
+
   const getNodeStatus = async () => {
-    if (account && account.address) {
-      try {
-        const user = account.address;
-        const nodeStatus = await nodeClient.getNodeStatus(NODES, user);
-        setNodeStatus(nodeStatus);
-      } catch (e: any) {
-        console.log(`getNodeStatus: ${e.message}`);
-        messageApi.error(`${t(handleTxError(e.message))}`);
-      }
+    if (!account) return;
+
+    try {
+      const nodeStatus = await nodeClient.getNodeStatus(NODES, account.address);
+      setNodeStatus(nodeStatus);
+    } catch (e: any) {
+      console.log(`getNodeStatus: ${e.message}`);
+      messageApi.error(`${t(handleTxError(e.message))}`);
     }
   };
 
   const updateInvite = async () => {
-    if (account && account.address) {
-      try {
-        const user = account.address;
-        const inviter = await inviteClient.inviters(INVITE, user);
-        setInviter(inviter);
-      } catch (e: any) {
-        console.log(`updateInvite: ${e.message}`);
-        messageApi.error(`${t(handleTxError(e.message.trim()))}`);
-      }
+    if (!account) return;
+
+    try {
+      const inviter = await inviteClient.inviters(INVITE, account.address);
+      setInviter(inviter);
+    } catch (e: any) {
+      console.log(`updateInvite: ${e.message}`);
+      messageApi.error(`${t(handleTxError(e.message.trim()))}`);
     }
   };
 

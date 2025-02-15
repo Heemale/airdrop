@@ -5,15 +5,15 @@ import { useContext, useEffect, useState } from 'react';
 import { NodeInfo } from '@local/airdrop-sdk/node';
 import { Autocomplete, TextField } from '@mui/material';
 import { nodeClient } from '@/sdk';
-import { NODES } from '../../sdk/constants';
+import { NODES } from '@/sdk/constants';
 import { convertSmallToLarge } from '@/utils/math';
 import { PresaleContext } from '@/context/PresaleContext';
 import { message } from 'antd';
 import { useClientTranslation } from '@/hook';
+import { handleTxError } from '@/sdk/error';
 
 const NodeData = () => {
   const { t } = useClientTranslation();
-
   const { node, setNode } = useContext(PresaleContext);
   const [messageApi, contextHolder] = message.useMessage();
 
@@ -24,8 +24,13 @@ const NodeData = () => {
   };
 
   const getNodeList = async () => {
-    const nodes = await nodeClient.nodeList(NODES);
-    setNodeList(nodes.filter((node) => node.isOpen));
+    try {
+      const nodes = await nodeClient.nodeList(NODES);
+      setNodeList(nodes.filter((node) => node.isOpen));
+    } catch (e: any) {
+      console.log(`getNodeList: ${e.message}`);
+      messageApi.error(`${t(handleTxError(e.message))}`);
+    }
   };
 
   useEffect(() => {

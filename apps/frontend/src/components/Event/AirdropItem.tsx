@@ -35,8 +35,7 @@ export interface Props {
   chainText: string;
   totalCopies: string;
   rewardQuantityPerCopy: string;
-  unpurchasedNode: string;
-  nodeStatus: NodeStatus;
+  nodeStatus: NodeStatus | null;
   claimText: string;
 }
 
@@ -48,7 +47,6 @@ const AirdropItem = (props: Props) => {
     chainText,
     totalCopies,
     rewardQuantityPerCopy,
-    unpurchasedNode,
     nodeStatus,
     claimText,
   } = props;
@@ -57,19 +55,21 @@ const AirdropItem = (props: Props) => {
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const router = useRouter();
+  const [messageApi, contextHolder] = message.useMessage();
 
   const [remainingClaimTimes, setRemainingClaimTimes] = useState<bigint>(
     BigInt(0),
   );
   const [coinMetaData, setCoinMetaData] = useState<CoinMetadata | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [messageApi, contextHolder] = message.useMessage();
 
   const claim = async () => {
     if (!account) return;
-    setLoading(true);
+
     try {
-      const tx = airdropClient.claim_v2(
+      setLoading(true);
+
+      const tx = airdropClient.claimV2(
         data.coinType,
         AIRDROPS,
         NODES,
@@ -79,6 +79,7 @@ const AirdropItem = (props: Props) => {
         INVEST,
         GLOBAL,
       );
+
       try {
         await devTransaction(tx, account.address);
       } catch (e: any) {
@@ -113,6 +114,7 @@ const AirdropItem = (props: Props) => {
 
   const remainingQuantityOfClaim = async () => {
     if (!account) return;
+
     try {
       const times = await nodeClient.remainingQuantityOfClaimV2(
         NODES,
@@ -151,6 +153,64 @@ const AirdropItem = (props: Props) => {
     return '/favicon.ico';
   };
 
+  const claimButton = () => {
+    // 如果空投结束，置灰
+    // 如果权益状态未获取，置灰
+    if (!isOngoing || nodeStatus === null) {
+      return (
+        <button
+          className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
+          disabled
+        >
+          {t(claimText)}
+        </button>
+      );
+    }
+
+    if (nodeStatus === NodeStatus.NODE_NOT_OWNED) {
+      return (
+        <button
+          className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+        >
+          {t('PLEASE PURCHASE RIGHTS')}
+        </button>
+      );
+    }
+
+    if (nodeStatus === NodeStatus.NODE_DISABLED) {
+      return (
+        <button
+          className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+        >
+          {t('PLEASE REACTIVATE RIGHTS')}
+        </button>
+      );
+    }
+
+    if (
+      nodeStatus === NodeStatus.NODE_ACTIVE &&
+      remainingClaimTimes > BigInt(0)
+    ) {
+      return (
+        <button
+          onClick={claim}
+          className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+        >
+          {t(claimText)}
+        </button>
+      );
+    }
+
+    return (
+      <button
+        className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
+        disabled
+      >
+        {t(claimText)}
+      </button>
+    );
+  };
+
   useEffect(() => {
     remainingQuantityOfClaim();
     fetchCoinMetaData();
@@ -185,37 +245,7 @@ const AirdropItem = (props: Props) => {
         </div>
       </div>
       <div>{data.description}</div>
-      {isOngoing && remainingClaimTimes > BigInt(0) ? (
-        nodeStatus === NodeStatus.NODE_ACTIVE ? (
-          <button
-            onClick={claim}
-            className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
-          >
-            {t(claimText)}
-          </button>
-        ) : nodeStatus === NodeStatus.NODE_NOT_OWNED ? (
-          <button
-            className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
-          >
-            {t('BUY')}
-          </button>
-        ) : nodeStatus === NodeStatus.NODE_DISABLED ? (
-          <button
-            className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
-          >
-            t('Activate again')
-          </button>
-        ) : (
-          t('The return value gets inconsistent')
-        )
-      ) : (
-        <button
-          className={`w-full relative inline-block bg-gray-400 text-gray-700 font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform cursor-not-allowed opacity-60`}
-          disabled
-        >
-          {t(claimText)}
-        </button>
-      )}
+      {claimButton()}
       <div className="flex justify-between">
         <div>{chainText}</div>
         <div className="flex justify-between items-center gap-2">
