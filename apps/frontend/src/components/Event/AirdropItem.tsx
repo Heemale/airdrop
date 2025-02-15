@@ -221,7 +221,17 @@ const AirdropItem = (props: Props) => {
       <div className="flex justify-between">
         <div className="flex gap-2">
           <div className="w-[50px] sm:w-[70px]">
-            <Image src={coinImage()} width="70" height="70" alt="coin-image" />
+            <Image
+              src={coinImage()}
+              width="70"
+              height="70"
+              alt="coin-image"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = '/sui-sui-logo.png';
+              }}
+            />
           </div>
           <div className="flex flex-col justify-between">
             <div className="flex gap-2">
@@ -230,7 +240,10 @@ const AirdropItem = (props: Props) => {
               </div>
               {isOngoing && (
                 <div>
-                  <div className="bg-gradient-to-b from-[#3f6b47] to-[#093f13] rounded px-1 py-0.5">
+                  <div
+                    className="bg-gradient-to-b from-[#3f6b47] to-[#093f13] rounded px-1 py-0.5 
+                whitespace-nowrap overflow-hidden text-ellipsis max-w-full"
+                  >
                     {ongoingText}
                   </div>
                 </div>
@@ -238,7 +251,7 @@ const AirdropItem = (props: Props) => {
             </div>
             <div className="flex flex-col sm:flex-row gap-2">
               <div>{formatTimestamp(Number(data.startTime))}</div>
-              <div>~</div>
+              <div></div>
               <div>{formatTimestamp(Number(data.endTime))}</div>
             </div>
           </div>
