@@ -481,6 +481,13 @@ module airdrop::airdrop {
     ) {
         node::modify_nodes<T>(nodes, receiver);
     }
+    public fun remove_nodes(
+        _admin_cap: &AdminCap,
+        nodes: &mut Nodes,
+        rank: u8
+    ) {
+        node::remove(nodes, rank);
+    }
 
     public fun new_limit(
         _admin_cap: &AdminCap,

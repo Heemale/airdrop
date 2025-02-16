@@ -27,6 +27,7 @@ import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { useRouter } from 'next/navigation';
 import type { CoinMetadata } from '@mysten/sui/client';
 import { NodeStatus } from '@local/airdrop-sdk/node';
+import Link from 'next/link';
 
 export interface Props {
   data: AirdropInfo;
@@ -169,21 +170,25 @@ const AirdropItem = (props: Props) => {
 
     if (nodeStatus === NodeStatus.NODE_NOT_OWNED) {
       return (
-        <button
-          className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
-        >
-          {t('PLEASE PURCHASE RIGHTS')}
-        </button>
+        <Link href={'/presale'}>
+          <button
+            className={`w-full relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+          >
+            {t('PLEASE PURCHASE RIGHTS')}
+          </button>
+        </Link>
       );
     }
 
     if (nodeStatus === NodeStatus.NODE_DISABLED) {
       return (
-        <button
-          className={`relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
-        >
-          {t('PLEASE REACTIVATE RIGHTS')}
-        </button>
+        <Link href={'/presale'}>
+          <button
+            className={`w-full relative inline-block bg-[#f0b90b] text-black font-bold text-center py-3 px-6 rounded-lg shadow-lg transition-transform transform active:scale-95 cursor-pointer`}
+          >
+            {t('PLEASE REACTIVATE RIGHTS')}
+          </button>
+        </Link>
       );
     }
 
@@ -221,24 +226,36 @@ const AirdropItem = (props: Props) => {
       <div className="flex justify-between">
         <div className="flex gap-2">
           <div className="w-[50px] sm:w-[70px]">
-            <Image src={coinImage()} width="70" height="70" alt="coin-image" />
+            <Image
+              src={coinImage()}
+              width="70"
+              height="70"
+              alt="coin-image"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.onerror = null;
+                target.src = '/sui-sui-logo.png';
+              }}
+            />
           </div>
-          <div className="flex flex-col justify-between">
+          <div className="flex flex-col justify-between gap-2">
             <div className="flex gap-2">
               <div className="text-lg font-semibold">
-                {getCoinTypeName(data.coinType)} - ROUND {data.round}
+                {getCoinTypeName(data.coinType)} - ROUND {data.round.toString()}
               </div>
               {isOngoing && (
                 <div>
-                  <div className="bg-gradient-to-b from-[#3f6b47] to-[#093f13] rounded px-1 py-0.5">
+                  <div
+                    className="bg-gradient-to-b from-[#3f6b47] to-[#093f13] rounded px-1 py-0.5 
+                whitespace-nowrap overflow-hidden text-ellipsis max-w-full"
+                  >
                     {ongoingText}
                   </div>
                 </div>
               )}
             </div>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col gap-2">
               <div>{formatTimestamp(Number(data.startTime))}</div>
-              <div>~</div>
               <div>{formatTimestamp(Number(data.endTime))}</div>
             </div>
           </div>
@@ -260,15 +277,15 @@ const AirdropItem = (props: Props) => {
       </div>
       <div className="flex justify-between">
         <div>{totalCopies}</div>
-        <div>{data.totalShares}</div>
+        <div>{data.totalShares.toString()}</div>
       </div>
       <div className="flex justify-between">
         <div>{t('Number of copies remaining')}</div>
-        <div>{data.totalShares - data.claimedShares}</div>
+        <div>{(data.totalShares - data.claimedShares).toString()}</div>
       </div>
       <div className="flex justify-between">
         <div>{t('Number of copies available')}</div>
-        <div>{remainingClaimTimes}</div>
+        <div>{remainingClaimTimes.toString()}</div>
       </div>
       <div className="flex justify-between">
         <div>{rewardQuantityPerCopy}</div>

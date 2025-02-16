@@ -40,7 +40,6 @@ const BindAddressList = () => {
 
             setBinds((prev) => [...prev, ...uniqueNewData]);
             setCursor(response.nextCursor);
-            console.log(response.nextCursor);
             setHasMore(
               response.nextCursor !== null && uniqueNewData.length > 0,
             );
