@@ -6,7 +6,7 @@ import {
 } from 'react-admin';
 import * as React from 'react';
 
-const PostListActions = () => (
+const ListActions = () => (
   <TopToolbar>
     <SelectColumnsButton />
     <FilterButton />
@@ -14,4 +14,4 @@ const PostListActions = () => (
   </TopToolbar>
 );
 
-export default PostListActions;
+export default ListActions;

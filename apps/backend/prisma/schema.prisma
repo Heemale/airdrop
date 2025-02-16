@@ -22,7 +22,7 @@ model Copywriting {
   en       String?  @db.Text /// 英文
   vi       String?  @db.Text /// 越南语
   imageUrl String?  @map("image_url") @db.Text /// 图片
-  isImage  Boolean? @map("is_image") /// 是否为图片
+  isImage  Boolean? @default(false) @map("is_image") /// 是否为图片
   createAt BigInt?  @map("create_at") /// 创建时间
   updateAt BigInt?  @map("update_at") /// 更新时间
 

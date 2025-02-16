@@ -1,10 +1,10 @@
 import { TopToolbar, ListButton } from 'react-admin';
 import CloseIcon from '@mui/icons-material/Close';
 
-const PostCreateEditActions = () => (
+const CreateEditActions = () => (
   <TopToolbar>
     <ListButton icon={<CloseIcon />} label="" />
   </TopToolbar>
 );
 
-export default PostCreateEditActions;
+export default CreateEditActions;

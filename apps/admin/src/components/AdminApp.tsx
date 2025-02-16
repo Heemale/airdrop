@@ -1,18 +1,25 @@
 'use client';
 
 import { Admin, Resource, ListGuesser, EditGuesser } from 'react-admin';
-import Dashboard from '@/components/Dashboard';
 import { dataProvider } from 'ra-data-simple-prisma';
-import { UserList } from '@/components/page/user/UserList';
-import { UserEdit } from '@/components/page/user/UserEdit';
+import Dashboard from '@/components/Dashboard';
+import Layout from '@/components/Layout';
+import UserList from '@/components/page/user/UserList';
+import CopywritingList from '@/components/page/copywriting/CopyrightingtList';
+import CopywritingEdit from '@/components/page/copywriting/CopywritingEdit';
 
 const AdminApp = () => (
-  <Admin dataProvider={dataProvider('/api')} dashboard={Dashboard}>
+  <Admin
+    dataProvider={dataProvider('/api')}
+    dashboard={Dashboard}
+    layout={Layout}
+  >
+    <Resource name="user" options={{ label: '用户表' }} list={UserList} />
     <Resource
-      name="user"
-      options={{ label: '用户表' }}
-      list={UserList}
-      edit={UserEdit}
+      name="copywriting"
+      options={{ label: '文案表' }}
+      list={CopywritingList}
+      edit={CopywritingEdit}
     />
   </Admin>
 );

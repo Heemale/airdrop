@@ -8,10 +8,10 @@ import {
 import React from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import PostCreateEditActions from '@/components/ui/PostCreateEditActions';
+import CreateEditActions from '@/components/ui/CreateEditActions';
 import MyDateTimePicker from '@/components/ui/MyDateTimePicker';
 
-export const UserEdit = () => {
+const UserEdit = () => {
   const transform = async (data: any) => {
     return {
       ...data,
@@ -20,7 +20,7 @@ export const UserEdit = () => {
   };
 
   return (
-    <Edit transform={transform} actions={<PostCreateEditActions />}>
+    <Edit transform={transform} actions={<CreateEditActions />}>
       <SimpleForm>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <TextInput source="id" label="ID" disabled fullWidth />
@@ -63,3 +63,5 @@ export const UserEdit = () => {
     </Edit>
   );
 };
+
+export default UserEdit;

@@ -9,6 +9,7 @@ import {
 } from 'react-admin';
 import { convertSmallToLarge } from '@/utils/math';
 import { TOKEN_DECIMAL } from '@/config';
+import * as React from 'react';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -83,9 +84,9 @@ const postFilters = [
   />,
 ];
 
-export const UserList = () => (
+const UserList = () => (
   <List filters={postFilters}>
-    <MyDatagridConfigurable hasEdit>
+    <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
       <TextField source="txDigest" label="交易hash" />
       <TextField source="eventSeq" label="事件索引" />
@@ -114,6 +115,10 @@ export const UserList = () => (
       />
       <TimeTextField source="totalGainsUpdateAt" label="总收益金额更新时间" />
       <BooleanField source="isBind" label="是否绑定" />
+      <TimeTextField source="createAt" label="创建时间" />
+      <TimeTextField source="updateAt" label="更新时间" />
     </MyDatagridConfigurable>
   </List>
 );
+
+export default UserList;
