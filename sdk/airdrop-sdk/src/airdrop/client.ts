@@ -201,6 +201,28 @@ export class AirdropClient {
     });
     return tx;
   }
+
+  modifyLimits(
+    adminCap: string,
+    limits: string,
+    address: string,
+    times: bigint,
+    is_limit: boolean,
+  ): Transaction {
+    const tx = new Transaction();
+    tx.moveCall({
+      typeArguments: [],
+      target: `${this.packageId}::${MODULE_CLOB}::modify_special_limits`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(limits),
+        tx.pure.address(address),
+        tx.pure.u64(times),
+        tx.pure.bool(is_limit),
+      ],
+    });
+    return tx;
+  }
   newInvite(adminCap: string, root: string, inviter_fee: bigint): Transaction {
     const tx = new Transaction();
     tx.moveCall({
