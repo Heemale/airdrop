@@ -1,4 +1,11 @@
 import { prisma } from '@/config/prisma';
+import { Prisma } from '@prisma/client';
+import {
+  DynamicClientExtensionThis,
+  Record,
+  TypeMapCbDef,
+  TypeMapDef,
+} from '@prisma/client/runtime/library';
 
 export const findAllNodes = async () => {
   try {
@@ -12,7 +19,7 @@ export const findAllNodes = async () => {
         rank: true,
         name: true,
         description: true,
-        limit:true,
+        limit: true,
         isOpen: true,
         isRemove: true,
         price: true,
@@ -33,7 +40,7 @@ export const findAllNodes = async () => {
         rank: node.rank.toString(),
         name: node.name,
         description: node.description,
-        limit:node.limit.toString(),
+        limit: node.limit.toString(),
         isOpen: node.isOpen,
         isRemove: node.isRemove,
 
@@ -51,4 +58,33 @@ export const findAllNodes = async () => {
     console.error('Error retrieving nodes:', error);
     throw new Error('Failed to fetch nodes');
   }
+};
+
+export const upsertNode = <
+  TypeMap extends TypeMapDef,
+  TypeMapCb extends TypeMapCbDef,
+  ExtArgs extends Record<string, any>,
+  ClientOptions,
+>(
+  data: Prisma.NodeCreateInput,
+  tx?: Omit<
+    DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs, ClientOptions>,
+    '$extends' | '$transaction' | '$disconnect' | '$connect' | '$on' | '$use'
+  >,
+) => {
+  const db = tx ?? prisma;
+  return db.node.upsert({
+    where: {
+      rank: data.rank,
+    },
+    update: {
+      ...data,
+      updateAt: Math.floor(Date.now() / 1000),
+    },
+    create: {
+      ...data,
+      createAt: Math.floor(Date.now() / 1000),
+      updateAt: Math.floor(Date.now() / 1000),
+    },
+  });
 };

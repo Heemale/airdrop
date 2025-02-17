@@ -1,7 +1,7 @@
 import { Controller, Get, HttpException, Query } from '@nestjs/common';
 import { findBuyRecordsBySender } from '@/node/dao/buyV2.dao';
 import { GetBuyInfoDto } from '@/node/dto/buyV2.dto';
-import { findAllNodes } from '@/node/dao/nodeList.dao'; // 导入 getAllNodes 函数
+import { findAllNodes } from '@/node/dao/node.dao';
 
 @Controller()
 export class NodeController {

@@ -7,7 +7,7 @@ import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { MODULE_CLOB } from './utils/constants';
-import { NodeInfo, AddSummary, NodeStatus ,UserStatus} from './types';
+import { NodeInfo, AddSummary, NodeStatus, UserStatus } from './types';
 import { bcs } from '@mysten/sui/bcs';
 import { Summary } from '../types';
 import { BuySummary } from './types';
@@ -246,23 +246,24 @@ export class NodeClient {
   }
   async getUserStatus(nodes: string, sender: string): Promise<UserStatus> {
     const tx = new Transaction();
-    
+
     // 调用合约方法 `users`
     tx.moveCall({
       typeArguments: [],
-      target: `${this.packageId}::${MODULE_CLOB}::users`,  // 假设你的合约方法是 users
+      target: `${this.packageId}::${MODULE_CLOB}::users`, // 假设你的合约方法是 users
       arguments: [tx.object(nodes), tx.pure.address(sender)],
     });
-  
+
     // @ts-ignore
-    const res: DevInspectResults = await this.suiClient.devInspectTransactionBlock({
-      transactionBlock: tx,
-      sender: normalizeSuiAddress('0x0'),
-    });
-  
+    const res: DevInspectResults =
+      await this.suiClient.devInspectTransactionBlock({
+        transactionBlock: tx,
+        sender: normalizeSuiAddress('0x0'),
+      });
+
     // 假设返回的数据是一个包含 rank、node_num 和 is_invalid 的数组
     const returnValues = res?.results[0]?.returnValues[0];
-    
+
     return {
       rank: Number(returnValues[0]), // rank
       nodeNum: Number(returnValues[1]), // node_num
@@ -400,15 +401,20 @@ export class NodeClient {
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
   ): Promise<Summary<NodeChangeSummary>> {
     const resp = await this.queryEvents('NodeChange', input);
+
+    const decoder = new TextDecoder('utf-8');
+
     const customMapping = (rawEvent: any) => ({
       rank: rawEvent.rank as bigint,
-      name: rawEvent.name as string,
+      name: decoder.decode(new Uint8Array(rawEvent.name)) as string,
+      description: decoder.decode(
+        new Uint8Array(rawEvent.description),
+      ) as string,
       limit: rawEvent.limit as bigint,
       price: rawEvent.price as bigint,
       totalQuantity: rawEvent.total_quantity as bigint,
-      description: rawEvent.description as bigint,
       purchasedQuantity: rawEvent.purchased_quantity as bigint,
-      isOpen: rawEvent.node_receiver_gains as boolean,
+      isOpen: rawEvent.is_open as boolean,
       isRemove: rawEvent.is_remove as boolean,
     });
     return this.handleEventReturns(resp, customMapping);

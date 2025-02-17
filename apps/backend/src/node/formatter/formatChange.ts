@@ -6,23 +6,24 @@ export const formatChange = (
 ): Prisma.NodeUncheckedCreateInput => {
   const {
     rank,
-    description,
     name,
+    description,
     limit,
     price,
     totalQuantity,
     purchasedQuantity,
+    isOpen,
     isRemove,
   } = eventObject;
   return {
-    name: name.toLowerCase(),
-    rank: BigInt(rank), // 确保 rank 是数字
-    description: description.toLowerCase(),
-    isOpen: true,
-    limit: BigInt(limit),
-    price: BigInt(price),
-    totalQuantity: BigInt(totalQuantity),
-    purchasedQuantity: BigInt(purchasedQuantity),
-    isRemove: isRemove,
+    rank,
+    name,
+    description,
+    limit,
+    price,
+    totalQuantity,
+    purchasedQuantity,
+    isOpen,
+    isRemove,
   };
 };

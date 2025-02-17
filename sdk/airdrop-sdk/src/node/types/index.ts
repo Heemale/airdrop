@@ -53,11 +53,11 @@ export interface NodeChangeSummary extends TransactionSummary {
   rank: bigint;
   name: string;
   description: string;
-  isOpen: boolean;
   limit: bigint;
   price: bigint;
   totalQuantity: bigint;
   purchasedQuantity: bigint;
+  isOpen: boolean;
   isRemove: boolean;
 }
 
