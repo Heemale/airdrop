@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 export const formatChange = (
   eventObject: NodeChangeSummary,
-): Prisma.NodeUncheckedCreateInput => {
+): Prisma.NodeCreateInput => {
   const {
     rank,
     description,
@@ -13,12 +13,13 @@ export const formatChange = (
     totalQuantity,
     purchasedQuantity,
     isRemove,
+    isOpen,
   } = eventObject;
   return {
-    name: name.toLowerCase(),
+    name: name,
     rank: BigInt(rank), // 确保 rank 是数字
-    description: description.toLowerCase(),
-    isOpen: true,
+    description: description,
+    isOpen: isOpen,
     limit: BigInt(limit),
     price: BigInt(price),
     totalQuantity: BigInt(totalQuantity),
