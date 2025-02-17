@@ -7,7 +7,7 @@ import { SuiClient } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import { normalizeSuiAddress } from '@mysten/sui/utils';
 import { MODULE_CLOB } from './utils/constants';
-import { NodeInfo, AddSummary, NodeStatus } from './types';
+import { NodeInfo, AddSummary, NodeStatus ,UserStatus} from './types';
 import { bcs } from '@mysten/sui/bcs';
 import { Summary } from '../types';
 import { BuySummary } from './types';
@@ -244,7 +244,31 @@ export class NodeClient {
       bcs.U64.parse(new Uint8Array(res?.results[0]?.returnValues[0][0])),
     );
   }
-
+  async getUserStatus(nodes: string, sender: string): Promise<UserStatus> {
+    const tx = new Transaction();
+    
+    // 调用合约方法 `users`
+    tx.moveCall({
+      typeArguments: [],
+      target: `${this.packageId}::${MODULE_CLOB}::users`,  // 假设你的合约方法是 users
+      arguments: [tx.object(nodes), tx.pure.address(sender)],
+    });
+  
+    // @ts-ignore
+    const res: DevInspectResults = await this.suiClient.devInspectTransactionBlock({
+      transactionBlock: tx,
+      sender: normalizeSuiAddress('0x0'),
+    });
+  
+    // 假设返回的数据是一个包含 rank、node_num 和 is_invalid 的数组
+    const returnValues = res?.results[0]?.returnValues[0];
+    
+    return {
+      rank: Number(returnValues[0]), // rank
+      nodeNum: Number(returnValues[1]), // node_num
+      isInvalid: Boolean(returnValues[2]), // is_invalid
+    };
+  }
   async isAlreadyBuyNode(nodes: string, sender: string): Promise<boolean> {
     const tx = new Transaction();
     tx.moveCall({
