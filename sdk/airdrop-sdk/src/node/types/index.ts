@@ -19,7 +19,11 @@ export interface NodeInfo {
   // 是否开启
   isOpen: boolean;
 }
-
+export interface UserStatus {
+  rank: number;
+  nodeNum: number;
+  isInvalid: boolean;
+}
 export interface BuySummary extends TransactionSummary {
   sender: string;
   rank: bigint;
