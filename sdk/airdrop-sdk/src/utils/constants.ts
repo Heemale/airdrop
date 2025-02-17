@@ -1,53 +1,38 @@
-export const PACKAGE_ID =
-  '0x17192ccd391112180395ca60d6cd68ad97816ed1a8557e83c995c43c24b7a67f';
-
-export const ADMIN_CAP =
-  '0x7e0959ceb96b5d20959d219e86c1bd3f5c1411c22dc60b5b82511253f0e4874b';
-
-export const UPGRADE_CAP =
-  '0x371567cbf6ee6d0f2ba8b9c62151533cda0dcb3ffa7c57736370a8f8628e7211';
-
-export const INVITE =
-  '0x9a1df5c1e15a40534798dc2809919c1771078f8bb618ac4a7ef3cf7882c8c4c8';
-
-export const NODES =
-  '0x9982d11548a495a92d17fa144fd1b13c3115f1b789890ef80d1c256616bd7ea4';
-
-export const AIRDROPS =
-  '0xedd84d036dfda620c26c402edbe786473e0467a0a87aca7fe099c368768cfdb4';
-
-export const PAY_COIN_TYPE = '0x2::sui::SUI';
-
 export const getConfig = (network: 'mainnet' | 'testnet') => {
   if (network === 'testnet') {
     return {
       package: {
         packageId:
-          '0xac0684d466a96c467ce1f2e65b224cdf8c9064fb5524966cb65c508f4f4e3c85',
+          '0x825342a40839424be4b2c644192822b7199eda1b84bf255c0ad1b0e5279cdf7d',
         outdated: [
           {
             packageId:
-              '0xb87677cd27227d3bb33f93706340d3f3c576a6d46351c055b7c1f080f2560846',
+              '0x8752effbf2371027fc61aea1e4aecc1a6da03222615fc10f56810f8734fe116c',
+            version: 2,
+          },
+          {
+            packageId:
+              '0x4cf1ba43864fc8a76250cd18ea8b6e92745c5ee7191122f60bf2fb89ff34840a',
             version: 1,
           },
         ],
       },
       ADMIN_CAP:
-        '0xc2584aeff49810add129bbab0d6edb0c38734cb557ca04f73a876170ce5a1017',
+        '0x83b5a87b517b91cb81350247b3bc48640263bda5047e929d14ad50d103354b9e',
       UPGRADE_CAP:
-        '0xe1adcd72b6ed5195b393b72a13be3cc9b13d6e1cc360da9d283c6f102fe5147c',
+        '0x5c5b6498960a3d8bbc974fcc52ca0a71feab1ddae60dff6e62543b580d53d321',
       INVITE:
-        '0x4be53ee5c674da50b9ef21223788babad8096fc33d4890e61057a14004317f4c',
+        '0x150f925eb8639497009df894c58051410f277a71fe007389a865b316ad4b017c',
       NODES:
-        '0xe7ee0e8914fa735d91e7be190f2afa84dcd5607e6a0a544352ee262c74eda386',
+        '0x53908d87401cbe75b843eaf1ed23d905b3c345c3af717c082801d07d202c1554',
       AIRDROPS:
-        '0x56b603537898718ab70d9d4e2697f88f6bb2c30147dedeffc4090c23c9be402c',
+        '0x494e29cfa046bd494f11d2c8d7fa0ee706f8bdce166c2aa1add1f13c490f5265',
       GLOBAL:
-        '0xc5bd162fdeea75e1f832afb96a0a048855974b7b2b91540cc7ad82362e9c276b',
+        '0x406c50a93652955df836f80dd81e679c6b8eed7f5b4b3c64fcca538620d46ffb',
       LIMITS:
-        '0x63c699db6f7b03182efae4fffbbb346b762ffdcd6ef898ea9135b7a90c9f4301',
+        '0x515808f8cd404eeda3f43338fb73bf7d6d454061ff42c035ca8a81853f910620',
       INVEST:
-        '0xc00172f568638ae3b98f6a1ea386415f2f2b5b7c2e749e0f8ac152f6a329a092',
+        '0x03d159659a1774f4328ed379610b1f7c45713757b93d91ab42d9f126bd227986',
       PAY_COIN_TYPE: '0x2::sui::SUI',
     };
   } else {
