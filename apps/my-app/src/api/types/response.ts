@@ -26,15 +26,15 @@ export interface NodeInfoResponse {
   /**
    * 节点价格
    */
-  price: null | string;
+  price: number;
   /**
    * 总数量
    */
-  totalQuantity: null | string;
+  totalQuantity:  number;
   /**
    * 已购买数量
    */
-  purchasedQuantity: null | string;
+  purchasedQuantity: number;
   /**
    * 分享人数
    */
@@ -46,13 +46,13 @@ export interface NodeInfoResponse {
   /**
    * 团队总投资金额
    */
-  teamTotalInvestment: null | string;
+  teamTotalInvestment: number;
   /**
    * 总收益金额
    */
-  totalGains: null | string;
+  totalGains:  number;
   /**
    * 总投资金额
    */
-  totalInvestment: null | string;
+  totalInvestment: number;
 }

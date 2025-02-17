@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/config/prisma';
 
-export const handleChange = async (event: Prisma.NodeUncheckedCreateInput) => {
+export const handleChange = async (event: Prisma.NodeCreateInput) => {
   try {
     await prisma.$transaction(async (tx) => {
       const updatedNodeData = {
