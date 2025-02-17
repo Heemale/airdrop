@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import LanguageChanger from '@/components/LanguageChanger';
 import { useClientTranslation } from '@/hook';
+import { usePathname } from 'next/navigation'; // 添加路径hook
 import {
   Drawer,
   IconButton,
@@ -12,7 +13,7 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Page } from './NavBarWrapper';
 import './sui-button.css';
 
@@ -24,7 +25,32 @@ interface Props {
 const NavBar = (props: Props) => {
   const { pages, children } = props;
   const { t } = useClientTranslation();
+  const pathname = usePathname();
+  const [selectedPage, setSelectedPage] = useState<string | null>(null);
 
+  // 移除语言前缀
+  const removeLanguagePrefix = (path: string) => {
+    return path.replace(/^\/[a-z]{2}/, '');
+  };
+
+  // 检查是否激活
+  const isActive = (link: string, pathname: string) => {
+    const cleanPathname = removeLanguagePrefix(pathname);
+    return cleanPathname === link || cleanPathname.startsWith(link + '/');
+  };
+  useEffect(() => {
+    const cleanPathname = removeLanguagePrefix(pathname); // 移除语言前缀
+    const activePage = pages.find(
+      (page) =>
+        cleanPathname === page.link ||
+        cleanPathname.startsWith(page.link + '/'),
+    );
+    if (activePage) {
+      setSelectedPage(activePage.id);
+    } else {
+      setSelectedPage(null);
+    }
+  }, [pathname, pages]);
   // 状态：抽屉是否打开
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   // 切换抽屉的状态
@@ -50,10 +76,35 @@ const NavBar = (props: Props) => {
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-10 items-center">
           {pages.map((page) => (
-            <Link key={page.id} href={page.link}>
-              <div className="text-white">{page.name}</div>
+            <Link
+              key={page.id}
+              href={page.link}
+              className="flex items-center gap-2"
+              onClick={() => setSelectedPage(page.id)}
+            >
+              <Image
+                src={
+                  selectedPage === page.id
+                    ? `/HomeIcon${page.id}.png`
+                    : page.icon
+                }
+                width={20}
+                height={20}
+                alt={`${page.name} icon`}
+                className="inline-block"
+              />
+              <div
+                className={`transition-colors ${
+                  isActive(page.link, pathname)
+                    ? 'bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-transparent bg-clip-text'
+                    : 'text-white hover:text-[#40cafd]'
+                }`}
+              >
+                {page.name}
+              </div>
             </Link>
           ))}
+
           <LanguageChanger />
           {children}
         </div>
@@ -73,14 +124,35 @@ const NavBar = (props: Props) => {
 
         {/* Drawer for Mobile */}
         <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
-          <div
-            className="w-64 p-4 text-white bg-black h-full"
-            onKeyDown={toggleDrawer(false)}
-          >
+          <div className="w-64 p-4 text-white bg-black h-full">
             <List>
               {pages.map((page) => (
-                <ListItem key={page.id} component={Link} href={page.link}>
-                  <ListItemText className="text-gradient" primary={page.name} />
+                <ListItem
+                  key={page.id}
+                  component={Link}
+                  href={page.link}
+                  className="flex items-center gap-2"
+                  onClick={toggleDrawer(false)}
+                >
+                  <Image
+                    src={page.icon}
+                    width={20}
+                    height={20}
+                    alt={`${page.name} icon`}
+                  />
+                  <ListItemText
+                    primary={
+                      <span
+                        className={
+                          isActive(page.link, pathname)
+                            ? 'bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-transparent bg-clip-text'
+                            : 'text-white'
+                        }
+                      >
+                        {page.name}
+                      </span>
+                    }
+                  />
                 </ListItem>
               ))}
               <ListItem>

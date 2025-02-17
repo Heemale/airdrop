@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { AIRDROPS, NODES, INVITE, PAY_COIN_TYPE } from "@/sdk/constants";
+import {
+  AIRDROPS,
+  NODES,
+  INVITE,
+  PAY_COIN_TYPE,
+  LIMITS,
+  ADMIN_CAP,
+} from "@/sdk/constants";
 import {
   Button,
   Table,
@@ -19,7 +26,6 @@ import {
   devTransaction,
   getCoinMetaData,
 } from "@/sdk";
-import { ADMIN_CAP } from "@local/airdrop-sdk/utils";
 import ConnectButton from "./components/ConnectButton";
 
 import {
@@ -33,8 +39,6 @@ import { handleDevTxError } from "@/sdk/error";
 import { isHexString } from "@/utils";
 import { getNodeInfo } from "@/api";
 
-import type { NodeInfoResponse } from "@/api/types/response";
-
 export interface NodeInfo {
   // 等级
   rank: number;
@@ -45,13 +49,14 @@ export interface NodeInfo {
   // 每轮空投购买次数
   limit: bigint;
   // 价格
-  price: string;
+  price: bigint;
   // 总量
   total_quantity: bigint;
   // 已购买的数量
   purchased_quantity: bigint;
   // 是否开启
   isOpen: boolean;
+  isRemove: boolean;
 }
 
 export interface AirdropInfo {
@@ -102,6 +107,7 @@ const AdminPage = () => {
   const [receiver_, set_receiver] = useState<string | null>(null);
   const [showRmoveNodeModal, setShowRmoveNodeModal] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false); // 控制邀请弹窗显示
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const [editReceiver, setEditReceiver] = useState(false);
   console.log("account", account);
   // 表格列配置
@@ -444,14 +450,15 @@ const AdminPage = () => {
         // 确保返回值是数组
         // 遍历返回的数据并赋值给 NodeInfo
         const formattedNodeList: NodeInfo[] = response.map((node) => ({
-          rank: node.rank,
+          rank: Number(node.rank), // 确保类型一致
           name: node.name,
           description: node.description,
-          limit: BigInt(node.limit), // 假设 limit 是 bigint 类型
+          limit: BigInt(node.limit),
           price: node.price,
-          total_quantity: BigInt(node.totalQuantity), // 假设 total_quantity 是 bigint 类型
-          purchased_quantity: BigInt(node.purchasedQuantity), // 假设 purchased_quantity 是 bigint 类型
+          total_quantity: BigInt(node.totalQuantity!), // 确保这个属性存在
+          purchased_quantity: BigInt(node.purchasedQuantity!), // 确保这个属性存在
           isOpen: node.isOpen,
+          isRemove: node.isRemove,
         }));
         console.log("formattedNodeList", formattedNodeList);
         setNodeList(formattedNodeList); // 更新状态
@@ -459,14 +466,15 @@ const AdminPage = () => {
         // 如果返回的是单个节点，直接处理
         const node = response; // 假设 response 是单个节点
         const formattedNode: NodeInfo = {
-          rank: node.rank,
+          rank: Number(node.rank), // 确保类型一致
           name: node.name,
           description: node.description,
           limit: BigInt(node.limit),
-          price: node.price!,
-          total_quantity: BigInt(node.totalQuantity!),
-          purchased_quantity: BigInt(node.purchasedQuantity!),
+          price: BigInt(node.price),
+          total_quantity: BigInt(node.totalQuantity!), // 确保这个属性存在
+          purchased_quantity: BigInt(node.purchasedQuantity!), // 确保这个属性存在
           isOpen: node.isOpen,
+          isRemove: node.isRemove,
         };
         console.log("formattedNode", formattedNode);
 
@@ -717,6 +725,47 @@ const AdminPage = () => {
     } catch (e: any) {
       messageApi.error(handleDevTxError(e.message.trim()));
       setLoading(false);
+      return;
+    }
+  };
+
+  const handleModifyUserLimit = async (value: any) => {
+    if (!account) {
+      messageApi.error("请先连接钱包");
+      return;
+    }
+
+    try {
+      const { address, times, isLimit } = value;
+      console.log("value", value);
+      // 调用 modifyLimits 方法来修改用户的领取次数
+      const tx = airdropClient.modifyLimits(
+        ADMIN_CAP, // 管理员权限
+        LIMITS, // 限制条件
+        address, // 用户地址
+        BigInt(times), // 领取次数（转换为BigInt）
+        isLimit, // 是否有限制
+      );
+      console.log("handleModify", tx);
+      // 提交交易
+      await devTransaction(tx, account.address);
+
+      // 签名并执行交易
+      signAndExecuteTransaction(
+        { transaction: tx },
+        {
+          onSuccess: async (tx) => {
+            messageApi.success(`修改用户领取次数成功: ${tx.digest}`);
+            setShowLimitModal(false); // 关闭模态框
+          },
+          onError: ({ message }) => {
+            messageApi.error(`修改用户领取次数失败: ${message}`);
+          },
+        },
+      );
+    } catch (e: any) {
+      messageApi.error(handleDevTxError(e.message.trim()));
+      setLoading(false); // 关闭加载状态
       return;
     }
   };
@@ -1170,6 +1219,63 @@ const AdminPage = () => {
                 rules={[{ required: true, message: "请输入接收人" }]}
               >
                 <Input placeholder="请输入接收人" />
+              </Form.Item>
+
+              <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button type="primary" htmlType="submit" loading={loading}>
+                  提交
+                </Button>
+              </Form.Item>
+            </Form>
+          </Modal>
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-4 overflow-x-auto">
+        <div className="overflow-x-auto">
+          <Button
+            type="primary"
+            onClick={() => setShowLimitModal(true)} // 显示弹窗
+            style={{ marginBottom: "20px" }}
+          >
+            修改用户领取次数
+          </Button>
+
+          {/* 修改领取次数的弹窗 */}
+          <Modal
+            title="修改用户领取次数"
+            open={showLimitModal}
+            onCancel={() => setShowLimitModal(false)} // 关闭弹窗
+            footer={null} // 关闭默认按钮
+          >
+            <Form
+              form={form}
+              onFinish={handleModifyUserLimit} // 提交表单时调用
+              labelCol={{ span: 8 }}
+              wrapperCol={{ span: 16 }}
+            >
+              <Form.Item
+                name="address"
+                label="接收人"
+                rules={[{ required: true, message: "请输入接收人" }]}
+              >
+                <Input placeholder="请输入接收人" />
+              </Form.Item>
+
+              <Form.Item
+                name="times"
+                label="领取次数"
+                rules={[{ required: true, message: "请输入领取次数" }]}
+              >
+                <Input type="number" placeholder="请输入领取次数" />
+              </Form.Item>
+
+              <Form.Item
+                name="isLimit"
+                label="是否限制"
+                valuePropName="checked"
+              >
+                <Input type="checkbox" />
               </Form.Item>
 
               <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
