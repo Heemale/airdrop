@@ -23,7 +23,6 @@ export class NodeChangeScheduler {
           cursor: this.cursor,
           order: 'ascending',
         });
-        console.log({ logs });
         for (const log of logs.data) {
           await handleChange(formatChange(log));
         }
