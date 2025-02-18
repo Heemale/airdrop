@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 export const formatChange = (
   eventObject: NodeChangeSummary,
-): Prisma.NodeUncheckedCreateInput => {
+): Prisma.NodeCreateInput => {
   const {
     rank,
     name,

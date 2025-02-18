@@ -399,6 +399,12 @@ const AdminPage = () => {
       render: (isOpen: boolean) => (isOpen ? "开启" : "关闭"),
     },
     {
+      title: "节点是否移除",
+      dataIndex: "isRemove",
+      key: "isRemove",
+      render: (isRemove: boolean) => (isRemove ? "已移除" : "未移除"),
+    },
+    {
       title: "操作",
       key: "actions",
       render: (_: any, record: NodeInfo) => (
@@ -447,6 +453,8 @@ const AdminPage = () => {
 
       console.log("response", response);
       if (Array.isArray(response)) {
+        console.log("11111", response);
+
         // 确保返回值是数组
         // 遍历返回的数据并赋值给 NodeInfo
         const formattedNodeList: NodeInfo[] = response.map((node) => ({
@@ -454,9 +462,13 @@ const AdminPage = () => {
           name: node.name,
           description: node.description,
           limit: BigInt(node.limit),
-          price: node.price,
-          total_quantity: BigInt(node.totalQuantity!), // 确保这个属性存在
-          purchased_quantity: BigInt(node.purchasedQuantity!), // 确保这个属性存在
+          price: BigInt(node.price),
+          total_quantity: node.totalQuantity
+            ? BigInt(node.totalQuantity)
+            : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
+          purchased_quantity: node.purchasedQuantity
+            ? BigInt(node.purchasedQuantity)
+            : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
           isOpen: node.isOpen,
           isRemove: node.isRemove,
         }));
@@ -471,12 +483,16 @@ const AdminPage = () => {
           description: node.description,
           limit: BigInt(node.limit),
           price: BigInt(node.price),
-          total_quantity: BigInt(node.totalQuantity!), // 确保这个属性存在
-          purchased_quantity: BigInt(node.purchasedQuantity!), // 确保这个属性存在
+          total_quantity: node.totalQuantity
+            ? BigInt(node.totalQuantity)
+            : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
+          purchased_quantity: node.purchasedQuantity
+            ? BigInt(node.purchasedQuantity)
+            : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
           isOpen: node.isOpen,
           isRemove: node.isRemove,
         };
-        console.log("formattedNode", formattedNode);
+        console.log("formattedNode111111111", formattedNode);
 
         setNodeList([formattedNode]); // 将单个节点包装成数组并更新状态
       }

@@ -67,9 +67,5 @@ export enum NodeStatus {
   NODE_ACTIVE = 1,
   NODE_DISABLED = 2,
 }
-export enum Status {
-  NODE_NOT_OWNED = 0,
-  NODE_ACTIVE = 1,
-  NODE_DISABLED = 2,
-}
+
 export * from './index';
