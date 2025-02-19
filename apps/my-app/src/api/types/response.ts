@@ -30,7 +30,7 @@ export interface NodeInfoResponse {
   /**
    * 总数量
    */
-  totalQuantity:  number;
+  totalQuantity: number;
   /**
    * 已购买数量
    */
@@ -50,7 +50,7 @@ export interface NodeInfoResponse {
   /**
    * 总收益金额
    */
-  totalGains:  number;
+  totalGains: number;
   /**
    * 总投资金额
    */
