@@ -8,8 +8,8 @@ import { sleep } from '@/utils/time';
 
 @Injectable()
 export class NodeChangeScheduler {
-  cursor: EventId | null = null;
-  finished: boolean = false;
+  cursorV2: EventId | null = null;
+  finishedV2: boolean = false;
 
   @Cron(new Date(Date.now() + 5 * 1000))
   async task() {
@@ -17,18 +17,18 @@ export class NodeChangeScheduler {
   }
 
   async subscribe() {
-    while (!this.finished) {
+    while (!this.finishedV2) {
       try {
         const logs = await nodeClientV2.changeNode({
-          cursor: this.cursor,
+          cursor: this.cursorV2,
           order: 'ascending',
         });
         for (const log of logs.data) {
           await handleChange(formatChange(log));
         }
-        if (logs.hasNextPage) this.cursor = logs.nextCursor;
+        if (logs.hasNextPage) this.cursorV2 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`NodeChangeScheduler subscribe v2 error => ${message}`);
+        console.error(`${this.constructor.name} subscribe error => ${message}`);
       }
       await sleep(1);
     }
