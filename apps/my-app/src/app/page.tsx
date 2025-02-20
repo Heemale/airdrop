@@ -27,7 +27,6 @@ import {
   getCoinMetaData,
 } from "@/sdk";
 import ConnectButton from "./components/ConnectButton";
-
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
@@ -37,7 +36,9 @@ import { formatTimestamp } from "../utils/time";
 import { convertLargeToSmall, convertSmallToLarge } from "../utils/math";
 import { handleDevTxError } from "@/sdk/error";
 import { isHexString } from "@/utils";
-import { getNodeInfo } from "@/api";
+import { getNodeInfo, getChildren } from "@/api";
+import { TreeStructure } from "./components/UserTree";
+import { RootNode } from "@/api/types/response";
 
 export interface NodeInfo {
   // 等级
@@ -109,6 +110,8 @@ const AdminPage = () => {
   const [showInviteModal, setShowInviteModal] = useState(false); // 控制邀请弹窗显示
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [editReceiver, setEditReceiver] = useState(false);
+  const [treeData, setTreeData] = useState<RootNode[]>([]);
+
   console.log("account", account);
   // 表格列配置
   const columns = [
@@ -786,6 +789,21 @@ const AdminPage = () => {
     }
   };
 
+  const getChildrens = async (): Promise<RootNode[]> => {
+    const rootNode = await getChildren();
+    console.log("rootNode", rootNode); // 获取返回的 rootNode 数据
+    return [rootNode]; // 将 rootNode 包装成一个数组
+  };
+  const fetchData = async () => {
+    const childrenData = await getChildrens();
+    console.log("childrenData", childrenData);
+    setTreeData(childrenData); // 设置数据
+  };
+  // 组件加载时获取数据
+  useEffect(() => {
+    fetchData();
+    console.log("treeData", treeData);
+  }, []);
   useEffect(() => {
     fetchAirdropList();
     fetchNodeList();
@@ -1302,6 +1320,11 @@ const AdminPage = () => {
             </Form>
           </Modal>
         </div>
+      </div>
+      <div>
+        <h1>User Hierarchy</h1>
+        {/* 将treeData传递给TreeStructure组件 */}
+        <TreeStructure data={treeData} />
       </div>
     </div>
   );
