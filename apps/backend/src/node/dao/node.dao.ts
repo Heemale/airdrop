@@ -6,6 +6,7 @@ import {
   TypeMapCbDef,
   TypeMapDef,
 } from '@prisma/client/runtime/library';
+import { consoleError } from '@/log';
 
 export const findAllNodes = async () => {
   try {
@@ -55,7 +56,7 @@ export const findAllNodes = async () => {
     });
     return formattedNodes;
   } catch (error) {
-    console.error('Error retrieving nodes:', error);
+    consoleError('Error retrieving nodes:', error);
     throw new Error('Failed to fetch nodes');
   }
 };

@@ -5,6 +5,7 @@ import { investClientV2 } from '@/sdk';
 import { formatUpdateInvest } from '@/invest/formatter/formatUpdateInvest';
 import { handleUpdateInvest } from '@/invest/handler/handleUpdateInvest';
 import { sleep } from '@/utils/time';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class UpdateInvestScheduler {
@@ -28,7 +29,7 @@ export class UpdateInvestScheduler {
         }
         if (logs.hasNextPage) this.cursorV2 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`${this.constructor.name} subscribe error => ${message}`);
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }

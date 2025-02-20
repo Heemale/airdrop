@@ -5,6 +5,7 @@ import { limitClientV2 } from '@/sdk';
 import { formatModifyLimit } from '@/limit/formatter/formatModifyLimit';
 import { handlerModifyLimit } from '@/limit/handler/handlerModifyLimit';
 import { sleep } from '@/utils/time';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class ModifyLimitScheduler {
@@ -28,7 +29,7 @@ export class ModifyLimitScheduler {
         }
         if (logs.hasNextPage) this.cursorV2 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`${this.constructor.name} subscribe error => ${message}`);
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }

@@ -5,6 +5,7 @@ import { inviteClientV1 } from '@/sdk';
 import { formatBind } from '@/user/formatter/formatBind';
 import { handleBind } from '@/user/handler/handleBind';
 import { sleep } from '@/utils/time';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class BindScheduler {
@@ -28,7 +29,7 @@ export class BindScheduler {
         }
         if (logs.hasNextPage) this.cursorV1 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`${this.constructor.name} subscribe error => ${message}`);
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }

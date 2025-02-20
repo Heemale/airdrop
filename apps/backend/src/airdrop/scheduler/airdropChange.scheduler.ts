@@ -5,6 +5,7 @@ import { airdropClientV2 } from '@/sdk';
 import { formatAirdropChange } from '@/airdrop/formatter/formatAirdropChange';
 import { handleAirdropChange } from '@/airdrop/handler/handleAirdropChange';
 import { sleep } from '@/utils/time';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class AirdropChangeScheduler {
@@ -28,7 +29,7 @@ export class AirdropChangeScheduler {
         }
         if (logs.hasNextPage) this.cursorV2 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`${this.constructor.name} subscribe error => ${message}`);
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }

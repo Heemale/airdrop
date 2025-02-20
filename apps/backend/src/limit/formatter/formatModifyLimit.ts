@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 
 export const formatModifyLimit = (
   eventObject: SpecialUserLimitSummary,
-): Prisma.SpecialLimitUncheckedCreateInput => {
+): Prisma.SpecialLimitCreateInput => {
   const { times, isLimit } = eventObject;
   return {
     times,

@@ -5,6 +5,7 @@ import { globalClientV2 } from '@/sdk';
 import { formatUpdateInitializationList } from '@/global/formatter/formatUpdateInitializationList';
 import { handlerUpdateInitializationList } from '@/global/handler/handlerUpdateInitializationList';
 import { sleep } from '@/utils/time';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class UpdateInitializationListScheduler {
@@ -30,9 +31,7 @@ export class UpdateInitializationListScheduler {
         }
         if (logs.hasNextPage) this.cursorV2 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(
-          `UpdateInitializationListScheduler subscribe error => ${message}`,
-        );
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }

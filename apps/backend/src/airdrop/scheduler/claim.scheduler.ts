@@ -5,6 +5,7 @@ import { airdropClientV1 } from '@/sdk';
 import { formatClaim } from '@/airdrop/formatter/formatClaim';
 import { handleClaim } from '@/airdrop/handler/handleClaim';
 import { sleep } from '@/utils/time';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class ClaimScheduler {
@@ -28,7 +29,7 @@ export class ClaimScheduler {
         }
         if (logs.hasNextPage) this.cursorV1 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`${this.constructor.name} subscribe error => ${message}`);
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }

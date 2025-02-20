@@ -7,6 +7,7 @@ import { handleBuy } from '@/node/handler/handleBuy';
 import { sleep } from '@/utils/time';
 import { handleBuyV2 } from '@/node/handler/handleBuyV2';
 import { formatBuyV2 } from '@/node/formatter/formatBuyV2';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class BuyScheduler {
@@ -36,9 +37,7 @@ export class BuyScheduler {
           this.finishedV1 = true;
         }
       } catch ({ message }) {
-        console.error(
-          `${this.constructor.name} subscribe v1 error => ${message}`,
-        );
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }
@@ -53,9 +52,7 @@ export class BuyScheduler {
         }
         if (logs.hasNextPage) this.cursorV2 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(
-          `${this.constructor.name} subscribe v2 error => ${message}`,
-        );
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }
