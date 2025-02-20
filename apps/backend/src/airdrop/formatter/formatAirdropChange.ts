@@ -19,17 +19,17 @@ export const formatAirdropChange = (
     remainingBalance,
   } = eventObject;
   return {
-    round: BigInt(round),
+    round,
     coinType,
-    totalShares: BigInt(totalShares),
-    description: description.toLowerCase(),
+    totalShares,
+    description,
     isOpen,
     isRemove,
-    imageUrl: imageUrl.toLowerCase(),
-    claimedShares: BigInt(claimedShares),
-    totalBalance: BigInt(totalBalance),
-    remainingBalance: BigInt(remainingBalance),
-    startTime: BigInt(startTime),
-    endTime: BigInt(endTime),
+    imageUrl,
+    claimedShares,
+    totalBalance,
+    remainingBalance,
+    startTime,
+    endTime,
   };
 };

@@ -90,7 +90,7 @@ model Node {
 /// 空投表
 model Airdrop {
   id               Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
-  round            BigInt? /// 轮次
+  round            BigInt?  @unique /// 轮次
   startTime        BigInt?  @map("start_time") /// 开始时间
   endTime          BigInt?  @map("end_time") /// 结束时间
   totalShares      BigInt?  @map("total_shares") /// 总份数
