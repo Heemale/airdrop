@@ -6,7 +6,7 @@ import type {
   OrderArguments,
 } from '@mysten/sui/client';
 import { Summary } from '../types';
-import { SpecialUserLimitSummary } from './types';
+import { ModifyLimitSummary } from './types';
 
 export class LimitClient {
   constructor(
@@ -15,9 +15,10 @@ export class LimitClient {
   ) {}
   async modifyLimit(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
-  ): Promise<Summary<SpecialUserLimitSummary>> {
+  ): Promise<Summary<ModifyLimitSummary>> {
     const resp = await this.queryEvents('ModifyLimit', input);
     const customMapping = (rawEvent: any) => ({
+      address:rawEvent.address as string,
       times: rawEvent.times as bigint,
       isLimit: rawEvent.is_limit as boolean,
     });
