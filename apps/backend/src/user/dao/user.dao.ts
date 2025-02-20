@@ -6,7 +6,6 @@ import {
   TypeMapCbDef,
   TypeMapDef,
 } from '@prisma/client/runtime/library';
-
 export const upsertUser = async <
   TypeMap extends TypeMapDef,
   TypeMapCb extends TypeMapCbDef,
@@ -134,7 +133,7 @@ export const getAllSubordinates = async (userId: number) => {
   // 批量查询下级的 totalInvestment
   const directChildUsers = await prisma.user.findMany({
     where: { id: { in: directChildIds } },
-    select: { id: true, totalInvestment: true },
+    select: { id: true, totalInvestment: true, address: true, sharerIds: true },
   });
 
   // 计算直接下级的投资总和
@@ -147,7 +146,6 @@ export const getAllSubordinates = async (userId: number) => {
   const subordinatesData = await Promise.all(
     directChildUsers.map((child) => getAllSubordinates(child.id)),
   );
-
   // 汇总所有下级 ID 和总投资金额
   const allSubordinates = subordinatesData.flatMap(
     (data) => data.allSubordinates,
@@ -156,12 +154,35 @@ export const getAllSubordinates = async (userId: number) => {
     (sum, data) => sum + data.totalInvestmentSum,
     totalInvestmentSumFromDirect,
   );
-
+  const children = directChildUsers.map((child) => {
+    const childData = subordinatesData.find((data) => data.id === child.id);
+    console.log('childData123123', childData);
+    return {
+      id: child.id,
+      address: child.address,
+      children: childData ? childData.children : [],
+    };
+  });
   return {
     id: userId,
     address: directChildren?.address ?? null,
     allSubordinates: [...directChildIds, ...allSubordinates], // 包含直接和间接下级
     totalInvestmentSum,
     directSubordinates: directChildIds, // 直接下级
+    children,
   };
+};
+
+export const getRootUsers = async () => {
+  const rootUsers = await prisma.user.findMany({
+    where: { isRoot: true },
+    select: { id: true, address: true, sharerIds: true },
+  });
+
+  return rootUsers.map((rootUser) => ({
+    id: rootUser.id,
+    address: rootUser.address,
+    shareIds: rootUser.sharerIds?.split(',').map(Number).filter(Boolean) || [],
+    isRoot: true,
+  }));
 };

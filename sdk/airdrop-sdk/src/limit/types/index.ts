@@ -1,6 +1,7 @@
 import { TransactionSummary } from '../../types';
 
-export interface SpecialUserLimitSummary extends TransactionSummary {
+export interface ModifyLimitSummary extends TransactionSummary {
+  address:string;
   times: bigint;
   isLimit: boolean;
 }
