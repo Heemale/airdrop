@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { GLOBAL_PREFIX, NODE_ENV, PORT } from '@/config/base';
 import { setupSwagger } from '@/swagger';
+import * as express from 'express';
+import * as path from 'path';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -24,6 +26,9 @@ async function bootstrap() {
     credentials: true, // 允许携带身份凭证，如 cookies
     allowedHeaders: 'Content-Type,Authorization', // 允许的请求头
   });
+
+  // 静态资源目录
+  app.use(express.static(path.join(__dirname, 'dist', '../../public')));
 
   await app.listen(PORT);
 }

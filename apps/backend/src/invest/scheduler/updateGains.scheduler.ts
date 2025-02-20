@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { EventId } from '@mysten/sui/client';
-import { investClientV2, investClient } from '@/sdk';
+import { investClientV2 } from '@/sdk';
 import { formatUpdateGains } from '@/invest/formatter/formatUpdateGains';
 import { handleUpdateGains } from '@/invest/handler/handleUpdateGains';
 import { sleep } from '@/utils/time';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class UpdateGainsScheduler {
-  cursor: EventId | null = null;
   cursorV2: EventId | null = null;
-  finished: boolean = false;
   finishedV2: boolean = false;
 
   @Cron(new Date(Date.now() + 5 * 1000))
@@ -28,28 +27,9 @@ export class UpdateGainsScheduler {
         for (const log of logs.data) {
           await handleUpdateGains(formatUpdateGains(log));
         }
-        if (logs.hasNextPage) {
-          this.cursorV2 = logs.nextCursor;
-        } else {
-          this.finishedV2 = true;
-        }
+        if (logs.hasNextPage) this.cursorV2 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(`UpdateGainsScheduler subscribe v2 error => ${message}`);
-      }
-      await sleep(1);
-    }
-    while (!this.finished) {
-      try {
-        const logs = await investClient.getAllUpdateGains({
-          cursor: this.cursor,
-          order: 'ascending',
-        });
-        for (const log of logs.data) {
-          await handleUpdateGains(formatUpdateGains(log));
-        }
-        if (logs.hasNextPage) this.cursor = logs.nextCursor;
-      } catch ({ message }) {
-        console.error(`UpdateGainsScheduler subscribe v3 error => ${message}`);
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }

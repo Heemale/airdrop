@@ -13,6 +13,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+/// 管理员表
+model Admin {
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt /// Id
+  username    String? @unique @default("") @db.VarChar(20) /// 用户名
+  nickname    String? @default("") @db.VarChar(64) /// 昵称
+  password    String? @default("") @db.VarChar(64) /// 密码
+  salt        String? @default("") @db.VarChar(30) /// 密码
+  avatar      String? @default("") @db.VarChar(255) /// 头像
+  email       String? @default("") @db.VarChar(100) /// 电子邮箱
+  description String? @db.Text /// 个人描述
+  createAt    BigInt? @map("create_at") /// 创建时间
+  updateAt    BigInt? @map("update_at") /// 更新时间
+
+  @@map("swld_admin")
+}
+
 /// 文案表
 model Copywriting {
   id       Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
@@ -74,7 +90,7 @@ model Node {
 /// 空投表
 model Airdrop {
   id               Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
-  round            BigInt? /// 轮次
+  round            BigInt?  @unique /// 轮次
   startTime        BigInt?  @map("start_time") /// 开始时间
   endTime          BigInt?  @map("end_time") /// 结束时间
   totalShares      BigInt?  @map("total_shares") /// 总份数

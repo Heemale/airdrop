@@ -8,6 +8,8 @@ import { GlobalModule } from './global/global.module';
 import { LimitModule } from './limit/limit.module';
 import { InvestModule } from './invest/invest.module';
 import { NodeModule } from '@/node/node.module';
+import { UploadModule } from './upload/upload.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { NodeModule } from '@/node/node.module';
     GlobalModule,
     LimitModule,
     InvestModule,
+    UploadModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

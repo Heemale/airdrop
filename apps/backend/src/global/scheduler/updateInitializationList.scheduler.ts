@@ -5,10 +5,12 @@ import { globalClientV2 } from '@/sdk';
 import { formatUpdateInitializationList } from '@/global/formatter/formatUpdateInitializationList';
 import { handlerUpdateInitializationList } from '@/global/handler/handlerUpdateInitializationList';
 import { sleep } from '@/utils/time';
+import { consoleError } from '@/log';
 
 @Injectable()
 export class UpdateInitializationListScheduler {
-  cursor: EventId | null = null;
+  cursorV2: EventId | null = null;
+  finishedV2: boolean = false;
 
   @Cron(new Date(Date.now() + 5 * 1000))
   async task() {
@@ -16,10 +18,10 @@ export class UpdateInitializationListScheduler {
   }
 
   async subscribe() {
-    while (true) {
+    while (!this.finishedV2) {
       try {
         const logs = await globalClientV2.updateInitialization({
-          cursor: this.cursor,
+          cursor: this.cursorV2,
           order: 'ascending',
         });
         for (const log of logs.data) {
@@ -27,11 +29,9 @@ export class UpdateInitializationListScheduler {
             formatUpdateInitializationList(log),
           );
         }
-        if (logs.hasNextPage) this.cursor = logs.nextCursor;
+        if (logs.hasNextPage) this.cursorV2 = logs.nextCursor;
       } catch ({ message }) {
-        console.error(
-          `UpdateInitializationListScheduler subscribe error => ${message}`,
-        );
+        consoleError(this.constructor.name, message);
       }
       await sleep(1);
     }
