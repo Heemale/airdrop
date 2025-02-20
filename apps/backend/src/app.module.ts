@@ -9,6 +9,7 @@ import { LimitModule } from './limit/limit.module';
 import { InvestModule } from './invest/invest.module';
 import { NodeModule } from '@/node/node.module';
 import { UploadModule } from './upload/upload.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { UploadModule } from './upload/upload.module';
     LimitModule,
     InvestModule,
     UploadModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
