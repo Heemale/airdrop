@@ -4,9 +4,9 @@ import { Prisma } from '@prisma/client';
 export const formatModifyLimit = (
   eventObject: ModifyLimitSummary,
 ): Prisma.SpecialLimitCreateInput => {
-  const { address,times, isLimit } = eventObject;
+  const { address, times, isLimit } = eventObject;
   return {
-    address:address.toLowerCase(),
+    address: address.toLowerCase(),
     times,
     isLimit,
   };

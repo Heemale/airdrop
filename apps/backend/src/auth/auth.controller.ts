@@ -26,18 +26,18 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @HttpCode(HttpStatus.CREATED)
-  @Post('sign/up')
-  async signUp(@Body() signUpDto: SignUpDto) {
+  @Post('register')
+  async register(@Body() signUpDto: SignUpDto) {
     const { username, password } = signUpDto;
-    await this.authService.signUp(username, password);
+    await this.authService.register(username, password);
     return 'success';
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('sign/in')
-  async signIn(@Body() signInDto: SignInDto) {
+  @Post('login')
+  async login(@Body() signInDto: SignInDto) {
     const { username, password } = signInDto;
-    return await this.authService.signIn(username, password);
+    return await this.authService.login(username, password);
   }
 
   @UseGuards(AuthGuard)

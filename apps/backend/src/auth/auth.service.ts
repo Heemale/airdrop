@@ -13,7 +13,7 @@ import { getRandomBetween } from '@/utils/random';
 export class AuthService {
   constructor(private jwtService: JwtService) {}
 
-  signUp = async (username: string, password: string) => {
+  register = async (username: string, password: string) => {
     const user = await getAdmin(username);
 
     if (user) {
@@ -37,7 +37,7 @@ export class AuthService {
     }
   };
 
-  signIn = async (username: string, password: string) => {
+  login = async (username: string, password: string) => {
     const user = await getAdmin(username);
 
     if (user) {

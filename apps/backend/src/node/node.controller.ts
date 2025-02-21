@@ -1,51 +1,54 @@
-import { Controller, Get, HttpException, Query } from '@nestjs/common';
-import { findBuyRecordsBySender } from '@/node/dao/buyV2.dao';
-import { GetBuyInfoDto } from '@/node/dto/buyV2.dto';
-import { findAllNodes } from '@/node/dao/node.dao';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpException,
+  HttpStatus,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { prisma } from '@/config/prisma';
+import { defaultHandler } from 'ra-data-simple-prisma';
 
-@Controller()
+@Controller('nodes')
 export class NodeController {
-  @Get('buy-node-record')
-  async getBuyRecords(@Query() params: GetBuyInfoDto) {
-    const { sender, pageSize = 25, nextCursor } = params;
-
-    // 参数校验
-    if (!sender) {
-      throw new HttpException('Sender address is required', 400);
-    }
-    if (nextCursor && isNaN(Number(nextCursor))) {
-      throw new HttpException('Invalid nextCursor.', 400);
-    }
-    if (
-      isNaN(Number(pageSize)) ||
-      Number(pageSize) <= 0 ||
-      Number(pageSize) > 200
-    ) {
-      throw new HttpException('Page size must be between 1 and 200', 400);
-    }
-
+  @Get()
+  async getMany(@Query() req: Request) {
     try {
-      // 查询购买记录
-      return await findBuyRecordsBySender(
-        sender,
-        nextCursor && Number(nextCursor),
-        Number(pageSize),
-      );
-
-      // 查询记录总数
-    } catch ({ message }) {
-      console.log(`FindClaimRecords error: ${message}`);
-      throw new HttpException('Error retrieving claim records.', 500);
+      const body = await req.json();
+      return await defaultHandler(body, prisma);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  @Get('all-nodes')
-  async getAllNodes() {
+  @Get(':id')
+  async getOne(@Query() req: Request) {
     try {
-      return await findAllNodes();
-    } catch ({ message }) {
-      console.log(`GetAllNodes error: ${message}`);
-      throw new HttpException('Error retrieving all nodes.', 500);
+      const body = await req.json();
+      return await defaultHandler(body, prisma);
+    } catch (err) {
+      throw new HttpException(err.message, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  @Post()
+  async create(@Body() req: Request) {
+    const body = await req.json();
+    return await defaultHandler(body, prisma);
+  }
+
+  @Put()
+  async update(@Body() req: Request) {
+    const body = await req.json();
+    return await defaultHandler(body, prisma);
+  }
+
+  @Delete()
+  async delete(@Body() req: Request) {
+    const body = await req.json();
+    return await defaultHandler(body, prisma);
   }
 }

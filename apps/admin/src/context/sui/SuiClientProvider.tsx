@@ -2,12 +2,12 @@
 import { SuiClientProvider as ClientProvider } from '@mysten/dapp-kit';
 import { createNetworkConfig } from '@mysten/dapp-kit';
 import React from 'react';
-import { RPC } from '@/config';
+import { SUI_FULL_NODE } from '@/config';
 
 const SuiClientProvider = ({ children }: { children: React.ReactNode }) => {
   const { networkConfig } = createNetworkConfig({
     mainnet: {
-      url: RPC,
+      url: SUI_FULL_NODE,
     },
   });
 

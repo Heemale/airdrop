@@ -1,4 +1,4 @@
-export const RPC: string = process.env.NEXT_PUBLIC_URL!;
+export const SUI_FULL_NODE: string = process.env.NEXT_PUBLIC_SUI_FULL_NODE!;
 export const SUI_NETWORK = process.env.NEXT_PUBLIC_SUI_NETWORK as
   | 'mainnet'
   | 'testnet';
