@@ -2,11 +2,8 @@ import { prisma } from '@/config/prisma';
 import { Prisma } from '@prisma/client';
 
 export const create = async (data: Prisma.AdminCreateInput) => {
-  console.log('test');
   return prisma.admin.create({
-    data: {
-      ...data,
-    },
+    data: { ...data },
   });
 };
 
