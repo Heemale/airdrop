@@ -6,7 +6,7 @@
   "scripts": {
     "build": "turbo run build",
     "format": "prettier --write .",
-    "lint": "eslint . --ext .ts --fix",
+    "lint": "eslint . --fix",
     "prepare": "husky"
   },
   "keywords": [],
