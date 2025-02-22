@@ -4,12 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "format": "prettier --write .",
+    "lint": "eslint . --ext .ts --fix",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "lint-staged": "^15.4.3",
     "turbo": "^2.2.3"
+  },
+  "dependencies": {
+    "husky": "^9.1.7",
+    "prettier": "^3.5.1"
+  },
+  "lint-staged": {
+    "**/*.ts": "prettier --write"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
