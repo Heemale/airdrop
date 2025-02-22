@@ -8,10 +8,11 @@ import UserList from '@/components/page/user/UserList';
 import CopywritingList from '@/components/page/copywriting/CopyrightingtList';
 import CopywritingEdit from '@/components/page/copywriting/CopywritingEdit';
 import { authProvider } from '@/config/authProvider';
+import { BASE_URL } from "@/config";
 
 const AdminApp = () => (
   <Admin
-    dataProvider={dataProvider('/api')}
+    dataProvider={dataProvider(BASE_URL)}
     dashboard={Dashboard}
     layout={Layout}
     authProvider={authProvider}
@@ -22,6 +23,12 @@ const AdminApp = () => (
       options={{ label: '文案表' }}
       list={CopywritingList}
       edit={CopywritingEdit}
+    />
+    <Resource
+      name="node"
+      options={{ label: '权益表' }}
+      list={ListGuesser}
+      edit={EditGuesser}
     />
   </Admin>
 );
