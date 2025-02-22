@@ -27,155 +27,155 @@ import { generatorHandler } from '@prisma/generator-helper';
 import { snakeCase } from 'lodash';
 
 function getLastSegment(url: string): string | null {
-  const match = url.match(/\/([^\/]+)$/);
-  return match ? match[1] : null;
+	const match = url.match(/\/([^\/]+)$/);
+	return match ? match[1] : null;
 }
 
 function getDatabaseName(): string | null {
-  const url = process.env.DATABASE_URL;
-  return getLastSegment(url);
+	const url = process.env.DATABASE_URL;
+	return getLastSegment(url);
 }
 
 async function generateModelComment(model: any): Promise<string[]> {
-  const databaseName = getDatabaseName();
+	const databaseName = getDatabaseName();
 
-  const modelName = model.dbName ?? model.name;
+	const modelName = model.dbName ?? model.name;
 
-  const commentStatements: string[] = [];
+	const commentStatements: string[] = [];
 
-  const tableComment = model.documentation;
-  // comment table
-  if (tableComment) {
-    const tableCommentStr = `ALTER TABLE ${modelName} COMMENT '${tableComment}';`;
-    commentStatements.push(tableCommentStr);
-  }
+	const tableComment = model.documentation;
+	// comment table
+	if (tableComment) {
+		const tableCommentStr = `ALTER TABLE ${modelName} COMMENT '${tableComment}';`;
+		commentStatements.push(tableCommentStr);
+	}
 
-  // comment fields
-  model.fields.forEach((field: any) => {
-    if (!field.documentation) {
-      return;
-    }
+	// comment fields
+	model.fields.forEach((field: any) => {
+		if (!field.documentation) {
+			return;
+		}
 
-    // debugLog(`Generating comment for ${modelName}.${field.name}...`);
+		// debugLog(`Generating comment for ${modelName}.${field.name}...`);
 
-    const escapedComment = field.documentation?.replace(/'/g, "''") ?? '';
+		const escapedComment = field.documentation?.replace(/'/g, "''") ?? '';
 
-    // const commentTemplate = `COMMENT ON COLUMN "${modelName}"."${field.name}" IS '${escapedComment}';`;
+		// const commentTemplate = `COMMENT ON COLUMN "${modelName}"."${field.name}" IS '${escapedComment}';`;
 
-    const fieldName = snakeCase(field.name);
+		const fieldName = snakeCase(field.name);
 
-    const commentTemplate = `SET @column_type = ( SELECT column_type FROM information_schema.COLUMNS WHERE table_schema = '${databaseName}' AND table_name = '${modelName}' AND column_name = '${fieldName}' );
+		const commentTemplate = `SET @column_type = ( SELECT column_type FROM information_schema.COLUMNS WHERE table_schema = '${databaseName}' AND table_name = '${modelName}' AND column_name = '${fieldName}' );
     SET @alter_sql = CONCAT( 'ALTER TABLE ${modelName} MODIFY COLUMN ${fieldName} ', @column_type, ' COMMENT ''${escapedComment}''' );
     PREPARE alter_statement  FROM @alter_sql;
     EXECUTE alter_statement;
     DEALLOCATE PREPARE alter_statement;`;
-    commentStatements.push(commentTemplate);
-  });
+		commentStatements.push(commentTemplate);
+	});
 
-  return [`-- Model ${modelName} comments`, '', ...commentStatements, ''];
+	return [`-- Model ${modelName} comments`, '', ...commentStatements, ''];
 }
 
 async function fileHash(file: string, allowEmpty = false): Promise<string> {
-  try {
-    const fileContent = await fs.readFile(file, 'utf-8');
+	try {
+		const fileContent = await fs.readFile(file, 'utf-8');
 
-    // now use sha256 to hash the content and return it
-    return createHash('sha256').update(fileContent).digest('hex');
-  } catch (e: any) {
-    if (e.code === 'ENOENT' && allowEmpty) {
-      return '';
-    }
+		// now use sha256 to hash the content and return it
+		return createHash('sha256').update(fileContent).digest('hex');
+	} catch (e: any) {
+		if (e.code === 'ENOENT' && allowEmpty) {
+			return '';
+		}
 
-    throw e;
-  }
+		throw e;
+	}
 }
 
 async function lockChanged(
-  lockFile: string,
-  tmpLockFile: string,
+	lockFile: string,
+	tmpLockFile: string,
 ): Promise<boolean> {
-  return (await fileHash(lockFile, true)) !== (await fileHash(tmpLockFile));
+	return (await fileHash(lockFile, true)) !== (await fileHash(tmpLockFile));
 }
 
 export async function generate() {
-  const outputDir = './migrations';
-  await fs.mkdir(outputDir, { recursive: true });
+	const outputDir = './migrations';
+	await fs.mkdir(outputDir, { recursive: true });
 
-  const promises: Promise<string[]>[] = [];
+	const promises: Promise<string[]>[] = [];
 
-  // @ts-ignore
-  Prisma.dmmf.datamodel.models.forEach((model: any) => {
-    // debugLog(`Generating comment for ${model.name}...`);
-    promises.push(generateModelComment(model));
-  });
+	// @ts-ignore
+	Prisma.dmmf.datamodel.models.forEach((model: any) => {
+		// debugLog(`Generating comment for ${model.name}...`);
+		promises.push(generateModelComment(model));
+	});
 
-  const allStatements = await Promise.all(promises);
+	const allStatements = await Promise.all(promises);
 
-  const tmpLock = await fs.open(`${outputDir}/.comments-lock.tmp`, 'w+');
+	const tmpLock = await fs.open(`${outputDir}/.comments-lock.tmp`, 'w+');
 
-  await tmpLock.write('-- generator-version: 0.0\n\n');
+	await tmpLock.write('-- generator-version: 0.0\n\n');
 
-  // concat all promises and separate with new line and two newlines between each model
-  const allStatementsString = allStatements
-    .map((statements) => statements.join('\n'))
-    .join('\n\n');
+	// concat all promises and separate with new line and two newlines between each model
+	const allStatementsString = allStatements
+		.map((statements) => statements.join('\n'))
+		.join('\n\n');
 
-  await tmpLock.write(allStatementsString);
-  await tmpLock.close();
+	await tmpLock.write(allStatementsString);
+	await tmpLock.close();
 
-  // compare hashes of tmp lock file and existing lock file
-  // if they are the same, do nothing
-  // if they are different, write tmp lock file to lock file
-  // if lock file does not exist, also write tmp lock file to lock file
-  const isChanged = await lockChanged(
-    `${outputDir}/.comments-lock`,
-    `${outputDir}/.comments-lock.tmp`,
-  );
+	// compare hashes of tmp lock file and existing lock file
+	// if they are the same, do nothing
+	// if they are different, write tmp lock file to lock file
+	// if lock file does not exist, also write tmp lock file to lock file
+	const isChanged = await lockChanged(
+		`${outputDir}/.comments-lock`,
+		`${outputDir}/.comments-lock.tmp`,
+	);
 
-  if (isChanged) {
-    await fs.copyFile(
-      `${outputDir}/.comments-lock.tmp`,
-      `${outputDir}/.comments-lock`,
-    );
+	if (isChanged) {
+		await fs.copyFile(
+			`${outputDir}/.comments-lock.tmp`,
+			`${outputDir}/.comments-lock`,
+		);
 
-    // when lockfile changed we generate a new migration file too
-    const date = new Date();
-    date.setMilliseconds(0);
+		// when lockfile changed we generate a new migration file too
+		const date = new Date();
+		date.setMilliseconds(0);
 
-    const dateStr = date
-      .toISOString()
-      .replace(/[:\-TZ]/g, '')
-      .replace('.000', '');
-    const migrationDir = `prisma/migrations/${dateStr}_update_comments`;
+		const dateStr = date
+			.toISOString()
+			.replace(/[:\-TZ]/g, '')
+			.replace('.000', '');
+		const migrationDir = `prisma/migrations/${dateStr}_update_comments`;
 
-    console.log(
-      `Lock file changed, creating a new migration at ${migrationDir}...`,
-    );
+		console.log(
+			`Lock file changed, creating a new migration at ${migrationDir}...`,
+		);
 
-    await fs.mkdir(migrationDir, { recursive: true });
+		await fs.mkdir(migrationDir, { recursive: true });
 
-    await fs.copyFile(
-      `${outputDir}/.comments-lock`,
-      `${migrationDir}/migration.sql`,
-    );
-  } else {
-    console.log(
-      'No changes detected, skipping creating a fresh comment migration...',
-    );
-  }
+		await fs.copyFile(
+			`${outputDir}/.comments-lock`,
+			`${migrationDir}/migration.sql`,
+		);
+	} else {
+		console.log(
+			'No changes detected, skipping creating a fresh comment migration...',
+		);
+	}
 
-  // always delete tmp lock file
-  await fs.unlink(`${outputDir}/.comments-lock.tmp`);
+	// always delete tmp lock file
+	await fs.unlink(`${outputDir}/.comments-lock.tmp`);
 
-  console.log('Comment generation completed');
+	console.log('Comment generation completed');
 }
 
 generatorHandler({
-  onManifest() {
-    return {
-      defaultOutput: 'comments',
-      prettyName: 'Prisma Database comments Generator',
-    };
-  },
-  onGenerate: generate,
+	onManifest() {
+		return {
+			defaultOutput: 'comments',
+			prettyName: 'Prisma Database comments Generator',
+		};
+	},
+	onGenerate: generate,
 });

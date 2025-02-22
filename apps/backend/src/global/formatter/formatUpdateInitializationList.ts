@@ -2,11 +2,11 @@ import { UpdateInitializationListSummary } from '@local/airdrop-sdk/global';
 import { Prisma } from '@prisma/client';
 
 export const formatUpdateInitializationList = (
-  eventObject: UpdateInitializationListSummary,
+	eventObject: UpdateInitializationListSummary,
 ): Prisma.ObjectCreateInput => {
-  const { object, isValid } = eventObject;
-  return {
-    object,
-    isValid,
-  };
+	const { object, isValid } = eventObject;
+	return {
+		object,
+		isValid,
+	};
 };

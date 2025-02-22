@@ -5,7 +5,7 @@ import { NodeChangeScheduler } from '@/node/scheduler/nodeChange.scheduler';
 import { BuyRecordController } from '@/node/buyRecord.controller';
 
 @Module({
-  controllers: [NodeController],
-  providers: [BuyScheduler, NodeChangeScheduler, BuyRecordController],
+	controllers: [NodeController],
+	providers: [BuyScheduler, NodeChangeScheduler, BuyRecordController],
 })
 export class NodeModule {}

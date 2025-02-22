@@ -12,18 +12,18 @@ import { UploadModule } from './upload/upload.module';
 import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [
-    ScheduleModule.forRoot(),
-    NodeModule,
-    UserModule,
-    AirdropModule,
-    GlobalModule,
-    LimitModule,
-    InvestModule,
-    UploadModule,
-    AuthModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+	imports: [
+		ScheduleModule.forRoot(),
+		NodeModule,
+		UserModule,
+		AirdropModule,
+		GlobalModule,
+		LimitModule,
+		InvestModule,
+		UploadModule,
+		AuthModule,
+	],
+	controllers: [AppController],
+	providers: [AppService],
 })
 export class AppModule {}
