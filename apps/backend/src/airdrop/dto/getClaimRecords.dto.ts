@@ -1,5 +1,5 @@
 export class GetClaimRecordsDto {
-	sender: string;
-	nextCursor?: number;
-	pageSize: number;
+  sender: string;
+  nextCursor?: number;
+  pageSize: number;
 }

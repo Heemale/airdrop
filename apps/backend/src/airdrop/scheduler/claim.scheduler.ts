@@ -9,29 +9,29 @@ import { consoleError } from '@/log';
 
 @Injectable()
 export class ClaimScheduler {
-	cursorV1: EventId | null = null;
-	finishedV1: boolean = false;
+  cursorV1: EventId | null = null;
+  finishedV1: boolean = false;
 
-	@Cron(new Date(Date.now() + 5 * 1000))
-	async task() {
-		await this.subscribe();
-	}
+  @Cron(new Date(Date.now() + 5 * 1000))
+  async task() {
+    await this.subscribe();
+  }
 
-	async subscribe() {
-		while (!this.finishedV1) {
-			try {
-				const logs = await airdropClientV1.getAllClaim({
-					cursor: this.cursorV1,
-					order: 'ascending',
-				});
-				for (const log of logs.data) {
-					await handleClaim(formatClaim(log));
-				}
-				if (logs.hasNextPage) this.cursorV1 = logs.nextCursor;
-			} catch ({ message }) {
-				consoleError(this.constructor.name, message);
-			}
-			await sleep(1);
-		}
-	}
+  async subscribe() {
+    while (!this.finishedV1) {
+      try {
+        const logs = await airdropClientV1.getAllClaim({
+          cursor: this.cursorV1,
+          order: 'ascending',
+        });
+        for (const log of logs.data) {
+          await handleClaim(formatClaim(log));
+        }
+        if (logs.hasNextPage) this.cursorV1 = logs.nextCursor;
+      } catch ({ message }) {
+        consoleError(this.constructor.name, message);
+      }
+      await sleep(1);
+    }
+  }
 }

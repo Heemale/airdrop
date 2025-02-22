@@ -4,7 +4,7 @@ import { BindScheduler } from '@/user/scheduler/bind.scheduler ';
 import { ClaimScheduler } from '@/airdrop/scheduler/claim.scheduler';
 
 @Module({
-	controllers: [UserController],
-	providers: [BindScheduler, ClaimScheduler],
+  controllers: [UserController],
+  providers: [BindScheduler, ClaimScheduler],
 })
 export class UserModule {}

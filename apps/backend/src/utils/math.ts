@@ -2,26 +2,26 @@ import BigNumber from 'bignumber.js';
 
 // Convert large units to small units
 export const convertLargeToSmall = (
-	from: number | string,
-	decimal: number | string,
+  from: number | string,
+  decimal: number | string,
 ): string => {
-	const x = new BigNumber(from);
-	const y = new BigNumber(10).pow(decimal);
-	return x.times(y).toFixed();
+  const x = new BigNumber(from);
+  const y = new BigNumber(10).pow(decimal);
+  return x.times(y).toFixed();
 };
 
 // Convert small units to large units
 export const convertSmallToLarge = (
-	from: number | string,
-	decimal: number | string,
+  from: number | string,
+  decimal: number | string,
 ): string => {
-	const x = new BigNumber(from);
-	const y = new BigNumber(10).pow(decimal);
-	return x.dividedBy(y).toFixed();
+  const x = new BigNumber(from);
+  const y = new BigNumber(10).pow(decimal);
+  return x.dividedBy(y).toFixed();
 };
 
 export const formatBigNumber = (from: number | string): string => {
-	return new BigNumber(from).toFixed();
+  return new BigNumber(from).toFixed();
 };
 
 /*
@@ -34,36 +34,36 @@ export const formatBigNumber = (from: number | string): string => {
  * :-------:|:---------------------------------------------------------------|
  * */
 export const comparedTo = (x: string | number, y: string | number) => {
-	const xBigNumber = new BigNumber(x);
-	const yBigNumber = new BigNumber(y);
-	return xBigNumber.comparedTo(yBigNumber);
+  const xBigNumber = new BigNumber(x);
+  const yBigNumber = new BigNumber(y);
+  return xBigNumber.comparedTo(yBigNumber);
 };
 
 export const add = (x: string | number, y: string | number): string => {
-	const xBigNumber = new BigNumber(x);
-	const yBigNumber = new BigNumber(y);
-	return xBigNumber.plus(yBigNumber).toFixed();
+  const xBigNumber = new BigNumber(x);
+  const yBigNumber = new BigNumber(y);
+  return xBigNumber.plus(yBigNumber).toFixed();
 };
 
 export const subtract = (x: string | number, y: string | number): string => {
-	const xBigNumber = new BigNumber(x);
-	const yBigNumber = new BigNumber(y);
-	return xBigNumber.minus(yBigNumber).toFixed();
+  const xBigNumber = new BigNumber(x);
+  const yBigNumber = new BigNumber(y);
+  return xBigNumber.minus(yBigNumber).toFixed();
 };
 
 export const multiply = (x: string | number, y: string | number): string => {
-	const xBigNumber = new BigNumber(x);
-	const yBigNumber = new BigNumber(y);
-	return xBigNumber.times(yBigNumber).toFixed();
+  const xBigNumber = new BigNumber(x);
+  const yBigNumber = new BigNumber(y);
+  return xBigNumber.times(yBigNumber).toFixed();
 };
 
 export const divide = (x: string | number, y: string | number): string => {
-	const xBigNumber = new BigNumber(x);
-	const yBigNumber = new BigNumber(y);
-	return xBigNumber.dividedBy(yBigNumber).toFixed();
+  const xBigNumber = new BigNumber(x);
+  const yBigNumber = new BigNumber(y);
+  return xBigNumber.dividedBy(yBigNumber).toFixed();
 };
 
 export const toFixed = (x: string | number, toFixed: number): string => {
-	const xBigNumber = new BigNumber(x);
-	return xBigNumber.toFixed(toFixed);
+  const xBigNumber = new BigNumber(x);
+  return xBigNumber.toFixed(toFixed);
 };

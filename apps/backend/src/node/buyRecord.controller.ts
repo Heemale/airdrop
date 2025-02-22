@@ -5,47 +5,47 @@ import { findAllNodes } from '@/node/dao/node.dao';
 
 @Controller()
 export class BuyRecordController {
-	@Get('buy-node-record')
-	async getBuyRecords(@Query() params: GetBuyInfoDto) {
-		const { sender, pageSize = 25, nextCursor } = params;
+  @Get('buy-node-record')
+  async getBuyRecords(@Query() params: GetBuyInfoDto) {
+    const { sender, pageSize = 25, nextCursor } = params;
 
-		// 参数校验
-		if (!sender) {
-			throw new HttpException('Sender address is required', 400);
-		}
-		if (nextCursor && isNaN(Number(nextCursor))) {
-			throw new HttpException('Invalid nextCursor.', 400);
-		}
-		if (
-			isNaN(Number(pageSize)) ||
-			Number(pageSize) <= 0 ||
-			Number(pageSize) > 200
-		) {
-			throw new HttpException('Page size must be between 1 and 200', 400);
-		}
+    // 参数校验
+    if (!sender) {
+      throw new HttpException('Sender address is required', 400);
+    }
+    if (nextCursor && isNaN(Number(nextCursor))) {
+      throw new HttpException('Invalid nextCursor.', 400);
+    }
+    if (
+      isNaN(Number(pageSize)) ||
+      Number(pageSize) <= 0 ||
+      Number(pageSize) > 200
+    ) {
+      throw new HttpException('Page size must be between 1 and 200', 400);
+    }
 
-		try {
-			// 查询购买记录
-			return await findBuyRecordsBySender(
-				sender,
-				nextCursor && Number(nextCursor),
-				Number(pageSize),
-			);
+    try {
+      // 查询购买记录
+      return await findBuyRecordsBySender(
+        sender,
+        nextCursor && Number(nextCursor),
+        Number(pageSize),
+      );
 
-			// 查询记录总数
-		} catch ({ message }) {
-			console.log(`FindClaimRecords error: ${message}`);
-			throw new HttpException('Error retrieving claim records.', 500);
-		}
-	}
+      // 查询记录总数
+    } catch ({ message }) {
+      console.log(`FindClaimRecords error: ${message}`);
+      throw new HttpException('Error retrieving claim records.', 500);
+    }
+  }
 
-	@Get('all-nodes')
-	async getAllNodes() {
-		try {
-			return await findAllNodes();
-		} catch ({ message }) {
-			console.log(`GetAllNodes error: ${message}`);
-			throw new HttpException('Error retrieving all nodes.', 500);
-		}
-	}
+  @Get('all-nodes')
+  async getAllNodes() {
+    try {
+      return await findAllNodes();
+    } catch ({ message }) {
+      console.log(`GetAllNodes error: ${message}`);
+      throw new HttpException('Error retrieving all nodes.', 500);
+    }
+  }
 }

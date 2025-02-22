@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 // import { UpdateInvestScheduler } from '@/invest/scheduler/updateInvest.scheduler';
 
 @Module({
-	controllers: [],
-	providers: [],
+  controllers: [],
+  providers: [],
 })
 export class InvestModule {}
