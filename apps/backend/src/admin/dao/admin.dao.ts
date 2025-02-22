@@ -3,7 +3,9 @@ import { Prisma } from '@prisma/client';
 
 export const create = async (data: Prisma.AdminCreateInput) => {
   return prisma.admin.create({
-    data: { ...data },
+    data: {
+      ...data,
+    },
   });
 };
 
