@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { LimitController } from '@/limit/limit.controller';
 
 @Module({
-  controllers: [],
+  controllers: [LimitController],
   providers: [],
 })
 export class LimitModule {}

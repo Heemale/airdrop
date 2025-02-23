@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { getCoinMetaData } from '@/sdk';
 import { message } from 'antd';
-import { getClaimAirdropRecord } from '@/api';
+import { getClaimRecords } from '@/api';
 import { formatTimestamp } from '@/utils/time';
 import Image from 'next/image';
 import Backdrop from '@mui/material/Backdrop';
@@ -55,8 +55,7 @@ const MyAirdrops = () => {
   ) => {
     if (!hasMore || loading) return; // 防止重复加载
     try {
-      const response = await getClaimAirdropRecord({
-        sender: sender!,
+      const response = await getClaimRecords(sender!, {
         nextCursor: cursor!,
       });
       const newAirdrops = response.data || [];

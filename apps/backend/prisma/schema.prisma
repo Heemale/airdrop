@@ -15,7 +15,7 @@ datasource db {
 
 /// 管理员表
 model Admin {
-  id          Int     @id @default(autoincrement()) @db.UnsignedInt /// Id
+  id          Int     @id @default(autoincrement()) @db.UnsignedInt /// ID
   username    String? @unique @default("") @db.VarChar(20) /// 用户名
   nickname    String? @default("") @db.VarChar(64) /// 昵称
   password    String? @default("") @db.VarChar(64) /// 密码
@@ -30,8 +30,8 @@ model Admin {
 }
 
 /// 文案表
-model Copywriting {
-  id       Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
+model MediaConfig {
+  id       Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
   page     String?  @db.VarChar(255) /// 页面
   code     String?  @db.VarChar(255) /// 文案编码
   zh       String?  @db.Text /// 中文
@@ -42,19 +42,19 @@ model Copywriting {
   createAt BigInt?  @map("create_at") /// 创建时间
   updateAt BigInt?  @map("update_at") /// 更新时间
 
-  @@map("swld_copywriting")
+  @@map("swld_media_config")
 }
 
 /// 用户表
 model User {
-  id                      Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
+  id                      Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
   txDigest                String?  @map("tx_digest") @db.VarChar(255) /// txDigest
   eventSeq                String?  @map("event_seq") @db.VarChar(255) /// eventSeq
   joinAt                  BigInt?  @map("join_at") /// 加入时间
   address                 String?  @unique @db.VarChar(72) /// 用户地址
   inviter                 String?  @db.VarChar(72) /// 邀请人地址
-  inviterId               Int?     @map("inviter_id") @db.UnsignedInt /// 邀请人Id
-  sharerIds               String?  @map("sharer_ids") @db.Text /// 分享人id列表
+  inviterId               Int?     @map("inviter_id") @db.UnsignedInt /// 邀请人ID
+  sharerIds               String?  @map("sharer_ids") @db.Text /// 分享人ID列表
   totalInvestment         BigInt?  @default(0) @map("total_investment") /// 总投资金额
   totalInvestmentUpdateAt BigInt?  @default(0) @map("total_investment_update_at") /// 总投资金额更新时间
   totalGains              BigInt?  @default(0) @map("total_gains") /// 总收益金额
@@ -71,7 +71,7 @@ model User {
 
 /// 权益表
 model Node {
-  id                Int      @id @default(autoincrement()) @db.UnsignedInt /// Id
+  id                Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
   rank              BigInt?  @unique /// 节点等级
   name              String?  @db.VarChar(255) /// 名称
   description       String?  @db.Text /// 描述
@@ -103,7 +103,7 @@ model Airdrop {
   remainingBalance BigInt?  @map("remaining_balance") /// 空投剩余资金
   createAt         BigInt?  @map("create_at") /// 创建时间
   updateAt         BigInt?  @map("update_at") /// 更新时间
-  isRemove         Boolean? @map("is_remove")
+  isRemove         Boolean? @map("is_remove") /// 是否移除
 
   @@map("swld_airdrop")
 }
@@ -120,11 +120,11 @@ model SpecialLimit {
   @@map("swld_special_limit")
 }
 
-/// 全局表
+/// 全局对象表
 model Object {
   id      Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
-  object  String?  @unique @db.VarChar(72) /// 对象id
-  isValid Boolean? @map("is_valid")
+  object  String?  @unique @db.VarChar(72) /// 对象ID
+  isValid Boolean? @map("is_valid") /// 是否合法
 
   @@map("swld_object")
 }

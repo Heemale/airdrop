@@ -3,6 +3,7 @@ export interface PaginatedResponse<T> {
   hasNextPage: boolean;
   nextCursor: number | null;
 }
+
 export interface Node {
   description: string;
   name: string;

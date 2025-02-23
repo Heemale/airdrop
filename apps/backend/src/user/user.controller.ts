@@ -1,21 +1,27 @@
-import { Controller, Get, HttpException, Query } from '@nestjs/common';
 import {
-  findUserByAddress,
-  getAllSubordinates,
-  getRootUsers,
-} from '@/user/dao/user.dao';
-import { GetSharesDto, GetUserInfoDto } from '@/user/dto/getUserInfo.dto';
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Param,
+  Query,
+} from '@nestjs/common';
+import { CrudController } from '@/common/crud/crud.controller';
+import { findUserByAddress, getAllSubordinates } from '@/user/dao/user.dao';
 import { convertSmallToLarge } from '@/utils/math';
 import { TOKEN_DECIMAL } from '@/config';
+import { PaginatedRequest } from '@/common/types';
 
-@Controller('user')
-export class UserController {
-  @Get('info')
-  async getUserInfo(@Query() params: GetUserInfoDto) {
-    const sender = params.sender && params.sender.toLowerCase();
+@Controller('users')
+export class UserController extends CrudController {
+  protected resource: string = 'user';
+
+  @Get('address/:address/info')
+  async getUserInfo(@Param('address') address: string) {
+    const sender = address && address.toLowerCase();
 
     if (!sender) {
-      throw new HttpException('Invalid parameters', 400);
+      throw new HttpException('Invalid parameters', HttpStatus.BAD_REQUEST);
     }
 
     const user = await findUserByAddress(sender);
@@ -48,42 +54,27 @@ export class UserController {
       teams: data.allSubordinates.length,
     };
   }
-  @Get('children')
-  async getRchildren() {
-    const users = await getRootUsers();
-    const children = await Promise.all(
-      users.map(async (user) => {
-        const data = await getAllSubordinates(user.id);
-        return {
-          parentAddress: user.address,
-          children: data.children, // 返回包含树状结构的子节点
-        };
-      }),
-    );
 
-    // 提取所有根用户的地址
-    const rootAddresses = users.map((user) => user.address);
-
-    return {
-      rootAddresses, // 返回根用户的地址数组
-      children, // 返回每个根用户的子节点
-    };
-  }
-
-  @Get('shares')
-  async getShares(@Query() params: GetSharesDto) {
-    const sender = params.sender && params.sender.toLowerCase();
+  @Get('address/:address/shares')
+  async getShares(
+    @Param('address') address: string,
+    @Query() params: PaginatedRequest,
+  ) {
+    const sender = address && address.toLowerCase();
     const nextCursor = params.nextCursor && Number(params.nextCursor);
     const pageSize = params.pageSize ? Number(params.pageSize) : 25;
 
     if (!sender) {
-      throw new HttpException('Invalid sender.', 400);
+      throw new HttpException('Invalid sender.', HttpStatus.BAD_REQUEST);
     }
     if (nextCursor && isNaN(nextCursor)) {
-      throw new HttpException('Invalid nextCursor.', 400);
+      throw new HttpException('Invalid nextCursor.', HttpStatus.BAD_REQUEST);
     }
     if (isNaN(pageSize) || pageSize <= 0 || pageSize > 200) {
-      throw new HttpException('Page size must be between 1 and 200.', 400);
+      throw new HttpException(
+        'Page size must be between 1 and 200.',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const user = await findUserByAddress(sender);

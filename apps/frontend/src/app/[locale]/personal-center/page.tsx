@@ -27,9 +27,7 @@ const Home = () => {
       if (account?.address) {
         try {
           setLoading(true);
-          const data = await getUserInfo({
-            sender: account.address,
-          });
+          const data = await getUserInfo(account.address);
           if (data) {
             setUserInfo(data);
           } else {

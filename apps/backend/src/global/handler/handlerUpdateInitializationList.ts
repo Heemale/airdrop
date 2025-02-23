@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { upsertGlobal } from '@/global/dao/global.dao';
+import { upsertGlobal } from '@/global/dao/object.dao';
 
 export const handlerUpdateInitializationList = async (
   event: Prisma.ObjectCreateInput,

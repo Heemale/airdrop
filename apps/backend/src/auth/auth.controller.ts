@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@/auth/auth.guard';
-import { SignInDto } from './dto/sign-in.dto';
-import { SignUpDto } from './dto/sign-up.dto';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
 
 export const User = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
@@ -27,7 +27,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post('register')
-  async register(@Body() signUpDto: SignUpDto) {
+  async register(@Body() signUpDto: RegisterDto) {
     const { username, password } = signUpDto;
     await this.authService.register(username, password);
     return 'success';
@@ -35,7 +35,7 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async login(@Body() signInDto: SignInDto) {
+  async login(@Body() signInDto: LoginDto) {
     const { username, password } = signInDto;
     return await this.authService.login(username, password);
   }

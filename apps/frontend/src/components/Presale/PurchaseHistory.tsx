@@ -4,7 +4,7 @@ import { useClientTranslation } from '@/hook';
 import { message } from 'antd';
 import { handleTxError } from '@/sdk/error';
 import { formatTimestamp } from '@/utils/time';
-import { getBuyNodeRecord } from '@/api';
+import { getBuyRecords } from '@/api';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { convertSmallToLarge } from '@/utils/math';
 import type { BuyNodeRecord } from '@/api/types/response';
@@ -34,8 +34,7 @@ const PurchaseHistory = () => {
 
     try {
       setLoading(true);
-      const response = await getBuyNodeRecord({
-        sender: account?.address!,
+      const response = await getBuyRecords(account?.address!, {
         nextCursor: cursor!,
       });
       const newBuy = response.data || [];

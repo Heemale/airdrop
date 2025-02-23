@@ -1,10 +1,5 @@
 import request from '@/utils/request';
-import {
-  GetBuyNodeRecordRequest,
-  GetClaimAirdropRecordRequest,
-  GetUserInfoRequest,
-  GetUserSharesRequest,
-} from '@/api/types/request';
+import { PaginatedRequest } from '@/api/types/request';
 import {
   BuyNodeRecord,
   ClaimAirdropRecord,
@@ -13,21 +8,23 @@ import {
   UserInfoResponse,
 } from '@/api/types/response';
 
-export const getUserInfo = (
-  params: GetUserInfoRequest,
-): Promise<UserInfoResponse> => request.get('/user/info', { params });
+export const getUserInfo = (address: string): Promise<UserInfoResponse> =>
+  request.get(`/users/address/${address}/info`);
 
 export const getUserShares = (
-  params: GetUserSharesRequest,
+  address: string,
+  params: PaginatedRequest,
 ): Promise<PaginatedResponse<UserSharesResponse>> =>
-  request.get('/user/shares', { params });
+  request.get(`/users/address/${address}/shares`, { params });
 
-export const getBuyNodeRecord = (
-  params: GetBuyNodeRecordRequest,
+export const getBuyRecords = (
+  address: string,
+  params: PaginatedRequest,
 ): Promise<PaginatedResponse<BuyNodeRecord>> =>
-  request.get('/buy-node-record', { params });
+  request.get(`/buy-records/address/${address}`, { params });
 
-export const getClaimAirdropRecord = (
-  params: GetClaimAirdropRecordRequest,
+export const getClaimRecords = (
+  address: string,
+  params: PaginatedRequest,
 ): Promise<PaginatedResponse<ClaimAirdropRecord>> =>
-  request.get('/claim-airdrop-record', { params });
+  request.get(`/claim-records/address/${address}`, { params });

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { GlobalController } from '@/global/global.controller';
+import { ObjectController } from '@/global/object.controller';
 
 @Module({
-  controllers: [GlobalController],
+  controllers: [ObjectController],
   providers: [],
 })
 export class GlobalModule {}
