@@ -1,11 +1,13 @@
+export const key = 'auth';
+
 export const getAuth = () => {
-  return localStorage.getItem('auth');
+  return localStorage.getItem(key);
 };
 
 export const setAuth = (auth: string) => {
-  localStorage.getItem(auth);
+  localStorage.setItem(key, auth);
 };
 
 export const removeAuth = () => {
-  localStorage.removeItem('auth');
+  localStorage.removeItem(key);
 };
