@@ -1,18 +1,17 @@
 'use client';
 
 import { Admin, Resource, ListGuesser, EditGuesser } from 'react-admin';
-import { dataProvider } from 'ra-data-simple-prisma';
 import Dashboard from '@/components/Dashboard';
 import Layout from '@/components/Layout';
 import UserList from '@/components/page/user/UserList';
 import CopywritingList from '@/components/page/copywriting/CopyrightingtList';
 import CopywritingEdit from '@/components/page/copywriting/CopywritingEdit';
 import { authProvider } from '@/config/authProvider';
-import { BASE_URL } from "@/config";
+import { dataProvider } from '@/config/dataProvider';
 
 const AdminApp = () => (
   <Admin
-    dataProvider={dataProvider(BASE_URL)}
+    dataProvider={dataProvider}
     dashboard={Dashboard}
     layout={Layout}
     authProvider={authProvider}

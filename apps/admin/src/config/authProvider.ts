@@ -1,5 +1,6 @@
 import { AuthProvider } from 'react-admin';
 import { BASE_URL } from '@/config';
+import { getAuth, removeAuth, setAuth } from '@/config/auth';
 // import * as jwtDecode from 'jwt-decode';
 
 export const authProvider: AuthProvider = {
@@ -10,7 +11,6 @@ export const authProvider: AuthProvider = {
       body: JSON.stringify({ username, password }),
       headers: new Headers({ 'Content-Type': 'application/json' }),
     });
-
     return fetch(request)
       .then((response) => {
         if (response.status < 200 || response.status >= 300) {
@@ -19,7 +19,7 @@ export const authProvider: AuthProvider = {
         return response.json();
       })
       .then((auth) => {
-        localStorage.setItem('auth', auth['accessToken']);
+        setAuth(auth['accessToken']);
         return { redirectTo: '/' };
       })
       .catch(() => {
@@ -28,13 +28,13 @@ export const authProvider: AuthProvider = {
   },
   // called when the user clicks on the logout button
   logout: () => {
-    localStorage.removeItem('auth');
+    removeAuth();
     return Promise.resolve();
   },
   // called when the API returns an error
   checkError: ({ status }: { status: number }) => {
     if (status === 401 || status === 403) {
-      localStorage.removeItem('auth');
+      removeAuth();
       return Promise.reject();
     }
     return Promise.resolve();
@@ -56,8 +56,7 @@ export const authProvider: AuthProvider = {
 };
 
 export const check = () => {
-  const token = localStorage.getItem('auth');
-
+  const token = getAuth();
   if (!token) return Promise.reject();
 
   const request = new Request(`${BASE_URL}/auth/profile`, {
@@ -80,7 +79,7 @@ export const check = () => {
       return Promise.resolve(user);
     })
     .catch(() => {
-      localStorage.removeItem('auth');
+      removeAuth();
       throw new Error('Authentication error');
     });
 };
