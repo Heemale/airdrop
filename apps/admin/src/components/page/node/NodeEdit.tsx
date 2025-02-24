@@ -25,7 +25,6 @@ const transform = async (data: any) => {
 };
 
 const NodeEdit = () => {
-
   const onSubmit = (data: any) => {
     console.log({ data });
   };

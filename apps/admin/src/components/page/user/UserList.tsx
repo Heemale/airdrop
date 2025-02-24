@@ -99,7 +99,12 @@ const UserList = () => (
         source="totalInvestment"
         label="总投资金额"
         render={(record) =>
-          convertSmallToLarge(record.totalInvestment.toString(), TOKEN_DECIMAL)
+          record
+            ? convertSmallToLarge(
+                record.totalInvestment.toString(),
+                TOKEN_DECIMAL,
+              )
+            : '-'
         }
       />
       <TimeTextField
@@ -110,7 +115,7 @@ const UserList = () => (
         source="totalGains"
         label="总收益金额"
         render={(record) =>
-          convertSmallToLarge(record.totalInvestment.toString(), TOKEN_DECIMAL)
+          convertSmallToLarge(record.totalGains.toString(), TOKEN_DECIMAL)
         }
       />
       <TimeTextField source="totalGainsUpdateAt" label="总收益金额更新时间" />

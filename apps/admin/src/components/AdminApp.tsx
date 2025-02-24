@@ -7,8 +7,8 @@ import Dashboard from '@/components/Dashboard';
 import Layout from '@/components/Layout';
 import UserList from '@/components/page/user/UserList';
 import UserEdit from '@/components/page/user/UserEdit';
-import CopywritingList from '@/components/page/copywriting/CopyrightingtList';
-import CopywritingEdit from '@/components/page/copywriting/CopywritingEdit';
+import MediaConfigList from '@/components/page/media-config/MediaConfigList';
+import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
 import AirdropList from '@/components/page/airdrop/AirdropList';
 import ClaimRecordList from '@/components/page/airdrop/ClaimRecordList';
 import GlobalList from '@/components/page/global/GlobalList';
@@ -76,8 +76,8 @@ const AdminApp = () => (
     <Resource
       name="media-configs"
       options={{ label: '文案表' }}
-      list={CopywritingList}
-      edit={CopywritingEdit}
+      list={MediaConfigList}
+      edit={MediaConfigEdit}
     />
   </Admin>
 );

@@ -91,26 +91,16 @@ const AirdropList = () => (
       <TextField source="round" label="轮次" />
       <TimeTextField source="startTime" label="开始时间" />
       <TimeTextField source="endTime" label="结束时间" />
-      <FunctionField
-        source="totalShares"
-        label="总份数"
-        render={(record) =>
-          convertSmallToLarge(record.totalShares.toString(), TOKEN_DECIMAL)
-        }
-      />
-      <FunctionField
-        source="claimedShares"
-        label="已领取份数"
-        render={(record) =>
-          convertSmallToLarge(record.claimedShares.toString(), TOKEN_DECIMAL)
-        }
-      />
+      <TextField source="totalShares" label="总份数" />
+      <TextField source="claimedShares" label="已领取份数" />
       <TextField source="description" label="描述" />
       <FunctionField
         source="totalBalance"
         label="总资金"
         render={(record) =>
-          convertSmallToLarge(record.totalBalance.toString(), TOKEN_DECIMAL)
+          record.totalBalance
+            ? convertSmallToLarge(record.totalBalance.toString(), TOKEN_DECIMAL)
+            : '-'
         }
       />
       <BooleanField source="isOpen" label="是否开放" />
@@ -120,7 +110,12 @@ const AirdropList = () => (
         source="remainingBalance"
         label="空投剩余资金"
         render={(record) =>
-          convertSmallToLarge(record.remainingBalance.toString(), TOKEN_DECIMAL)
+          record.remainingBalance
+            ? convertSmallToLarge(
+                record.remainingBalance.toString(),
+                TOKEN_DECIMAL,
+              )
+            : '-'
         }
       />
       <BooleanField source="isRemove" label="是否移除" />
