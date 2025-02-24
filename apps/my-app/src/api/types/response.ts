@@ -66,6 +66,6 @@ export interface SubordinateNode {
 
 // 根节点类型
 export interface RootNode {
-  parentAddress: string[]; // 根用户的地址数组
+  rootAddresses: string[]; // 根用户的地址数组
   children: SubordinateNode[]; // 根节点的子节点数组
 }

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { ConnectModal } from "@mysten/dapp-kit";
-import * as React from "react";
+import { ConnectModal } from '@mysten/dapp-kit';
+import * as React from 'react';
 
 interface Props {
   text: string;
