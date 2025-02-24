@@ -46,7 +46,7 @@ const TreeNode: React.FC<{ node: SubordinateNode; depth: number }> = ({
   const handleToggle = () => {
     setIsOpen((prev) => !prev); // 切换展开状态
   };
-
+console.log(8672637267362783232,node.address)
   return (
     <li style={treeNodeStyle}>
       <div style={nodeHeaderStyle}>
@@ -57,7 +57,7 @@ const TreeNode: React.FC<{ node: SubordinateNode; depth: number }> = ({
           </button>
         )}
         {/* 节点内容 */}
-        <span>{node.address ?? "Root Node"}</span>
+        <span>{node.address ?? "children"}</span>
       </div>
 
       {/* 递归渲染子节点 */}
@@ -71,13 +71,17 @@ const TreeNode: React.FC<{ node: SubordinateNode; depth: number }> = ({
 // 根组件，接收数据并渲染整个树
 export const TreeStructure: React.FC<{ data: RootNode[] }> = ({ data }) => {
   console.log("Data:", JSON.stringify(data, null, 2));
+ if (data){
+  console.log(234234234234,data)
 
+ }
   return (
     <div style={{ fontFamily: "Arial, sans-serif", padding: "16px" }}>
-      {data.map((rootNode, index) => (
+       {data.map((rootNode, index) => (
         <div key={index}>
           {/* 渲染第一层子节点 */}
-          {rootNode.children && rootNode.children.length > 0 && (
+          <h3>Root Addresses:</h3>
+          <pre>{rootNode.rootAddresses.join("\n")}</pre>          {rootNode.children && rootNode.children.length > 0 && (
             <RenderTree nodes={rootNode.children} depth={1} />
           )}
         </div>

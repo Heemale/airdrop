@@ -36,7 +36,7 @@ import { formatTimestamp } from "../utils/time";
 import { convertLargeToSmall, convertSmallToLarge } from "../utils/math";
 import { handleDevTxError } from "@/sdk/error";
 import { isHexString } from "@/utils";
-import { getNodeInfo, getChildren } from "@/api";
+import { getNodeInfo, getChildren, getUserInfo } from "@/api";
 import { TreeStructure } from "./components/UserTree";
 import { RootNode } from "@/api/types/response";
 
@@ -111,7 +111,9 @@ const AdminPage = () => {
   const [showLimitModal, setShowLimitModal] = useState(false);
   const [editReceiver, setEditReceiver] = useState(false);
   const [treeData, setTreeData] = useState<RootNode[]>([]);
+  const [treeData1, setTreeData1] = useState<RootNode[]>([]);
 
+  const [address, setAddress] = useState("");
   console.log("account", account);
   // 表格列配置
   const columns = [
@@ -799,6 +801,28 @@ const AdminPage = () => {
     console.log("childrenData", childrenData);
     setTreeData(childrenData); // 设置数据
   };
+
+  const handleSearch = async () => {
+    if (!address) return; // 如果地址为空，直接返回
+    setLoading(true); // 设置加载状态
+
+    try {
+      const data = await getUserInfo(address); // 根据输入地址调用 API 获取数据
+      // 确保 data 是一个数组
+      const rootNode: RootNode[] = [
+        {
+          rootAddresses: [address], // 假设当前地址作为根节点的 parentAddress
+          children: Array.isArray(data) ? data : [data], // 将获取到的 children 数据赋给 rootNode 的 children
+        },
+      ];
+
+      setTreeData1(rootNode);
+    } catch (e: any) {
+      messageApi.error(handleDevTxError(e.message.trim()));
+    } finally {
+      setLoading(false); // 结束加载状态
+    }
+  };
   // 组件加载时获取数据
   useEffect(() => {
     fetchData();
@@ -1325,6 +1349,22 @@ const AdminPage = () => {
         <h1>User Hierarchy</h1>
         {/* 将treeData传递给TreeStructure组件 */}
         <TreeStructure data={treeData} />
+      </div>
+      <div>
+        <div>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)} // 更新地址输入
+            placeholder="请输入地址"
+          />
+          <button onClick={handleSearch} disabled={loading}>
+            {loading ? "加载中..." : "搜索"}
+          </button>
+        </div>
+
+        {/* 渲染树形结构 */}
+        {treeData1.length > 0 && <TreeStructure data={treeData1} />}
       </div>
     </div>
   );

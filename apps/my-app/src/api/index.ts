@@ -1,7 +1,13 @@
-import request from "@/utils/request";
-import { NodeInfoResponse, RootNode } from "@/api/types/response";
+import request from '@/utils/request';
+import {
+  NodeInfoResponse,
+  RootNode,
+  SubordinateNode,
+} from '@/api/types/response';
 export const getNodeInfo = (): Promise<NodeInfoResponse> =>
-  request.get("/all-nodes");
+  request.get('/all-nodes');
 
 export const getChildren = (): Promise<RootNode> =>
-  request.get("/user/children");
+  request.get('/user/children');
+export const getUserInfo = (address: string): Promise<SubordinateNode> =>
+  request.get(`/user/address/${address}/children`);

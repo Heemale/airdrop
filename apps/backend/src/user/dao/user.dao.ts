@@ -106,7 +106,25 @@ export const findUserByAddress = async <
     },
   });
 };
+export const getUserId = async (address: string) => {
+  try {
+    // 查找用户表，通过地址查找用户记录
+    const user = await prisma.user.findUnique({
+      where: {
+        address: address, // 假设表中有 address 字段
+      },
+    });
 
+    if (user) {
+      return user.id; // 返回 userId
+    } else {
+      return null; // 如果没有找到用户，返回 null
+    }
+  } catch (error) {
+    console.error('获取 userId 失败：', error);
+    throw new Error('获取 userId 失败');
+  }
+};
 export const getAllSubordinates = async (userId: number) => {
   // 获取直接下级的地址和 sharerIds
   const directChildren = await prisma.user.findUnique({

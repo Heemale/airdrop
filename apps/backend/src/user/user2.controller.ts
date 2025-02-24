@@ -1,5 +1,15 @@
-import { Controller, Get } from '@nestjs/common';
-import { getAllSubordinates, getRootUsers } from '@/user/dao/user.dao';
+import {
+  Controller,
+  Get,
+  Param,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
+import {
+  getAllSubordinates,
+  getRootUsers,
+  getUserId,
+} from '@/user/dao/user.dao';
 
 @Controller('user')
 export class User2Controller {
@@ -23,5 +33,18 @@ export class User2Controller {
       rootAddresses, // 返回根用户的地址数组
       children, // 返回每个根用户的子节点
     };
+  }
+  @Get('address/:address/children')
+  async getChildren(@Param('address') address: string) {
+    const sender = address && address.toLowerCase();
+    if (!sender) {
+      throw new HttpException('Invalid parameters', HttpStatus.BAD_REQUEST);
+    }
+    const user = await getUserId(sender);
+    const data = await getAllSubordinates(user);
+    console.log('User ID:', user);
+    console.log('Subordinates:', data.children);
+
+    return data.children;
   }
 }
