@@ -75,12 +75,12 @@ model Node {
   rank              BigInt?  @unique /// 节点等级
   name              String?  @db.VarChar(255) /// 名称
   description       String?  @db.Text /// 描述
-  isOpen            Boolean? @default(false) @map("is_open") // 是否开启
+  isOpen            Boolean? @default(false) @map("is_open") /// 是否开启
   isRemove          Boolean? @map("is_remove") ///是否移除
-  limit             BigInt? ///可领取次数
-  price             BigInt? ///节点价格
-  totalQuantity     BigInt?  @map("total_quantity") ///总数量
-  purchasedQuantity BigInt?  @map("purchased_quantity") ///已购买数量
+  limit             BigInt? /// 可领取次数
+  price             BigInt? /// 节点价格
+  totalQuantity     BigInt?  @map("total_quantity") /// 总数量
+  purchasedQuantity BigInt?  @map("purchased_quantity") /// 已购买数量
   createAt          BigInt?  @map("create_at") /// 创建时间
   updateAt          BigInt?  @map("update_at") /// 更新时间
 
