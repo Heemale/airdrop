@@ -20,12 +20,7 @@ const postFilters = [
     source="startTime"
     label="开始时间"
   />,
-  <TextInput
-    key="endTime"
-    name="endTime"
-    source="endTime"
-    label="结束时间"
-  />,
+  <TextInput key="endTime" name="endTime" source="endTime" label="结束时间" />,
   <TextInput
     key="totalShares"
     name="totalShares"
@@ -44,12 +39,7 @@ const postFilters = [
     source="totalBalance"
     label="总资金"
   />,
-  <TextInput
-    key="isOpen"
-    name="isOpen"
-    source="isOpen"
-    label="是否开放"
-  />,
+  <TextInput key="isOpen" name="isOpen" source="isOpen" label="是否开放" />,
   <TextInput
     key="coinType"
     name="coinType"
@@ -68,7 +58,12 @@ const postFilters = [
     source="remainingBalance"
     label="空投剩余资金"
   />,
-  <TextInput key="isRemove" name="isRemove" source="isRemove" label="是否移除" />,
+  <TextInput
+    key="isRemove"
+    name="isRemove"
+    source="isRemove"
+    label="是否移除"
+  />,
   <TextInput
     key="createAt"
     name="createAt"
@@ -81,7 +76,12 @@ const postFilters = [
     source="updateAt"
     label="更新时间"
   />,
-  <TextInput key="description" name="description" source="description" label="描述" />, 
+  <TextInput
+    key="description"
+    name="description"
+    source="description"
+    label="描述"
+  />,
 ];
 
 const AirdropList = () => (
@@ -98,7 +98,7 @@ const AirdropList = () => (
           convertSmallToLarge(record.totalShares.toString(), TOKEN_DECIMAL)
         }
       />
-            <FunctionField
+      <FunctionField
         source="claimedShares"
         label="已领取份数"
         render={(record) =>

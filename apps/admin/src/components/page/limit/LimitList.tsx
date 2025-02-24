@@ -16,8 +16,18 @@ const postFilters = [
   <TextInput key="address" name="address" source="address" label="用户地址" />,
   <TextInput key="times" name="times" source="times" label="次数" />,
   <TextInput key="isLimit" name="isLimit" source="isLimit" label="是否限制" />,
-  <TextInput key="createAt" name="createAt" source="createAt" label="创建时间" />,
-  <TextInput key="updateAt" name="updateAt" source="updateAt" label="更新时间" />,
+  <TextInput
+    key="createAt"
+    name="createAt"
+    source="createAt"
+    label="创建时间"
+  />,
+  <TextInput
+    key="updateAt"
+    name="updateAt"
+    source="updateAt"
+    label="更新时间"
+  />,
 ];
 
 const LimitList = () => (
@@ -28,7 +38,9 @@ const LimitList = () => (
       <FunctionField
         source="times"
         label="次数"
-        render={(record) => convertSmallToLarge(record.times.toString(), TOKEN_DECIMAL)}
+        render={(record) =>
+          convertSmallToLarge(record.times.toString(), TOKEN_DECIMAL)
+        }
       />
       <BooleanField source="isLimit" label="是否限制" />
       <TimeTextField source="createAt" label="创建时间" />
