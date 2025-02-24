@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import "@mysten/dapp-kit/dist/index.css";
-import Context from "@/context/Context";
+import type { Metadata } from 'next';
+import './globals.css';
+import '@mysten/dapp-kit/dist/index.css';
+import Context from '@/context/Context';
 
 export const metadata: Metadata = {
-  title: "Sui AirDrop",
-  description: "Sui AirDrop",
+  title: 'Sui AirDrop',
+  description: 'Sui AirDrop',
 };
 
 const RootLayout = async ({

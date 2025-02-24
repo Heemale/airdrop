@@ -1,5 +1,5 @@
-import { getConfig } from "@local/airdrop-sdk/utils";
-import { SUI_NETWORK } from "@/config";
+import { getConfig } from '@local/airdrop-sdk/utils';
+import { SUI_NETWORK } from '@/config';
 
 export const config = getConfig(SUI_NETWORK);
 

@@ -1,4 +1,4 @@
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 
 // Convert large units to small units
 export const convertLargeToSmall = (

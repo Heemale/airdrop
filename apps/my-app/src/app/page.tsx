@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   AIRDROPS,
   NODES,
@@ -8,7 +8,7 @@ import {
   PAY_COIN_TYPE,
   LIMITS,
   ADMIN_CAP,
-} from "@/sdk/constants";
+} from '@/sdk/constants';
 import {
   Button,
   Table,
@@ -18,27 +18,27 @@ import {
   Form,
   DatePicker,
   Switch,
-} from "antd";
+} from 'antd';
 import {
   airdropClient,
   nodeClient,
   inviteClient,
   devTransaction,
   getCoinMetaData,
-} from "@/sdk";
-import ConnectButton from "./components/ConnectButton";
+} from '@/sdk';
+import ConnectButton from './components/ConnectButton';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
-} from "@mysten/dapp-kit";
-import dayjs from "dayjs";
-import { formatTimestamp } from "../utils/time";
-import { convertLargeToSmall, convertSmallToLarge } from "../utils/math";
-import { handleDevTxError } from "@/sdk/error";
-import { isHexString } from "@/utils";
-import { getNodeInfo, getChildren, getUserInfo } from "@/api";
-import { TreeStructure } from "./components/UserTree";
-import { RootNode } from "@/api/types/response";
+} from '@mysten/dapp-kit';
+import dayjs from 'dayjs';
+import { formatTimestamp } from '../utils/time';
+import { convertLargeToSmall, convertSmallToLarge } from '../utils/math';
+import { handleDevTxError } from '@/sdk/error';
+import { isHexString } from '@/utils';
+import { getNodeInfo, getChildren, getUserInfo } from '@/api';
+import { TreeStructure } from './components/UserTree';
+import { RootNode } from '@/api/types/response';
 
 export interface NodeInfo {
   // 等级
@@ -113,53 +113,53 @@ const AdminPage = () => {
   const [treeData, setTreeData] = useState<RootNode[]>([]);
   const [treeData1, setTreeData1] = useState<RootNode[]>([]);
 
-  const [address, setAddress] = useState("");
-  console.log("account", account);
+  const [address, setAddress] = useState('');
+  console.log('account', account);
   // 表格列配置
   const columns = [
-    { title: "轮次", dataIndex: "round", key: "round" },
+    { title: '轮次', dataIndex: 'round', key: 'round' },
     {
-      title: "开始时间",
-      dataIndex: "startTime",
-      key: "startTime",
+      title: '开始时间',
+      dataIndex: 'startTime',
+      key: 'startTime',
       render: (startTime: bigint) => formatTimestamp(startTime),
     },
     {
-      title: "结束时间",
-      dataIndex: "endTime",
-      key: "endTime",
+      title: '结束时间',
+      dataIndex: 'endTime',
+      key: 'endTime',
       render: (endTime: bigint) => formatTimestamp(endTime),
     },
-    { title: "总份数", dataIndex: "totalShares", key: "totalShares" },
-    { title: "已领取份数", dataIndex: "claimedShares", key: "claimedShares" },
+    { title: '总份数', dataIndex: 'totalShares', key: 'totalShares' },
+    { title: '已领取份数', dataIndex: 'claimedShares', key: 'claimedShares' },
     {
-      title: "总金额",
-      dataIndex: "totalBalance",
-      key: "totalBalance",
+      title: '总金额',
+      dataIndex: 'totalBalance',
+      key: 'totalBalance',
     },
     {
-      title: "是否开启",
-      dataIndex: "isOpen",
-      key: "isOpen",
-      render: (isOpen: boolean) => (isOpen ? "开启" : "关闭"),
+      title: '是否开启',
+      dataIndex: 'isOpen',
+      key: 'isOpen',
+      render: (isOpen: boolean) => (isOpen ? '开启' : '关闭'),
     },
-    { title: "描述", dataIndex: "description", key: "description" },
+    { title: '描述', dataIndex: 'description', key: 'description' },
     {
-      title: "币种",
-      dataIndex: "coinType",
-      key: "coinType",
+      title: '币种',
+      dataIndex: 'coinType',
+      key: 'coinType',
       render: (coinType: string) => {
-        return isHexString(coinType) ? coinType : "0x" + coinType;
+        return isHexString(coinType) ? coinType : '0x' + coinType;
       },
     },
     {
-      title: "剩余金额",
-      dataIndex: "remaining_balance",
-      key: "remaining_balance",
+      title: '剩余金额',
+      dataIndex: 'remaining_balance',
+      key: 'remaining_balance',
     },
     {
-      title: "操作",
-      key: "actions",
+      title: '操作',
+      key: 'actions',
       render: (text: any, record: AirdropInfo) => (
         <Button
           type="link"
@@ -171,8 +171,8 @@ const AdminPage = () => {
       ),
     },
     {
-      title: "修改",
-      key: "actions",
+      title: '修改',
+      key: 'actions',
       render: (_: any, record: AirdropInfo) => (
         <Button
           type="link"
@@ -213,7 +213,7 @@ const AdminPage = () => {
           list.map(async (item) => {
             const coinType = isHexString(item.coinType)
               ? item.coinType
-              : "0x" + item.coinType;
+              : '0x' + item.coinType;
             const coinMetaData = await getCoinMetaData({ coinType });
             const { totalBalance, remaining_balance, ...rest } = item;
             return {
@@ -241,7 +241,7 @@ const AdminPage = () => {
   // 提款功能
   const handleWithdraw = async (round: bigint, coinType: string) => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
 
@@ -278,7 +278,7 @@ const AdminPage = () => {
   // 新建空投功能
   const handleCreateAirdrop = async (values: any) => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
 
@@ -287,20 +287,20 @@ const AdminPage = () => {
 
       const coinType = isHexString(values.coinType)
         ? values.coinType
-        : "0x" + values.coinType;
+        : '0x' + values.coinType;
       const coinMetaData = await getCoinMetaData({
         coinType,
       });
 
       if (!coinMetaData) {
-        messageApi.error("获取代币元数据失败");
+        messageApi.error('获取代币元数据失败');
         return;
       }
 
       // 检查图片链接是否有效，若无效则使用默认图片
       const validImageUrl = (await checkImageExists(values.image_url))
         ? values.image_url
-        : "/sui-sui-logo.png"; // 替换成你的默认图片路径
+        : '/sui-sui-logo.png'; // 替换成你的默认图片路径
 
       const tx = await airdropClient.insert(
         values.coinType,
@@ -345,7 +345,7 @@ const AdminPage = () => {
 
   const handleUpdateAirdrop = async (values: any) => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
     if (!editingAirdrop) return;
@@ -387,31 +387,31 @@ const AdminPage = () => {
 
   // 节点表格列配置
   const nodeColumns = [
-    { title: "节点等级", dataIndex: "rank", key: "rank" },
-    { title: "节点称号", dataIndex: "name", key: "name" },
-    { title: "节点描述", dataIndex: "description", key: "description" },
-    { title: "每轮空投可领取次数", dataIndex: "limit", key: "limit" },
+    { title: '节点等级', dataIndex: 'rank', key: 'rank' },
+    { title: '节点称号', dataIndex: 'name', key: 'name' },
+    { title: '节点描述', dataIndex: 'description', key: 'description' },
+    { title: '每轮空投可领取次数', dataIndex: 'limit', key: 'limit' },
     {
-      title: "节点售价",
-      dataIndex: "price",
-      key: "price",
+      title: '节点售价',
+      dataIndex: 'price',
+      key: 'price',
     },
-    { title: "节点总数量", dataIndex: "total_quantity", key: "total_quantity" },
+    { title: '节点总数量', dataIndex: 'total_quantity', key: 'total_quantity' },
     {
-      title: "节点是否开启",
-      dataIndex: "isOpen",
-      key: "isOpen",
-      render: (isOpen: boolean) => (isOpen ? "开启" : "关闭"),
-    },
-    {
-      title: "节点是否移除",
-      dataIndex: "isRemove",
-      key: "isRemove",
-      render: (isRemove: boolean) => (isRemove ? "已移除" : "未移除"),
+      title: '节点是否开启',
+      dataIndex: 'isOpen',
+      key: 'isOpen',
+      render: (isOpen: boolean) => (isOpen ? '开启' : '关闭'),
     },
     {
-      title: "操作",
-      key: "actions",
+      title: '节点是否移除',
+      dataIndex: 'isRemove',
+      key: 'isRemove',
+      render: (isRemove: boolean) => (isRemove ? '已移除' : '未移除'),
+    },
+    {
+      title: '操作',
+      key: 'actions',
       render: (_: any, record: NodeInfo) => (
         <Button
           type="link"
@@ -434,8 +434,8 @@ const AdminPage = () => {
       ),
     },
     {
-      title: "移除节点",
-      key: "remove",
+      title: '移除节点',
+      key: 'remove',
       render: (_: any, record: NodeInfo) => (
         <Button
           onClick={() => {
@@ -456,9 +456,9 @@ const AdminPage = () => {
       console.log(2222222);
       const response = await getNodeInfo(); // 获取节点信息
 
-      console.log("response", response);
+      console.log('response', response);
       if (Array.isArray(response)) {
-        console.log("11111", response);
+        console.log('11111', response);
 
         // 确保返回值是数组
         // 遍历返回的数据并赋值给 NodeInfo
@@ -477,7 +477,7 @@ const AdminPage = () => {
           isOpen: node.isOpen,
           isRemove: node.isRemove,
         }));
-        console.log("formattedNodeList", formattedNodeList);
+        console.log('formattedNodeList', formattedNodeList);
         setNodeList(formattedNodeList); // 更新状态
       } else {
         // 如果返回的是单个节点，直接处理
@@ -497,7 +497,7 @@ const AdminPage = () => {
           isOpen: node.isOpen,
           isRemove: node.isRemove,
         };
-        console.log("formattedNode111111111", formattedNode);
+        console.log('formattedNode111111111', formattedNode);
 
         setNodeList([formattedNode]); // 将单个节点包装成数组并更新状态
       }
@@ -511,7 +511,7 @@ const AdminPage = () => {
   // 新建节点功能
   const handleCreateNode = async (values: any) => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
 
@@ -523,7 +523,7 @@ const AdminPage = () => {
       });
 
       if (!coinMetaData) {
-        messageApi.error("获取代币元数据失败");
+        messageApi.error('获取代币元数据失败');
         return;
       }
 
@@ -566,7 +566,7 @@ const AdminPage = () => {
   // 修改节点信息
   const handleUpdateNode = async (values: NodeInfo) => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
     if (!editingNode) return;
@@ -577,7 +577,7 @@ const AdminPage = () => {
       });
 
       if (!coinMetaData) {
-        messageApi.error("获取代币元数据失败");
+        messageApi.error('获取代币元数据失败');
         return;
       }
 
@@ -618,14 +618,14 @@ const AdminPage = () => {
   // 移除节点
   const handleRemoveNode = async () => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
     if (removeNode === null) return; // 确保 removeNode 有值
     console.log(123, removeNode);
     try {
       const tx = airdropClient.removeNode(ADMIN_CAP, NODES, removeNode);
-      console.log("tx", tx);
+      console.log('tx', tx);
       await devTransaction(tx, account.address);
       signAndExecuteTransaction(
         { transaction: tx },
@@ -664,14 +664,14 @@ const AdminPage = () => {
 
   const handleInvite = async (value: any) => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
 
     try {
       const { root, inviter_fee } = value;
       if (inviter_fee < 0.01) {
-        console.error("分红比例不能低于0.01%");
+        console.error('分红比例不能低于0.01%');
         return;
       }
 
@@ -692,7 +692,7 @@ const AdminPage = () => {
             setShowInviteModal(false);
           },
           onError: ({ message }) => {
-            console.error("更新失败:", message);
+            console.error('更新失败:', message);
             messageApi.error(`更新失败: ${message}`);
           },
         },
@@ -716,7 +716,7 @@ const AdminPage = () => {
 
   const handleNode = async (value: any) => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
 
@@ -752,13 +752,13 @@ const AdminPage = () => {
 
   const handleModifyUserLimit = async (value: any) => {
     if (!account) {
-      messageApi.error("请先连接钱包");
+      messageApi.error('请先连接钱包');
       return;
     }
 
     try {
       const { address, times, isLimit } = value;
-      console.log("value", value);
+      console.log('value', value);
       // 调用 modifyLimits 方法来修改用户的领取次数
       const tx = airdropClient.modifyLimits(
         ADMIN_CAP, // 管理员权限
@@ -767,7 +767,7 @@ const AdminPage = () => {
         BigInt(times), // 领取次数（转换为BigInt）
         isLimit, // 是否有限制
       );
-      console.log("handleModify", tx);
+      console.log('handleModify', tx);
       // 提交交易
       await devTransaction(tx, account.address);
 
@@ -793,12 +793,12 @@ const AdminPage = () => {
 
   const getChildrens = async (): Promise<RootNode[]> => {
     const rootNode = await getChildren();
-    console.log("rootNode", rootNode); // 获取返回的 rootNode 数据
+    console.log('rootNode', rootNode); // 获取返回的 rootNode 数据
     return [rootNode]; // 将 rootNode 包装成一个数组
   };
   const fetchData = async () => {
     const childrenData = await getChildrens();
-    console.log("childrenData", childrenData);
+    console.log('childrenData', childrenData);
     setTreeData(childrenData); // 设置数据
   };
 
@@ -826,7 +826,7 @@ const AdminPage = () => {
   // 组件加载时获取数据
   useEffect(() => {
     fetchData();
-    console.log("treeData", treeData);
+    console.log('treeData', treeData);
   }, []);
   useEffect(() => {
     fetchAirdropList();
@@ -839,7 +839,7 @@ const AdminPage = () => {
     <div className="flex flex-col gap-4 p-4">
       {contextHolder}
       <div>
-        <ConnectButton connectText={"CONNECT"} />
+        <ConnectButton connectText={'CONNECT'} />
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-4">
@@ -875,22 +875,22 @@ const AdminPage = () => {
               <Form.Item
                 name="coinType"
                 label="代币类型"
-                rules={[{ required: true, message: "请输入代币类型" }]}
+                rules={[{ required: true, message: '请输入代币类型' }]}
               >
                 <Input placeholder="请输入代币类型" />
               </Form.Item>
               <Form.Item
                 name="startTime"
                 label="开始时间"
-                rules={[{ required: true, message: "请选择开始时间" }]}
+                rules={[{ required: true, message: '请选择开始时间' }]}
               >
                 <DatePicker
                   showTime
                   format="YYYY-MM-DD HH:mm:ss"
                   popupStyle={{
-                    maxWidth: "20vw",
-                    maxHeight: "50vh",
-                    overflow: "auto",
+                    maxWidth: '20vw',
+                    maxHeight: '50vh',
+                    overflow: 'auto',
                   }}
                 />
               </Form.Item>
@@ -898,15 +898,15 @@ const AdminPage = () => {
               <Form.Item
                 name="endTime"
                 label="结束时间"
-                rules={[{ required: true, message: "请选择结束时间" }]}
+                rules={[{ required: true, message: '请选择结束时间' }]}
               >
                 <DatePicker
                   showTime
                   format="YYYY-MM-DD HH:mm:ss"
                   popupStyle={{
-                    maxWidth: "20vw",
-                    maxHeight: "50vh",
-                    overflow: "auto",
+                    maxWidth: '20vw',
+                    maxHeight: '50vh',
+                    overflow: 'auto',
                   }}
                 />
               </Form.Item>
@@ -914,7 +914,7 @@ const AdminPage = () => {
               <Form.Item
                 name="totalShares"
                 label="总份数"
-                rules={[{ required: true, message: "请输入总份数" }]}
+                rules={[{ required: true, message: '请输入总份数' }]}
               >
                 <Input type="number" placeholder="请输入总份数" />
               </Form.Item>
@@ -922,7 +922,7 @@ const AdminPage = () => {
               <Form.Item
                 name="totalBalance"
                 label="总金额"
-                rules={[{ required: true, message: "请输入总金额" }]}
+                rules={[{ required: true, message: '请输入总金额' }]}
               >
                 <Input type="number" placeholder="请输入总金额" />
               </Form.Item>
@@ -930,14 +930,14 @@ const AdminPage = () => {
               <Form.Item
                 name="description"
                 label="描述"
-                rules={[{ required: true, message: "请输入描述" }]}
+                rules={[{ required: true, message: '请输入描述' }]}
               >
                 <Input placeholder="请输入描述" />
               </Form.Item>
               <Form.Item
                 name="image_url"
                 label="图片"
-                rules={[{ required: true, message: "请输入图片" }]}
+                rules={[{ required: true, message: '请输入图片' }]}
               >
                 <Input placeholder="请输入图片" />
               </Form.Item>
@@ -963,7 +963,7 @@ const AdminPage = () => {
               <Form.Item
                 name="round"
                 label="轮次"
-                rules={[{ required: true, message: "请输入轮次" }]}
+                rules={[{ required: true, message: '请输入轮次' }]}
               >
                 <Input type="number" disabled />
               </Form.Item>
@@ -972,15 +972,15 @@ const AdminPage = () => {
               <Form.Item
                 name="startTime"
                 label="开始时间"
-                rules={[{ required: true, message: "请选择开始时间" }]}
+                rules={[{ required: true, message: '请选择开始时间' }]}
               >
                 <DatePicker
                   showTime
                   format="YYYY-MM-DD HH:mm:ss"
                   popupStyle={{
-                    maxWidth: "20vw",
-                    maxHeight: "50vh",
-                    overflow: "auto",
+                    maxWidth: '20vw',
+                    maxHeight: '50vh',
+                    overflow: 'auto',
                   }}
                   getPopupContainer={(triggerNode) =>
                     triggerNode.parentNode as HTMLElement
@@ -992,15 +992,15 @@ const AdminPage = () => {
               <Form.Item
                 name="endTime"
                 label="结束时间"
-                rules={[{ required: true, message: "请选择结束时间" }]}
+                rules={[{ required: true, message: '请选择结束时间' }]}
               >
                 <DatePicker
                   showTime
                   format="YYYY-MM-DD HH:mm:ss"
                   popupStyle={{
-                    maxWidth: "20vw",
-                    maxHeight: "50vh",
-                    overflow: "auto",
+                    maxWidth: '20vw',
+                    maxHeight: '50vh',
+                    overflow: 'auto',
                   }}
                   getPopupContainer={(triggerNode) =>
                     triggerNode.parentNode as HTMLElement
@@ -1015,7 +1015,7 @@ const AdminPage = () => {
               <Form.Item
                 name="description"
                 label="描述"
-                rules={[{ required: true, message: "请输入描述" }]}
+                rules={[{ required: true, message: '请输入描述' }]}
               >
                 <Input placeholder="请输入描述" />
               </Form.Item>
@@ -1062,14 +1062,14 @@ const AdminPage = () => {
               <Form.Item
                 name="name"
                 label="节点名称"
-                rules={[{ required: true, message: "请输入节点名称" }]}
+                rules={[{ required: true, message: '请输入节点名称' }]}
               >
                 <Input placeholder="请输入节点名称" />
               </Form.Item>
               <Form.Item
                 name="description"
                 label="节点描述"
-                rules={[{ required: true, message: "请输入节点描述" }]}
+                rules={[{ required: true, message: '请输入节点描述' }]}
               >
                 <Input placeholder="请输入节点描述" />
               </Form.Item>
@@ -1077,7 +1077,7 @@ const AdminPage = () => {
                 name="limit"
                 label="每轮空投可领取次数"
                 rules={[
-                  { required: true, message: "请输入每轮空投可领取次数" },
+                  { required: true, message: '请输入每轮空投可领取次数' },
                 ]}
               >
                 <Input type="number" placeholder="请输入每轮空投可领取次数" />
@@ -1085,18 +1085,18 @@ const AdminPage = () => {
               <Form.Item
                 name="price"
                 label="节点售价"
-                rules={[{ required: true, message: "请输入节点售价" }]}
+                rules={[{ required: true, message: '请输入节点售价' }]}
               >
                 <Input
                   type="number"
                   placeholder="请输入节点售价"
-                  value={convertSmallToLarge(form.getFieldValue("price"), 9)}
+                  value={convertSmallToLarge(form.getFieldValue('price'), 9)}
                 />
               </Form.Item>
               <Form.Item
                 name="total_quantity"
                 label="节点总数量"
-                rules={[{ required: true, message: "请输入节点总数量" }]}
+                rules={[{ required: true, message: '请输入节点总数量' }]}
               >
                 <Input type="number" placeholder="请输入节点总数量" />
               </Form.Item>
@@ -1123,7 +1123,7 @@ const AdminPage = () => {
               <Form.Item
                 name="rank"
                 label="节点等级"
-                rules={[{ required: true, message: "请输入节点等级" }]}
+                rules={[{ required: true, message: '请输入节点等级' }]}
               >
                 <Input type="number" disabled />
               </Form.Item>
@@ -1131,7 +1131,7 @@ const AdminPage = () => {
               <Form.Item
                 name="name"
                 label="节点名称"
-                rules={[{ required: true, message: "请输入节点名称" }]}
+                rules={[{ required: true, message: '请输入节点名称' }]}
               >
                 <Input />
               </Form.Item>
@@ -1139,7 +1139,7 @@ const AdminPage = () => {
               <Form.Item
                 name="description"
                 label="节点描述"
-                rules={[{ required: true, message: "节点描述" }]}
+                rules={[{ required: true, message: '节点描述' }]}
               >
                 <Input />
               </Form.Item>
@@ -1147,7 +1147,7 @@ const AdminPage = () => {
                 name="limit"
                 label="每轮空投可领取次数"
                 rules={[
-                  { required: true, message: "请输入每轮空投可领取次数" },
+                  { required: true, message: '请输入每轮空投可领取次数' },
                 ]}
               >
                 <Input type="number" />
@@ -1155,17 +1155,17 @@ const AdminPage = () => {
               <Form.Item
                 name="price"
                 label="节点售价"
-                rules={[{ required: true, message: "请输入节点售价" }]}
+                rules={[{ required: true, message: '请输入节点售价' }]}
               >
                 <Input
                   type="number"
-                  value={convertSmallToLarge(form.getFieldValue("price"), 9)}
+                  value={convertSmallToLarge(form.getFieldValue('price'), 9)}
                 />
               </Form.Item>
               <Form.Item
                 name="total_quantity"
                 label="节点总数量"
-                rules={[{ required: true, message: "节点总数量" }]}
+                rules={[{ required: true, message: '节点总数量' }]}
               >
                 <Input type="number" />
               </Form.Item>
@@ -1194,12 +1194,12 @@ const AdminPage = () => {
       </div>
       <div className="flex flex-col gap-4 overflow-x-auto">
         <div className="overflow-x-auto">
-          <h3>根用户: {root !== null ? root : "Loading..."}</h3>
-          <h3>邀请人分红费率: {fee !== null ? fee / 100 : "Loading..."}%</h3>
+          <h3>根用户: {root !== null ? root : 'Loading...'}</h3>
+          <h3>邀请人分红费率: {fee !== null ? fee / 100 : 'Loading...'}%</h3>
           <Button
             type="primary"
             onClick={() => setShowInviteModal(true)} // 点击按钮显示弹窗
-            style={{ marginBottom: "20px" }}
+            style={{ marginBottom: '20px' }}
           >
             修改分红
           </Button>
@@ -1223,14 +1223,14 @@ const AdminPage = () => {
               <Form.Item
                 name="root"
                 label="根用户"
-                rules={[{ required: true, message: "请输入根用户" }]}
+                rules={[{ required: true, message: '请输入根用户' }]}
               >
                 <Input placeholder="请输入根用户" />
               </Form.Item>
               <Form.Item
                 name="inviter_fee"
                 label="邀请人分红费率"
-                rules={[{ required: true, message: "请输入邀请人分红费率" }]}
+                rules={[{ required: true, message: '请输入邀请人分红费率' }]}
               >
                 <Input type="number" placeholder="请输入邀请人分红费率" />
               </Form.Item>
@@ -1246,13 +1246,13 @@ const AdminPage = () => {
       <div className="flex flex-col gap-4 overflow-x-auto">
         <div className="overflow-x-auto">
           <h3>
-            出售节点资金接收人: {receiver_ !== null ? receiver_ : "null..."}
+            出售节点资金接收人: {receiver_ !== null ? receiver_ : 'null...'}
           </h3>
 
           <Button
             type="primary"
             onClick={() => setEditReceiver(true)} // 点击按钮显示弹窗
-            style={{ marginBottom: "20px" }}
+            style={{ marginBottom: '20px' }}
           >
             修改接收人
           </Button>
@@ -1268,13 +1268,13 @@ const AdminPage = () => {
               labelCol={{ span: 8 }}
               wrapperCol={{ span: 16 }}
               initialValues={{
-                receiver: receiver_ ? receiver_ : "",
+                receiver: receiver_ ? receiver_ : '',
               }}
             >
               <Form.Item
                 name="receiver"
                 label="接收人"
-                rules={[{ required: true, message: "请输入接收人" }]}
+                rules={[{ required: true, message: '请输入接收人' }]}
               >
                 <Input placeholder="请输入接收人" />
               </Form.Item>
@@ -1294,7 +1294,7 @@ const AdminPage = () => {
           <Button
             type="primary"
             onClick={() => setShowLimitModal(true)} // 显示弹窗
-            style={{ marginBottom: "20px" }}
+            style={{ marginBottom: '20px' }}
           >
             修改用户领取次数
           </Button>
@@ -1315,7 +1315,7 @@ const AdminPage = () => {
               <Form.Item
                 name="address"
                 label="接收人"
-                rules={[{ required: true, message: "请输入接收人" }]}
+                rules={[{ required: true, message: '请输入接收人' }]}
               >
                 <Input placeholder="请输入接收人" />
               </Form.Item>
@@ -1323,7 +1323,7 @@ const AdminPage = () => {
               <Form.Item
                 name="times"
                 label="领取次数"
-                rules={[{ required: true, message: "请输入领取次数" }]}
+                rules={[{ required: true, message: '请输入领取次数' }]}
               >
                 <Input type="number" placeholder="请输入领取次数" />
               </Form.Item>
@@ -1359,7 +1359,7 @@ const AdminPage = () => {
             placeholder="请输入地址"
           />
           <button onClick={handleSearch} disabled={loading}>
-            {loading ? "加载中..." : "搜索"}
+            {loading ? '加载中...' : '搜索'}
           </button>
         </div>
 
