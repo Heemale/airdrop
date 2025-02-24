@@ -10,7 +10,7 @@ export const dataProvider = provider(BASE_URL, {
           runWhen: (config) => {
             const auth = getAuth();
             config.headers.authorization = `Bearer ${auth}`;
-            return config as boolean;
+            return config as unknown as boolean;
           },
         },
       },
