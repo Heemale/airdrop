@@ -1,13 +1,15 @@
 'use client';
 
 import { Admin, Resource, ListGuesser, EditGuesser } from 'react-admin';
+import { authProvider } from '@/config/authProvider';
+import { dataProvider } from '@/config/dataProvider';
 import Dashboard from '@/components/Dashboard';
 import Layout from '@/components/Layout';
 import UserList from '@/components/page/user/UserList';
+import UserEdit from '@/components/page/user/UserEdit';
 import CopywritingList from '@/components/page/copywriting/CopyrightingtList';
 import CopywritingEdit from '@/components/page/copywriting/CopywritingEdit';
-import { authProvider } from '@/config/authProvider';
-import { dataProvider } from '@/config/dataProvider';
+import NodeEdit from '@/components/page/node/NodeEdit';
 
 const AdminApp = () => (
   <Admin
@@ -16,12 +18,17 @@ const AdminApp = () => (
     layout={Layout}
     authProvider={authProvider}
   >
-    <Resource name="users" options={{ label: '用户表' }} list={UserList} />
+    <Resource
+      name="users"
+      options={{ label: '用户表' }}
+      list={UserList}
+      edit={UserEdit}
+    />
     <Resource
       name="nodes"
       options={{ label: '权益表' }}
       list={ListGuesser}
-      edit={EditGuesser}
+      edit={NodeEdit}
     />
     <Resource
       name="airdrops"
