@@ -18,7 +18,7 @@ export class LimitClient {
   ): Promise<Summary<ModifyLimitSummary>> {
     const resp = await this.queryEvents('ModifyLimit', input);
     const customMapping = (rawEvent: any) => ({
-      address:rawEvent.address as string,
+      address: rawEvent.address as string,
       times: rawEvent.times as bigint,
       isLimit: rawEvent.is_limit as boolean,
     });

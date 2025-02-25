@@ -17,6 +17,7 @@ import BuyRecordList from '@/components/page/buy_record/BuyRecordList';
 import NodeList from '@/components/page/node/NodeList';
 import TransferRecordList from '@/components/page/transfer_record/TransferRecordList';
 import NodeEdit from '@/components/page/node/NodeEdit';
+import AirdropCreate from '@/components/page/airdrop/AirdropCreate';
 
 const AdminApp = () => (
   <Admin
@@ -42,6 +43,7 @@ const AdminApp = () => (
       options={{ label: '空投表' }}
       list={AirdropList}
       edit={EditGuesser}
+      create={AirdropCreate}
     />
     <Resource
       name="buy-records"
