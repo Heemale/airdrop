@@ -1,20 +1,18 @@
 import {
   BooleanInput,
   Edit,
-  NumberInput,
   SaveButton,
   SimpleForm,
   TextInput,
   Toolbar,
 } from 'react-admin';
 import React from 'react';
-import MyDateTimePicker from '@/components/ui/MyDateTimePicker';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { airdropClient, devTransaction } from '@/sdk';
-import { ADMIN_CAP, AIRDROPS } from '@/sdk/constants';
+import { globalClient, devTransaction } from '@/sdk';
+import { GLOBAL } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
 
@@ -23,7 +21,8 @@ const PostEditToolbar = (props: any) => (
     <SaveButton label="修改" />
   </Toolbar>
 );
-const AirdropEdit = () => {
+
+const GlobalEdit = () => {
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const notify = useNotify();
@@ -32,15 +31,7 @@ const AirdropEdit = () => {
     if (!account) return;
 
     try {
-      const tx = airdropClient.modify(
-        ADMIN_CAP,
-        AIRDROPS,
-        data.round,
-        data.startTime,
-        data.endTime,
-        data.isOpen,
-        data.description,
-      );
+      const tx = globalClient.modify(GLOBAL, data.object, data.ivValid);
 
       try {
         await devTransaction(tx, account.address);
@@ -69,18 +60,11 @@ const AirdropEdit = () => {
     <Edit>
       <SimpleForm onSubmit={onSubmit} toolbar={<PostEditToolbar />}>
         <TextInput source="id" label="ID" disabled fullWidth />
-        <NumberInput source="round" label="回合" fullWidth />
-        <div>
-          <MyDateTimePicker source="startTime" label="开始时间" />
-        </div>
-        <div className="pb-6">
-          <MyDateTimePicker source="endTime" label="结束时间" />
-        </div>
-        <TextInput source="description" label="描述" fullWidth />
+        <TextInput source="object" label="对象ID" fullWidth />
         <BooleanInput source="isOpen" label="是否开启" fullWidth />
       </SimpleForm>
     </Edit>
   );
 };
 
-export default AirdropEdit;
+export default GlobalEdit;
