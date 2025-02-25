@@ -7,12 +7,20 @@ import type { GetCoinMetadataParams, CoinMetadata } from '@mysten/sui/client';
 import { Transaction } from '@mysten/sui/transactions';
 import type { DevInspectResults } from '@mysten/sui/client';
 import { PACKAGE_ID } from '@/sdk/constants';
+import { CommonClient } from '@/sdk/common/client';
+import { InvestClient } from '@local/airdrop-sdk/invest';
+import { LimitClient } from '@local/airdrop-sdk/limit';
+import { GlobalClient } from '@local/airdrop-sdk/global';
 
 export const suiClient = new SuiClient({ url: SUI_FULL_NODE });
 
+export const commonClient = new CommonClient(suiClient);
 export const airdropClient = new AirdropClient(suiClient, PACKAGE_ID);
 export const inviteClient = new InviteClient(suiClient, PACKAGE_ID);
 export const nodeClient = new NodeClient(suiClient, PACKAGE_ID);
+export const investClient = new InvestClient(suiClient, PACKAGE_ID);
+export const limitClient = new LimitClient(suiClient, PACKAGE_ID);
+export const globalClient = new GlobalClient(suiClient, PACKAGE_ID);
 
 // 获取 Coin 元数据
 export const getCoinMetaData = async (

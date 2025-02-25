@@ -30,7 +30,8 @@ export class AirdropClient {
     return tx;
   }
 
-  async insert(
+  insert(
+    tx: Transaction,
     T: string,
     adminCap: string,
     airdrops: string,
@@ -39,78 +40,24 @@ export class AirdropClient {
     totalShares: bigint,
     totalBalance: bigint,
     description: string,
-    wallet: string | null,
-    image_url: string,
-    amount: bigint | null,
-    owner: string,
-  ): Promise<Transaction> {
-    const tx = new Transaction();
-    if (wallet) {
-      tx.moveCall({
-        typeArguments: [T],
-        target: `${this.packageId}::${MODULE_CLOB}::insert`,
-        arguments: [
-          tx.object(adminCap),
-          tx.object(airdrops),
-          tx.pure.u64(startTime),
-          tx.pure.u64(endTime),
-          tx.pure.u64(totalShares),
-          tx.pure.u64(totalBalance),
-          tx.pure.string(description),
-          tx.object(wallet),
-          tx.pure.string(image_url),
-        ],
-      });
-    } else {
-      if (T === '0x2::sui::SUI' && amount) {
-        const [coin] = tx.splitCoins(tx.gas, [tx.pure.u64(amount)]);
-        tx.moveCall({
-          typeArguments: [T],
-          target: `${this.packageId}::${MODULE_CLOB}::insert`,
-          arguments: [
-            tx.object(adminCap),
-            tx.object(airdrops),
-            tx.pure.u64(startTime),
-            tx.pure.u64(endTime),
-            tx.pure.u64(totalShares),
-            tx.pure.u64(totalBalance),
-            tx.pure.string(description),
-            coin,
-            tx.pure.string(image_url),
-          ],
-        });
-      } else {
-        // @ts-ignore
-        const coins = await this.suiClient.getCoins({
-          owner,
-          coinType: T,
-        });
-        if (!coins.data.length) throw new Error('No coins.');
-        if (coins.data.length > 1) {
-          tx.mergeCoins(
-            tx.object(coins.data[0]['coinObjectId']),
-            coins.data.slice(1).map((e: any) => tx.object(e['coinObjectId'])),
-          );
-        }
-        const coin = tx.object(coins.data[0]['coinObjectId']); //合并后使用
-        tx.moveCall({
-          typeArguments: [T],
-          target: `${this.packageId}::${MODULE_CLOB}::insert`,
-          arguments: [
-            tx.object(adminCap),
-            tx.object(airdrops),
-            tx.pure.u64(startTime),
-            tx.pure.u64(endTime),
-            tx.pure.u64(totalShares),
-            tx.pure.u64(totalBalance),
-            tx.pure.string(description),
-            coin,
-            tx.pure.string(image_url),
-          ],
-        });
-      }
-    }
-    return tx;
+    wallet: any,
+    imageUrl: string,
+  ) {
+    tx.moveCall({
+      typeArguments: [T],
+      target: `${this.packageId}::${MODULE_CLOB}::insert`,
+      arguments: [
+        tx.object(adminCap),
+        tx.object(airdrops),
+        tx.pure.u64(startTime),
+        tx.pure.u64(endTime),
+        tx.pure.u64(totalShares),
+        tx.pure.u64(totalBalance),
+        tx.pure.string(description),
+        wallet,
+        tx.pure.string(imageUrl),
+      ],
+    });
   }
 
   modify(
