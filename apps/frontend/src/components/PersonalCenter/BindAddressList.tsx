@@ -25,9 +25,8 @@ const BindAddressList = () => {
     if (account?.address) {
       try {
         setLoading(true);
-        const response = await getUserShares({
-          sender: account?.address!,
-          nextCursor: cursor!,
+        const response = await getUserShares(account.address!, {
+          nextCursor: cursor || null, // 将 cursor 作为 params 传递
         });
 
         if (response?.data) {
