@@ -8,13 +8,14 @@ import {
   Toolbar,
 } from 'react-admin';
 import React from 'react';
-import MyDateTimePicker from '@/components/ui/MyDateTimePicker';
+import { convertLargeToSmall, convertSmallToLarge } from '@/utils/math';
+import { TOKEN_DECIMAL } from '@/config';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { airdropClient, devTransaction } from '@/sdk';
-import { ADMIN_CAP, AIRDROPS } from '@/sdk/constants';
+import { limitClient, devTransaction } from '@/sdk';
+import { LIMITS } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
 
@@ -23,7 +24,8 @@ const PostEditToolbar = (props: any) => (
     <SaveButton label="修改" />
   </Toolbar>
 );
-const AirdropEdit = () => {
+
+const LimitEdit = () => {
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const notify = useNotify();
@@ -32,14 +34,11 @@ const AirdropEdit = () => {
     if (!account) return;
 
     try {
-      const tx = airdropClient.modify(
-        ADMIN_CAP,
-        AIRDROPS,
-        data.round,
-        data.startTime,
-        data.endTime,
-        data.isOpen,
-        data.description,
+      const tx = limitClient.modify(
+        LIMITS,
+        data.address,
+        data.times,
+        data.ivValid,
       );
 
       try {
@@ -69,18 +68,12 @@ const AirdropEdit = () => {
     <Edit>
       <SimpleForm onSubmit={onSubmit} toolbar={<PostEditToolbar />}>
         <TextInput source="id" label="ID" disabled fullWidth />
-        <NumberInput source="round" label="回合" fullWidth />
-        <div>
-          <MyDateTimePicker source="startTime" label="开始时间" />
-        </div>
-        <div className="pb-6">
-          <MyDateTimePicker source="endTime" label="结束时间" />
-        </div>
-        <TextInput source="description" label="描述" fullWidth />
-        <BooleanInput source="isOpen" label="是否开启" fullWidth />
+        <TextInput source="address" label="用户地址" fullWidth />
+        <NumberInput source="times" label="可领取次数" fullWidth />
+        <BooleanInput source="ivValid" label="是否限制" fullWidth />
       </SimpleForm>
     </Edit>
   );
 };
 
-export default AirdropEdit;
+export default LimitEdit;

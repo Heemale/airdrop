@@ -1,0 +1,5 @@
+{
+	"private": true,
+	"import": "../dist/esm/limit/index.js",
+	"main": "../dist/cjs/limit/index.js"
+}

@@ -10,12 +10,12 @@ import UserEdit from '@/components/page/user/UserEdit';
 import MediaConfigList from '@/components/page/media-config/MediaConfigList';
 import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
 import AirdropList from '@/components/page/airdrop/AirdropList';
-import ClaimRecordList from '@/components/page/airdrop/ClaimRecordList';
+import ClaimRecordList from '@/components/page/claim_record/ClaimRecordList';
 import GlobalList from '@/components/page/global/GlobalList';
 import LimitList from '@/components/page/limit/LimitList';
-import BuyRecordList from '@/components/page/node/BuyRecordList';
+import BuyRecordList from '@/components/page/buy_record/BuyRecordList';
 import NodeList from '@/components/page/node/NodeList';
-import TransferRecordList from '@/components/page/user/TransferRecordList';
+import TransferRecordList from '@/components/page/transfer_record/TransferRecordList';
 import NodeEdit from '@/components/page/node/NodeEdit';
 import AirdropCreate from '@/components/page/airdrop/AirdropCreate';
 

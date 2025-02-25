@@ -25,20 +25,12 @@ export class GlobalClient {
     return tx;
   }
 
-  async modify(
-    global: string,
-    object: string,
-    is_valid: boolean,
-  ): Promise<Transaction> {
+  modify(global: string, object: string, ivValid: boolean): Transaction {
     const tx = new Transaction();
     tx.moveCall({
       typeArguments: [],
       target: `${this.packageId}::${MODULE_CLOB}::update_initialization_list`,
-      arguments: [
-        tx.object(global),
-        tx.pure.id(object),
-        tx.pure.bool(is_valid),
-      ],
+      arguments: [tx.object(global), tx.pure.id(object), tx.pure.bool(ivValid)],
     });
 
     return tx;
