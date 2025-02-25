@@ -2,7 +2,7 @@ import {
   NumberInput,
   SaveButton,
   SimpleForm,
-      TextInput,
+  TextInput,
   Toolbar,
   useNotify,
 } from 'react-admin';
