@@ -1,4 +1,11 @@
-import { BooleanInput, Edit, SimpleForm, TextInput } from 'react-admin';
+import {
+  BooleanInput,
+  Edit,
+  ImageField,
+  ImageInput,
+  SimpleForm,
+  TextInput,
+} from 'react-admin';
 import React from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -22,7 +29,9 @@ const MediaConfigEdit = () => {
           <TextInput source="zh" label="中文" multiline fullWidth />
           <TextInput source="en" label="英文" multiline fullWidth />
           <TextInput source="vi" label="越南语" multiline fullWidth />
-          <TextInput source="imageUrl" label="图片链接" fullWidth />
+          <ImageInput source="imageUrl" label="图片">
+            <ImageField source="src" title="title" />
+          </ImageInput>
           <BooleanInput source="isImage" label="是否为图片" fullWidth />
         </LocalizationProvider>
       </SimpleForm>

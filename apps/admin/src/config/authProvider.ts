@@ -6,7 +6,7 @@ import { getAuth, removeAuth, setAuth } from '@/config/auth';
 export const authProvider: AuthProvider = {
   // called when the user attempts to log in
   login: ({ username, password }) => {
-    const request = new Request(`${BASE_URL}/auth/login`, {
+    const request = new Request(`${BASE_URL}/api/auth/login`, {
       method: 'POST',
       body: JSON.stringify({ username, password }),
       headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -59,7 +59,7 @@ export const check = () => {
   const token = getAuth();
   if (!token) return Promise.reject();
 
-  const request = new Request(`${BASE_URL}/auth/profile`, {
+  const request = new Request(`${BASE_URL}/api/auth/profile`, {
     method: 'GET',
     headers: new Headers({
       'Content-Type': 'application/json',

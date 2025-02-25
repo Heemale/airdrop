@@ -2,7 +2,7 @@ import { BASE_URL } from '@/config/index';
 import { dataProvider as provider } from 'ra-data-simple-prisma';
 import { getAuth } from '@/config/auth';
 
-export const dataProvider = provider(BASE_URL, {
+export const dataProvider = provider(`${BASE_URL}/api`, {
   axiosInterceptors: {
     request: [
       {

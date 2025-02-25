@@ -1,7 +1,16 @@
 import * as React from 'react';
-import { List, TextField, BooleanField, TextInput } from 'react-admin';
+import {
+  List,
+  TextField,
+  BooleanField,
+  TextInput,
+  ImageField,
+  FunctionField,
+} from 'react-admin';
 import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
+import { BASE_URL } from '@/config';
+import Image from 'next/image';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -36,7 +45,7 @@ const postFilters = [
   />,
 ];
 
-const CopywritingList = () => (
+const MediaConfigList = () => (
   <List filters={postFilters}>
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
@@ -45,6 +54,18 @@ const CopywritingList = () => (
       <TextField source="zh" label="中文" />
       <TextField source="en" label="英文" />
       <TextField source="vi" label="越南语" />
+      <FunctionField
+        source="imageUrl"
+        label="图片"
+        render={(record) => (
+          <Image
+            src={BASE_URL + record.imageUrl}
+            alt={'image'}
+            width={100}
+            height={100}
+          />
+        )}
+      />
       <TextField source="imageUrl" label="图片链接" />
       <BooleanField source="isImage" label="是否为图片" />
       <TimeTextField source="createAt" label="创建时间" />
@@ -53,4 +74,4 @@ const CopywritingList = () => (
   </List>
 );
 
-export default CopywritingList;
+export default MediaConfigList;
