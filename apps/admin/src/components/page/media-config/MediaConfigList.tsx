@@ -45,6 +45,11 @@ const postFilters = [
   />,
 ];
 
+const renderImageUrl = (imageUrl: string | null) => {
+  const url = imageUrl ? BASE_URL + imageUrl : '/home_banner_bg2_2.png';
+  return <Image src={url} alt={'image'} width={100} height={100} />;
+};
+
 const MediaConfigList = () => (
   <List filters={postFilters}>
     <MyDatagridConfigurable>
@@ -57,14 +62,7 @@ const MediaConfigList = () => (
       <FunctionField
         source="imageUrl"
         label="图片"
-        render={(record) => (
-          <Image
-            src={BASE_URL + record.imageUrl}
-            alt={'image'}
-            width={100}
-            height={100}
-          />
-        )}
+        render={(record) => renderImageUrl(record.imageUrl)}
       />
       <TextField source="imageUrl" label="图片链接" />
       <BooleanField source="isImage" label="是否为图片" />
