@@ -1,4 +1,4 @@
-import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
+import MyDatagridConfigurable from './MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
 import {
   FunctionField,
@@ -58,7 +58,7 @@ const postFilters = [
 
 const NodeList = () => (
   <List filters={postFilters}>
-    <MyDatagridConfigurable>
+    <MyDatagridConfigurable hasEdit>
       <TextField source="id" label="ID" />
       <TextField source="rank" label="节点等级" />
       <TextField source="name" label="名称" />
