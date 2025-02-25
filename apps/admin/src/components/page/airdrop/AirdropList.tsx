@@ -1,4 +1,4 @@
-import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
+import MyDatagridConfigurable from './MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
 import {
   BooleanField,
@@ -86,7 +86,7 @@ const postFilters = [
 
 const AirdropList = () => (
   <List filters={postFilters}>
-    <MyDatagridConfigurable>
+    <MyDatagridConfigurable hasEdit>
       <TextField source="id" label="ID" />
       <TextField source="round" label="轮次" />
       <TimeTextField source="startTime" label="开始时间" />

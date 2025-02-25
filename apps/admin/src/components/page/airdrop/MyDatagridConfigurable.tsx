@@ -9,7 +9,7 @@ import {
 import * as React from 'react';
 import { useRef } from 'react';
 import { airdropClient, devTransaction } from '@/sdk';
-import { ADMIN_CAP, NODES } from '@/sdk/constants';
+import { ADMIN_CAP, AIRDROPS } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import {
   useCurrentAccount,
@@ -39,17 +39,22 @@ const MyDatagridConfigurable = ({
     return false;
   };
 
-  const handleRemove = async () => {
+  const handleWithdraw = async () => {
     const record = recordRef.current;
     if (!record) {
       await sleep(0.5);
-      await handleRemove();
+      await handleWithdraw();
       return;
     }
     if (!account) return;
 
     try {
-      const tx = airdropClient.removeNode(ADMIN_CAP, NODES, record.rank);
+      const tx = airdropClient.withdraw(
+        record.coinType,
+        ADMIN_CAP,
+        AIRDROPS,
+        record.round,
+      );
 
       try {
         await devTransaction(tx, account.address);
@@ -89,8 +94,8 @@ const MyDatagridConfigurable = ({
       }}
     >
       {children}
-      {hasEdit && <EditButton label="修改" />}
-      <Button label="移除" onClick={handleRemove} />
+      {hasEdit && <EditButton />}
+      <Button label="提现" onClick={handleWithdraw} />
     </DatagridConfigurable>
   );
 };
