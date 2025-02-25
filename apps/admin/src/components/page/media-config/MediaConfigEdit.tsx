@@ -4,7 +4,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CreateEditActions from '@/components/ui/CreateEditActions';
 
-const CopywritingEdit = () => {
+const MediaConfigEdit = () => {
   const transform = async (data: any) => {
     return {
       ...data,
@@ -30,4 +30,4 @@ const CopywritingEdit = () => {
   );
 };
 
-export default CopywritingEdit;
+export default MediaConfigEdit;
