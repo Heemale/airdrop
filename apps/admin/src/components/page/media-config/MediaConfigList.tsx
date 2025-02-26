@@ -4,13 +4,11 @@ import {
   TextField,
   BooleanField,
   TextInput,
-  ImageField,
   FunctionField,
 } from 'react-admin';
 import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
-import { BASE_URL } from '@/config';
-import Image from 'next/image';
+import MyImageField from '@/components/ui/MyImageField';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -45,11 +43,6 @@ const postFilters = [
   />,
 ];
 
-const renderImageUrl = (imageUrl: string | null) => {
-  const url = imageUrl ? BASE_URL + imageUrl : '/home_banner_bg2_2.png';
-  return <Image src={url} alt={'image'} width={100} height={100} />;
-};
-
 const MediaConfigList = () => (
   <List filters={postFilters}>
     <MyDatagridConfigurable>
@@ -59,13 +52,15 @@ const MediaConfigList = () => (
       <TextField source="zh" label="中文" />
       <TextField source="en" label="英文" />
       <TextField source="vi" label="越南语" />
+      <BooleanField source="isImage" label="是否为图片" />
       <FunctionField
         source="imageUrl"
         label="图片"
-        render={(record) => renderImageUrl(record.imageUrl)}
+        render={(record) => (
+          <MyImageField isImage={record.isImage} imageUrl={record.imageUrl} />
+        )}
       />
       <TextField source="imageUrl" label="图片链接" />
-      <BooleanField source="isImage" label="是否为图片" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
     </MyDatagridConfigurable>

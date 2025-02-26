@@ -5,45 +5,35 @@ import {
   ImageInput,
   SimpleForm,
   TextInput,
+  useNotify,
 } from 'react-admin';
 import React from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CreateEditActions from '@/components/ui/CreateEditActions';
-import { BASE_URL } from '@/config';
-import { getAuth } from '@/config/auth';
+import { uploadImage } from '@/api';
 
 const MediaConfigEdit = () => {
+  const notify = useNotify();
+
   const transform = async (data: any) => {
-    console.log({
-      data,
-    });
-
-    const token = getAuth();
-
-    const formData = new FormData();
-    formData.append('file', data.imageUrl.rawFile);
-
-    const request = new Request(`${BASE_URL}/api/upload/file`, {
-      method: 'POST',
-      headers: new Headers({
-        Authorization: `Bearer ${token}`,
-      }),
-      body: formData,
-    });
-
-    const response = await fetch(request);
-
-    const res = await response.json();
-
-    if (res.statusCode !== 201) {
-      throw new Error('Upload failed');
+    if (!(typeof data.imageUrl === 'object')) {
+      return {
+        ...data,
+        updateAt: Math.floor(Date.now() / 1000),
+      };
     }
 
-    return {
-      imageUrl: res.data,
-      updateAt: Math.floor(Date.now() / 1000), // Update the timestamp to current time
-    };
+    try {
+      const imageUrl = await uploadImage(data.imageUrl.rawFile);
+      return {
+        ...data,
+        imageUrl,
+        updateAt: Math.floor(Date.now() / 1000),
+      };
+    } catch (e: any) {
+      notify(`图片上传失败: ${e.message}`, { type: 'error' });
+    }
   };
 
   return (
