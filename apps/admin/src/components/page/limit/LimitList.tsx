@@ -2,13 +2,11 @@ import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
 import {
   BooleanField,
-  FunctionField,
+  NumberField,
   List,
   TextField,
   TextInput,
 } from 'react-admin';
-import { convertSmallToLarge } from '@/utils/math';
-import { TOKEN_DECIMAL } from '@/config';
 import * as React from 'react';
 
 const postFilters = [
@@ -32,16 +30,10 @@ const postFilters = [
 
 const LimitList = () => (
   <List filters={postFilters}>
-    <MyDatagridConfigurable>
+    <MyDatagridConfigurable hasEdit>
       <TextField source="id" label="ID" />
       <TextField source="address" label="用户地址" />
-      <FunctionField
-        source="times"
-        label="次数"
-        render={(record) =>
-          convertSmallToLarge(record.times.toString(), TOKEN_DECIMAL)
-        }
-      />
+      <NumberField source="times" label="次数" />
       <BooleanField source="isLimit" label="是否限制" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />

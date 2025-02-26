@@ -10,14 +10,20 @@ import UserEdit from '@/components/page/user/UserEdit';
 import MediaConfigList from '@/components/page/media-config/MediaConfigList';
 import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
 import AirdropList from '@/components/page/airdrop/AirdropList';
-import ClaimRecordList from '@/components/page/claim_record/ClaimRecordList';
+import AirdropEdit from '@/components/page/airdrop/AirdropEdit';
+import ClaimRecordList from '@/components/page/claim-record/ClaimRecordList';
 import GlobalList from '@/components/page/global/GlobalList';
+import GlobalCreate from '@/components/page/global/GlobalCreate';
+import LimitCreate from '@/components/page/limit/LimitCreate';
+import GlobalEdit from '@/components/page/global/GlobalEdit';
+import LimitEdit from '@/components/page/limit/LimitEdit';
 import LimitList from '@/components/page/limit/LimitList';
-import BuyRecordList from '@/components/page/buy_record/BuyRecordList';
+import BuyRecordList from '@/components/page/buy-record/BuyRecordList';
 import NodeList from '@/components/page/node/NodeList';
 import TransferRecordList from '@/components/page/transfer_record/TransferRecordList';
 import NodeEdit from '@/components/page/node/NodeEdit';
 import AirdropCreate from '@/components/page/airdrop/AirdropCreate';
+import NodeCreate from '@/components/page/node/NodeCreate';
 
 const AdminApp = () => (
   <Admin
@@ -37,12 +43,13 @@ const AdminApp = () => (
       options={{ label: '权益表' }}
       list={NodeList}
       edit={NodeEdit}
+      create={NodeCreate}
     />
     <Resource
       name="airdrops"
       options={{ label: '空投表' }}
       list={AirdropList}
-      edit={EditGuesser}
+      edit={AirdropEdit}
       create={AirdropCreate}
     />
     <Resource
@@ -67,13 +74,15 @@ const AdminApp = () => (
       name="special-limits"
       options={{ label: '特殊限制表' }}
       list={LimitList}
-      edit={EditGuesser}
+      edit={LimitEdit}
+      create={LimitCreate}
     />
     <Resource
       name="objects"
       options={{ label: '项目对象表' }}
       list={GlobalList}
-      edit={EditGuesser}
+      edit={GlobalEdit}
+      create={GlobalCreate}
     />
     <Resource
       name="media-configs"

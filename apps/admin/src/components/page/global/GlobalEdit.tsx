@@ -15,6 +15,7 @@ import { globalClient, devTransaction } from '@/sdk';
 import { GLOBAL } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
+import { Transaction } from '@mysten/sui/transactions';
 
 const PostEditToolbar = (props: any) => (
   <Toolbar {...props}>
@@ -31,7 +32,9 @@ const GlobalEdit = () => {
     if (!account) return;
 
     try {
-      const tx = globalClient.modify(GLOBAL, data.object, data.ivValid);
+      const tx = new Transaction();
+
+      globalClient.modify(tx, GLOBAL, data.object, data.ivValid);
 
       try {
         await devTransaction(tx, account.address);

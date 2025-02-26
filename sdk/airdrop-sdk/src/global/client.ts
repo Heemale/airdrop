@@ -25,8 +25,7 @@ export class GlobalClient {
     return tx;
   }
 
-  modify(global: string, object: string, ivValid: boolean): Transaction {
-    const tx = new Transaction();
+  modify(tx: Transaction, global: string, object: string, ivValid: boolean) {
     tx.moveCall({
       typeArguments: [],
       target: `${this.packageId}::${MODULE_CLOB}::update_initialization_list`,
