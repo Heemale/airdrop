@@ -215,6 +215,7 @@ export class AirdropClient {
   }
 
   insertNode(
+    tx: Transaction,
     adminCap: string,
     nodes: string,
     name: string,
@@ -222,8 +223,7 @@ export class AirdropClient {
     limit: bigint,
     price: bigint,
     total_quantity: bigint,
-  ): Transaction {
-    const tx = new Transaction();
+  ) {
     tx.moveCall({
       typeArguments: [],
       target: `${this.packageId}::${MODULE_CLOB}::insert_node`,
@@ -237,7 +237,6 @@ export class AirdropClient {
         tx.pure.u64(total_quantity),
       ],
     });
-    return tx;
   }
 
   removeNode(adminCap: string, nodes: string, rank: number): Transaction {

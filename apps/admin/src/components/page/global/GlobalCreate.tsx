@@ -1,44 +1,40 @@
 import {
   BooleanInput,
   Edit,
-  NumberInput,
   SaveButton,
   SimpleForm,
   TextInput,
   Toolbar,
 } from 'react-admin';
 import React from 'react';
-import { convertLargeToSmall, convertSmallToLarge } from '@/utils/math';
-import { TOKEN_DECIMAL } from '@/config';
-import { Transaction } from '@mysten/sui/transactions';
-
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { limitClient, devTransaction } from '@/sdk';
-import { LIMITS } from '@/sdk/constants';
+import { Transaction } from '@mysten/sui/transactions';
+
+import { globalClient, devTransaction } from '@/sdk';
+import { GLOBAL } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
 
-const PostEditToolbar = (props: any) => (
+const CreateToolbar = (props: any) => (
   <Toolbar {...props}>
-    <SaveButton label="修改" />
+    <SaveButton label="添加" />
   </Toolbar>
 );
 
-const LimitEdit = () => {
+const GlobalCreate = () => {
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const notify = useNotify();
 
   const onSubmit = async (data: any) => {
     if (!account) return;
-
     try {
       const tx = new Transaction();
 
-      limitClient.modify(tx, LIMITS, data.address, data.times, data.ivValid);
+      globalClient.modify(tx, GLOBAL, data.object, data.isValid);
 
       try {
         await devTransaction(tx, account.address);
@@ -64,15 +60,11 @@ const LimitEdit = () => {
   };
 
   return (
-    <Edit>
-      <SimpleForm onSubmit={onSubmit} toolbar={<PostEditToolbar />}>
-        <TextInput source="id" label="ID" disabled fullWidth />
-        <TextInput source="address" label="用户地址" fullWidth />
-        <NumberInput source="times" label="可领取次数" fullWidth />
-        <BooleanInput source="ivValid" label="是否限制" fullWidth />
-      </SimpleForm>
-    </Edit>
+    <SimpleForm onSubmit={onSubmit} toolbar={<CreateToolbar />}>
+      <TextInput source="object" label="对象ID" fullWidth />
+      <BooleanInput source="isValid" label="是否合法" fullWidth />
+    </SimpleForm>
   );
 };
 
-export default LimitEdit;
+export default GlobalCreate;

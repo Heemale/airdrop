@@ -1,7 +1,5 @@
 import { SuiClient } from '@mysten/sui/client';
 import { MODULE_CLOB } from './utils/constants';
-import { Transaction } from '@mysten/sui/transactions';
-
 import type {
   PaginationArguments,
   PaginatedEvents,
@@ -16,26 +14,6 @@ export class LimitClient {
     public packageId: string,
   ) {}
 
-  modify(
-    limits: string,
-    address: string,
-    times: bigint,
-    ivValid: boolean,
-  ): Transaction {
-    const tx = new Transaction();
-    tx.moveCall({
-      typeArguments: [],
-      target: `${this.packageId}::${MODULE_CLOB}::modify`,
-      arguments: [
-        tx.object(limits),
-        tx.pure.string(address),
-        tx.pure.u64(times),
-        tx.pure.bool(ivValid),
-      ],
-    });
-
-    return tx;
-  }
   async modifyLimit(
     input: PaginationArguments<PaginatedEvents['nextCursor']> & OrderArguments,
   ): Promise<Summary<ModifyLimitSummary>> {

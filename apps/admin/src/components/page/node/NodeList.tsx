@@ -2,6 +2,7 @@ import MyDatagridConfigurable from './MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
 import {
   FunctionField,
+  NumberField,
   List,
   TextField,
   TextInput,
@@ -65,13 +66,7 @@ const NodeList = () => (
       <TextField source="description" label="描述" />
       <BooleanField source="isOpen" label="是否开启" />
       <BooleanField source="isRemove" label="是否移除" />
-      <FunctionField
-        source="limit"
-        label="可领取次数"
-        render={(record) =>
-          convertSmallToLarge(record.limit.toString(), TOKEN_DECIMAL)
-        }
-      />
+      <NumberField source="limit" label="可领取次数" />
       <FunctionField
         source="price"
         label="节点价格"
