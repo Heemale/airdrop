@@ -1,17 +1,13 @@
+'use client';
 import NumberPlate from '@/components/Home/NumberPlate';
 import UpdateData from '@/components/Home/UpdateData';
 import Always from '@/components/Home/Always';
 import * as React from 'react';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import { useClientTranslation } from '@/hook';
 
-interface Props {
-  locale: string;
-}
 
-const Sale = async (props: Props) => {
-  const { locale } = props;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+const Sale = async () => {
+  const { t } = useClientTranslation();
 
   return (
     <div className="flex flex-col gap-4 sm:gap-14 items-center mt-16 sm:mt-32">
@@ -24,7 +20,7 @@ const Sale = async (props: Props) => {
         <NumberPlate num={0} />
         <NumberPlate num={0} />
       </div>
-      <UpdateData locale={locale} />
+      <UpdateData  />
       <Always />
     </div>
   );

@@ -1,11 +1,10 @@
+'use client';
 import * as React from 'react';
 import Image from 'next/image';
 import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
+import { useClientTranslation } from '@/hook';
 
-interface Props {
-  locale: string;
-}
 
 const benefits = [
   {
@@ -50,9 +49,8 @@ const benefits = [
   },
 ];
 
-const Holder = async (props: Props) => {
-  const { locale } = props;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+const Holder =  () => {
+  const { t } = useClientTranslation();
 
   return (
     <div className="max-w-screen-xl flex flex-col items-start text-white mx-auto -mt-48 sm:mt-0 px-4">

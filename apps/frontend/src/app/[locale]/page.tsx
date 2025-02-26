@@ -1,26 +1,22 @@
+'use client';
 import * as React from 'react';
 import Banner from '@/components/Home/Banner';
 import About from '@/components/Home/About';
 import Holder from '@/components/Home/Holder';
 import Link from 'next/link';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import { useClientTranslation } from '@/hook';
 
-interface Props {
-  params: Promise<{ locale: string }>;
-}
 
-const Home = async (props: Props) => {
-  const { params } = props;
-  const { locale } = await params;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
+const Home = async () => {
+  const { t } = useClientTranslation();
 
   return (
     <>
       <div className="bg-center bg-no-repeat flex flex-col gap-24 sm:gap-64 my-5">
         <div className="flex flex-col gap-24 sm:gap-48 items-center">
           <div className="flex flex-col gap-20 sm:gap-20">
-            <Banner locale={locale} />
+            <Banner />
             <div className="bg-black bg-contain bg-no-repeat sm:bg-cover bg-right flex flex-col gap-6 sm:gap-12 mx-4 sm:mx-16 -mt-48 sm:mt-0">
               <Link href={'/presale'} className="flex justify-center">
                 <button
@@ -32,8 +28,8 @@ const Home = async (props: Props) => {
             </div>
             {/*<Sale locale={locale} />*/}
             {/*<Remain locale={locale} />*/}
-            <About locale={locale} />
-            <Holder locale={locale} />
+            <About />
+            <Holder  />
           </div>
         </div>
       </div>
