@@ -1,20 +1,15 @@
+'use client';
 import NavBarWrapper from '@/components/NavBarWrapper';
 import * as React from 'react';
 import Banner from '@/components/Event/Banner';
 import Announcement from '@/components/Event/Announcement';
 import AirdropsHeader from '@/components/Event/AirdropsHeader';
 import AirdropList from '@/components/Event/AirdropList';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import { useClientTranslation } from '@/hook';
 
-interface Props {
-  params: Promise<{ locale: string }>;
-}
 
-const Home = async (props: Props) => {
-  const { params } = props;
-  const { locale } = await params;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+const Home = async () => {
+  const { t } = useClientTranslation();
 
   return (
     <>
@@ -24,9 +19,9 @@ const Home = async (props: Props) => {
           <div className="flex flex-col gap-8 sm:gap-20 mb-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-stretch gap-10">
               <Banner />
-              <Announcement locale={locale} />
+              <Announcement  />
             </div>
-            <AirdropsHeader locale={locale} />
+            <AirdropsHeader />
             <AirdropList
               isOngoing
               ongoingText={t('ongoing')}

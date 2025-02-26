@@ -1,16 +1,15 @@
+'use client';
 import Button from '@/components/Button';
 import * as React from 'react';
 import Link from 'next/link';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import { useClientTranslation } from '@/hook';
 
 interface Props {
   locale: string;
 }
 
-const AirdropsHeader = async (props: Props) => {
-  const { locale } = props;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+const AirdropsHeader =  () => {
+  const { t } = useClientTranslation();
 
   return (
     <div className="flex justify-between">

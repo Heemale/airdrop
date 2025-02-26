@@ -1,14 +1,11 @@
+'use client';
+
 import * as React from 'react';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import { useClientTranslation } from '@/hook';
 
-interface Props {
-  locale: string;
-}
 
-const UpdateData = async (props: Props) => {
-  const { locale } = props;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+const UpdateData =  () => {
+  const { t } = useClientTranslation();
 
   return (
     <div className="flex gap-2 mt-6">

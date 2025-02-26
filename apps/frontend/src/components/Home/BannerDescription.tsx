@@ -1,19 +1,16 @@
+'use client';
 import * as React from 'react';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
+import { useClientTranslation } from '@/hook';
 
-interface Props {
-  locale: string;
-}
 
-const BannerDescription = async (props: Props) => {
-  const { locale } = props;
-  const { t } = await initTranslations(locale, i18nConfig.i18nNamespaces);
+
+const BannerDescription =  () => {
+  const { t } = useClientTranslation();
 
   return (
     <div className="w-3/4">
       <div className="text-pretty sm:w-2/3 flex flex-col sm:gap-1 text-white text-sm sm:text-lg -mt-2">
-        <div>
+        <div>k
           {t('Data scale summary and forecast of decentralized sharing track')}
         </div>
         <div>
