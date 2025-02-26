@@ -46,4 +46,5 @@ export interface AirdropChangeSummary extends TransactionSummary {
   imageUrl: string;
   remainingBalance: bigint;
   isRemove: boolean;
+  nextCursor?: EventId | null;
 }

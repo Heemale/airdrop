@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { upsert } from '@/airdrop/dao/airdrop.dao';
+import { upsert } from '@/limit/dao/limit.dao';
 
 export const handlerModifyLimit = async (
   event: Prisma.SpecialLimitCreateInput,
