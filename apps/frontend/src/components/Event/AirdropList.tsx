@@ -62,7 +62,7 @@ const AirdropList = (props: Props) => {
       const airdrops = await getAirdropInfo(); // 获取空投信息
       if (Array.isArray(airdrops)) {
         console.log('Received airdrop list:', airdrops);
-  
+
         // 确保返回值是数组，遍历数据并格式化
         const formattedAirdropList: AirdropInfo[] = airdrops.map((airdrop) => ({
           round: BigInt(airdrop.round), // 确保是 BigInt 类型
@@ -77,7 +77,7 @@ const AirdropList = (props: Props) => {
           coinType: airdrop.coinType,
           remaining_balance: BigInt(airdrop.remaining_balance),
         }));
-  
+
         console.log('Formatted airdrop list:', formattedAirdropList);
         setAirdropList(formattedAirdropList); // 只保留开启的空投
       } else {
@@ -97,7 +97,7 @@ const AirdropList = (props: Props) => {
           remaining_balance: BigInt(airdrop.remaining_balance),
         };
         console.log('Formatted single airdrop:', formattedAirdrop);
-  
+
         setAirdropList([formattedAirdrop]); // 将单个空投包装成数组并更新状态
       }
     } catch (e: any) {

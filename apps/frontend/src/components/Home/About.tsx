@@ -3,7 +3,6 @@ import * as React from 'react';
 import BannerBottom from '@/components/Home/BannerBottom';
 import { useClientTranslation } from '@/hook';
 
-
 const About = () => {
   const { t } = useClientTranslation();
 

@@ -5,7 +5,6 @@ import initTranslations from '@/app/i18n';
 import i18nConfig from '@/i18nConfig';
 import { useClientTranslation } from '@/hook';
 
-
 const benefits = [
   {
     number: '01',
@@ -49,7 +48,7 @@ const benefits = [
   },
 ];
 
-const Holder =  () => {
+const Holder = () => {
   const { t } = useClientTranslation();
 
   return (

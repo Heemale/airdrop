@@ -2,16 +2,14 @@
 import * as React from 'react';
 import { useClientTranslation } from '@/hook';
 
-
-
-const BannerDescription =  () => {
+const BannerDescription = () => {
   const { t } = useClientTranslation();
 
   return (
     <div className="w-3/4">
       <div className="text-pretty sm:w-2/3 flex flex-col sm:gap-1 text-white text-sm sm:text-lg -mt-2">
-        <div>k
-          {t('Data scale summary and forecast of decentralized sharing track')}
+        <div>
+          k{t('Data scale summary and forecast of decentralized sharing track')}
         </div>
         <div>
           {t(

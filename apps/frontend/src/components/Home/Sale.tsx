@@ -5,7 +5,6 @@ import Always from '@/components/Home/Always';
 import * as React from 'react';
 import { useClientTranslation } from '@/hook';
 
-
 const Sale = async () => {
   const { t } = useClientTranslation();
 
@@ -20,7 +19,7 @@ const Sale = async () => {
         <NumberPlate num={0} />
         <NumberPlate num={0} />
       </div>
-      <UpdateData  />
+      <UpdateData />
       <Always />
     </div>
   );

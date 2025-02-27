@@ -74,24 +74,33 @@ const BuyRecordList = () => (
         source="paymentAmount"
         label="支付金额"
         render={(record) =>
-          record.paymentAmount ?convertSmallToLarge(record.paymentAmount.toString(), TOKEN_DECIMAL):'-'
+          record.paymentAmount
+            ? convertSmallToLarge(
+                record.paymentAmount.toString(),
+                TOKEN_DECIMAL,
+              )
+            : '-'
         }
       />
       <FunctionField
         source="inviterGains"
         label="邀请人返利金额"
         render={(record) =>
-          record.inviterGains?  convertSmallToLarge(record.inviterGains.toString(), TOKEN_DECIMAL):'-'
+          record.inviterGains
+            ? convertSmallToLarge(record.inviterGains.toString(), TOKEN_DECIMAL)
+            : '-'
         }
       />
       <FunctionField
         source="nodeReceiverGains"
         label="平台返利金额"
         render={(record) =>
-          record.nodeReceiverGains ?convertSmallToLarge(
-            record.nodeReceiverGains.toString(),
-            TOKEN_DECIMAL,
-          ):'-'
+          record.nodeReceiverGains
+            ? convertSmallToLarge(
+                record.nodeReceiverGains.toString(),
+                TOKEN_DECIMAL,
+              )
+            : '-'
         }
       />
       <TimeTextField source="createAt" label="创建时间" />

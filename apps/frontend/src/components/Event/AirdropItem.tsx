@@ -4,7 +4,7 @@ import Image from 'next/image';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import {
-  airdropClient, 
+  airdropClient,
   devTransaction,
   getCoinMetaData,
   nodeClient,
@@ -51,7 +51,7 @@ const AirdropItem = (props: Props) => {
     nodeStatus,
     claimText,
   } = props;
-console.log('data11222333',data)
+  console.log('data11222333', data);
   const { t } = useClientTranslation();
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
@@ -140,13 +140,13 @@ console.log('data11222333',data)
       const coinMetaData = await getCoinMetaData({
         coinType,
       });
-      
+
       console.log('data.coinType', data.coinType);
       console.log('coinMetaData', coinMetaData);
 
       setCoinMetaData(coinMetaData);
-    } catch (e:any) {
-      console.error('获取代币元数据时出错:', e); 
+    } catch (e: any) {
+      console.error('获取代币元数据时出错:', e);
       messageApi.error(`${t(handleTxError(e.message.trim()))}`);
     }
   };
@@ -265,8 +265,8 @@ console.log('data11222333',data)
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <div>{formatTimestamp(Number(data.startTime)* 1000)}</div>
-              <div>{formatTimestamp(Number(data.endTime)* 1000)}</div>
+              <div>{formatTimestamp(Number(data.startTime) * 1000)}</div>
+              <div>{formatTimestamp(Number(data.endTime) * 1000)}</div>
             </div>
           </div>
         </div>

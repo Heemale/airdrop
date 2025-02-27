@@ -6,8 +6,6 @@ import Holder from '@/components/Home/Holder';
 import Link from 'next/link';
 import { useClientTranslation } from '@/hook';
 
-
-
 const Home = async () => {
   const { t } = useClientTranslation();
 
@@ -29,7 +27,7 @@ const Home = async () => {
             {/*<Sale locale={locale} />*/}
             {/*<Remain locale={locale} />*/}
             <About />
-            <Holder  />
+            <Holder />
           </div>
         </div>
       </div>
