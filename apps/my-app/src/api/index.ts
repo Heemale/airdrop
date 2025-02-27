@@ -5,9 +5,9 @@ import {
   SubordinateNode,
 } from '@/api/types/response';
 export const getNodeInfo = (): Promise<NodeInfoResponse> =>
-  request.get('/all-nodes');
+  request.get('api/all-nodes');
 
 export const getChildren = (): Promise<RootNode> =>
-  request.get('/user/children');
+  request.get('api/user/children');
 export const getUserInfo = (address: string): Promise<SubordinateNode> =>
-  request.get(`/user/address/${address}/children`);
+  request.get(`api/user/address/${address}/children`);

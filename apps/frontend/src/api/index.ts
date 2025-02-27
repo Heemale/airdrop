@@ -6,6 +6,8 @@ import {
   PaginatedResponse,
   UserSharesResponse,
   UserInfoResponse,
+  NodeInfoResponse,
+  AirdropInfo,
 } from '@/api/types/response';
 
 export const getUserInfo = (address: string): Promise<UserInfoResponse> =>
@@ -28,3 +30,9 @@ export const getClaimRecords = (
   params: PaginatedRequest,
 ): Promise<PaginatedResponse<ClaimAirdropRecord>> =>
   request.get(`/claim-records/address/${address}`, { params });
+
+export const getNodeInfo = (): Promise<NodeInfoResponse> =>
+  request.get('/all-nodes');
+
+export const getAirdropInfo = (): Promise<AirdropInfo> =>
+  request.get('/airdrops/all-airdrops');
