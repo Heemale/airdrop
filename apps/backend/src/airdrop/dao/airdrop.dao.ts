@@ -18,7 +18,10 @@ export const upsert = (data: Prisma.AirdropCreateInput) => {
     },
   });
 };
-export const findAllAirdrops = async () => {
+export const findAllAirdrops = async (
+  cursor: number | null | undefined,
+  pageSize: number,
+) => {
   try {
     // 查询所有空投
     const airdrops = await prisma.airdrop.findMany({
@@ -38,15 +41,20 @@ export const findAllAirdrops = async () => {
         coinType: true,
         remainingBalance: true,
       },
+      take: pageSize,
+      skip: cursor ? 1 : 0,
+      cursor: cursor && { id: Number(cursor) },
     });
 
     // 如果没有数据，直接返回空数组
     if (airdrops.length === 0) {
       return [];
     }
+    const hasNextPage = airdrops.length === pageSize;
+    const nextCursor = hasNextPage ? airdrops[airdrops.length - 1].round : null;
 
     // 格式化返回数据（将 BigInt 转为字符串）
-    const formattedAirdrops = airdrops.map((airdrop) => {
+    const data = airdrops.map((airdrop) => {
       return {
         round: airdrop.round.toString(),
         startTime: airdrop.startTime.toString(),
@@ -63,7 +71,11 @@ export const findAllAirdrops = async () => {
           : null,
       };
     });
-    return formattedAirdrops;
+    return {
+      data,
+      nextCursor,
+      hasNextPage,
+    };
   } catch (error) {
     consoleError('Error retrieving airdrops:', error);
     throw new Error('Failed to fetch airdrops');

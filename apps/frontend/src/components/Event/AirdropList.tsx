@@ -3,7 +3,6 @@
 import * as React from 'react';
 import AirdropItem from '@/components/Event/AirdropItem';
 import { useEffect, useState } from 'react';
-import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
 import { getCurrentTimestampMs } from '@/utils/time';
 import { airdropClient, nodeClient } from '@/sdk';
 import { AIRDROPS, NODES } from '@/sdk/constants';
@@ -13,6 +12,7 @@ import { handleTxError } from '@/sdk/error';
 import { useClientTranslation } from '@/hook';
 import { NodeStatus } from '@local/airdrop-sdk/node';
 import { getAirdropInfo } from '@/api';
+import type { AirdropInfo } from '@/api/types/response';
 
 interface Props {
   isOngoing?: boolean;
@@ -37,6 +37,9 @@ const AirdropList = (props: Props) => {
     rewardQuantityPerCopy,
     claimText,
   } = props;
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [cursor, setCursor] = useState<number | null>(null);
 
   const { t } = useClientTranslation();
   const account = useCurrentAccount();
@@ -57,53 +60,28 @@ const AirdropList = (props: Props) => {
     }
   };
 
-  const getAirdropList = async () => {
+  const getAirdropList = async (cursor: number | null = null) => {
+    if (!hasMore || loading) return; // 防止重复加载
+
     try {
-      const airdrops = await getAirdropInfo(); // 获取空投信息
-      if (Array.isArray(airdrops)) {
-        console.log('Received airdrop list:', airdrops);
+      const airdropResponse = await getAirdropInfo({ nextCursor: cursor }); // 获取空投信息
+      const airdrops = airdropResponse.data || [];
 
-        // 确保返回值是数组，遍历数据并格式化
-        const formattedAirdropList: AirdropInfo[] = airdrops.map((airdrop) => ({
-          round: BigInt(airdrop.round), // 确保是 BigInt 类型
-          startTime: BigInt(airdrop.startTime),
-          endTime: BigInt(airdrop.endTime),
-          totalShares: BigInt(airdrop.totalShares),
-          claimedShares: BigInt(airdrop.claimedShares),
-          totalBalance: BigInt(airdrop.totalBalance),
-          isOpen: airdrop.isOpen,
-          description: airdrop.description,
-          image_url: airdrop.image_url,
-          coinType: airdrop.coinType,
-          remaining_balance: BigInt(airdrop.remaining_balance),
-        }));
+        // 使用 id 作为唯一键
+        const existingIds = new Set(airdropList.map((item) => item.round));
+        const uniqueNewAirdrops = airdrops.filter(
+          (item: AirdropInfo) => !existingIds.has(item.round),
+        );
 
-        console.log('Formatted airdrop list:', formattedAirdropList);
-        setAirdropList(formattedAirdropList); // 只保留开启的空投
-      } else {
-        // 如果返回的是单个空投，直接处理
-        const airdrop = airdrops; // 假设 response 是单个空投
-        const formattedAirdrop: AirdropInfo = {
-          round: BigInt(airdrop.round),
-          startTime: BigInt(airdrop.startTime),
-          endTime: BigInt(airdrop.endTime),
-          totalShares: BigInt(airdrop.totalShares),
-          claimedShares: BigInt(airdrop.claimedShares),
-          totalBalance: BigInt(airdrop.totalBalance),
-          isOpen: airdrop.isOpen,
-          description: airdrop.description,
-          image_url: airdrop.image_url,
-          coinType: airdrop.coinType,
-          remaining_balance: BigInt(airdrop.remaining_balance),
-        };
-        console.log('Formatted single airdrop:', formattedAirdrop);
-
-        setAirdropList([formattedAirdrop]); // 将单个空投包装成数组并更新状态
-      }
+        setAirdropList((prev) => [...prev, ...uniqueNewAirdrops]);
+        setCursor(airdropResponse.nextCursor); // 更新游标
+        setHasMore(airdropResponse.hasNextPage); // 更新是否还有更多数据
+        setLoading(false);
+      
     } catch (e: any) {
       console.log(`getAirdropList: ${e.message}`);
-      // 处理错误并显示提示
       messageApi.error(`${t(handleTxError(e.message))}`);
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -113,16 +91,28 @@ const AirdropList = (props: Props) => {
   useEffect(() => {
     getAirdropList();
   }, []);
-
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    // 当滚动到距离底部10px以内时，认为到达底部
+    const isBottom = scrollTop + clientHeight >= scrollHeight - 10;
+    if (isBottom && !loading && cursor) {
+      getAirdropList(cursor); // 滚动到底部时加载更多数据
+    }
+  };
   return (
-    <div className="flex flex-col gap-6">
+    <div
+      className="flex flex-col gap-6"
+      onScroll={handleScroll}
+      style={{ maxHeight: '600px', overflowY: 'auto' }} // 设置最大高度和滚动
+    >
+      {' '}
       {isOngoing
         ? airdropList
             .filter(
               (item) =>
                 item.isOpen && checkIsGoing(item.startTime, item.endTime),
             )
-            .sort((a, b) => (b.round > a.round ? 1 : -1)) // 按照 round 从大到小排序
+            .sort((a, b) => (b.round > a.round ? 1 : -1))
             .map((item) => (
               <AirdropItem
                 key={item.round.toString()}
@@ -138,7 +128,7 @@ const AirdropList = (props: Props) => {
             ))
         : airdropList
             .filter((item) => item.isOpen)
-            .sort((a, b) => (b.round > a.round ? 1 : -1)) // 按照 round 从大到小排序
+            .sort((a, b) => (b.round > a.round ? 1 : -1))
             .map((item) => {
               const isOngoing = checkIsGoing(item.startTime, item.endTime);
               return (

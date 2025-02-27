@@ -11,7 +11,7 @@ import {
 } from '@/sdk';
 import { AIRDROPS, GLOBAL, INVEST, LIMITS, NODES } from '@/sdk/constants';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
-import { AirdropInfo } from '@local/airdrop-sdk/airdrop';
+import type { AirdropInfo } from '@/api/types/response';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
