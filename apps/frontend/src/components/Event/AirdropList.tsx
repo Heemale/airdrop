@@ -65,8 +65,6 @@ const AirdropList = (props: Props) => {
 
     try {
       const airdropResponse = await getAirdropInfo({ nextCursor: cursor }); // 获取空投信息
-      console.log('Received airdrop list:', airdropResponse);
-      console.log('data:', airdropResponse.data);
       const airdrops = airdropResponse.data || [];
 
         // 使用 id 作为唯一键
