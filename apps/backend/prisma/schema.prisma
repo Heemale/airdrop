@@ -33,7 +33,7 @@ model Admin {
 model MediaConfig {
   id       Int      @id @default(autoincrement()) @db.UnsignedInt /// ID
   page     String?  @db.VarChar(255) /// 页面
-  code     String?  @db.VarChar(255) /// 文案编码
+  code     String?  @unique @db.VarChar(255) /// 文案编码
   zh       String?  @db.Text /// 中文
   en       String?  @db.Text /// 英文
   vi       String?  @db.Text /// 越南语

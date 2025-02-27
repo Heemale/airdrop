@@ -302,9 +302,9 @@ const AdminPage = () => {
       const validImageUrl = (await checkImageExists(values.image_url))
         ? values.image_url
         : '/sui-sui-logo.png'; // 替换成你的默认图片路径
-        const tx = new Transaction();
+      const tx = new Transaction();
 
-       await airdropClient.insert(
+      await airdropClient.insert(
         tx,
         values.coinType,
         ADMIN_CAP,
@@ -531,7 +531,7 @@ const AdminPage = () => {
       const { name, description, limit, price, total_quantity } = values;
       const tx = new Transaction();
 
-       airdropClient.insertNode(
+      airdropClient.insertNode(
         tx,
         ADMIN_CAP,
         NODES,
