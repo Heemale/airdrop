@@ -85,10 +85,10 @@ const NodeList = () => (
         source="purchasedQuantity"
         label="已购买数量"
         render={(record) =>
-          convertSmallToLarge(
+          record.purchasedQuantity? convertSmallToLarge(
             record.purchasedQuantity.toString(),
             TOKEN_DECIMAL,
-          )
+          ):'-'
         }
       />
       <TimeTextField source="createAt" label="创建时间" />

@@ -4,13 +4,14 @@ import * as React from 'react';
 import { useContext, useEffect, useState } from 'react';
 import { NodeInfo } from '@local/airdrop-sdk/node';
 import { Autocomplete, TextField } from '@mui/material';
-import { nodeClient } from '@/sdk';
-import { NODES } from '@/sdk/constants';
 import { convertSmallToLarge } from '@/utils/math';
 import { PresaleContext } from '@/context/PresaleContext';
 import { message } from 'antd';
 import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
+import { getNodeInfo } from '@/api';
+
+
 
 const NodeData = () => {
   const { t } = useClientTranslation();
@@ -25,8 +26,49 @@ const NodeData = () => {
 
   const getNodeList = async () => {
     try {
-      const nodes = await nodeClient.nodeList(NODES);
-      setNodeList(nodes.filter((node) => node.isOpen));
+      const nodes = await getNodeInfo();
+      if (Array.isArray(nodes)) {
+        console.log('11111', nodes);
+
+        // 确保返回值是数组
+        // 遍历返回的数据并赋值给 NodeInfo
+        const formattedNodeList: NodeInfo[] = nodes.map((node) => ({
+          rank: Number(node.rank), // 确保类型一致
+          name: node.name,
+          description: node.description,
+          limit: BigInt(node.limit),
+          price: BigInt(node.price),
+          total_quantity: node.totalQuantity
+            ? BigInt(node.totalQuantity)
+            : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
+          purchased_quantity: node.purchasedQuantity
+            ? BigInt(node.purchasedQuantity)
+            : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
+          isOpen: node.isOpen,
+        }));
+        console.log('formattedNodeList', formattedNodeList);
+        setNodeList(formattedNodeList.filter((node) => node.isOpen));
+      } else {
+        // 如果返回的是单个节点，直接处理
+        const node = nodes; // 假设 response 是单个节点
+        const formattedNode: NodeInfo = {
+          rank: Number(node.rank), // 确保类型一致
+          name: node.name,
+          description: node.description,
+          limit: BigInt(node.limit),
+          price: BigInt(node.price),
+          total_quantity: node.totalQuantity
+            ? BigInt(node.totalQuantity)
+            : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
+          purchased_quantity: node.purchasedQuantity
+            ? BigInt(node.purchasedQuantity)
+            : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
+          isOpen: node.isOpen,
+        };
+        console.log('formattedNode111111111', formattedNode);
+
+        setNodeList([formattedNode].filter((node) => node.isOpen)); // 将单个节点包装成数组并更新状态
+      }
     } catch (e: any) {
       console.log(`getNodeList: ${e.message}`);
       messageApi.error(`${t(handleTxError(e.message))}`);

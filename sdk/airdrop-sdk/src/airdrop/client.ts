@@ -358,8 +358,10 @@ export class AirdropClient {
     const resp = await this.queryEvents('AirdropChange', input);
 
     const customMapping = (rawEvent: any) => {
+      const decoder = new TextDecoder('utf-8');
+
       return {
-        description: rawEvent.description as string,
+        description: decoder.decode(new Uint8Array(rawEvent.description)),
         round: rawEvent.round as bigint,
         coinType: ('0x' + rawEvent.coin_type.name) as string,
         startTime: rawEvent.start_time as bigint,
@@ -368,7 +370,7 @@ export class AirdropClient {
         totalShares: rawEvent.total_shares as bigint,
         claimedShares: rawEvent.claimed_shares as bigint,
         totalBalance: rawEvent.total_balance as bigint,
-        imageUrl: rawEvent.image_url as string,
+        imageUrl: decoder.decode(new Uint8Array(rawEvent.image_url)),
         remainingBalance: rawEvent.remaining_balance as bigint,
         isRemove: rawEvent.is_remove as boolean,
       };

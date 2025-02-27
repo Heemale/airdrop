@@ -39,6 +39,7 @@ import { isHexString } from '@/utils';
 import { getNodeInfo, getChildren, getUserInfo } from '@/api';
 import { TreeStructure } from './components/UserTree';
 import { RootNode } from '@/api/types/response';
+import { Transaction } from '@mysten/sui/transactions';
 
 export interface NodeInfo {
   // 等级
@@ -301,8 +302,10 @@ const AdminPage = () => {
       const validImageUrl = (await checkImageExists(values.image_url))
         ? values.image_url
         : '/sui-sui-logo.png'; // 替换成你的默认图片路径
+        const tx = new Transaction();
 
-      const tx = await airdropClient.insert(
+       await airdropClient.insert(
+        tx,
         values.coinType,
         ADMIN_CAP,
         AIRDROPS,
@@ -313,8 +316,6 @@ const AdminPage = () => {
         values.description,
         null,
         validImageUrl, // 使用有效的图片链接
-        BigInt(convertLargeToSmall(values.totalBalance, coinMetaData.decimals)),
-        account.address,
       );
 
       await devTransaction(tx, account.address);
@@ -458,7 +459,7 @@ const AdminPage = () => {
 
       console.log('response', response);
       if (Array.isArray(response)) {
-        console.log('11111', response);
+        console.log('11111node', response);
 
         // 确保返回值是数组
         // 遍历返回的数据并赋值给 NodeInfo
@@ -528,7 +529,10 @@ const AdminPage = () => {
       }
 
       const { name, description, limit, price, total_quantity } = values;
-      const tx = airdropClient.insertNode(
+      const tx = new Transaction();
+
+       airdropClient.insertNode(
+        tx,
         ADMIN_CAP,
         NODES,
         name,
