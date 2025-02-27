@@ -12,6 +12,7 @@ import { useCurrentAccount } from '@mysten/dapp-kit';
 import { handleTxError } from '@/sdk/error';
 import { useClientTranslation } from '@/hook';
 import { NodeStatus } from '@local/airdrop-sdk/node';
+import { getAirdropInfo } from '@/api';
 
 interface Props {
   isOngoing?: boolean;
@@ -58,14 +59,53 @@ const AirdropList = (props: Props) => {
 
   const getAirdropList = async () => {
     try {
-      const airdropData = await airdropClient.airdrops(AIRDROPS);
-      setAirdropList(airdropData);
+      const airdrops = await getAirdropInfo(); // 获取空投信息
+      if (Array.isArray(airdrops)) {
+        console.log('Received airdrop list:', airdrops);
+  
+        // 确保返回值是数组，遍历数据并格式化
+        const formattedAirdropList: AirdropInfo[] = airdrops.map((airdrop) => ({
+          round: BigInt(airdrop.round), // 确保是 BigInt 类型
+          startTime: BigInt(airdrop.startTime),
+          endTime: BigInt(airdrop.endTime),
+          totalShares: BigInt(airdrop.totalShares),
+          claimedShares: BigInt(airdrop.claimedShares),
+          totalBalance: BigInt(airdrop.totalBalance),
+          isOpen: airdrop.isOpen,
+          description: airdrop.description,
+          image_url: airdrop.image_url,
+          coinType: airdrop.coinType,
+          remaining_balance: BigInt(airdrop.remaining_balance),
+        }));
+  
+        console.log('Formatted airdrop list:', formattedAirdropList);
+        setAirdropList(formattedAirdropList); // 只保留开启的空投
+      } else {
+        // 如果返回的是单个空投，直接处理
+        const airdrop = airdrops; // 假设 response 是单个空投
+        const formattedAirdrop: AirdropInfo = {
+          round: BigInt(airdrop.round),
+          startTime: BigInt(airdrop.startTime),
+          endTime: BigInt(airdrop.endTime),
+          totalShares: BigInt(airdrop.totalShares),
+          claimedShares: BigInt(airdrop.claimedShares),
+          totalBalance: BigInt(airdrop.totalBalance),
+          isOpen: airdrop.isOpen,
+          description: airdrop.description,
+          image_url: airdrop.image_url,
+          coinType: airdrop.coinType,
+          remaining_balance: BigInt(airdrop.remaining_balance),
+        };
+        console.log('Formatted single airdrop:', formattedAirdrop);
+  
+        setAirdropList([formattedAirdrop]); // 将单个空投包装成数组并更新状态
+      }
     } catch (e: any) {
-      console.log(`getAirdropList error: ${e.messag}`);
+      console.log(`getAirdropList: ${e.message}`);
+      // 处理错误并显示提示
       messageApi.error(`${t(handleTxError(e.message))}`);
     }
   };
-
   useEffect(() => {
     getNodeStatus();
   }, [account]);
