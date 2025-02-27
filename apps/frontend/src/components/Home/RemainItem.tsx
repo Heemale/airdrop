@@ -8,7 +8,7 @@ interface Props {
   text: string;
 }
 
-const RemainItem =  (props: Props) => {
+const RemainItem = (props: Props) => {
   const { text } = props;
   const { t } = useClientTranslation();
 

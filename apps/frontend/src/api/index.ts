@@ -34,5 +34,7 @@ export const getClaimRecords = (
 export const getNodeInfo = (): Promise<NodeInfoResponse> =>
   request.get('/all-nodes');
 
-export const getAirdropInfo = (): Promise<AirdropInfo> =>
-  request.get('/airdrops/all-airdrops');
+export const getAirdropInfo = (
+  params: PaginatedRequest,
+): Promise<PaginatedResponse<AirdropInfo>> =>
+  request.get('/airdrops/all-airdrops', { params });

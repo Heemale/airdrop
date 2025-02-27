@@ -7,7 +7,6 @@ import AirdropsHeader from '@/components/Event/AirdropsHeader';
 import AirdropList from '@/components/Event/AirdropList';
 import { useClientTranslation } from '@/hook';
 
-
 const Home = async () => {
   const { t } = useClientTranslation();
 
@@ -19,7 +18,7 @@ const Home = async () => {
           <div className="flex flex-col gap-8 sm:gap-20 mb-6">
             <div className="flex flex-col sm:flex-row items-center sm:items-stretch gap-10">
               <Banner />
-              <Announcement  />
+              <Announcement />
             </div>
             <AirdropsHeader />
             <AirdropList

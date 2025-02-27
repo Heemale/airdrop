@@ -3,8 +3,7 @@
 import * as React from 'react';
 import { useClientTranslation } from '@/hook';
 
-
-const UpdateData =  () => {
+const UpdateData = () => {
   const { t } = useClientTranslation();
 
   return (

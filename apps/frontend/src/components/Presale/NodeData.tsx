@@ -11,8 +11,6 @@ import { useClientTranslation } from '@/hook';
 import { handleTxError } from '@/sdk/error';
 import { getNodeInfo } from '@/api';
 
-
-
 const NodeData = () => {
   const { t } = useClientTranslation();
   const { node, setNode } = useContext(PresaleContext);

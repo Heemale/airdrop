@@ -8,7 +8,7 @@ interface Props {
   locale: string;
 }
 
-const AirdropsHeader =  () => {
+const AirdropsHeader = () => {
   const { t } = useClientTranslation();
 
   return (

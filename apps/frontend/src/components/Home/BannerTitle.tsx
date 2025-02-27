@@ -2,7 +2,7 @@
 import * as React from 'react';
 import Image from 'next/image';
 
-const BannerTitle =  () => {
+const BannerTitle = () => {
   return (
     <>
       <div className="hidden sm:flex sm:-ml-20">
