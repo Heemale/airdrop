@@ -24,6 +24,7 @@ import GlobalEdit from '@/components/page/global/GlobalEdit';
 import GlobalCreate from '@/components/page/global/GlobalCreate';
 import MediaConfigList from '@/components/page/media-config/MediaConfigList';
 import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
+import UserHierarchy from '@/components/page/user-hierarchy/UserHierarchy';
 
 const AdminApp = () => (
   <div className="w-full overflow-x-auto md:overflow-x-visible md:max-w-none">
@@ -87,6 +88,11 @@ const AdminApp = () => (
         options={{ label: '文案表' }}
         list={MediaConfigList}
         edit={MediaConfigEdit}
+      />
+      <Resource
+        name="user-hierarchy"
+        options={{ label: '用户层级结构' }}
+        list={UserHierarchy}
       />
     </Admin>
   </div>
