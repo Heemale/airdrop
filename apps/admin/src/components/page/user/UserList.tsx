@@ -88,12 +88,9 @@ const UserList = () => (
   <List filters={postFilters}>
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
-      <TextField source="txDigest" label="交易hash" />
-      <TextField source="eventSeq" label="事件索引" />
-      <TimeTextField source="joinAt" label="加入时间" />
+      <TextField source="inviterId" label="邀请人ID" />
       <TextField source="address" label="用户地址" />
       <TextField source="inviter" label="邀请人地址" />
-      <TextField source="inviterId" label="邀请人ID" />
       <TextField source="sharerIds" label="直接推荐人列表" />
       <FunctionField
         source="totalInvestment"
@@ -107,10 +104,6 @@ const UserList = () => (
             : '-'
         }
       />
-      <TimeTextField
-        source="totalInvestmentUpdateAt"
-        label="总投资金额更新时间"
-      />
       <FunctionField
         source="totalGains"
         label="总收益金额"
@@ -118,8 +111,16 @@ const UserList = () => (
           convertSmallToLarge(record.totalGains.toString(), TOKEN_DECIMAL)
         }
       />
+      <TimeTextField
+        source="totalInvestmentUpdateAt"
+        label="总投资金额更新时间"
+      />
       <TimeTextField source="totalGainsUpdateAt" label="总收益金额更新时间" />
       <BooleanField source="isBind" label="是否绑定" />
+      <BooleanField source="isRoot" label="是否根地址" />
+      <TextField source="txDigest" label="交易hash" />
+      <TextField source="eventSeq" label="事件索引" />
+      <TimeTextField source="joinAt" label="加入时间" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
     </MyDatagridConfigurable>

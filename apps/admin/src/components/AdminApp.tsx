@@ -1,28 +1,29 @@
 'use client';
 
-import { Admin, Resource, ListGuesser, EditGuesser } from 'react-admin';
+import { Admin, Resource } from 'react-admin';
 import { authProvider } from '@/config/authProvider';
 import { dataProvider } from '@/config/dataProvider';
 import Dashboard from '@/components/Dashboard';
 import Layout from '@/components/Layout';
 import UserList from '@/components/page/user/UserList';
-import MediaConfigList from '@/components/page/media-config/MediaConfigList';
-import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
+import UserEdit from '@/components/page/user/userEdit';
+import NodeList from '@/components/page/node/NodeList';
+import NodeEdit from '@/components/page/node/NodeEdit';
+import NodeCreate from '@/components/page/node/NodeCreate';
 import AirdropList from '@/components/page/airdrop/AirdropList';
 import AirdropEdit from '@/components/page/airdrop/AirdropEdit';
-import ClaimRecordList from '@/components/page/claim-record/ClaimRecordList';
-import GlobalList from '@/components/page/global/GlobalList';
-import GlobalCreate from '@/components/page/global/GlobalCreate';
-import LimitCreate from '@/components/page/limit/LimitCreate';
-import GlobalEdit from '@/components/page/global/GlobalEdit';
-import LimitEdit from '@/components/page/limit/LimitEdit';
-import LimitList from '@/components/page/limit/LimitList';
-import BuyRecordList from '@/components/page/buy-record/BuyRecordList';
-import NodeList from '@/components/page/node/NodeList';
-import TransferRecordList from '@/components/page/transfer-record/TransferRecordList';
-import NodeEdit from '@/components/page/node/NodeEdit';
 import AirdropCreate from '@/components/page/airdrop/AirdropCreate';
-import NodeCreate from '@/components/page/node/NodeCreate';
+import BuyRecordList from '@/components/page/buy-record/BuyRecordList';
+import TransferRecordList from '@/components/page/transfer-record/TransferRecordList';
+import ClaimRecordList from '@/components/page/claim-record/ClaimRecordList';
+import LimitList from '@/components/page/limit/LimitList';
+import LimitEdit from '@/components/page/limit/LimitEdit';
+import LimitCreate from '@/components/page/limit/LimitCreate';
+import GlobalList from '@/components/page/global/GlobalList';
+import GlobalEdit from '@/components/page/global/GlobalEdit';
+import GlobalCreate from '@/components/page/global/GlobalCreate';
+import MediaConfigList from '@/components/page/media-config/MediaConfigList';
+import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
 
 const AdminApp = () => (
   <div className="w-full overflow-x-auto md:overflow-x-visible md:max-w-none">
@@ -32,7 +33,12 @@ const AdminApp = () => (
       layout={Layout}
       authProvider={authProvider}
     >
-      <Resource name="users" options={{ label: '用户表' }} list={UserList} />
+      <Resource
+        name="users"
+        options={{ label: '用户表' }}
+        list={UserList}
+        edit={UserEdit}
+      />
       <Resource
         name="nodes"
         options={{ label: '权益表' }}
