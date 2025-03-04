@@ -13,6 +13,7 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from '@/auth/auth.guard';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ChangePasswordDto } from '@/auth/dto/change-password.dto';
 
 export const User = createParamDecorator(
   (_data: unknown, ctx: ExecutionContext) => {
@@ -38,6 +39,13 @@ export class AuthController {
   async login(@Body() signInDto: LoginDto) {
     const { username, password } = signInDto;
     return await this.authService.login(username, password);
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('change-password')
+  async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
+    const { username, password } = changePasswordDto;
+    return await this.authService.changePassword(username, password);
   }
 
   @UseGuards(AuthGuard)
