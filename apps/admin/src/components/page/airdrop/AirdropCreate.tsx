@@ -1,9 +1,10 @@
 import {
+  Create,
   NumberInput,
   SaveButton,
   SimpleForm,
   TextInput,
-  Toolbar,
+  Toolbar as RaToolbar,
   useNotify,
 } from 'react-admin';
 import React from 'react';
@@ -24,11 +25,12 @@ import { ADMIN_CAP, AIRDROPS } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { Transaction } from '@mysten/sui/transactions';
 import { convertLargeToSmall } from '@/utils/math';
+import CreateEditActions from '@/components/ui/CreateEditActions';
 
-const CreateToolbar = (props: any) => (
-  <Toolbar {...props}>
+const Toolbar = (props: any) => (
+  <RaToolbar {...props}>
     <SaveButton label="添加" />
-  </Toolbar>
+  </RaToolbar>
 );
 
 const AirdropCreate = () => {
@@ -99,21 +101,23 @@ const AirdropCreate = () => {
   };
 
   return (
-    <SimpleForm onSubmit={onSubmit} toolbar={<CreateToolbar />}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <TextInput source="coinType" label="代币类型" fullWidth />
-        <div className="pb-6">
-          <MyDateTimePicker source="startTime" label="开始时间" />
-        </div>
-        <div className="pb-6">
-          <MyDateTimePicker source="endTime" label="结束时间" />
-        </div>
-        <NumberInput source="totalShares" label="总份数" fullWidth />
-        <NumberInput source="totalBalance" label="总金额" fullWidth />
-        <TextInput source="description" label="描述" fullWidth />
-        <TextInput source="imageUrl" label="图片链接" fullWidth />
-      </LocalizationProvider>
-    </SimpleForm>
+    <Create actions={<CreateEditActions />}>
+      <SimpleForm onSubmit={onSubmit} toolbar={<Toolbar />}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <TextInput source="coinType" label="代币类型" fullWidth />
+          <div className="pb-6">
+            <MyDateTimePicker source="startTime" label="开始时间" />
+          </div>
+          <div className="pb-6">
+            <MyDateTimePicker source="endTime" label="结束时间" />
+          </div>
+          <NumberInput source="totalShares" label="总份数" fullWidth />
+          <NumberInput source="totalBalance" label="总金额" fullWidth />
+          <TextInput source="description" label="描述" fullWidth />
+          <TextInput source="imageUrl" label="图片链接" fullWidth />
+        </LocalizationProvider>
+      </SimpleForm>
+    </Create>
   );
 };
 

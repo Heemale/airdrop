@@ -5,13 +5,10 @@ import {
   SaveButton,
   SimpleForm,
   TextInput,
-  Toolbar,
+  Toolbar as RaToolbar,
 } from 'react-admin';
 import React from 'react';
-import { convertLargeToSmall, convertSmallToLarge } from '@/utils/math';
-import { TOKEN_DECIMAL } from '@/config';
 import { Transaction } from '@mysten/sui/transactions';
-
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
@@ -20,11 +17,12 @@ import { limitClient, devTransaction } from '@/sdk';
 import { LIMITS } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
+import CreateEditActions from '@/components/ui/CreateEditActions';
 
-const PostEditToolbar = (props: any) => (
-  <Toolbar {...props}>
+const Toolbar = (props: any) => (
+  <RaToolbar {...props}>
     <SaveButton label="修改" />
-  </Toolbar>
+  </RaToolbar>
 );
 
 const LimitEdit = () => {
@@ -64,8 +62,8 @@ const LimitEdit = () => {
   };
 
   return (
-    <Edit>
-      <SimpleForm onSubmit={onSubmit} toolbar={<PostEditToolbar />}>
+    <Edit actions={<CreateEditActions />}>
+      <SimpleForm onSubmit={onSubmit} toolbar={<Toolbar />}>
         <TextInput source="id" label="ID" disabled fullWidth />
         <TextInput source="address" label="用户地址" fullWidth />
         <NumberInput source="times" label="可领取次数" fullWidth />

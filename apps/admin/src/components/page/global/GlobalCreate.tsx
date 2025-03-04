@@ -1,10 +1,10 @@
 import {
   BooleanInput,
-  Edit,
   SaveButton,
   SimpleForm,
   TextInput,
-  Toolbar,
+  Toolbar as RaToolbar,
+  Create,
 } from 'react-admin';
 import React from 'react';
 import {
@@ -12,16 +12,16 @@ import {
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
 import { Transaction } from '@mysten/sui/transactions';
-
 import { globalClient, devTransaction } from '@/sdk';
 import { GLOBAL } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
+import CreateEditActions from '@/components/ui/CreateEditActions';
 
-const CreateToolbar = (props: any) => (
-  <Toolbar {...props}>
+const Toolbar = (props: any) => (
+  <RaToolbar {...props}>
     <SaveButton label="添加" />
-  </Toolbar>
+  </RaToolbar>
 );
 
 const GlobalCreate = () => {
@@ -60,10 +60,12 @@ const GlobalCreate = () => {
   };
 
   return (
-    <SimpleForm onSubmit={onSubmit} toolbar={<CreateToolbar />}>
-      <TextInput source="object" label="对象ID" fullWidth />
-      <BooleanInput source="isValid" label="是否合法" fullWidth />
-    </SimpleForm>
+    <Create actions={<CreateEditActions />}>
+      <SimpleForm onSubmit={onSubmit} toolbar={<Toolbar />}>
+        <TextInput source="object" label="对象ID" fullWidth />
+        <BooleanInput source="isValid" label="是否合法" fullWidth />
+      </SimpleForm>
+    </Create>
   );
 };
 

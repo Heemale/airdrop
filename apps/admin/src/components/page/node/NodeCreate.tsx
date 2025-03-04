@@ -1,9 +1,10 @@
 import {
+  Create,
   NumberInput,
   SaveButton,
   SimpleForm,
   TextInput,
-  Toolbar,
+  Toolbar as RaToolbar,
   useNotify,
 } from 'react-admin';
 import React from 'react';
@@ -17,11 +18,12 @@ import { handleDevTxError } from '@/sdk/error';
 import { Transaction } from '@mysten/sui/transactions';
 import { convertLargeToSmall } from '@/utils/math';
 import { TOKEN_DECIMAL } from '@/config';
+import CreateEditActions from '@/components/ui/CreateEditActions';
 
-const CreateToolbar = (props: any) => (
-  <Toolbar {...props}>
+const Toolbar = (props: any) => (
+  <RaToolbar {...props}>
     <SaveButton label="添加" />
-  </Toolbar>
+  </RaToolbar>
 );
 
 const NodeCreate = () => {
@@ -72,13 +74,15 @@ const NodeCreate = () => {
   };
 
   return (
-    <SimpleForm onSubmit={onSubmit} toolbar={<CreateToolbar />}>
-      <TextInput source="name" label="节点名称" fullWidth />
-      <NumberInput source="limit" label="可领取次数" fullWidth />
-      <NumberInput source="price" label="节点价格" fullWidth />
-      <TextInput source="description" label="描述" fullWidth />
-      <NumberInput source="totalQuantity" label="总数量" fullWidth />
-    </SimpleForm>
+    <Create actions={<CreateEditActions />}>
+      <SimpleForm onSubmit={onSubmit} toolbar={<Toolbar />}>
+        <TextInput source="name" label="节点名称" fullWidth />
+        <NumberInput source="limit" label="可领取次数" fullWidth />
+        <NumberInput source="price" label="节点价格" fullWidth />
+        <TextInput source="description" label="描述" fullWidth />
+        <NumberInput source="totalQuantity" label="总数量" fullWidth />
+      </SimpleForm>
+    </Create>
   );
 };
 

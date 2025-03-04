@@ -20,7 +20,11 @@ const MyDatagridConfigurable = ({
   const [lastClickTime, setLastClickTime] = useState<number | null>(null);
   const [lastClickId, setLastClickId] = useState<Identifier | null>(null);
 
-  const postRowClick = (id: Identifier, resource: string, record: RaRecord) => {
+  const postRowClick = (
+    id: Identifier,
+    resource: string,
+    record: RaRecord,
+  ): string | false | Promise<string | false> => {
     const currentTime = Date.now();
 
     if (
@@ -33,11 +37,11 @@ const MyDatagridConfigurable = ({
       setLastClickTime(currentTime);
       setLastClickId(id);
     }
+    return false;
   };
 
   return (
     <DatagridConfigurable
-      // @ts-ignore
       rowClick={postRowClick}
       sx={{
         '& .RaDatagrid-root': {},
