@@ -172,16 +172,42 @@ export interface ClaimAirdropRecord {
   timestamp: null | string;
 }
 export interface AirdropInfo {
-  round: bigint;
-  startTime: bigint;
-  endTime: bigint;
-  totalShares: bigint;
-  claimedShares: bigint;
-  totalBalance: bigint;
-  isOpen: boolean;
-  description: string;
-  image_url: string;
-  coinType: string;
-  remaining_balance: bigint;
-  isRemove: boolean;
+  airdrop: {
+    round: bigint;
+    startTime: bigint;
+    endTime: bigint;
+    totalShares: bigint;
+    claimedShares: bigint;
+    totalBalance: bigint;
+    isOpen: boolean;
+    description: string;
+    image_url: string;
+    coinType: string;
+    remaining_balance: bigint;
+    token: TokenMetadata | null;
+  };
 }
+
+export interface TokenMetadata {
+  objectId: string;
+  name: string;
+  symbol: string;
+  description: string;
+  decimals: string;
+  coinType: string;
+  iconUrl: string;
+  createAt: string;
+  updateAt: string;
+}
+export interface MediaConfig {
+  id: number;
+  page: string | null;
+  code: string | null;
+  zh: string | null;
+  en: string | null;
+  vi: string | null;
+  imageUrl: string | null;
+  isImage: boolean;
+}
+
+export type MediaConfigRecord = Record<string, MediaConfig>;

@@ -57,7 +57,9 @@ const ClaimRecordList = () => (
         source="amount"
         label="数量"
         render={(record) =>
-          convertSmallToLarge(record.amount.toString(), TOKEN_DECIMAL)
+          record.amount
+            ? convertSmallToLarge(record.amount.toString(), TOKEN_DECIMAL)
+            : '-'
         }
       />
       <TimeTextField source="createAt" label="创建时间" />
