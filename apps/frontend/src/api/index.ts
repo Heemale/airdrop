@@ -8,6 +8,7 @@ import {
   UserInfoResponse,
   NodeInfoResponse,
   AirdropInfo,
+  MediaConfigRecord,
 } from '@/api/types/response';
 
 export const getUserInfo = (address: string): Promise<UserInfoResponse> =>
@@ -38,3 +39,6 @@ export const getAirdropInfo = (
   params: PaginatedRequest,
 ): Promise<PaginatedResponse<AirdropInfo>> =>
   request.get('/airdrops/all-airdrops', { params });
+
+export const getMediaConfig = (page: string): Promise<MediaConfigRecord> =>
+  request.get(`/media-configs/pages/${page}`);

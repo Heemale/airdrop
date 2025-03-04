@@ -11,7 +11,7 @@ import {
 } from '@/sdk';
 import { AIRDROPS, GLOBAL, INVEST, LIMITS, NODES } from '@/sdk/constants';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
-import type { AirdropInfo } from '@/api/types/response';
+import type { AirdropInfo, TokenMetadata } from '@/api/types/response';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
@@ -47,11 +47,13 @@ const AirdropItem = (props: Props) => {
     ongoingText,
     chainText,
     totalCopies,
-    rewardQuantityPerCopy,
     nodeStatus,
     claimText,
   } = props;
+
   console.log('data11222333', data);
+  console.log(' data.token', data.airdrop.token);
+
   const { t } = useClientTranslation();
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
@@ -61,7 +63,6 @@ const AirdropItem = (props: Props) => {
   const [remainingClaimTimes, setRemainingClaimTimes] = useState<bigint>(
     BigInt(0),
   );
-  const [coinMetaData, setCoinMetaData] = useState<CoinMetadata | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const claim = async () => {
@@ -71,10 +72,10 @@ const AirdropItem = (props: Props) => {
       setLoading(true);
 
       const tx = airdropClient.claimV2(
-        data.coinType,
+        data.airdrop.coinType,
         AIRDROPS,
         NODES,
-        data.round,
+        data.airdrop.round,
         SUI_CLOCK_OBJECT_ID,
         LIMITS,
         INVEST,
@@ -120,7 +121,7 @@ const AirdropItem = (props: Props) => {
       const times = await nodeClient.remainingQuantityOfClaimV2(
         NODES,
         account.address,
-        data.round,
+        data.airdrop.round,
         LIMITS,
       );
       setRemainingClaimTimes(BigInt(times));
@@ -130,33 +131,12 @@ const AirdropItem = (props: Props) => {
     }
   };
 
-  const fetchCoinMetaData = async () => {
-    const coinType = isHexString(data.coinType)
-      ? data.coinType
-      : '0x' + data.coinType;
-
-    try {
-      // @ts-ignore
-      const coinMetaData = await getCoinMetaData({
-        coinType,
-      });
-
-      console.log('data.coinType', data.coinType);
-      console.log('coinMetaData', coinMetaData);
-
-      setCoinMetaData(coinMetaData);
-    } catch (e: any) {
-      console.error('获取代币元数据时出错:', e);
-      messageApi.error(`${t(handleTxError(e.message.trim()))}`);
-    }
-  };
-
-  const coinImage = () => {
-    if (!coinMetaData) return '/favicon.ico';
-    if (coinMetaData.iconUrl) {
-      return coinMetaData.iconUrl;
+  const coinImage = (token: TokenMetadata) => {
+    if (!token.iconUrl) return '/favicon.ico';
+    if (token.iconUrl) {
+      return token.iconUrl;
     } else {
-      if (coinMetaData && coinMetaData.symbol === 'SUI') {
+      if (token.iconUrl && token.symbol === 'SUI') {
         return '/sui-sui-logo.png';
       }
     }
@@ -228,7 +208,6 @@ const AirdropItem = (props: Props) => {
 
   useEffect(() => {
     remainingQuantityOfClaim();
-    fetchCoinMetaData();
   }, [data]);
 
   return (
@@ -237,7 +216,7 @@ const AirdropItem = (props: Props) => {
         <div className="flex gap-2">
           <div className="w-[50px] sm:w-[70px]">
             <Image
-              src={coinImage()}
+              src={coinImage(data.airdrop.token!)}
               width="70"
               height="70"
               alt="coin-image"
@@ -251,7 +230,8 @@ const AirdropItem = (props: Props) => {
           <div className="flex flex-col justify-between gap-2">
             <div className="flex gap-2">
               <div className="text-lg font-semibold">
-                {getCoinTypeName(data.coinType)} - ROUND {data.round.toString()}
+                {getCoinTypeName(data.airdrop.coinType)} - ROUND{' '}
+                {data.airdrop.round.toString()}
               </div>
               {isOngoing && (
                 <div>
@@ -265,13 +245,15 @@ const AirdropItem = (props: Props) => {
               )}
             </div>
             <div className="flex flex-col gap-2">
-              <div>{formatTimestamp(Number(data.startTime) * 1000)}</div>
-              <div>{formatTimestamp(Number(data.endTime) * 1000)}</div>
+              <div>
+                {formatTimestamp(Number(data.airdrop.startTime) * 1000)}
+              </div>
+              <div>{formatTimestamp(Number(data.airdrop.endTime) * 1000)}</div>
             </div>
           </div>
         </div>
       </div>
-      <div>{data.description}</div>
+      <div>{data.airdrop.description}</div>
       {claimButton()}
       <div className="flex justify-between">
         <div>{chainText}</div>
@@ -287,11 +269,13 @@ const AirdropItem = (props: Props) => {
       </div>
       <div className="flex justify-between">
         <div>{totalCopies}</div>
-        <div>{data.totalShares.toString()}</div>
+        <div>{data.airdrop.totalShares.toString()}</div>
       </div>
       <div className="flex justify-between">
         <div>{t('Number of copies remaining')}</div>
-        <div>{(data.totalShares - data.claimedShares).toString()}</div>
+        <div>
+          {(data.airdrop.totalShares - data.airdrop.claimedShares).toString()}
+        </div>
       </div>
       <div className="flex justify-between">
         <div>{t('Number of copies available')}</div>
@@ -300,13 +284,13 @@ const AirdropItem = (props: Props) => {
       <div className="flex justify-between">
         <div>{t('Reward Quantity per Copy')}</div>
         <div>
-          {coinMetaData
+          {data.airdrop.token
             ? convertSmallToLarge(
                 divide(
-                  data.totalBalance.toString(),
-                  data.totalShares.toString(),
+                  data.airdrop.totalBalance.toString(),
+                  data.airdrop.totalShares.toString(),
                 ),
-                coinMetaData.decimals.toString(),
+                data.airdrop.token.decimals.toString(),
               )
             : '-'}
         </div>

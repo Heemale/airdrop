@@ -1,9 +1,28 @@
 import { prisma } from '@/config/prisma';
 import { Prisma } from '@prisma/client';
 import { consoleError } from '@/log';
+import {
+  DynamicClientExtensionThis,
+  Record,
+  TypeMapCbDef,
+  TypeMapDef,
+} from '@prisma/client/runtime/library';
 
-export const upsert = (data: Prisma.AirdropCreateInput) => {
-  return prisma.airdrop.upsert({
+export const upsert = async <
+  TypeMap extends TypeMapDef,
+  TypeMapCb extends TypeMapCbDef,
+  ExtArgs extends Record<string, any>,
+  ClientOptions,
+>(
+  data: Prisma.AirdropCreateInput,
+  tx?: Omit<
+    DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs, ClientOptions>,
+    '$extends' | '$transaction' | '$disconnect' | '$connect' | '$on' | '$use'
+  >,
+) => {
+  const db = tx ?? prisma;
+
+  return db.airdrop.upsert({
     where: {
       round: data.round,
     },
@@ -45,13 +64,17 @@ export const findAllAirdrops = async (
       skip: cursor ? 1 : 0,
       cursor: cursor && { id: Number(cursor) },
     });
+    const hasNextPage = airdrops.length === pageSize;
+    const nextCursor = hasNextPage ? airdrops[airdrops.length - 1].round : null;
 
     // 如果没有数据，直接返回空数组
     if (airdrops.length === 0) {
-      return [];
+      return {
+        data: [],
+        hasNextPage,
+        nextCursor,
+      };
     }
-    const hasNextPage = airdrops.length === pageSize;
-    const nextCursor = hasNextPage ? airdrops[airdrops.length - 1].round : null;
 
     // 格式化返回数据（将 BigInt 转为字符串）
     const data = airdrops.map((airdrop) => {
