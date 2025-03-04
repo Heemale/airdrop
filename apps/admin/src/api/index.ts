@@ -1,5 +1,6 @@
 import { getAuth } from '@/config/auth';
 import { BASE_URL } from '@/config';
+import { ChangePasswordDto } from '@/api/types';
 
 export const uploadImage = async (rawFile: string | Blob): Promise<string> => {
   const token = getAuth();
@@ -17,6 +18,28 @@ export const uploadImage = async (rawFile: string | Blob): Promise<string> => {
   });
 
   const response = await fetch(request);
+
+  return response.text();
+};
+
+export const changePassword = async (params: ChangePasswordDto) => {
+  const token = getAuth();
+  if (!token) return Promise.reject();
+
+  const request = new Request(`${BASE_URL}/api/auth/change-password`, {
+    method: 'POST',
+    headers: new Headers({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify(params),
+  });
+
+  const response = await fetch(request);
+
+  if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
 
   return response.text();
 };

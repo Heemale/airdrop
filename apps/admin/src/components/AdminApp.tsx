@@ -25,6 +25,7 @@ import GlobalCreate from '@/components/page/global/GlobalCreate';
 import MediaConfigList from '@/components/page/media-config/MediaConfigList';
 import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
 import UserHierarchy from '@/components/page/user-hierarchy/UserHierarchy';
+import ChangePassword from '@/components/page/change-password/ChangePassword';
 
 const AdminApp = () => (
   <div className="w-full overflow-x-auto md:overflow-x-visible md:max-w-none">
@@ -93,6 +94,11 @@ const AdminApp = () => (
         name="user-hierarchy"
         options={{ label: '用户层级结构' }}
         list={UserHierarchy}
+      />
+      <Resource
+        name="change-password"
+        options={{ label: '修改密码' }}
+        list={ChangePassword}
       />
     </Admin>
   </div>
