@@ -4,7 +4,7 @@ import {
   SaveButton,
   SimpleForm,
   TextInput,
-  Toolbar,
+  Toolbar as RaToolbar,
 } from 'react-admin';
 import React from 'react';
 import {
@@ -17,10 +17,10 @@ import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
 import { Transaction } from '@mysten/sui/transactions';
 
-const PostEditToolbar = (props: any) => (
-  <Toolbar {...props}>
+const Toolbar = (props: any) => (
+  <RaToolbar {...props}>
     <SaveButton label="修改" />
-  </Toolbar>
+  </RaToolbar>
 );
 
 const GlobalEdit = () => {
@@ -61,7 +61,7 @@ const GlobalEdit = () => {
 
   return (
     <Edit>
-      <SimpleForm onSubmit={onSubmit} toolbar={<PostEditToolbar />}>
+      <SimpleForm onSubmit={onSubmit} toolbar={<Toolbar />}>
         <TextInput source="id" label="ID" disabled fullWidth />
         <TextInput source="object" label="对象ID" fullWidth />
         <BooleanInput source="isOpen" label="是否开启" fullWidth />

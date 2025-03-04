@@ -5,7 +5,7 @@ import {
   SaveButton,
   SimpleForm,
   TextInput,
-  Toolbar,
+  Toolbar as RaToolbar,
 } from 'react-admin';
 import React from 'react';
 import { convertLargeToSmall, convertSmallToLarge } from '@/utils/math';
@@ -18,11 +18,12 @@ import { airdropClient, devTransaction } from '@/sdk';
 import { ADMIN_CAP, NODES } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
+import CreateEditActions from '@/components/ui/CreateEditActions';
 
-const PostEditToolbar = (props: any) => (
-  <Toolbar {...props}>
+const Toolbar = (props: any) => (
+  <RaToolbar {...props}>
     <SaveButton label="修改" />
-  </Toolbar>
+  </RaToolbar>
 );
 
 const NodeEdit = () => {
@@ -70,8 +71,8 @@ const NodeEdit = () => {
   };
 
   return (
-    <Edit>
-      <SimpleForm onSubmit={onSubmit} toolbar={<PostEditToolbar />}>
+    <Edit actions={<CreateEditActions />}>
+      <SimpleForm onSubmit={onSubmit} toolbar={<Toolbar />}>
         <TextInput source="id" label="ID" disabled fullWidth />
         <NumberInput source="rank" label="节点等级" fullWidth />
         <TextInput source="name" label="名称" fullWidth />

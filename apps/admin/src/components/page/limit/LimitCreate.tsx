@@ -1,15 +1,13 @@
 import {
   BooleanInput,
-  Edit,
   NumberInput,
   SaveButton,
   SimpleForm,
   TextInput,
-  Toolbar,
+  Toolbar as RaToolbar,
+  Create,
 } from 'react-admin';
 import React from 'react';
-import { Transaction } from '@mysten/sui/transactions';
-
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
@@ -18,12 +16,14 @@ import { airdropClient, devTransaction } from '@/sdk';
 import { LIMITS, ADMIN_CAP } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
+import CreateEditActions from '@/components/ui/CreateEditActions';
 
-const CreateToolbar = (props: any) => (
-  <Toolbar {...props}>
+const Toolbar = (props: any) => (
+  <RaToolbar {...props}>
     <SaveButton label="添加" />
-  </Toolbar>
+  </RaToolbar>
 );
+
 const LimitCreate = () => {
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
@@ -65,11 +65,13 @@ const LimitCreate = () => {
   };
 
   return (
-    <SimpleForm onSubmit={onSubmit} toolbar={<CreateToolbar />}>
-      <TextInput source="address" label="用户地址" fullWidth />
-      <NumberInput source="times" label="可领取次数" fullWidth />
-      <BooleanInput source="ivValid" label="是否限制" fullWidth />
-    </SimpleForm>
+    <Create actions={<CreateEditActions />}>
+      <SimpleForm onSubmit={onSubmit} toolbar={<Toolbar />}>
+        <TextInput source="address" label="用户地址" fullWidth />
+        <NumberInput source="times" label="可领取次数" fullWidth />
+        <BooleanInput source="ivValid" label="是否限制" fullWidth />
+      </SimpleForm>
+    </Create>
   );
 };
 
