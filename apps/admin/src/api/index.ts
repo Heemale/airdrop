@@ -19,6 +19,10 @@ export const uploadImage = async (rawFile: string | Blob): Promise<string> => {
 
   const response = await fetch(request);
 
+  if (response.status !== 201) {
+    throw new Error(response.statusText);
+  }
+
   return response.text();
 };
 
