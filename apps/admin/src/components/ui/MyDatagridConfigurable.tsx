@@ -6,14 +6,16 @@ import {
   useRedirect,
 } from 'react-admin';
 import * as React from 'react';
-import { useState } from 'react';
+import { ReactElement, useState } from 'react';
 
 const MyDatagridConfigurable = ({
   children,
   hasEdit = false,
+  bulkActionButtons = false,
 }: {
   children: React.ReactNode;
   hasEdit?: boolean | undefined;
+  bulkActionButtons?: ReactElement | false;
 }) => {
   const redirect = useRedirect();
 
@@ -23,7 +25,7 @@ const MyDatagridConfigurable = ({
   const postRowClick = (
     id: Identifier,
     resource: string,
-    record: RaRecord,
+    _record: RaRecord,
   ): string | false | Promise<string | false> => {
     const currentTime = Date.now();
 
@@ -43,6 +45,7 @@ const MyDatagridConfigurable = ({
   return (
     <DatagridConfigurable
       rowClick={postRowClick}
+      bulkActionButtons={bulkActionButtons}
       sx={{
         '& .RaDatagrid-root': {},
         '& .RaDatagrid-thead': {
