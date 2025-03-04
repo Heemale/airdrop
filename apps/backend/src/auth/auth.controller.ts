@@ -12,7 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@/auth/auth.guard';
 import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
+// import { RegisterDto } from './dto/register.dto';
 import { ChangePasswordDto } from '@/auth/dto/change-password.dto';
 
 export const User = createParamDecorator(
@@ -26,13 +26,13 @@ export const User = createParamDecorator(
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.CREATED)
-  @Post('register')
-  async register(@Body() signUpDto: RegisterDto) {
-    const { username, password } = signUpDto;
-    await this.authService.register(username, password);
-    return 'success';
-  }
+  // @HttpCode(HttpStatus.CREATED)
+  // @Post('register')
+  // async register(@Body() signUpDto: RegisterDto) {
+  //   const { username, password } = signUpDto;
+  //   await this.authService.register(username, password);
+  //   return 'success';
+  // }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
