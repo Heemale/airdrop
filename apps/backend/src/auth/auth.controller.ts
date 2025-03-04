@@ -41,6 +41,7 @@ export class AuthController {
     return await this.authService.login(username, password);
   }
 
+  @UseGuards(AuthGuard)
   @HttpCode(HttpStatus.OK)
   @Post('change-password')
   async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
