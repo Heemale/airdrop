@@ -1,60 +1,86 @@
 'use client';
 import * as React from 'react';
 import Image from 'next/image';
-import initTranslations from '@/app/i18n';
-import i18nConfig from '@/i18nConfig';
 import { useClientTranslation } from '@/hook';
+import { MediaConfig } from '@/api/types/response';
+import { useMedia } from '@/context/MediaContext';
+import { BASE_URL } from '@/config';
 
-const benefits = [
-  {
-    number: '01',
-    title: 'Long-lasting and sustainable dividends',
-    description:
-      'The higher the equity status, the more creation equity you can own and the more sustainable dividends you will receive.',
-    icon: '/home_icon1.png',
-    numberIcon: '/home_number_icon1.png',
-  },
-  {
-    number: '02',
-    title: 'High-quality projects receive priority',
-    description:
-      'By participating in Mercury World, you will have the opportunity to obtain the IDO whitelist and priority airdrop rights for high-quality assets that will be launched soon, led by top venture capital institutions and leading exchanges.',
-    icon: '/home_icon2.png',
-    numberIcon: '/home_number_icon2.png',
-  },
-  {
-    number: '03',
-    title: 'A large number of ecological airdrops',
-    description:
-      'As long as you join Mercury World, you can receive a wide variety of potential project airdrop rewards.',
-    icon: '/home_icon3.png',
-    numberIcon: '/home_number_icon3.png',
-  },
-  {
-    number: '04',
-    title: 'Participation is mining',
-    description:
-      'Once you obtain the rights status of Mercury World, you can obtain the mining rewards of the platform. The higher the status, the more and continuous the rewards will be.',
-    icon: '/home_icon4.png',
-    numberIcon: '/home_number_icon4.png',
-  },
-  {
-    number: '05',
-    title: 'Obtain exclusive identity NFT',
-    description:
-      'Holding exclusive identity NFT, you can immediately share the markets continuous channel income. The higher the NFT level, you also have the right to propose, and receive bonuses and permanent dividends for proposal approval.',
-    icon: '/home_icon5.png',
-    numberIcon: '/home_number_icon5.png',
-  },
-];
+const BANNER_KEYS = {
+  INF00: 'HOME_BENEFIT_TITLE',
+  INFO1: 'HOME_BENEFIT_1_TITLE',
+  INFO2: 'HOME_BENEFIT_2_TITLE',
+  INFO3: 'HOME_BENEFIT_3_TITLE',
+  INFO4: 'HOME_BENEFIT_4_TITLE',
+  INFO5: 'HOME_BENEFIT_5_TITLE',
+  INFO11: 'HOME_BENEFIT_1_CONTENT',
+  INFO12: 'HOME_BENEFIT_2_CONTENT',
+  INFO13: 'HOME_BENEFIT_3_CONTENT',
+  INFO14: 'HOME_BENEFIT_4_CONTENT',
+  INFO15: 'HOME_BENEFIT_5_CONTENT',
+  INF001: 'HOME_BENEFIT_1_IMAGE',
+  INF002: 'HOME_BENEFIT_2_IMAGE',
+  INF003: 'HOME_BENEFIT_3_IMAGE',
+  INF004: 'HOME_BENEFIT_4_IMAGE',
+  INF005: 'HOME_BENEFIT_5_IMAGE',
+} as const;
 
 const Holder = () => {
-  const { t } = useClientTranslation();
+  const { i18n } = useClientTranslation();
+  const mediaConfig = useMedia();
+  const currentLang = i18n.language as keyof MediaConfig;
+  const getLocalizedText = (code: string) => {
+    return mediaConfig?.[code]?.[currentLang] ?? 'Loading...';
+  };
+  const getImageUrl = (imageUrl: string) => {
+    console.log(mediaConfig?.[imageUrl].imageUrl, 'imageUrl');
+    if (!mediaConfig || !mediaConfig[imageUrl]) {
+      return '/sui-sui-logo.png';
+    }
+    return BASE_URL + (mediaConfig?.[imageUrl].imageUrl ?? '/sui-sui-logo.png');
+  };
+  const benefits = [
+    {
+      number: '01',
+      title: getLocalizedText(BANNER_KEYS.INFO1),
+      description: getLocalizedText(BANNER_KEYS.INFO11),
+      icon: getImageUrl(BANNER_KEYS.INF001),
+      numberIcon: '/home_number_icon1.png',
+    },
+    {
+      number: '02',
+      title: getLocalizedText(BANNER_KEYS.INFO2),
+      description: getLocalizedText(BANNER_KEYS.INFO12),
+      icon: getImageUrl(BANNER_KEYS.INF002),
+      numberIcon: '/home_number_icon2.png',
+    },
+    {
+      number: '03',
+      title: getLocalizedText(BANNER_KEYS.INFO3),
+      description: getLocalizedText(BANNER_KEYS.INFO13),
+      icon: getImageUrl(BANNER_KEYS.INF003),
+      numberIcon: '/home_number_icon3.png',
+    },
+    {
+      number: '04',
+      title: getLocalizedText(BANNER_KEYS.INFO4),
+      description: getLocalizedText(BANNER_KEYS.INFO14),
+      icon: getImageUrl(BANNER_KEYS.INF004),
+      numberIcon: '/home_number_icon4.png',
+    },
+    {
+      number: '05',
+      title: getLocalizedText(BANNER_KEYS.INFO5),
+      description: getLocalizedText(BANNER_KEYS.INFO15),
+      icon: getImageUrl(BANNER_KEYS.INF005),
+      numberIcon: '/home_number_icon5.png',
+    },
+  ];
 
   return (
     <div className="max-w-screen-xl flex flex-col items-start text-white mx-auto -mt-48 sm:mt-0 px-4">
       <h2 className="text-xl sm:text-6xl font-bold text-gradient mb-12">
-        {t('Exclusive benefits for holding Mercury World rights and status')}
+        {getLocalizedText(BANNER_KEYS.INF00)}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 w-full">
         {benefits &&
@@ -75,12 +101,10 @@ const Holder = () => {
                 <div className="flex-none">
                   <Image src={benefit.icon} alt="Icon" width={40} height={40} />
                 </div>
-                <div className="sm:text-xl font-semibold">
-                  {t(benefit.title)}
-                </div>
+                <div className="sm:text-xl font-semibold">{benefit.title}</div>
               </div>
               <div className="text-xs sm:text-sm leading-relaxed mt-2">
-                {t(benefit.description)}
+                {benefit.description}
               </div>
             </div>
           ))}
