@@ -36,12 +36,6 @@ const AdminApp = () => (
       authProvider={authProvider}
     >
       <Resource
-        name="users"
-        options={{ label: '用户表' }}
-        list={UserList}
-        edit={UserEdit}
-      />
-      <Resource
         name="nodes"
         options={{ label: '权益表' }}
         list={NodeList}
@@ -56,19 +50,21 @@ const AdminApp = () => (
         create={AirdropCreate}
       />
       <Resource
-        name="buy-records"
-        options={{ label: '购买记录表' }}
-        list={BuyRecordList}
+        name="media-configs"
+        options={{ label: '文案表' }}
+        list={MediaConfigList}
+        edit={MediaConfigEdit}
       />
       <Resource
-        name="transfer-records"
-        options={{ label: '转移记录表' }}
-        list={TransferRecordList}
+        name="users"
+        options={{ label: '用户表' }}
+        list={UserList}
+        edit={UserEdit}
       />
       <Resource
-        name="claim-records"
-        options={{ label: '领取记录表' }}
-        list={ClaimRecordList}
+        name="user-hierarchy"
+        options={{ label: '用户层级结构' }}
+        list={UserHierarchy}
       />
       <Resource
         name="special-limits"
@@ -85,15 +81,19 @@ const AdminApp = () => (
         create={GlobalCreate}
       />
       <Resource
-        name="media-configs"
-        options={{ label: '文案表' }}
-        list={MediaConfigList}
-        edit={MediaConfigEdit}
+        name="buy-records"
+        options={{ label: '购买记录' }}
+        list={BuyRecordList}
       />
       <Resource
-        name="user-hierarchy"
-        options={{ label: '用户层级结构' }}
-        list={UserHierarchy}
+        name="transfer-records"
+        options={{ label: '转移记录' }}
+        list={TransferRecordList}
+      />
+      <Resource
+        name="claim-records"
+        options={{ label: '领取记录' }}
+        list={ClaimRecordList}
       />
       <Resource
         name="change-password"
