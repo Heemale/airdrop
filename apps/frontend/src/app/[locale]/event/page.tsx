@@ -8,7 +8,7 @@ import AirdropList from '@/components/Event/AirdropList';
 import { useClientTranslation } from '@/hook';
 import { MediaProvider } from '@/context/MediaContext';
 
-const Home = async () => {
+const Home = () => {
   const { t } = useClientTranslation();
 
   return (

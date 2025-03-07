@@ -33,7 +33,6 @@ const Holder = () => {
     return mediaConfig?.[code]?.[currentLang] ?? 'Loading...';
   };
   const getImageUrl = (imageUrl: string) => {
-    console.log(mediaConfig?.[imageUrl].imageUrl, 'imageUrl');
     if (!mediaConfig || !mediaConfig[imageUrl]) {
       return '/sui-sui-logo.png';
     }
