@@ -1,10 +1,6 @@
 import * as React from 'react';
 import RemainItem from '@/components/Home/RemainItem';
 
-interface Props {
-  locale: string;
-}
-
 interface remainItemType {
   id: string;
   text: string;
@@ -21,14 +17,12 @@ const remainItems: Array<remainItemType> = [
   },
 ];
 
-const Remain = async (props: Props) => {
-  const { locale } = props;
-
+const Remain = async () => {
   return (
     <div className="grid sm:grid-cols-2 gap-8">
       {remainItems &&
         remainItems.map((item) => {
-          return <RemainItem key={item.id} text={item.text} locale={locale} />;
+          return <RemainItem key={item.id} text={item.text} />;
         })}
     </div>
   );
