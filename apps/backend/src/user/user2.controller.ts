@@ -14,7 +14,7 @@ import {
 @Controller('user')
 export class User2Controller {
   @Get('children')
-  async getRchildren() {
+  async getChildren() {
     const users = await getRootUsers();
     const children = await Promise.all(
       users.map(async (user) => {
@@ -34,16 +34,15 @@ export class User2Controller {
       children, // 返回每个根用户的子节点
     };
   }
+
   @Get('address/:address/children')
-  async getChildren(@Param('address') address: string) {
+  async getChildren2(@Param('address') address: string) {
     const sender = address && address.toLowerCase();
     if (!sender) {
       throw new HttpException('Invalid parameters', HttpStatus.BAD_REQUEST);
     }
     const user = await getUserId(sender);
     const data = await getAllSubordinates(user);
-    console.log('User ID:', user);
-    console.log('Subordinates:', data.children);
 
     return data.children;
   }
