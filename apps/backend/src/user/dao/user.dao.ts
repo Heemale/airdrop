@@ -174,7 +174,6 @@ export const getAllSubordinates = async (userId: number) => {
   );
   const children = directChildUsers.map((child) => {
     const childData = subordinatesData.find((data) => data.id === child.id);
-    console.log('childData123123', childData);
     return {
       id: child.id,
       address: child.address,

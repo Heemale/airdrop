@@ -8,13 +8,12 @@ import {
   Toolbar as RaToolbar,
 } from 'react-admin';
 import React from 'react';
-import { Transaction } from '@mysten/sui/transactions';
+import { LIMITS, ADMIN_CAP } from '@/sdk/constants';
 import {
   useCurrentAccount,
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
-import { limitClient, devTransaction } from '@/sdk';
-import { LIMITS } from '@/sdk/constants';
+import { airdropClient, devTransaction } from '@/sdk';
 import { handleDevTxError } from '@/sdk/error';
 import { useNotify } from 'react-admin';
 import CreateEditActions from '@/components/ui/CreateEditActions';
@@ -34,9 +33,13 @@ const LimitEdit = () => {
     if (!account) return;
 
     try {
-      const tx = new Transaction();
-
-      limitClient.modify(tx, LIMITS, data.address, data.times, data.ivValid);
+      const tx = airdropClient.modifyLimits(
+        ADMIN_CAP,
+        LIMITS,
+        data.address,
+        data.times,
+        data.ivValid,
+      );
 
       try {
         await devTransaction(tx, account.address);
@@ -49,7 +52,7 @@ const LimitEdit = () => {
         { transaction: tx },
         {
           onSuccess: async (result) => {
-            notify(`提交成功, 交易hash: ${result.digest}`, { type: 'error' });
+            notify(`提交成功, 交易hash: ${result.digest}`, { type: 'success' });
           },
           onError: ({ message }) => {
             notify(handleDevTxError(message.trim()), { type: 'error' });
