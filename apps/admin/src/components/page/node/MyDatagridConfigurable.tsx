@@ -62,7 +62,7 @@ const MyDatagridConfigurable = ({
         { transaction: tx },
         {
           onSuccess: async (result) => {
-            notify(`提交成功, 交易hash: ${result.digest}`, { type: 'error' });
+            notify(`提交成功, 交易hash: ${result.digest}`, { type: 'success' });
           },
           onError: ({ message }) => {
             notify(handleDevTxError(message.trim()), { type: 'error' });

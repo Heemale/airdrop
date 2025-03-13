@@ -28,18 +28,14 @@ export class AirdropController extends CrudController {
         nextCursor && Number(nextCursor),
         Number(pageSize),
       );
-      console.log('98777777', formatAirdrop);
       const coinTypes = Array.from(
         new Set(formatAirdrop.data.map((item) => item.coinType)),
       );
-      console.log('coinTypes', coinTypes);
       const tokenMetadata = await findTokenMetadata(coinTypes);
-      console.log('tokenMetadata', tokenMetadata);
 
       const tokenMetadataMap = new Map(
         tokenMetadata.map((token) => [token.coinType, token]),
       );
-      console.log('tokenMetadataMap', tokenMetadataMap);
 
       const responseData = formatAirdrop.data.map((airdrop) => ({
         airdrop: {
@@ -47,14 +43,12 @@ export class AirdropController extends CrudController {
           token: tokenMetadataMap.get(airdrop.coinType) || null, // 关联 token 数据
         },
       }));
-      console.log(121213, responseData);
 
       const result = {
         data: responseData,
         nextCursor: formatAirdrop.nextCursor,
         hasNextPage: formatAirdrop.hasNextPage,
       };
-      console.log('result', result);
 
       return handleBigInt(result);
     } catch ({ message }) {

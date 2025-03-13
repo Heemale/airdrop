@@ -94,13 +94,11 @@ const UserHierarchy = () => {
   const [messageApi, contextHolder] = message.useMessage();
   const getChildrens = async (): Promise<RootNode[]> => {
     const rootNode = await getChildren();
-    console.log('rootNode', rootNode);
     return [rootNode];
   };
 
   const fetchData = async () => {
     const childrenData = await getChildrens();
-    console.log('childrenData', childrenData);
     setTreeData(childrenData);
   };
   const handleSearch = async () => {
