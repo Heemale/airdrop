@@ -89,26 +89,26 @@ const findNode = (
   }
 };
 
-export const getAllItemsWithChildrenItemIds = () => {
-  const itemIds: TreeViewItemId[] = [];
-  const registerItemId = (item: TreeViewBaseItem) => {
-    if (item.children?.length) {
-      itemIds.push(item.id);
-      item.children.forEach(registerItemId);
-    }
-  };
-
-  MUI_X_PRODUCTS.forEach(registerItemId);
-
-  return itemIds;
-};
-
 const UserTree = () => {
   const [treeData, setTreeData] = useState<ExtendedTreeItem[]>([]);
   const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const [lastSelectedItem, setLastSelectedItem] = React.useState<string | null>(
     null,
   );
+
+  const getAllItemsWithChildrenItemIds = () => {
+    const itemIds: TreeViewItemId[] = [];
+    const registerItemId = (item: TreeViewBaseItem) => {
+      if (item.children?.length) {
+        itemIds.push(item.id);
+        item.children.forEach(registerItemId);
+      }
+    };
+
+    treeData.forEach(registerItemId);
+
+    return itemIds;
+  };
 
   const CustomTreeItem = React.forwardRef(function CustomTreeItem(
     props: CustomTreeItemProps,
@@ -200,25 +200,26 @@ const UserTree = () => {
       });
 
       // 建立父子关系
-      // newItems.forEach(item => {
-      //   // 如果是通过父节点加载的，直接挂载
-      //   if (parentId) {
-      //     const parent = findNode(newTree, parentId);
-      //     if (parent && !parent.children?.some(c => c.id === item.id)) {
-      //       parent.children = [...(parent.children || []), item];
-      //     }
-      //   } else {
-      //     // 处理根节点：找到所有父节点并挂载
-      //     const parents = newTree.filter(node =>
-      //       item?.sharerIds?.includes(parseInt(node.id))
-      //     );
-      //     parents.forEach(parent => {
-      //       if (!parent.children?.some(c => c.id === item.id)) {
-      //         parent.children = [...(parent.children || []), item];
-      //       }
-      //     });
-      //   }
-      // });
+      newItems.forEach((item) => {
+        // 如果是通过父节点加载的，直接挂载
+        if (parentId) {
+          // TODO 在父级下追加节点同时补上父级的地址
+          // const parent = findNode(newTree, parentId);
+          // if (parent && !parent.children?.some((c) => c.id === item.id)) {
+          //   parent.children = [...(parent.children || []), item];
+          // }
+        } else {
+          // 处理根节点：找到所有父节点并挂载
+          const parents = newTree.filter((node) =>
+            item?.sharerIds?.includes(parseInt(node.id)),
+          );
+          parents.forEach((parent) => {
+            if (!parent.children?.some((c) => c.id === item.id)) {
+              parent.children = [...(parent.children || []), item];
+            }
+          });
+        }
+      });
 
       return newTree;
     });
@@ -230,36 +231,44 @@ const UserTree = () => {
       const ids = parentId ? [parseInt(parentId)] : null;
       const teamInfo = await getTeamInfo({ ids });
 
-      const handledData: ExtendedTreeItem[] = teamInfo.map((item) => {
-        return {
-          id: item.id.toString(),
-          label: `${item.id.toString()} ${formatAddress(item.address)}`,
-          children: item.sharerIds?.length
-            ? item.sharerIds.map((item) => {
-                return {
-                  id: item.toString(),
-                  label: item.toString(),
-                  children: [],
-                  sharerIds: [],
-                  hasFetched: false,
-                };
-              })
-            : undefined,
-          sharerIds: item.sharerIds,
-          hasFetched: false,
-        };
-      });
+      if (!teamInfo[0].sharerIds) {
+        return [];
+      }
 
-      console.log({ handledData });
+      const handledData: ExtendedTreeItem[] = !parentId
+        ? teamInfo.map((item) => {
+            return {
+              id: item.id.toString(),
+              label: `${item.id.toString()} ${formatAddress(item.address)}`,
+              children: item.sharerIds?.length
+                ? item.sharerIds.map((item) => {
+                    return {
+                      id: item.toString(),
+                      label: item.toString(),
+                      children: [],
+                      sharerIds: [],
+                      hasFetched: false,
+                    };
+                  })
+                : undefined,
+              sharerIds: item.sharerIds,
+              hasFetched: false,
+            };
+          })
+        : teamInfo[0].sharerIds.map((item) => {
+            return {
+              id: item.toString(),
+              label: `${item.toString()}`,
+              children: [],
+              sharerIds: [],
+              hasFetched: false,
+            };
+          });
       updateTreeData(parentId, handledData);
     } catch (err) {
       console.error('Failed to load team info:', err);
     }
   };
-
-  useEffect(() => {
-    console.log({ lastSelectedItem });
-  }, [lastSelectedItem]);
 
   useEffect(() => {
     updateTeamInfo(null);
