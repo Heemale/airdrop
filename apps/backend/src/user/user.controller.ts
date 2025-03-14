@@ -1,16 +1,23 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
   Param,
+  Post,
   Query,
 } from '@nestjs/common';
 import { CrudController } from '@/common/crud/crud.controller';
-import { findUserByAddress, getAllSubordinates } from '@/user/dao/user.dao';
+import {
+  findUserByAddress,
+  findUsersByIds,
+  getAllSubordinates,
+} from '@/user/dao/user.dao';
 import { convertSmallToLarge } from '@/utils/math';
 import { TOKEN_DECIMAL } from '@/config';
 import { PaginatedRequest } from '@/common/types';
+import { GetTeamInfoDto } from '@/user/dto/getTeamInfo.dto';
 
 @Controller('users')
 export class UserController extends CrudController {
@@ -122,5 +129,11 @@ export class UserController extends CrudController {
       nextCursor: cursor,
       hasNextPage,
     };
+  }
+
+  @Post('teams')
+  async getTeamInfo(@Body() params: GetTeamInfoDto) {
+    const { ids } = params;
+    return await findUsersByIds(ids);
   }
 }

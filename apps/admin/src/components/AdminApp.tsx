@@ -26,6 +26,7 @@ import MediaConfigList from '@/components/page/media-config/MediaConfigList';
 import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
 import UserHierarchy from '@/components/page/user-hierarchy/UserHierarchy';
 import ChangePassword from '@/components/page/change-password/ChangePassword';
+import UserTree from '@/components/page/user-hierarchy/UserTree';
 
 const AdminApp = () => (
   <div className="w-full overflow-x-auto md:overflow-x-visible md:max-w-none">
@@ -65,6 +66,11 @@ const AdminApp = () => (
         name="user-hierarchy"
         options={{ label: '用户层级结构' }}
         list={UserHierarchy}
+      />
+      <Resource
+        name="user-hierarchy-2"
+        options={{ label: '用户层级结构2' }}
+        list={UserTree}
       />
       <Resource
         name="special-limits"

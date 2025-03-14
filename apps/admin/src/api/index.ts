@@ -1,6 +1,6 @@
 import { getAuth } from '@/config/auth';
 import { BASE_URL } from '@/config';
-import { ChangePasswordDto } from '@/api/types';
+import { ChangePasswordDto, GetTeamInfoDto, TeamInfo } from '@/api/types';
 import { RootNode, SubordinateNode } from '@/api/types';
 
 export const uploadImage = async (rawFile: string | Blob): Promise<string> => {
@@ -88,6 +88,26 @@ export const getUserInfo = async (
   const response = await fetch(request);
 
   if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
+
+  return response.json();
+};
+
+export const getTeamInfo = async (
+  params: GetTeamInfoDto,
+): Promise<Array<TeamInfo>> => {
+  const request = new Request(`${BASE_URL}/api/users/teams`, {
+    method: 'POST',
+    headers: new Headers({
+      'Content-Type': 'application/json',
+    }),
+    body: JSON.stringify(params),
+  });
+
+  const response = await fetch(request);
+
+  if (response.status !== 201) {
     throw new Error(response.statusText);
   }
 

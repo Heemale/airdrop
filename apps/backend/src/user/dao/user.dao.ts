@@ -6,6 +6,7 @@ import {
   TypeMapCbDef,
   TypeMapDef,
 } from '@prisma/client/runtime/library';
+
 export const upsertUser = async <
   TypeMap extends TypeMapDef,
   TypeMapCb extends TypeMapCbDef,
@@ -106,6 +107,50 @@ export const findUserByAddress = async <
     },
   });
 };
+
+export const findUsersByIds = async <
+  TypeMap extends TypeMapDef,
+  TypeMapCb extends TypeMapCbDef,
+  ExtArgs extends Record<string, any>,
+  ClientOptions,
+>(
+  ids: Array<number> | null,
+  tx?: Omit<
+    DynamicClientExtensionThis<TypeMap, TypeMapCb, ExtArgs, ClientOptions>,
+    '$extends' | '$transaction' | '$disconnect' | '$connect' | '$on' | '$use'
+  >,
+) => {
+  const db = tx ?? prisma;
+
+  const whereCondition = ids
+    ? {
+        id: {
+          in: ids,
+        },
+      }
+    : {
+        isRoot: true,
+      };
+
+  const users = await db.user.findMany({
+    select: {
+      id: true,
+      address: true,
+      sharerIds: true,
+    },
+    where: whereCondition,
+  });
+
+  return users.map((item) => {
+    const { sharerIds, ...rest } = item;
+    const ids = sharerIds ? sharerIds.split(',').map(Number) : null;
+    return {
+      sharerIds: ids,
+      ...rest,
+    };
+  });
+};
+
 export const getUserId = async (address: string) => {
   try {
     // 查找用户表，通过地址查找用户记录
@@ -125,6 +170,7 @@ export const getUserId = async (address: string) => {
     throw new Error('获取 userId 失败');
   }
 };
+
 export const getAllSubordinates = async (userId: number) => {
   // 获取直接下级的地址和 sharerIds
   const directChildren = await prisma.user.findUnique({
