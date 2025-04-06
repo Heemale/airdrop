@@ -75,7 +75,7 @@ const AirdropEdit = () => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <TextInput source="id" label="ID" disabled fullWidth />
           <NumberInput source="round" label="回合" fullWidth />
-          <div>
+          <div className="pb-6">
             <MyDateTimePicker source="startTime" label="开始时间" />
           </div>
           <div className="pb-6">

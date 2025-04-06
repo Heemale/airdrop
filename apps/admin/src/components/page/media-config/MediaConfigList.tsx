@@ -5,6 +5,7 @@ import {
   BooleanField,
   TextInput,
   FunctionField,
+  EditButton,
 } from 'react-admin';
 import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
@@ -63,6 +64,7 @@ const MediaConfigList = () => (
       <TextField source="imageUrl" label="图片链接" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
+      <EditButton label="编辑" />
     </MyDatagridConfigurable>
   </List>
 );

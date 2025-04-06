@@ -94,7 +94,7 @@ const MyDatagridConfigurable = ({
       }}
     >
       {children}
-      {hasEdit && <EditButton />}
+      {hasEdit && <EditButton label="编辑" />}
       <Button label="提现" onClick={handleWithdraw} />
     </DatagridConfigurable>
   );

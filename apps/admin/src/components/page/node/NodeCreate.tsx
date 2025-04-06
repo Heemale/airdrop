@@ -34,7 +34,6 @@ const NodeCreate = () => {
   const onSubmit = async (data: any) => {
     if (!account) return;
 
-    // 将字段转换为 BigInt
     const price = BigInt(convertLargeToSmall(data.price, TOKEN_DECIMAL));
 
     try {

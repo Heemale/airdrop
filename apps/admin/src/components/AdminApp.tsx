@@ -27,6 +27,19 @@ import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
 import UserHierarchy from '@/components/page/user-hierarchy/UserHierarchy';
 import ChangePassword from '@/components/page/change-password/ChangePassword';
 
+import {
+  People,
+  AccountTree,
+  CardGiftcard,
+  Article,
+  LockPerson,
+  Widgets,
+  AttachMoney,
+  SwapHoriz,
+  Assignment,
+  Security,
+} from '@mui/icons-material';
+
 const AdminApp = () => (
   <div className="w-full overflow-x-auto md:overflow-x-visible md:max-w-none">
     <Admin
@@ -41,6 +54,7 @@ const AdminApp = () => (
         list={NodeList}
         edit={NodeEdit}
         create={NodeCreate}
+        icon={AccountTree}
       />
       <Resource
         name="airdrops"
@@ -48,23 +62,27 @@ const AdminApp = () => (
         list={AirdropList}
         edit={AirdropEdit}
         create={AirdropCreate}
+        icon={CardGiftcard}
       />
       <Resource
         name="media-configs"
         options={{ label: '文案表' }}
         list={MediaConfigList}
         edit={MediaConfigEdit}
+        icon={Article}
       />
       <Resource
         name="users"
         options={{ label: '用户表' }}
         list={UserList}
         edit={UserEdit}
+        icon={People}
       />
       <Resource
         name="user-hierarchy"
         options={{ label: '用户层级结构' }}
         list={UserHierarchy}
+        icon={AccountTree}
       />
       <Resource
         name="special-limits"
@@ -72,6 +90,7 @@ const AdminApp = () => (
         list={LimitList}
         edit={LimitEdit}
         create={LimitCreate}
+        icon={LockPerson}
       />
       <Resource
         name="objects"
@@ -79,26 +98,31 @@ const AdminApp = () => (
         list={GlobalList}
         edit={GlobalEdit}
         create={GlobalCreate}
+        icon={Widgets}
       />
       <Resource
         name="buy-records"
         options={{ label: '购买记录' }}
         list={BuyRecordList}
+        icon={AttachMoney}
       />
       <Resource
         name="transfer-records"
         options={{ label: '转移记录' }}
         list={TransferRecordList}
+        icon={SwapHoriz}
       />
       <Resource
         name="claim-records"
         options={{ label: '领取记录' }}
         list={ClaimRecordList}
+        icon={Assignment}
       />
       <Resource
         name="change-password"
         options={{ label: '修改密码' }}
         list={ChangePassword}
+        icon={Security}
       />
     </Admin>
   </div>

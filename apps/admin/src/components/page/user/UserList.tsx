@@ -2,6 +2,7 @@ import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
 import {
   BooleanField,
+  EditButton,
   FunctionField,
   List,
   TextField,
@@ -123,6 +124,7 @@ const UserList = () => (
       <TimeTextField source="joinAt" label="加入时间" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
+      <EditButton label="编辑" />
     </MyDatagridConfigurable>
   </List>
 );
