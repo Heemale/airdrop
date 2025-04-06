@@ -1,8 +1,6 @@
 import * as React from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useEffect, useState } from 'react';
-import { dateToTimestamp } from '@/utils/time';
-import { useController } from 'react-hook-form';
 import { useRecordContext } from 'react-admin';
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -15,11 +13,6 @@ const MyDateTimePicker = ({
   source: string;
   label?: string;
 }) => {
-  const {
-    field,
-    fieldState: { invalid, isTouched, isDirty },
-    formState: { touchedFields, dirtyFields },
-  } = useController({ name: source, defaultValue: null });
   const record = useRecordContext();
 
   const [selectedDateTime, setSelectedDateTime] = useState<Dayjs | null>(null);
@@ -29,17 +22,8 @@ const MyDateTimePicker = ({
   };
 
   useEffect(() => {
-    if (selectedDateTime) {
-      field.onChange(dateToTimestamp(selectedDateTime.toDate()));
-    } else {
-      field.onChange(null);
-    }
-  }, [selectedDateTime]);
-
-  // 初始化值
-  useEffect(() => {
     if (record?.[source]) {
-      const initialDate = dayjs(record[source]);
+      const initialDate = dayjs(Number(record[source]) * 1000);
       setSelectedDateTime(initialDate);
     }
   }, [record, source]);
