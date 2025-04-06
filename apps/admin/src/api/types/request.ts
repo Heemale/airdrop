@@ -3,15 +3,9 @@ export interface ChangePasswordDto {
 }
 
 export interface GetTeamInfoDto {
-  ids: Array<number> | null;
+  ids: Array<number>;
 }
 
 export interface GetUserByAddressDto {
   address: string;
-}
-
-export interface Tree {
-  id: number;
-  address: string;
-  sharerIds: Array<number>;
 }

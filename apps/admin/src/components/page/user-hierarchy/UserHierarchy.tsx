@@ -1,5 +1,5 @@
 import { getTree, getUserByAddress } from '@/api';
-import { Tree } from '@/api/types';
+import { Tree } from '@/api/types/response';
 import { Button, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNotify } from 'react-admin';

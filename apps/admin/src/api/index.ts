@@ -4,8 +4,8 @@ import {
   ChangePasswordDto,
   GetTeamInfoDto,
   GetUserByAddressDto,
-  Tree,
-} from '@/api/types';
+} from '@/api/types/request';
+import { Tree } from './types/response';
 
 export const uploadImage = async (rawFile: string | Blob): Promise<string> => {
   const token = getAuth();
