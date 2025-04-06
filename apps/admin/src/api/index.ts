@@ -1,7 +1,11 @@
 import { getAuth } from '@/config/auth';
 import { BASE_URL } from '@/config';
-import { ChangePasswordDto, GetTeamInfoDto, TeamInfo } from '@/api/types';
-import { RootNode, SubordinateNode } from '@/api/types';
+import {
+  ChangePasswordDto,
+  GetTeamInfoDto,
+  GetUserByAddressDto,
+  Tree,
+} from '@/api/types';
 
 export const uploadImage = async (rawFile: string | Blob): Promise<string> => {
   const token = getAuth();
@@ -49,55 +53,10 @@ export const changePassword = async (params: ChangePasswordDto) => {
   return response.text();
 };
 
-export const getChildren = async (): Promise<RootNode> => {
-  const token = getAuth();
-  if (!token) return Promise.reject();
-
-  const request = new Request(`${BASE_URL}/api/user/children`, {
-    method: 'GET',
-    headers: new Headers({
-      Authorization: `Bearer ${token}`,
-    }),
-  });
-
-  const response = await fetch(request);
-
-  if (response.status !== 200) {
-    throw new Error(response.statusText);
-  }
-
-  return response.json();
-};
-
-export const getUserInfo = async (
-  address: string,
-): Promise<SubordinateNode> => {
-  const token = getAuth();
-  if (!token) return Promise.reject();
-
-  const request = new Request(
-    `${BASE_URL}/api/user/address/${address}/children`,
-    {
-      method: 'GET',
-      headers: new Headers({
-        Authorization: `Bearer ${token}`,
-      }),
-    },
-  );
-
-  const response = await fetch(request);
-
-  if (response.status !== 200) {
-    throw new Error(response.statusText);
-  }
-
-  return response.json();
-};
-
-export const getTeamInfo = async (
-  params: GetTeamInfoDto,
-): Promise<Array<TeamInfo>> => {
-  const request = new Request(`${BASE_URL}/api/users/teams`, {
+export const getTree = async (
+  params?: GetTeamInfoDto,
+): Promise<Array<Tree>> => {
+  const request = new Request(`${BASE_URL}/api/users/tree`, {
     method: 'POST',
     headers: new Headers({
       'Content-Type': 'application/json',
@@ -112,4 +71,29 @@ export const getTeamInfo = async (
   }
 
   return response.json();
+};
+
+export const getUserByAddress = async (
+  params: GetUserByAddressDto,
+): Promise<Tree | null> => {
+  const request = new Request(
+    `${BASE_URL}/api/users/address/${params.address}`,
+    {
+      method: 'GET',
+      headers: new Headers({
+        'Content-Type': 'application/json',
+      }),
+    },
+  );
+
+  const response = await fetch(request);
+
+  if (response.status !== 200) {
+    throw new Error(response.statusText);
+  }
+
+  const user = await response.json();
+  if (!user || user.id === 0) return null;
+
+  return user;
 };

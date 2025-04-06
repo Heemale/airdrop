@@ -23,9 +23,8 @@ export const getCurrentTimestampMs = (): number => {
   return Math.floor(Date.now());
 };
 
-export const dateToTimestamp = (date: string): number => {
-  const dateTime = new Date(date);
-  return Math.floor(dateTime.getTime() / 1000);
+export const dateToTimestamp = (date: Date): number => {
+  return Math.floor(date.getTime() / 1000);
 };
 
 export const timestampToDate = (timestamp: number): string => {

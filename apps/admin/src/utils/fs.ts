@@ -5,7 +5,7 @@ export const writeDataToFile = (filePath: string, jsonData: any): void => {
   fs.writeFileSync(filePath, jsonString, 'utf8');
 };
 
-export const readDataFromFile = (filePath: string): JSON => {
+export const readDataFromFile = (filePath: string): JSON | null => {
   try {
     const jsonString = fs.readFileSync(filePath, 'utf8');
     return JSON.parse(jsonString);

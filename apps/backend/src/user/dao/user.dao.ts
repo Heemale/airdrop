@@ -143,32 +143,12 @@ export const findUsersByIds = async <
 
   return users.map((item) => {
     const { sharerIds, ...rest } = item;
-    const ids = sharerIds ? sharerIds.split(',').map(Number) : null;
+    const ids = sharerIds ? sharerIds.split(',').map(Number) : [];
     return {
       sharerIds: ids,
       ...rest,
     };
   });
-};
-
-export const getUserId = async (address: string) => {
-  try {
-    // 查找用户表，通过地址查找用户记录
-    const user = await prisma.user.findUnique({
-      where: {
-        address: address, // 假设表中有 address 字段
-      },
-    });
-
-    if (user) {
-      return user.id; // 返回 userId
-    } else {
-      return null; // 如果没有找到用户，返回 null
-    }
-  } catch (error) {
-    console.error('获取 userId 失败：', error);
-    throw new Error('获取 userId 失败');
-  }
 };
 
 export const getAllSubordinates = async (userId: number) => {
@@ -234,18 +214,4 @@ export const getAllSubordinates = async (userId: number) => {
     directSubordinates: directChildIds, // 直接下级
     children,
   };
-};
-
-export const getRootUsers = async () => {
-  const rootUsers = await prisma.user.findMany({
-    where: { isRoot: true },
-    select: { id: true, address: true, sharerIds: true },
-  });
-
-  return rootUsers.map((rootUser) => ({
-    id: rootUser.id,
-    address: rootUser.address,
-    shareIds: rootUser.sharerIds?.split(',').map(Number).filter(Boolean) || [],
-    isRoot: true,
-  }));
 };

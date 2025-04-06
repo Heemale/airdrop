@@ -18,7 +18,9 @@ export const handleCrudRequest = async (request: any, resource: string) => {
 };
 
 export const handleBigInt = (result: any) => {
-  return JSON.stringify(result, (_, value) =>
-    typeof value === 'bigint' ? value.toString() : value,
+  return JSON.parse(
+    JSON.stringify(result, (_, value) =>
+      typeof value === 'bigint' ? value.toString() : value,
+    ),
   );
 };

@@ -131,9 +131,29 @@ export class UserController extends CrudController {
     };
   }
 
-  @Post('teams')
+  @Post('tree')
   async getTeamInfo(@Body() params: GetTeamInfoDto) {
     const { ids } = params;
     return await findUsersByIds(ids);
+  }
+
+  @Get('address/:address')
+  async getUserByAddress(@Param() params) {
+    const { address } = params;
+    const user = await findUserByAddress(address);
+    if (!user) {
+      return {
+        id: 0,
+        address: '',
+        sharerIds: [],
+      };
+    }
+
+    const sharerIds = user.sharerIds;
+    return {
+      id: user.id,
+      address: user.address,
+      sharerIds: sharerIds ? sharerIds.split(',').map(Number) : [],
+    };
   }
 }

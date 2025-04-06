@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { dateToTimestamp } from '@/utils/time';
 import { useController } from 'react-hook-form';
 import { useRecordContext } from 'react-admin';
+import dayjs, { Dayjs } from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 const MyDateTimePicker = ({
   source,
@@ -19,34 +22,37 @@ const MyDateTimePicker = ({
   } = useController({ name: source, defaultValue: null });
   const record = useRecordContext();
 
-  const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
+  const [selectedDateTime, setSelectedDateTime] = useState<Dayjs | null>(null);
 
-  const handleDateTimeChange = (newDateTime: Date | null) => {
+  const handleDateTimeChange = (newDateTime: Dayjs | null) => {
     setSelectedDateTime(newDateTime);
   };
 
   useEffect(() => {
-    if (selectedDateTime !== null) {
-      // @ts-ignore
-      field.onChange(dateToTimestamp(selectedDateTime?.$d)); // data send back to hook form
+    if (selectedDateTime) {
+      field.onChange(dateToTimestamp(selectedDateTime.toDate()));
     } else {
       field.onChange(null);
     }
   }, [selectedDateTime]);
 
-  // TODO 设置初始值
-  // useEffect(() => {
-  //   if (!record) return;
-  //   setSelectedDateTime(new Date(record[source]));
-  // }, [record]);
+  // 初始化值
+  useEffect(() => {
+    if (record?.[source]) {
+      const initialDate = dayjs(record[source]);
+      setSelectedDateTime(initialDate);
+    }
+  }, [record, source]);
 
   return (
-    <DateTimePicker
-      label={label}
-      value={selectedDateTime}
-      onChange={handleDateTimeChange}
-      views={['year', 'day', 'hours', 'minutes', 'seconds']}
-    />
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DateTimePicker
+        label={label}
+        value={selectedDateTime}
+        onChange={handleDateTimeChange}
+        views={['year', 'day', 'hours', 'minutes', 'seconds']}
+      />
+    </LocalizationProvider>
   );
 };
 
