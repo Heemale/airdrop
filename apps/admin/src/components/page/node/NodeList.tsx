@@ -74,25 +74,8 @@ const NodeList = () => (
           convertSmallToLarge(record.price.toString(), TOKEN_DECIMAL)
         }
       />
-      <FunctionField
-        source="totalQuantity"
-        label="总数量"
-        render={(record) =>
-          convertSmallToLarge(record.totalQuantity.toString(), TOKEN_DECIMAL)
-        }
-      />
-      <FunctionField
-        source="purchasedQuantity"
-        label="已购买数量"
-        render={(record) =>
-          record.purchasedQuantity
-            ? convertSmallToLarge(
-                record.purchasedQuantity.toString(),
-                TOKEN_DECIMAL,
-              )
-            : '-'
-        }
-      />
+      <NumberField source="totalQuantity" label="总数量" />
+      <NumberField source="purchasedQuantity" label="已购买数量" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
     </MyDatagridConfigurable>
