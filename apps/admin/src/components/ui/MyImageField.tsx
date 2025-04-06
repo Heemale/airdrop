@@ -11,6 +11,20 @@ interface props {
   imageUrl: string | null;
 }
 
+const getProcessedUrl = (imageUrl: string | null) => {
+  if (!imageUrl) return '';
+
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl;
+  }
+
+  if (imageUrl.startsWith('/')) {
+    return `${BASE_URL}${imageUrl}`;
+  }
+
+  return '';
+};
+
 const MyImageField = (props: props) => {
   const { isImage, imageUrl } = props;
 
@@ -18,6 +32,7 @@ const MyImageField = (props: props) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const processedUrl = getProcessedUrl(imageUrl);
 
   const handleImageError = () => {
     setIsError(true);
@@ -47,7 +62,7 @@ const MyImageField = (props: props) => {
   return (
     <div className="flex w-[200px] h-[200px] items-center">
       <Image
-        src={BASE_URL + imageUrl}
+        src={processedUrl}
         alt="image"
         width={200}
         height={200}
