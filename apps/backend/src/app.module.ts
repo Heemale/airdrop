@@ -11,6 +11,7 @@ import { NodeModule } from '@/node/node.module';
 import { UploadModule } from '@/upload/upload.module';
 import { AuthModule } from '@/auth/auth.module';
 import { MediaConfigModule } from '@/media-config/media-config.module';
+import { TokenMetadataModule } from './token-metadata/token-metadata.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { MediaConfigModule } from '@/media-config/media-config.module';
     UploadModule,
     AuthModule,
     MediaConfigModule,
+    TokenMetadataModule,
   ],
   controllers: [AppController],
   providers: [AppService],

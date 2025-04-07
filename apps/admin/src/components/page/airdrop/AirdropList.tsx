@@ -1,15 +1,8 @@
 import MyDatagridConfigurable from './MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
-import {
-  BooleanField,
-  FunctionField,
-  List,
-  TextField,
-  TextInput,
-} from 'react-admin';
-import { convertSmallToLarge } from '@/utils/math';
-import { TOKEN_DECIMAL } from '@/config';
+import { BooleanField, List, TextField, TextInput } from 'react-admin';
 import * as React from 'react';
+import UnitConvertField from '@/components/helper/UnitConvertField';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -94,30 +87,11 @@ const AirdropList = () => (
       <TextField source="totalShares" label="总份数" />
       <TextField source="claimedShares" label="已领取份数" />
       <TextField source="description" label="描述" />
-      <FunctionField
-        source="totalBalance"
-        label="总资金"
-        render={(record) =>
-          record.totalBalance
-            ? convertSmallToLarge(record.totalBalance.toString(), TOKEN_DECIMAL)
-            : '-'
-        }
-      />
+      <UnitConvertField source="totalBalance" label="总资金" />
       <BooleanField source="isOpen" label="是否开放" />
       <TextField source="coinType" label="货币类型" />
       <TextField source="imageUrl" label="空投图片" />
-      <FunctionField
-        source="remainingBalance"
-        label="空投剩余资金"
-        render={(record) =>
-          record.remainingBalance
-            ? convertSmallToLarge(
-                record.remainingBalance.toString(),
-                TOKEN_DECIMAL,
-              )
-            : '-'
-        }
-      />
+      <UnitConvertField source="remainingBalance" label="空投剩余资金" />
       <BooleanField source="isRemove" label="是否移除" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />

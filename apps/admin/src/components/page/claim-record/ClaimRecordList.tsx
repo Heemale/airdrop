@@ -1,9 +1,8 @@
 import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
-import { FunctionField, List, TextField, TextInput } from 'react-admin';
-import { convertSmallToLarge } from '@/utils/math';
-import { TOKEN_DECIMAL } from '@/config';
+import { List, TextField, TextInput } from 'react-admin';
 import * as React from 'react';
+import UnitConvertField from '@/components/helper/UnitConvertField';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -53,15 +52,7 @@ const ClaimRecordList = () => (
       <TextField source="sender" label="用户" />
       <TextField source="round" label="回合" />
       <TextField source="coinType" label="币种" />
-      <FunctionField
-        source="amount"
-        label="数量"
-        render={(record) =>
-          record.amount
-            ? convertSmallToLarge(record.amount.toString(), TOKEN_DECIMAL)
-            : '-'
-        }
-      />
+      <UnitConvertField source="amount" label="数量" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
     </MyDatagridConfigurable>

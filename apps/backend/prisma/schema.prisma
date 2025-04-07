@@ -222,14 +222,13 @@ model GainsChangeRecord {
 }
 
 model TokenMetadata {
-  id          Int     @id @default(autoincrement()) @db.UnsignedInt /// ID
+  id          String  @id @map("coin_type") @db.VarChar(255) /// 币种
   objectId    String? @unique @map("object_id") @db.VarChar(255) ///代币id
   name        String? @db.VarChar(255) /// 代币名称
   symbol      String? @db.VarChar(255) /// 代币符号
   description String? @db.Text /// 代币描述
   decimals    Int     @default(0) @db.UnsignedTinyInt /// 小数位数，默认为 0
   iconUrl     String? @map("icon_url") @db.Text /// 代币图标
-  coinType    String? @unique @map("coin_type") @db.VarChar(255) /// 币种
   createAt    BigInt? @map("create_at") /// 创建时间
   updateAt    BigInt? @map("update_at") /// 更新时间
 

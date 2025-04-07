@@ -1,5 +1,4 @@
 import { prisma } from '@/config/prisma';
-import { Prisma } from '@prisma/client';
 import {
   DynamicClientExtensionThis,
   Record,
@@ -38,7 +37,7 @@ export const upsertCoinMeta = async <
       description,
       decimals,
       iconUrl,
-      coinType,
+      id: coinType,
       updateAt: Math.floor(Date.now() / 1000),
     },
     create: {
@@ -48,7 +47,7 @@ export const upsertCoinMeta = async <
       description,
       decimals,
       iconUrl,
-      coinType,
+      id: coinType,
       createAt: Math.floor(Date.now() / 1000),
       updateAt: Math.floor(Date.now() / 1000),
     },
@@ -58,13 +57,13 @@ export const findTokenMetadata = async (coinTypes: string[]) => {
   try {
     const tokenMetadata = await prisma.tokenMetadata.findMany({
       where: {
-        coinType: {
+        id: {
           in: coinTypes, // 使用 in 操作符
         },
       },
       select: {
         objectId: true,
-        coinType: true,
+        id: true,
         name: true,
         symbol: true,
         description: true,
@@ -85,7 +84,7 @@ export const findTokenMetadata = async (coinTypes: string[]) => {
       symbol: token.symbol,
       description: token.description,
       decimals: token.decimals.toString(),
-      coinType: token.coinType,
+      coinType: token.id,
       iconUrl: token.iconUrl,
       createAt: token.createAt ? token.createAt.toString() : null,
       updateAt: token.updateAt ? token.updateAt.toString() : null,
