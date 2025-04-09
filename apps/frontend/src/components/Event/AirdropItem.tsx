@@ -3,12 +3,7 @@
 import Image from 'next/image';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import {
-  airdropClient,
-  devTransaction,
-  getCoinMetaData,
-  nodeClient,
-} from '@/sdk';
+import { airdropClient, devTransaction, nodeClient } from '@/sdk';
 import { AIRDROPS, GLOBAL, INVEST, LIMITS, NODES } from '@/sdk/constants';
 import { SUI_CLOCK_OBJECT_ID } from '@mysten/sui/utils';
 import type { AirdropInfo, TokenMetadata } from '@/api/types/response';
@@ -17,7 +12,7 @@ import {
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
 import { message } from 'antd';
-import { getCoinTypeName, isHexString } from '@/utils';
+import { getCoinTypeName } from '@/utils';
 import { formatTimestamp, sleep } from '@/utils/time';
 import { convertSmallToLarge, divide } from '@/utils/math';
 import Backdrop from '@mui/material/Backdrop';
@@ -25,7 +20,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useClientTranslation } from '@/hook';
 import { handleDevTxError, handleTxError } from '@/sdk/error';
 import { useRouter } from 'next/navigation';
-import type { CoinMetadata } from '@mysten/sui/client';
 import { NodeStatus } from '@local/airdrop-sdk/node';
 import Link from 'next/link';
 
@@ -50,9 +44,6 @@ const AirdropItem = (props: Props) => {
     nodeStatus,
     claimText,
   } = props;
-
-  console.log('data11222333', data);
-  console.log(' data.token', data.airdrop.token);
 
   const { t } = useClientTranslation();
   const account = useCurrentAccount();

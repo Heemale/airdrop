@@ -4,8 +4,8 @@ import * as React from 'react';
 import AirdropItem from '@/components/Event/AirdropItem';
 import { useEffect, useState } from 'react';
 import { getCurrentTimestampMs } from '@/utils/time';
-import { airdropClient, nodeClient } from '@/sdk';
-import { AIRDROPS, NODES } from '@/sdk/constants';
+import { nodeClient } from '@/sdk';
+import { NODES } from '@/sdk/constants';
 import { message } from 'antd';
 import { useCurrentAccount } from '@mysten/dapp-kit';
 import { handleTxError } from '@/sdk/error';
@@ -66,12 +66,10 @@ const AirdropList = (props: Props) => {
     try {
       const airdropResponse = await getAirdropInfo({ nextCursor: cursor }); // 获取空投信息
       const airdrops = airdropResponse.data || [];
-      console.log('airdrops', airdrops);
       // 使用 id 作为唯一键
       const existingIds = new Set(
         airdropList.map((item) => item.airdrop.round),
       );
-      console.log('existingIds', existingIds);
 
       const uniqueNewAirdrops = airdrops.filter(
         (item: any) => !existingIds.has(item.airdrop.round),
@@ -102,7 +100,6 @@ const AirdropList = (props: Props) => {
       getAirdropList(cursor); // 滚动到底部时加载更多数据
     }
   };
-  console.log('airdropList', airdropList);
 
   return (
     <div

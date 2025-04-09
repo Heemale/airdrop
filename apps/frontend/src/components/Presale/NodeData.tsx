@@ -26,8 +26,6 @@ const NodeData = () => {
     try {
       const nodes = await getNodeInfo();
       if (Array.isArray(nodes)) {
-        console.log('11111', nodes);
-
         // 确保返回值是数组
         // 遍历返回的数据并赋值给 NodeInfo
         const formattedNodeList: NodeInfo[] = nodes.map((node) => ({
@@ -44,7 +42,6 @@ const NodeData = () => {
             : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
           isOpen: node.isOpen,
         }));
-        console.log('formattedNodeList', formattedNodeList);
         setNodeList(formattedNodeList.filter((node) => node.isOpen));
       } else {
         // 如果返回的是单个节点，直接处理
@@ -63,7 +60,6 @@ const NodeData = () => {
             : BigInt(0), // 如果是 null 或 undefined，使用默认值 0
           isOpen: node.isOpen,
         };
-        console.log('formattedNode111111111', formattedNode);
 
         setNodeList([formattedNode].filter((node) => node.isOpen)); // 将单个节点包装成数组并更新状态
       }

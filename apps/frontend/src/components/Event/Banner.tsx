@@ -9,7 +9,6 @@ const BANNER_KEYS = {
 const Banner = () => {
   const mediaConfig = useMedia();
   const getImageUrl = (imageUrl: string) => {
-    console.log(mediaConfig?.[imageUrl].imageUrl, 'imageUrl');
     if (!mediaConfig || !mediaConfig[imageUrl]) {
       return '/sui-sui-logo.png';
     }

@@ -3,7 +3,7 @@ import * as React from 'react';
 import NavBar from './NavBar';
 import ConnectButton from '@/components/ConnectButton';
 import { useClientTranslation } from '@/hook';
-import { usePathname } from 'next/navigation';
+
 export interface Page {
   id: string;
   name: string;
@@ -16,7 +16,7 @@ const pages: Array<Page> = [
     id: '0',
     name: 'Home',
     link: '/',
-    icon: '/HomeIconImage1.png', // 添加图标路径
+    icon: '/HomeIconImage1.png',
   },
   {
     id: '1',
@@ -38,12 +38,8 @@ const pages: Array<Page> = [
   },
 ];
 
-const isActive = (href: string, pathname: string) => {
-  return pathname.includes(href);
-};
 const NavBarWrapper = () => {
   const { t } = useClientTranslation();
-  const pathname = usePathname();
 
   return (
     <NavBar
