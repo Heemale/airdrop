@@ -26,6 +26,8 @@ import MediaConfigList from '@/components/page/media-config/MediaConfigList';
 import MediaConfigEdit from '@/components/page/media-config/MediaConfigEdit';
 import UserHierarchy from '@/components/page/user-hierarchy/UserHierarchy';
 import ChangePassword from '@/components/page/change-password/ChangePassword';
+import ReceiverEdit from '@/components/page/change-receiver/ReceiverEdit';
+import InviteFeeEdit from '@/components/page/change-inviter-fee/InviteFeeEdit';
 
 import {
   People,
@@ -122,6 +124,18 @@ const AdminApp = () => (
         name="change-password"
         options={{ label: '修改密码' }}
         list={ChangePassword}
+        icon={Security}
+      />
+      <Resource
+        name="change-receiver"
+        options={{ label: '修改资金接收人' }}
+        list={ReceiverEdit}
+        icon={Security}
+      />
+      <Resource
+        name="change-inviter-fee"
+        options={{ label: '修改分红费率' }}
+        list={InviteFeeEdit}
         icon={Security}
       />
     </Admin>
