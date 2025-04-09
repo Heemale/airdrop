@@ -10,6 +10,7 @@ import { NODES, ADMIN_CAP, PAY_COIN_TYPE } from '@/sdk/constants';
 import { Typography, Card, Space } from 'antd';
 
 const { Text } = Typography;
+import { sleep } from '@/utils/time';
 
 const ReceiverEdit = () => {
   const account = useCurrentAccount();
@@ -50,17 +51,16 @@ const ReceiverEdit = () => {
         data.address,
       );
 
-      // 验证交易
       await devTransaction(tx, account.address);
 
-      // 执行交易
       signAndExecuteTransaction(
         { transaction: tx },
         {
-          onSuccess: (result) => {
+          onSuccess: async (result) => {
             notify(`修改成功, 交易hash: ${result.digest}`, { type: 'success' });
             // 更新显示
             fetchReceiver();
+            sleep(2);
           },
           onError: ({ message }) => {
             notify(handleDevTxError(message.trim()), { type: 'error' });
