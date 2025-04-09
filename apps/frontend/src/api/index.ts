@@ -33,7 +33,7 @@ export const getClaimRecords = (
   request.get(`/api/claim-records/address/${address}`, { params });
 
 export const getNodeInfo = (): Promise<NodeInfoResponse> =>
-  request.get('/api/all-nodes');
+  request.get('/api/nodes/all-nodes');
 
 export const getAirdropInfo = (
   params: PaginatedRequest,

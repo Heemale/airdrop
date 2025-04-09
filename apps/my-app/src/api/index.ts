@@ -5,7 +5,7 @@ import {
   SubordinateNode,
 } from '@/api/types/response';
 export const getNodeInfo = (): Promise<NodeInfoResponse> =>
-  request.get('api/all-nodes');
+  request.get('api/nodes/all-nodes');
 
 export const getChildren = (): Promise<RootNode> =>
   request.get('api/user/children');
