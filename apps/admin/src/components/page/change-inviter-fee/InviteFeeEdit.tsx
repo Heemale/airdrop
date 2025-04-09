@@ -7,9 +7,7 @@ import {
 import { airdropClient, devTransaction, inviteClient } from '@/sdk';
 import { handleDevTxError } from '@/sdk/error';
 import { INVITE, ADMIN_CAP } from '@/sdk/constants';
-import { Typography, Card, Space } from 'antd';
-
-const { Text } = Typography;
+import { sleep } from '@/utils/time';
 
 const InviteFeeEdit = () => {
   const account = useCurrentAccount();
@@ -25,16 +23,12 @@ const InviteFeeEdit = () => {
         inviteClient.inviterFee(INVITE),
       ]);
       setRoot(rootAddress);
-      setFee(Number(inviterFee) / 100); // 转换为百分比
+      setFee(Number(inviterFee) / 100);
     } catch (error: any) {
       notify(`获取信息失败: ${error.message}`, { type: 'error' });
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    fetchInviteInfo();
-  }, []);
 
   const onSubmit = async (data: any) => {
     if (!account) {
@@ -58,15 +52,15 @@ const InviteFeeEdit = () => {
         BigInt(data.inviter_fee * 100),
       );
 
-      // 验证交易
       await devTransaction(tx, account.address);
 
-      // 执行交易
       signAndExecuteTransaction(
         { transaction: tx },
         {
-          onSuccess: (result) => {
+          onSuccess: async (result) => {
             notify(`修改成功, 交易hash: ${result.digest}`, { type: 'success' });
+            sleep(2);
+            fetchInviteInfo();
           },
           onError: ({ message }) => {
             notify(handleDevTxError(message.trim()), { type: 'error' });
@@ -78,15 +72,19 @@ const InviteFeeEdit = () => {
     }
   };
 
+  useEffect(() => {
+    fetchInviteInfo();
+  }, []);
+
   return (
     <>
-      <Card style={{ marginBottom: '24px' }}>
-        <Space direction="vertical">
-          <Text>当前根用户地址: {root || '加载中...'}</Text>
-          <Text>当前邀请人分红费率: {fee ? `${fee}%` : '加载中...'}</Text>
-        </Space>
-      </Card>
       <SimpleForm onSubmit={onSubmit}>
+        <div>
+          <div>
+            <div>当前根用户地址: {root || '加载中...'}</div>
+            <div>当前邀请人分红费率: {fee ? `${fee}%` : '加载中...'}</div>
+          </div>
+        </div>
         <TextInput
           source="address"
           label="根用户"
