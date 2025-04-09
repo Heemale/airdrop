@@ -13,7 +13,7 @@ interface LanguageType {
   name: string;
 }
 
-const languages: Array<LanguageType> = [
+export const languages: Array<LanguageType> = [
   {
     key: 'en',
     name: 'English',

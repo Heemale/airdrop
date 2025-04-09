@@ -3,9 +3,8 @@
 import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import LanguageChanger from '@/components/LanguageChanger';
-import { useClientTranslation } from '@/hook';
-import { usePathname } from 'next/navigation'; // 添加路径hook
+import LanguageChanger, { languages } from '@/components/LanguageChanger';
+import { usePathname } from 'next/navigation';
 import {
   Drawer,
   IconButton,
@@ -13,7 +12,7 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Page } from './NavBarWrapper';
 import './sui-button.css';
 
@@ -24,36 +23,35 @@ interface Props {
 
 const NavBar = (props: Props) => {
   const { pages, children } = props;
-  const { t } = useClientTranslation();
   const pathname = usePathname();
-  const [selectedPage, setSelectedPage] = useState<string | null>(null);
 
-  // 移除语言前缀
+  const [selectedPage, setSelectedPage] = useState<string | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+
   const removeLanguagePrefix = (path: string) => {
-    return path.replace(/^\/[a-z]{2}/, '');
+    // 分割路径并过滤空段
+    const segments = path.split('/').filter((p) => p !== '');
+
+    // 匹配语言前缀（如 zh/en/vi）
+    const lang = languages.find((l) => l.key === segments[0]);
+
+    // 处理带语言前缀的情况
+    if (lang) {
+      const remaining = segments.slice(1);
+
+      // 仅语言前缀时返回根路径，否则拼接剩余路径
+      return remaining.length > 0 ? `/${remaining.join('/')}` : '/';
+    }
+
+    // 无语言前缀时返回原始路径
+    return path;
   };
 
-  // 检查是否激活
   const isActive = (link: string, pathname: string) => {
     const cleanPathname = removeLanguagePrefix(pathname);
     return cleanPathname === link || cleanPathname.startsWith(link + '/');
   };
-  useEffect(() => {
-    const cleanPathname = removeLanguagePrefix(pathname); // 移除语言前缀
-    const activePage = pages.find(
-      (page) =>
-        cleanPathname === page.link ||
-        cleanPathname.startsWith(page.link + '/'),
-    );
-    if (activePage) {
-      setSelectedPage(activePage.id);
-    } else {
-      setSelectedPage(null);
-    }
-  }, [pathname, pages]);
-  // 状态：抽屉是否打开
-  const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
-  // 切换抽屉的状态
+
   const toggleDrawer =
     (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
       if (event instanceof KeyboardEvent) {
