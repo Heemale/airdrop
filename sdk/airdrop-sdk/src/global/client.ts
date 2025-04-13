@@ -41,7 +41,7 @@ export class GlobalClient {
     const resp = await this.queryEvents('UpdateInitializationList', input);
     const customMapping = (rawEvent: any) => ({
       object: rawEvent.object as string,
-      ivValid: rawEvent.is_valid as boolean,
+      isValid: rawEvent.is_valid as boolean,
     });
     return this.handleEventReturns(resp, customMapping);
   }
