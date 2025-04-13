@@ -7,9 +7,6 @@ import {
 import { airdropClient, devTransaction, nodeClient } from '@/sdk';
 import { handleDevTxError } from '@/sdk/error';
 import { NODES, ADMIN_CAP, PAY_COIN_TYPE } from '@/sdk/constants';
-import { Typography, Card, Space } from 'antd';
-
-const { Text } = Typography;
 import { sleep } from '@/utils/time';
 
 const ReceiverEdit = () => {
@@ -74,11 +71,11 @@ const ReceiverEdit = () => {
 
   return (
     <>
-      <Card style={{ marginBottom: '24px' }}>
-        <Space direction="vertical">
-          <Text>当前接收人地址: {currentReceiver || '加载中...'}</Text>
-        </Space>
-      </Card>
+      <div style={{ marginBottom: '24px' }}>
+        <div>
+          <div>当前接收人地址: {currentReceiver || '加载中...'}</div>
+        </div>
+      </div>
       <SimpleForm onSubmit={onSubmit}>
         <TextInput
           source="address"
