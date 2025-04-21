@@ -23,7 +23,7 @@ import CreateEditActions from '@/components/ui/CreateEditActions';
 
 const Toolbar = (props: any) => (
   <RaToolbar {...props}>
-    <SaveButton label="添加" />
+    <SaveButton label="修改" />
   </RaToolbar>
 );
 
