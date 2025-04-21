@@ -45,7 +45,7 @@ export const findAllAirdrops = async (
     // 查询所有空投
     const airdrops = await prisma.airdrop.findMany({
       orderBy: {
-        round: 'asc', // 按照 round 排序
+        round: 'desc', // 按照 round 排序
       },
       select: {
         round: true,

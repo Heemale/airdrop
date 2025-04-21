@@ -66,16 +66,7 @@ const AirdropList = (props: Props) => {
     try {
       const airdropResponse = await getAirdropInfo({ nextCursor: cursor }); // 获取空投信息
       const airdrops = airdropResponse.data || [];
-      // 使用 id 作为唯一键
-      const existingIds = new Set(
-        airdropList.map((item) => item.airdrop.round),
-      );
-
-      const uniqueNewAirdrops = airdrops.filter(
-        (item: any) => !existingIds.has(item.airdrop.round),
-      );
-
-      setAirdropList((prev) => [...prev, ...uniqueNewAirdrops]);
+      setAirdropList((prev) => [...prev, ...airdrops]);
       setCursor(airdropResponse.nextCursor); // 更新游标
       setHasMore(airdropResponse.hasNextPage); // 更新是否还有更多数据
       setLoading(false);
@@ -105,7 +96,7 @@ const AirdropList = (props: Props) => {
     <div
       className="flex flex-col gap-6"
       onScroll={handleScroll}
-      style={{ maxHeight: '600px', overflowY: 'auto' }} // 设置最大高度和滚动
+      style={{ maxHeight: '600px', overflowY: 'auto' }}
     >
       {isOngoing
         ? airdropList
@@ -114,7 +105,6 @@ const AirdropList = (props: Props) => {
                 item.airdrop.isOpen &&
                 checkIsGoing(item.airdrop.startTime, item.airdrop.endTime),
             )
-            .sort((a, b) => (b.airdrop.round > a.airdrop.round ? 1 : -1))
             .map((item) => (
               <AirdropItem
                 key={item.airdrop.round.toString()}
@@ -130,7 +120,6 @@ const AirdropList = (props: Props) => {
             ))
         : airdropList
             .filter((item) => item.airdrop.isOpen)
-            .sort((a, b) => (b.airdrop.round > a.airdrop.round ? 1 : -1))
             .map((item) => {
               const isOngoing = checkIsGoing(
                 item.airdrop.startTime,
