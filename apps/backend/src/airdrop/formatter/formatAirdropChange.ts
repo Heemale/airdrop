@@ -1,5 +1,6 @@
 import { AirdropChangeSummary } from '@local/airdrop-sdk/airdrop';
 import { Prisma } from '@prisma/client';
+import { convertSmallToLarge, toFixed } from '@/utils/math';
 
 export const formatAirdropChange = (
   eventObject: AirdropChangeSummary,
@@ -29,7 +30,7 @@ export const formatAirdropChange = (
     claimedShares,
     totalBalance,
     remainingBalance,
-    startTime,
-    endTime,
+    startTime: BigInt(toFixed(convertSmallToLarge(startTime.toString(), 3), 0)),
+    endTime: BigInt(toFixed(convertSmallToLarge(endTime.toString(), 3), 0)),
   };
 };

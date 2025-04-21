@@ -13,7 +13,7 @@ const TimeTextField = ({
   const text =
     !record || !record[source] || Number(record[source]) === 0
       ? '-'
-      : formatTimestamp(Number(record[source]));
+      : formatTimestamp(Number(record[source]) * 1000);
   return <span>{text}</span>;
 };
 
