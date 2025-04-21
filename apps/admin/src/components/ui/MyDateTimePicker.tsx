@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { useEffect, useState } from 'react';
-import { useRecordContext } from 'react-admin';
+import { useInput, useRecordContext } from 'react-admin';
 import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -14,11 +14,14 @@ const MyDateTimePicker = ({
   label?: string;
 }) => {
   const record = useRecordContext();
+  const { field } = useInput({ source });
 
   const [selectedDateTime, setSelectedDateTime] = useState<Dayjs | null>(null);
 
   const handleDateTimeChange = (newDateTime: Dayjs | null) => {
     setSelectedDateTime(newDateTime);
+    const timestamp = newDateTime ? newDateTime.unix() : null;
+    field.onChange(timestamp);
   };
 
   useEffect(() => {
