@@ -20,7 +20,7 @@ const MyDateTimePicker = ({
 
   const handleDateTimeChange = (newDateTime: Dayjs | null) => {
     setSelectedDateTime(newDateTime);
-    const timestamp = newDateTime ? newDateTime.unix() : null;
+    const timestamp = newDateTime ? newDateTime.unix() * 1000 : null;
     field.onChange(timestamp);
   };
 

@@ -1,7 +1,6 @@
 import { useRecordContext } from 'react-admin';
 import { formatTimestamp } from '@/utils/time';
 import * as React from 'react';
-import { convertLargeToSmall } from '@/utils/math';
 
 const TimeTextField = ({
   source,
@@ -14,7 +13,7 @@ const TimeTextField = ({
   const text =
     !record || !record[source] || Number(record[source]) === 0
       ? '-'
-      : formatTimestamp(Number(convertLargeToSmall(record[source], 3)));
+      : formatTimestamp(Number(record[source]));
   return <span>{text}</span>;
 };
 
