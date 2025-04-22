@@ -24,7 +24,7 @@ import {
 import { ADMIN_CAP, AIRDROPS } from '@/sdk/constants';
 import { handleDevTxError } from '@/sdk/error';
 import { Transaction } from '@mysten/sui/transactions';
-import { convertLargeToSmall, convertSmallToLarge } from '@/utils/math';
+import { convertLargeToSmall } from '@/utils/math';
 import CreateEditActions from '@/components/ui/CreateEditActions';
 
 const Toolbar = (props: any) => (
@@ -68,8 +68,8 @@ const AirdropCreate = () => {
         data.coinType,
         ADMIN_CAP,
         AIRDROPS,
-        BigInt(convertSmallToLarge(data.startTime, 3)),
-        BigInt(convertSmallToLarge(data.endTime, 3)),
+        BigInt(convertLargeToSmall(data.startTime, 3)),
+        BigInt(convertLargeToSmall(data.endTime, 3)),
         data.totalShares,
         payAmount,
         data.description,

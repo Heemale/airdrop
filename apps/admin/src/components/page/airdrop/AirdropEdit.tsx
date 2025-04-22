@@ -20,7 +20,7 @@ import { useNotify } from 'react-admin';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import CreateEditActions from '@/components/ui/CreateEditActions';
-import { convertSmallToLarge } from '@/utils/math';
+import { convertLargeToSmall } from '@/utils/math';
 
 const Toolbar = (props: any) => (
   <RaToolbar {...props}>
@@ -41,8 +41,8 @@ const AirdropEdit = () => {
         ADMIN_CAP,
         AIRDROPS,
         data.round,
-        BigInt(convertSmallToLarge(data.startTime, 3)),
-        BigInt(convertSmallToLarge(data.endTime, 3)),
+        BigInt(convertLargeToSmall(data.startTime, 3)),
+        BigInt(convertLargeToSmall(data.endTime, 3)),
         data.isOpen,
         data.description,
       );
