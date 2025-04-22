@@ -37,13 +37,15 @@ const AirdropList = (props: Props) => {
     rewardQuantityPerCopy,
     claimText,
   } = props;
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [cursor, setCursor] = useState<number | null>(null);
 
   const { t } = useClientTranslation();
   const account = useCurrentAccount();
   const [messageApi, contextHolder] = message.useMessage();
+
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [cursor, setCursor] = useState<number | null>(null);
+  const initedRef = React.useRef(false);
 
   const [airdropList, setAirdropList] = useState<Array<AirdropInfo>>([]);
   const [nodeStatus, setNodeStatus] = useState<NodeStatus | null>(null);
@@ -76,13 +78,7 @@ const AirdropList = (props: Props) => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    getNodeStatus();
-  }, [account]);
 
-  useEffect(() => {
-    getAirdropList();
-  }, []);
   const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
     // 当滚动到距离底部10px以内时，认为到达底部
@@ -91,6 +87,16 @@ const AirdropList = (props: Props) => {
       getAirdropList(cursor); // 滚动到底部时加载更多数据
     }
   };
+
+  useEffect(() => {
+    getNodeStatus();
+  }, [account]);
+
+  useEffect(() => {
+    if (initedRef.current) return;
+    initedRef.current = true;
+    getAirdropList();
+  }, []);
 
   return (
     <div
@@ -103,7 +109,10 @@ const AirdropList = (props: Props) => {
             .filter(
               (item) =>
                 item.airdrop.isOpen &&
-                checkIsGoing(item.airdrop.startTime, item.airdrop.endTime),
+                checkIsGoing(
+                  BigInt(item.airdrop.startTime) * BigInt(1000),
+                  BigInt(item.airdrop.endTime) * BigInt(1000),
+                ),
             )
             .map((item) => (
               <AirdropItem
@@ -122,8 +131,8 @@ const AirdropList = (props: Props) => {
             .filter((item) => item.airdrop.isOpen)
             .map((item) => {
               const isOngoing = checkIsGoing(
-                item.airdrop.startTime,
-                item.airdrop.endTime,
+                BigInt(item.airdrop.startTime) * BigInt(1000),
+                BigInt(item.airdrop.endTime) * BigInt(1000),
               );
               return (
                 <AirdropItem
