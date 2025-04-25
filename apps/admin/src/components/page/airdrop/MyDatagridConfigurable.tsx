@@ -91,11 +91,34 @@ const MyDatagridConfigurable = ({
         '& .RaDatagrid-row': {
           whiteSpace: 'nowrap',
         },
+        // 确保按钮在移动设备上可见
+        '& .column-withdraw': {
+          display: 'table-cell !important',
+          minWidth: '80px',
+          textAlign: 'center',
+        },
+        // 添加媒体查询以确保在小屏幕上的可见性
+        '@media (max-width: 768px)': {
+          '& .column-withdraw': {
+            display: 'table-cell !important',
+            minWidth: '60px',
+            textAlign: 'center',
+          },
+        }
       }}
     >
       {children}
       {hasEdit && <EditButton label="编辑" />}
-      <Button label="提现" onClick={handleWithdraw} />
+      <Button 
+        label="提现" 
+        onClick={handleWithdraw} 
+        className="column-withdraw"
+        sx={{
+          display: 'inline-flex !important',
+          visibility: 'visible !important',
+          minWidth: '60px',
+        }}
+      />
     </DatagridConfigurable>
   );
 };
