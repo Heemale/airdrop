@@ -1,5 +1,4 @@
 import {
-  Button,
   DatagridConfigurable,
   EditButton,
   Identifier,
@@ -16,6 +15,7 @@ import {
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
 import { sleep } from '@/utils/time';
+import { Button } from '@mui/material';
 
 const MyDatagridConfigurable = ({
   children,
@@ -95,7 +95,7 @@ const MyDatagridConfigurable = ({
     >
       {children}
       {hasEdit && <EditButton label="编辑" />}
-      <Button label="提现" onClick={handleWithdraw} />
+      <Button onClick={handleWithdraw}>提现</Button>
     </DatagridConfigurable>
   );
 };
