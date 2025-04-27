@@ -77,8 +77,9 @@ const NavBar = (props: Props) => {
             <Link
               key={page.id}
               href={page.link}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 -webkit-tap-highlight-color-transparent"
               onClick={() => setSelectedPage(page.id)}
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               <Image
                 src={
@@ -92,11 +93,10 @@ const NavBar = (props: Props) => {
                 className="inline-block"
               />
               <div
-                className={`transition-colors ${
-                  isActive(page.link, pathname)
+                className={`transition-colors ${isActive(page.link, pathname)
                     ? 'bg-gradient-to-r from-[#40cafd] to-[#1993ee] text-transparent bg-clip-text'
                     : 'text-white hover:text-[#40cafd]'
-                }`}
+                  }`}
               >
                 {page.name}
               </div>
@@ -131,6 +131,7 @@ const NavBar = (props: Props) => {
                   href={page.link}
                   className="flex items-center gap-2"
                   onClick={toggleDrawer(false)}
+                  style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
                   <Image
                     src={page.icon}
