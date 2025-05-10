@@ -70,21 +70,17 @@ const ReceiverEdit = () => {
   };
 
   return (
-    <>
-      <div style={{ marginBottom: '24px' }}>
-        <div>
-          <div>当前接收人地址: {currentReceiver || '加载中...'}</div>
-        </div>
+    <SimpleForm onSubmit={onSubmit}>
+      <div>
+        <div>当前接收人地址: {currentReceiver || '加载中...'}</div>
       </div>
-      <SimpleForm onSubmit={onSubmit}>
-        <TextInput
-          source="address"
-          label="接收人地址"
-          fullWidth
-          helperText="请输入新的接收人地址"
-        />
-      </SimpleForm>
-    </>
+      <TextInput
+        source="address"
+        label="接收人地址"
+        fullWidth
+        helperText="请输入新的接收人地址"
+      />
+    </SimpleForm>
   );
 };
 

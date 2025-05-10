@@ -15,6 +15,8 @@ import {
 import { convertSmallToLarge } from '@/utils/math';
 import { TOKEN_DECIMAL } from '@/config';
 import * as React from 'react';
+import DigestTextField from '@/components/helper/DigestTextField';
+import AddressTextField from '@/components/helper/AddressTextField';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -49,13 +51,13 @@ const postFilters = [
     key="inviterGains"
     name="inviterGains"
     source="inviterGains"
-    label="邀请人返利金额"
+    label="邀请收益"
   />,
   <TextInput
     key="nodeReceiverGains"
     name="nodeReceiverGains"
     source="nodeReceiverGains"
-    label="平台返利金额"
+    label="平台收益"
   />,
   <TextInput
     key="createAt"
@@ -92,10 +94,10 @@ const BuyRecordList = () => (
   <List filters={postFilters} actions={<ListActions />}>
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
-      <TextField source="txDigest" label="交易hash" />
+      <DigestTextField source="txDigest" label="交易hash" />
       <TextField source="eventSeq" label="事件索引" />
       <TimeTextField source="timestamp" label="时间戳" />
-      <TextField source="sender" label="用户" />
+      <AddressTextField source="sender" label="用户" />
       <TextField source="rank" label="节点等级" />
       <TextField source="nodeNum" label="节点序号" />
       <FunctionField
@@ -112,7 +114,7 @@ const BuyRecordList = () => (
       />
       <FunctionField
         source="inviterGains"
-        label="邀请人返利金额"
+        label="邀请收益"
         render={(record) =>
           record.inviterGains
             ? convertSmallToLarge(record.inviterGains.toString(), TOKEN_DECIMAL)
@@ -121,7 +123,7 @@ const BuyRecordList = () => (
       />
       <FunctionField
         source="nodeReceiverGains"
-        label="平台返利金额"
+        label="平台收益"
         render={(record) =>
           record.nodeReceiverGains
             ? convertSmallToLarge(

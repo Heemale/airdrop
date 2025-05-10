@@ -16,6 +16,7 @@ import {
 } from 'react-admin';
 import * as React from 'react';
 import UnitConvertField from '@/components/helper/UnitConvertField';
+import { formatType } from '@/helper';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -120,7 +121,11 @@ const AirdropList = () => (
       <TextField source="description" label="描述" />
       <UnitConvertField source="totalBalance" label="总资金" />
       <BooleanField source="isOpen" label="是否开放" />
-      <TextField source="coinType" label="货币类型" />
+      <FunctionField
+        source="coinType"
+        label="货币类型"
+        render={(record) => formatType(record.coinType) ?? '-'}
+      />
       <TextField source="imageUrl" label="空投图片" />
       <UnitConvertField source="remainingBalance" label="空投剩余资金" />
       <BooleanField source="isRemove" label="是否移除" />

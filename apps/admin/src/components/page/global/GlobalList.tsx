@@ -13,6 +13,7 @@ import {
   useListContext,
 } from 'react-admin';
 import * as React from 'react';
+import AddressTextField from '@/components/helper/AddressTextField';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -42,7 +43,7 @@ const GlobalList = () => (
   <List filters={postFilters} actions={<ListActions />}>
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
-      <TextField source="object" label="对象ID" />
+      <AddressTextField source="object" label="对象ID" />
       <BooleanField source="isValid" label="是否合法" />
     </MyDatagridConfigurable>
   </List>

@@ -15,6 +15,7 @@ import {
   ExportButton,
 } from 'react-admin';
 import * as React from 'react';
+import AddressTextField from '@/components/helper/AddressTextField';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -57,7 +58,7 @@ const LimitList = () => (
   <List filters={postFilters} actions={<ListActions />}>
     <MyDatagridConfigurable hasEdit>
       <TextField source="id" label="ID" />
-      <TextField source="address" label="用户地址" />
+      <AddressTextField source="address" label="用户地址" />
       <NumberField source="times" label="次数" />
       <BooleanField source="isLimit" label="是否限制" />
       <TimeTextField source="createAt" label="创建时间" />

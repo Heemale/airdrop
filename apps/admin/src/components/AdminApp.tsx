@@ -14,7 +14,6 @@ import AirdropList from '@/components/page/airdrop/AirdropList';
 import AirdropEdit from '@/components/page/airdrop/AirdropEdit';
 import AirdropCreate from '@/components/page/airdrop/AirdropCreate';
 import BuyRecordList from '@/components/page/buy-record/BuyRecordList';
-import TransferRecordList from '@/components/page/transfer-record/TransferRecordList';
 import ClaimRecordList from '@/components/page/claim-record/ClaimRecordList';
 import LimitList from '@/components/page/limit/LimitList';
 import LimitEdit from '@/components/page/limit/LimitEdit';
@@ -37,7 +36,6 @@ import {
   LockPerson,
   Widgets,
   AttachMoney,
-  SwapHoriz,
   Assignment,
   Security,
 } from '@mui/icons-material';
@@ -107,12 +105,6 @@ const AdminApp = () => (
         options={{ label: '购买记录' }}
         list={BuyRecordList}
         icon={AttachMoney}
-      />
-      <Resource
-        name="transfer-records"
-        options={{ label: '转移记录' }}
-        list={TransferRecordList}
-        icon={SwapHoriz}
       />
       <Resource
         name="claim-records"

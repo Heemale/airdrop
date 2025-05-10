@@ -77,28 +77,24 @@ const InviteFeeEdit = () => {
   }, []);
 
   return (
-    <>
-      <SimpleForm onSubmit={onSubmit}>
-        <div>
-          <div>
-            <div>当前根用户地址: {root || '加载中...'}</div>
-            <div>当前邀请人分红费率: {fee ? `${fee}%` : '加载中...'}</div>
-          </div>
-        </div>
-        <TextInput
-          source="address"
-          label="根用户"
-          fullWidth
-          helperText="请输入新的根用户地址"
-        />
-        <NumberInput
-          source="inviter_fee"
-          label="邀请人分红费率"
-          fullWidth
-          helperText="请输入新的分红费率（百分比）"
-        />
-      </SimpleForm>
-    </>
+    <SimpleForm onSubmit={onSubmit}>
+      <div>
+        <div>当前根用户地址: {root || '加载中...'}</div>
+        <div>当前邀请人分红费率: {fee ? `${fee}%` : '加载中...'}</div>
+      </div>
+      <TextInput
+        source="address"
+        label="根用户"
+        fullWidth
+        helperText="请输入新的根用户地址"
+      />
+      <NumberInput
+        source="inviter_fee"
+        label="邀请人分红费率"
+        fullWidth
+        helperText="请输入新的分红费率（百分比）"
+      />
+    </SimpleForm>
   );
 };
 

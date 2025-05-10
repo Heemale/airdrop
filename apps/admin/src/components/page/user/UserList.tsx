@@ -17,6 +17,8 @@ import {
 import { convertSmallToLarge } from '@/utils/math';
 import { TOKEN_DECIMAL } from '@/config';
 import * as React from 'react';
+import AddressTextField from '@/components/helper/AddressTextField';
+import DigestTextField from '@/components/helper/DigestTextField';
 
 const postFilters = [
   <TextInput key="id" name="id" source="id" label="ID" />,
@@ -113,8 +115,8 @@ const UserList = () => (
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
       <TextField source="inviterId" label="邀请人ID" />
-      <TextField source="address" label="用户地址" />
-      <TextField source="inviter" label="邀请人地址" />
+      <AddressTextField source="address" label="用户地址" />
+      <AddressTextField source="inviter" label="邀请人地址" />
       <TextField source="sharerIds" label="直接推荐人列表" />
       <FunctionField
         source="totalInvestment"
@@ -142,7 +144,7 @@ const UserList = () => (
       <TimeTextField source="totalGainsUpdateAt" label="总收益金额更新时间" />
       <BooleanField source="isBind" label="是否绑定" />
       <BooleanField source="isRoot" label="是否根地址" />
-      <TextField source="txDigest" label="交易hash" />
+      <DigestTextField source="txDigest" label="交易hash" />
       <TextField source="eventSeq" label="事件索引" />
       <TimeTextField source="joinAt" label="加入时间" />
       <TimeTextField source="createAt" label="创建时间" />

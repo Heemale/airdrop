@@ -1,30 +1,35 @@
 import { getTree, getUserByAddress } from '@/api';
 import { Tree } from '@/api/types/response';
+import Copy from '@/components/helper/Copy';
 import { Button, TextField } from '@mui/material';
+import { formatAddress } from '@mysten/sui/utils';
 import { useEffect, useState } from 'react';
 import { useNotify } from 'react-admin';
 
 const treeStyles = {
   nodeContainer: {
     position: 'relative' as const,
-    paddingLeft: '20px',
-    marginLeft: '15px',
+    marginLeft: '30px', // 增加左侧边距以容纳连接线
+    paddingTop: '10px', // 增加顶部边距
   },
   verticalLine: {
     position: 'absolute' as const,
-    left: 0,
-    top: '20px',
-    bottom: 0,
+    left: '-15px', // 调整到节点左侧
+    top: '0', // 从节点顶部开始
+    bottom: '-10px', // 延伸到子节点区域
     width: '1px',
     backgroundColor: '#ccc',
   },
   horizontalLine: {
     position: 'absolute' as const,
-    left: 0,
-    top: '20px',
+    left: '-15px', // 从垂直连接线开始
+    top: '35px', // 调整水平连接线位置
     width: '15px',
     height: '1px',
     backgroundColor: '#ccc',
+  },
+  rootNodeContainer: {
+    marginLeft: '0', // 根节点不需要左侧边距
   },
   contentWrapper: {
     position: 'relative' as const,
@@ -77,9 +82,13 @@ const UserHierarchy = () => {
   const loadNodeData = async (id?: string) => {
     try {
       const list = id ? await getTree({ ids: [Number(id)] }) : await getTree();
-      notify('获取数据成功', { type: 'info' });
-
       updateTreeData(list);
+
+      if (list.length === 1 && list[0].sharerIds.length === 0) {
+        notify('没有更多下级', { type: 'info' });
+        return;
+      }
+      notify('获取数据成功', { type: 'info' });
     } catch (e: any) {
       notify('更新数据失败', { type: 'error' });
     }
@@ -185,7 +194,7 @@ const UserHierarchy = () => {
     }
   };
 
-  const renderTree = (nodes: TreeNode[]) => {
+  const renderTree = (nodes: TreeNode[], isRoot = false) => {
     return nodes.map((node, index, array) => {
       const isExpanded = expanded.includes(node.id);
       const isLastNode = index === array.length - 1;
@@ -193,14 +202,24 @@ const UserHierarchy = () => {
       return (
         <div
           key={node.id}
-          style={treeStyles.nodeContainer}
+          style={{
+            ...treeStyles.nodeContainer,
+            ...(isRoot ? treeStyles.rootNodeContainer : {}),
+          }}
           className="tree-node"
         >
           {/* 垂直连接线 */}
-          {!isLastNode && <div style={treeStyles.verticalLine} />}
+          {!isRoot && (
+            <div
+              style={{
+                ...treeStyles.verticalLine,
+                bottom: isLastNode ? '15px' : '-10px', // 最后一个节点的垂直连接线缩短
+              }}
+            />
+          )}
 
           {/* 水平连接线 */}
-          <div style={treeStyles.horizontalLine} />
+          {!isRoot && <div style={treeStyles.horizontalLine} />}
 
           <div style={treeStyles.contentWrapper}>
             <span style={{ display: 'inline-flex', alignItems: 'center' }}>
@@ -210,9 +229,14 @@ const UserHierarchy = () => {
                   color: node.address ? '#333' : '#999',
                 }}
               >
-                {node.address
-                  ? `${node.address} (ID: ${node.id})`
-                  : `未加载节点 (ID: ${node.id})`}
+                {node.address ? (
+                  <div className="flex gap-1">
+                    <Copy text={node.address} render={formatAddress} />
+                    (ID: {node.id})
+                  </div>
+                ) : (
+                  `未加载节点 (ID: ${node.id})`
+                )}
               </span>
 
               <button
