@@ -6,6 +6,13 @@ import {
   List,
   TextField,
   TextInput,
+  useListContext,
+  TopToolbar,
+  sanitizeListRestProps,
+  CreateButton,
+  FilterButton,
+  SelectColumnsButton,
+  ExportButton,
 } from 'react-admin';
 import * as React from 'react';
 
@@ -28,8 +35,26 @@ const postFilters = [
   />,
 ];
 
+const ListActions = (props: any) => {
+  const { className, exporter, filters, maxResults, ...rest } = props;
+  const { total } = useListContext();
+
+  return (
+    <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
+      <CreateButton />
+      <FilterButton />
+      <SelectColumnsButton />
+      <ExportButton
+        exporter={exporter}
+        maxResults={maxResults}
+        disabled={total === 0}
+      />
+    </TopToolbar>
+  );
+};
+
 const LimitList = () => (
-  <List filters={postFilters}>
+  <List filters={postFilters} ctions={<ListActions />}>
     <MyDatagridConfigurable hasEdit>
       <TextField source="id" label="ID" />
       <TextField source="address" label="用户地址" />

@@ -1,6 +1,16 @@
 import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
-import { List, TextField, TextInput } from 'react-admin';
+import {
+  ExportButton,
+  FilterButton,
+  List,
+  sanitizeListRestProps,
+  SelectColumnsButton,
+  TextField,
+  TextInput,
+  TopToolbar,
+  useListContext,
+} from 'react-admin';
 import * as React from 'react';
 import UnitConvertField from '@/components/helper/UnitConvertField';
 
@@ -42,8 +52,25 @@ const postFilters = [
   />,
 ];
 
+const ListActions = (props: any) => {
+  const { className, exporter, filters, maxResults, ...rest } = props;
+  const { total } = useListContext();
+
+  return (
+    <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
+      <FilterButton />
+      <SelectColumnsButton />
+      <ExportButton
+        exporter={exporter}
+        maxResults={maxResults}
+        disabled={total === 0}
+      />
+    </TopToolbar>
+  );
+};
+
 const ClaimRecordList = () => (
-  <List filters={postFilters}>
+  <List filters={postFilters} actions={<ListActions />}>
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
       <TextField source="txDigest" label="交易hash" />

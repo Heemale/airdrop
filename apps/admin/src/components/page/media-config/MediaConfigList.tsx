@@ -6,6 +6,12 @@ import {
   TextInput,
   FunctionField,
   EditButton,
+  useListContext,
+  TopToolbar,
+  sanitizeListRestProps,
+  FilterButton,
+  SelectColumnsButton,
+  ExportButton,
 } from 'react-admin';
 import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
@@ -44,8 +50,25 @@ const postFilters = [
   />,
 ];
 
+const ListActions = (props: any) => {
+  const { className, exporter, filters, maxResults, ...rest } = props;
+  const { total } = useListContext();
+
+  return (
+    <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
+      <FilterButton />
+      <SelectColumnsButton />
+      <ExportButton
+        exporter={exporter}
+        maxResults={maxResults}
+        disabled={total === 0}
+      />
+    </TopToolbar>
+  );
+};
+
 const MediaConfigList = () => (
-  <List filters={postFilters}>
+  <List filters={postFilters} actions={<ListActions />}>
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
       <TextField source="page" label="页面" />

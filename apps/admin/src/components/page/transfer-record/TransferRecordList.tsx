@@ -1,6 +1,17 @@
 import MyDatagridConfigurable from '@/components/ui/MyDatagridConfigurable';
 import TimeTextField from '@/components/ui/TimeTextField';
-import { FunctionField, List, TextField, TextInput } from 'react-admin';
+import {
+  ExportButton,
+  FilterButton,
+  FunctionField,
+  List,
+  sanitizeListRestProps,
+  SelectColumnsButton,
+  TextField,
+  TextInput,
+  TopToolbar,
+  useListContext,
+} from 'react-admin';
 import { convertSmallToLarge } from '@/utils/math';
 import { TOKEN_DECIMAL } from '@/config';
 import * as React from 'react';
@@ -61,8 +72,25 @@ const postFilters = [
   />,
 ];
 
+const ListActions = (props: any) => {
+  const { className, exporter, filters, maxResults, ...rest } = props;
+  const { total } = useListContext();
+
+  return (
+    <TopToolbar className={className} {...sanitizeListRestProps(rest)}>
+      <FilterButton />
+      <SelectColumnsButton />
+      <ExportButton
+        exporter={exporter}
+        maxResults={maxResults}
+        disabled={total === 0}
+      />
+    </TopToolbar>
+  );
+};
+
 const TransferRecordList = () => (
-  <List filters={postFilters}>
+  <List filters={postFilters} actions={<ListActions />}>
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
       <TextField source="txDigest" label="交易hash" />

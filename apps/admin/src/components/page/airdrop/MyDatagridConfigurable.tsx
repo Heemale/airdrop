@@ -4,6 +4,8 @@ import {
   Identifier,
   RaRecord,
   useNotify,
+  Button,
+  FunctionField,
 } from 'react-admin';
 import * as React from 'react';
 import { useRef } from 'react';
@@ -15,7 +17,7 @@ import {
   useSignAndExecuteTransaction,
 } from '@mysten/dapp-kit';
 import { sleep } from '@/utils/time';
-import { Button } from '@mui/material';
+import ContentCreate from '@mui/icons-material/Create';
 
 const MyDatagridConfigurable = ({
   children,
@@ -95,7 +97,14 @@ const MyDatagridConfigurable = ({
     >
       {children}
       {hasEdit && <EditButton label="编辑" />}
-      <Button onClick={handleWithdraw}>提现</Button>
+      <FunctionField
+        label="提现"
+        render={() => (
+          <Button label="提现" onClick={handleWithdraw}>
+            <ContentCreate />
+          </Button>
+        )}
+      />
     </DatagridConfigurable>
   );
 };
