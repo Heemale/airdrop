@@ -33,12 +33,6 @@ const postFilters = [
     source="eventSeq"
     label="事件索引"
   />,
-  <TextInput
-    key="timestamp"
-    name="timestamp"
-    source="timestamp"
-    label="时间戳"
-  />,
   <TextInput key="sender" name="sender" source="sender" label="用户" />,
   <TextInput key="rank" name="rank" source="rank" label="节点等级" />,
   <TextInput key="nodeNum" name="nodeNum" source="nodeNum" label="节点序号" />,
@@ -59,6 +53,12 @@ const postFilters = [
     name="nodeReceiverGains"
     source="nodeReceiverGains"
     label="平台收益"
+  />,
+  <TextInput
+    key="timestamp"
+    name="timestamp"
+    source="timestamp"
+    label="时间戳"
   />,
   <TextInput
     key="createAt"
@@ -97,7 +97,6 @@ const BuyRecordList = () => (
       <TextField source="id" label="ID" />
       <DigestTextField source="txDigest" label="交易hash" />
       <TextField source="eventSeq" label="事件索引" />
-      <TimeTextField source="timestamp" label="时间戳" />
       <AddressTextField source="sender" label="用户" />
       <TextField source="rank" label="节点等级" />
       <TextField source="nodeNum" label="节点序号" />
@@ -134,6 +133,7 @@ const BuyRecordList = () => (
             : '-'
         }
       />
+      <TimeTextField source="timestamp" label="时间戳" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
     </MyDatagridConfigurable>
