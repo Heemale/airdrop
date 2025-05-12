@@ -39,6 +39,7 @@ import {
   Assignment,
   Security,
 } from '@mui/icons-material';
+import { i18nProvider } from '@/config/i18nProvider';
 
 const AdminApp = () => (
   <div className="w-full overflow-x-auto md:overflow-x-visible md:max-w-none">
@@ -47,6 +48,7 @@ const AdminApp = () => (
       dashboard={Dashboard}
       layout={Layout}
       authProvider={authProvider}
+      i18nProvider={i18nProvider}
     >
       <Resource
         name="nodes"
