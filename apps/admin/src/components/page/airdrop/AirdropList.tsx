@@ -131,7 +131,6 @@ const AirdropList = () => (
       <BooleanField source="isRemove" label="是否移除" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
-      <FunctionField label="提现" render={() => <></>} />
     </MyDatagridConfigurable>
   </List>
 );
