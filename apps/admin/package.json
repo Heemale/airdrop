@@ -29,6 +29,7 @@
     "jwt-decode": "^4.0.0",
     "next": "15.1.7",
     "prettier": "^3.5.1",
+    "ra-core": "^5.8.0",
     "ra-data-json-server": "^5.5.3",
     "ra-data-simple-prisma": "^5.2.1",
     "ra-i18n-polyglot": "^5.8.0",
