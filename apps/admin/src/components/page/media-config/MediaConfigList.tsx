@@ -69,8 +69,8 @@ const ListActions = (props: any) => {
 
 const MediaConfigList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable>
-      <TextField source="id" label="ID" />
+    <MyDatagridConfigurable isShow>
+    <TextField source="id" label="ID" />
       <TextField source="page" label="页面" />
       <TextField source="code" label="文案编码" sx={{ whiteSpace: 'normal', wordBreak: 'break-all' }} />
       <BooleanField source="isImage" label="是否为图片" />

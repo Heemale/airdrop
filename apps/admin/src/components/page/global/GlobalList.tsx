@@ -41,7 +41,7 @@ const ListActions = (props: any) => {
 
 const GlobalList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable>
+    <MyDatagridConfigurable isShow>
       <TextField source="id" label="ID" />
       <AddressTextField source="object" label="对象ID" />
       <BooleanField source="isValid" label="是否合法" />

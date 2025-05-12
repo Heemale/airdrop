@@ -112,8 +112,8 @@ const ListActions = (props: any) => {
 
 const UserList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable>
-      <TextField source="id" label="ID" />
+    <MyDatagridConfigurable isShow>
+    <TextField source="id" label="ID" />
       <TextField source="inviterId" label="邀请人ID" />
       <AddressTextField source="address" label="用户地址" />
       <AddressTextField source="inviter" label="邀请人地址" />

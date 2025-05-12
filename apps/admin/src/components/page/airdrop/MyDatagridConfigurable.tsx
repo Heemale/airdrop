@@ -5,7 +5,9 @@ import {
   RaRecord,
   useNotify,
   Button,
+  useRedirect,
   FunctionField,
+  useResourceContext // 新增
 } from 'react-admin';
 import * as React from 'react';
 import { useRef } from 'react';
@@ -22,13 +24,19 @@ import ContentCreate from '@mui/icons-material/Create';
 const MyDatagridConfigurable = ({
   children,
   hasEdit = false,
+  isShow = false,
+
 }: {
   children: React.ReactNode;
   hasEdit?: boolean | undefined;
+  isShow?: boolean | undefined;
+
 }) => {
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const notify = useNotify();
+  const resource = useResourceContext(); // 新增
+  const redirect = useRedirect();
 
   const recordRef = useRef<RaRecord | null>(null);
 
@@ -96,6 +104,22 @@ const MyDatagridConfigurable = ({
       }}
     >
       {children}
+      {isShow && (
+        <FunctionField
+          label="查看"
+          render={record => (
+            <button
+              style={{ color: '#1976d2', cursor: 'pointer', background: 'none', border: 'none' }}
+              onClick={e => {
+                e.stopPropagation();
+                redirect('show', resource, record.id); // 这里传入 resource
+              }}
+            >
+              查看
+            </button>
+          )}
+        />
+      )}
       {hasEdit && <EditButton label="编辑" />}
       <FunctionField
         label="提现"

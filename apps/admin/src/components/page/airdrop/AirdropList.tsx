@@ -111,7 +111,7 @@ const ListActions = (props: any) => {
 
 const AirdropList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable hasEdit>
+    <MyDatagridConfigurable hasEdit isShow >
       <TextField source="id" label="ID" />
       <TextField source="round" label="轮次" />
       <TimeTextField source="startTime" label="开始时间" />

@@ -56,7 +56,7 @@ const ListActions = (props: any) => {
 
 const LimitList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable hasEdit>
+    <MyDatagridConfigurable hasEdit isShow>
       <TextField source="id" label="ID" />
       <AddressTextField source="address" label="用户地址" />
       <NumberField source="times" label="次数" />
