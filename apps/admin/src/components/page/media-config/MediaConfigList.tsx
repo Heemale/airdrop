@@ -72,7 +72,7 @@ const MediaConfigList = () => (
     <MyDatagridConfigurable>
       <TextField source="id" label="ID" />
       <TextField source="page" label="页面" />
-      <TextField source="code" label="文案编码" />
+      <TextField source="code" label="文案编码" sx={{ whiteSpace: 'normal', wordBreak: 'break-all' }} />
       <BooleanField source="isImage" label="是否为图片" />
       <FunctionField
         source="imageUrl"
@@ -81,9 +81,9 @@ const MediaConfigList = () => (
           <MyImageField isImage={record.isImage} imageUrl={record.imageUrl} />
         )}
       />
-      <TextField source="zh" label="中文" />
-      <TextField source="en" label="英文" />
-      <TextField source="vi" label="越南语" />
+      <TextField source="zh" label="中文" sx={{ whiteSpace: 'pre-line' }} />
+      <TextField source="en" label="英文" sx={{ whiteSpace: 'pre-line' }} />
+      <TextField source="vi" label="越南语" sx={{ whiteSpace: 'pre-line' }} />
       <TextField source="imageUrl" label="图片链接" />
       <TimeTextField source="createAt" label="创建时间" />
       <TimeTextField source="updateAt" label="更新时间" />
