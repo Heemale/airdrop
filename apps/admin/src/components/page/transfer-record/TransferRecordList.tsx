@@ -93,8 +93,12 @@ const ListActions = (props: any) => {
 
 const TransferRecordList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable>
-      <TextField source="id" label="ID" />
+    <MyDatagridConfigurable isShow  sx={{
+        '& .RaDatagrid-cell': {
+          textAlign: 'left'
+        }
+      }} >
+    <TextField source="id" label="ID" />
       <DigestTextField source="txDigest" label="交易hash" />
       <TextField source="eventSeq" label="事件索引" />
       <TimeTextField source="timestamp" label="时间戳" />

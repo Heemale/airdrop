@@ -84,7 +84,11 @@ const ListActions = (props: any) => {
 
 const NodeList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable hasEdit>
+    <MyDatagridConfigurable hasEdit isShow sx={{
+        '& .RaDatagrid-cell': {
+          textAlign: 'left'
+        }
+      }} >
       <TextField source="id" label="ID" />
       <TextField source="rank" label="节点等级" />
       <TextField source="name" label="名称" />

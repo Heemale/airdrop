@@ -8,12 +8,20 @@ import Layout from '@/components/Layout';
 import UserList from '@/components/page/user/UserList';
 import UserEdit from '@/components/page/user/userEdit';
 import NodeList from '@/components/page/node/NodeList';
+import NodeShow from '@/components/page/node/NodeShow';
+import MediaConfigShow from '@/components/page/media-config/MediaConfigShow';
+import UserShow from '@/components/page/user/UserShow';
+import LimitShow from '@/components/page/limit/LimitShow';
+import ClaimRecordShow from './page/claim-record/ClaimRecordShow';
+import GlobalShow from './page/global/GlobalShow';
 import NodeEdit from '@/components/page/node/NodeEdit';
 import NodeCreate from '@/components/page/node/NodeCreate';
 import AirdropList from '@/components/page/airdrop/AirdropList';
 import AirdropEdit from '@/components/page/airdrop/AirdropEdit';
 import AirdropCreate from '@/components/page/airdrop/AirdropCreate';
+import AirdropShow from '@/components/page/airdrop/AirdropShow';
 import BuyRecordList from '@/components/page/buy-record/BuyRecordList';
+import BuyRecordShow from '@/components/page/buy-record/BuyRecordShow';
 import ClaimRecordList from '@/components/page/claim-record/ClaimRecordList';
 import LimitList from '@/components/page/limit/LimitList';
 import LimitEdit from '@/components/page/limit/LimitEdit';
@@ -56,6 +64,7 @@ const AdminApp = () => (
         list={NodeList}
         edit={NodeEdit}
         create={NodeCreate}
+        show={NodeShow}
         icon={AccountTree}
       />
       <Resource
@@ -64,6 +73,7 @@ const AdminApp = () => (
         list={AirdropList}
         edit={AirdropEdit}
         create={AirdropCreate}
+        show={AirdropShow}
         icon={CardGiftcard}
       />
       <Resource
@@ -71,6 +81,7 @@ const AdminApp = () => (
         options={{ label: '文案表' }}
         list={MediaConfigList}
         edit={MediaConfigEdit}
+        show={MediaConfigShow}
         icon={Article}
       />
       <Resource
@@ -78,6 +89,7 @@ const AdminApp = () => (
         options={{ label: '用户表' }}
         list={UserList}
         edit={UserEdit}
+        show={UserShow}
         icon={People}
       />
       <Resource
@@ -92,6 +104,7 @@ const AdminApp = () => (
         list={LimitList}
         edit={LimitEdit}
         create={LimitCreate}
+        show={LimitShow}
         icon={LockPerson}
       />
       <Resource
@@ -100,18 +113,21 @@ const AdminApp = () => (
         list={GlobalList}
         edit={GlobalEdit}
         create={GlobalCreate}
+        show={GlobalShow}
         icon={Widgets}
       />
       <Resource
         name="buy-records"
         options={{ label: '购买记录' }}
         list={BuyRecordList}
+        show={BuyRecordShow}
         icon={AttachMoney}
       />
       <Resource
         name="claim-records"
         options={{ label: '领取记录' }}
         list={ClaimRecordList}
+        show={ClaimRecordShow}
         icon={Assignment}
       />
       <Resource

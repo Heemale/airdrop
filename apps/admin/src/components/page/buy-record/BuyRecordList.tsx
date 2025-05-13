@@ -11,6 +11,7 @@ import {
   TextInput,
   TopToolbar,
   useListContext,
+  Show
 } from 'react-admin';
 import { convertSmallToLarge } from '@/utils/math';
 import { TOKEN_DECIMAL } from '@/config';
@@ -92,7 +93,11 @@ const ListActions = (props: any) => {
 
 const BuyRecordList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable>
+    <MyDatagridConfigurable isShow sx={{
+        '& .RaDatagrid-cell': {
+          textAlign: 'left'
+        }
+      }}>
       <TextField source="id" label="ID" />
       <DigestTextField source="txDigest" label="交易hash" />
       <TextField source="eventSeq" label="事件索引" />

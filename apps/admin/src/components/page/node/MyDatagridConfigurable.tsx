@@ -5,6 +5,9 @@ import {
   Identifier,
   RaRecord,
   useNotify,
+  useRedirect,
+  FunctionField,
+  useResourceContext // 新增
 } from 'react-admin';
 import * as React from 'react';
 import { useRef } from 'react';
@@ -20,13 +23,21 @@ import { sleep } from '@/utils/time';
 const MyDatagridConfigurable = ({
   children,
   hasEdit = false,
+  isShow = false,
+  sx, // 新增
+
 }: {
   children: React.ReactNode;
   hasEdit?: boolean | undefined;
+  isShow?: boolean | undefined;
+  sx?: any; // 新增
+
 }) => {
   const account = useCurrentAccount();
   const { mutate: signAndExecuteTransaction } = useSignAndExecuteTransaction();
   const notify = useNotify();
+  const resource = useResourceContext(); // 新增
+  const redirect = useRedirect();
 
   const recordRef = useRef<RaRecord | null>(null);
 
@@ -78,17 +89,26 @@ const MyDatagridConfigurable = ({
     <DatagridConfigurable
       bulkActionButtons={false}
       rowClick={rowClick}
-      sx={{
-        '& .RaDatagrid-root': {},
-        '& .RaDatagrid-thead': {
-          whiteSpace: 'nowrap',
-        },
-        '& .RaDatagrid-row': {
-          whiteSpace: 'nowrap',
-        },
-      }}
+      sx={sx} // 新增
+
     >
       {children}
+      {isShow && (
+        <FunctionField
+          label="查看"
+          render={record => (
+            <button
+              style={{ color: '#1976d2', cursor: 'pointer', background: 'none', border: 'none' }}
+              onClick={e => {
+                e.stopPropagation();
+                redirect('show', resource, record.id); // 这里传入 resource
+              }}
+            >
+              查看
+            </button>
+          )}
+        />
+      )}
       {hasEdit && <EditButton label="修改" />}
       <Button label="移除" onClick={handleRemove} />
     </DatagridConfigurable>
