@@ -69,7 +69,11 @@ const ListActions = (props: any) => {
 
 const MediaConfigList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable isShow>
+    <MyDatagridConfigurable isShow sx={{
+        '& .RaDatagrid-cell': {
+          textAlign: 'left'
+        }
+      }}>
     <TextField source="id" label="ID" />
       <TextField source="page" label="页面" />
       <TextField source="code" label="文案编码" sx={{ whiteSpace: 'normal', wordBreak: 'break-all' }} />

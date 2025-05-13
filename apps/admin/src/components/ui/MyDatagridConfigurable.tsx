@@ -15,11 +15,13 @@ const MyDatagridConfigurable = ({
   hasEdit = false,
   isShow = false,
   bulkActionButtons = false,
+  sx, // 新增
 }: {
   children: React.ReactNode;
   hasEdit?: boolean | undefined;
   isShow?: boolean | undefined;
   bulkActionButtons?: ReactElement | false;
+  sx?: any; // 新增
 }) => {
   const redirect = useRedirect();
   const resource = useResourceContext(); // 新增
@@ -51,15 +53,7 @@ const MyDatagridConfigurable = ({
     <DatagridConfigurable
       rowClick={postRowClick}
       bulkActionButtons={bulkActionButtons}
-      sx={{
-        '& .RaDatagrid-root': {},
-        '& .RaDatagrid-thead': {
-          whiteSpace: 'nowrap',
-        },
-        '& .RaDatagrid-row': {
-          whiteSpace: 'nowrap',
-        },
-      }}
+      sx={sx} // 新增
     >
       {children}
       {isShow && (

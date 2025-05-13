@@ -41,7 +41,11 @@ const ListActions = (props: any) => {
 
 const GlobalList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable isShow>
+    <MyDatagridConfigurable isShow sx={{
+        '& .RaDatagrid-cell': {
+          textAlign: 'left'
+        }
+      }}>
       <TextField source="id" label="ID" />
       <AddressTextField source="object" label="对象ID" />
       <BooleanField source="isValid" label="是否合法" />

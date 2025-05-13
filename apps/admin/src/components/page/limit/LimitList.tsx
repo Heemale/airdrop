@@ -56,7 +56,11 @@ const ListActions = (props: any) => {
 
 const LimitList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable hasEdit isShow>
+    <MyDatagridConfigurable hasEdit isShow sx={{
+        '& .RaDatagrid-cell': {
+          textAlign: 'left'
+        }
+      }}>
       <TextField source="id" label="ID" />
       <AddressTextField source="address" label="用户地址" />
       <NumberField source="times" label="次数" />

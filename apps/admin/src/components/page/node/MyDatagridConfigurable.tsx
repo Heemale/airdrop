@@ -24,11 +24,13 @@ const MyDatagridConfigurable = ({
   children,
   hasEdit = false,
   isShow = false,
+  sx, // 新增
 
 }: {
   children: React.ReactNode;
   hasEdit?: boolean | undefined;
   isShow?: boolean | undefined;
+  sx?: any; // 新增
 
 }) => {
   const account = useCurrentAccount();
@@ -87,15 +89,8 @@ const MyDatagridConfigurable = ({
     <DatagridConfigurable
       bulkActionButtons={false}
       rowClick={rowClick}
-      sx={{
-        '& .RaDatagrid-root': {},
-        '& .RaDatagrid-thead': {
-          whiteSpace: 'nowrap',
-        },
-        '& .RaDatagrid-row': {
-          whiteSpace: 'nowrap',
-        },
-      }}
+      sx={sx} // 新增
+
     >
       {children}
       {isShow && (

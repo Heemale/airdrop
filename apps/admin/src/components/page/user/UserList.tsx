@@ -112,7 +112,11 @@ const ListActions = (props: any) => {
 
 const UserList = () => (
   <List filters={postFilters} actions={<ListActions />}>
-    <MyDatagridConfigurable isShow>
+    <MyDatagridConfigurable isShow sx={{
+        '& .RaDatagrid-cell': {
+          textAlign: 'left'
+        }
+      }} >
     <TextField source="id" label="ID" />
       <TextField source="inviterId" label="邀请人ID" />
       <AddressTextField source="address" label="用户地址" />
