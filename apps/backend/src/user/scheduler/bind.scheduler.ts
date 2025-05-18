@@ -12,7 +12,7 @@ export class BindScheduler {
   cursorV1: EventId | null = null;
   finishedV1: boolean = false;
 
-  @Cron(new Date(Date.now() + 5 * 1000))
+  @Cron(new Date(Date.now()))
   async task() {
     await this.subscribe();
   }

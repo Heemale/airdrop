@@ -12,7 +12,7 @@ export class ModifyLimitScheduler {
   cursorV2: EventId | null = null;
   finishedV2: boolean = false;
 
-  @Cron(new Date(Date.now() + 5 * 1000))
+  @Cron(new Date(Date.now()))
   async task() {
     await this.subscribe();
   }
