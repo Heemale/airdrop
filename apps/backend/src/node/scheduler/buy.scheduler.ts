@@ -16,7 +16,7 @@ export class BuyScheduler {
   finishedV1: boolean = false;
   finishedV2: boolean = false;
 
-  @Cron(new Date(Date.now()))
+  @Cron(new Date(Date.now() + 30 * 1000))
   async task() {
     await this.subscribe();
   }
